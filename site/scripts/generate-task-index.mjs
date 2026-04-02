@@ -253,6 +253,18 @@ async function main() {
   fs.copyFileSync(v1Path, aliasPath);
   console.log(`\n  📋 Alias: task-index.json → task-index-v1.json`);
 
+  // Generate human-reference.json — lightweight lookup for task pages
+  const humanRef = {};
+  for (const [version, config] of Object.entries(VERSION_CONFIGS)) {
+    const traceMap = loadHumanTraces(config.humanTraces);
+    for (const [taskId, data] of Object.entries(traceMap)) {
+      humanRef[taskId] = { steps: data.human_steps, duration_ms: data.human_duration_ms };
+    }
+  }
+  const humanRefPath = path.join(OUTPUT_DIR, 'human-reference.json');
+  fs.writeFileSync(humanRefPath, JSON.stringify(humanRef));
+  console.log(`  👤 Human reference: ${Object.keys(humanRef).length} tasks → ${humanRefPath}`);
+
   console.log('\nDone.');
 }
 

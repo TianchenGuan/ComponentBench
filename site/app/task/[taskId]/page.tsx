@@ -10,6 +10,7 @@ import { parseViewModeFromUrl } from '@/utils/viewMode';
 import { getThemeColors } from '@/runners/ThemeWrapper';
 import type { TaskSpec, ViewMode } from '@/types';
 import type { ComponentType } from 'react';
+import humanReference from '@/generated/human-reference.json';
 
 const LogViewer = dynamic(() => import('@/components/LogViewer'), { ssr: false });
 const RecordOverlay = dynamic(() => import('@/components/RecordOverlay'), { ssr: false });
@@ -453,6 +454,30 @@ function TaskPageContent() {
           </div>
         </div>
       </div>
+
+      {/* Human Reference */}
+      {(() => {
+        const ref = (humanReference as Record<string, { steps: number; duration_ms: number }>)[task.id];
+        if (!ref) return null;
+        const secs = (ref.duration_ms / 1000).toFixed(1);
+        return (
+          <div style={{ background: themeColors.headerBg, borderBottom: `1px solid ${themeColors.headerBorder}`, padding: '12px 24px' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', textTransform: 'uppercase', fontWeight: 500 }}>
+                Human Reference
+              </div>
+              <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
+                <span style={{ color: themeColors.isDark ? '#ddd' : '#333' }}>
+                  <strong>{ref.steps}</strong> {ref.steps === 1 ? 'step' : 'steps'}
+                </span>
+                <span style={{ color: themeColors.isDark ? '#aaa' : '#666' }}>
+                  {secs}s
+                </span>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Details (collapsible) */}
       <div style={{ background: themeColors.headerBg, borderBottom: `1px solid ${themeColors.headerBorder}` }}>
