@@ -17,7 +17,7 @@ import yaml from 'js-yaml';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const REPO_ROOT = path.join(__dirname, '../../..');
+const REPO_ROOT = path.join(__dirname, '../..');
 const OUTPUT_DIR = path.join(__dirname, '../src/generated');
 
 const VERSION_CONFIGS = {

@@ -5,8 +5,8 @@ import * as yaml from 'js-yaml';
 import type { TaskSpec, PublicTaskSpec, BenchmarkVersion } from '@/types';
 
 const YAML_DIRS: Record<BenchmarkVersion, string> = {
-  v1: path.resolve(process.cwd(), '..', '..', 'data', 'tasks_v1'),
-  v2: path.resolve(process.cwd(), '..', '..', 'data', 'tasks_v2'),
+  v1: path.resolve(process.cwd(), '..', 'data', 'tasks_v1'),
+  v2: path.resolve(process.cwd(), '..', 'data', 'tasks_v2'),
 };
 
 function toPublicTaskSpec(task: TaskSpec): PublicTaskSpec {
