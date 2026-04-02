@@ -38,6 +38,8 @@ interface SafeTaskEntry {
     guidance: string;
     clutter: string;
   };
+  human_steps: number | null;
+  human_duration_ms: number | null;
 }
 
 const LIBRARY_COLORS: Record<LibraryFilter, string> = {
@@ -632,23 +634,36 @@ function ComponentCard({
       {isReady && (
         <div style={{ marginBottom: 12 }}>
           {hasMatchingTasks ? (
-            <select
-              value={selectedTaskId}
-              onChange={e => setSelectedTaskId(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px 8px',
-                border: '1px solid #d9d9d9',
-                borderRadius: 4,
-                fontSize: 12,
-              }}
-            >
-              {matchingTasks.map(task => (
-                <option key={task.id} value={task.id}>
-                  {task.id}: {task.name}
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                value={selectedTaskId}
+                onChange={e => setSelectedTaskId(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '6px 8px',
+                  border: '1px solid #d9d9d9',
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+              >
+                {matchingTasks.map(task => (
+                  <option key={task.id} value={task.id}>
+                    {task.id}: {task.name}{task.human_steps != null ? ` (${task.human_steps} steps)` : ''}
+                  </option>
+                ))}
+              </select>
+              {viewMode === 'presentation' && (() => {
+                const selectedTask = matchingTasks.find(t => t.id === selectedTaskId);
+                if (!selectedTask?.human_steps) return null;
+                const secs = selectedTask.human_duration_ms != null ? (selectedTask.human_duration_ms / 1000).toFixed(1) : null;
+                return (
+                  <div style={{ marginTop: 6, fontSize: 11, color: '#8c8c8c', display: 'flex', gap: 8 }}>
+                    <span>Human: <strong style={{ color: '#595959' }}>{selectedTask.human_steps} steps</strong></span>
+                    {secs && <span>({secs}s)</span>}
+                  </div>
+                );
+              })()}
+            </>
           ) : (
             <select
               disabled
@@ -779,23 +794,36 @@ function V2UnitMemberCard({
       {hasTasks && (
         <div style={{ marginBottom: 12 }}>
           {hasMatchingTasks ? (
-            <select
-              value={selectedTaskId}
-              onChange={e => setSelectedTaskId(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px 8px',
-                border: '1px solid #d9d9d9',
-                borderRadius: 4,
-                fontSize: 12,
-              }}
-            >
-              {matchingTasks.map(task => (
-                <option key={task.id} value={task.id}>
-                  {task.id}: {task.name}
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                value={selectedTaskId}
+                onChange={e => setSelectedTaskId(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '6px 8px',
+                  border: '1px solid #d9d9d9',
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+              >
+                {matchingTasks.map(task => (
+                  <option key={task.id} value={task.id}>
+                    {task.id}: {task.name}{task.human_steps != null ? ` (${task.human_steps} steps)` : ''}
+                  </option>
+                ))}
+              </select>
+              {viewMode === 'presentation' && (() => {
+                const selectedTask = matchingTasks.find(t => t.id === selectedTaskId);
+                if (!selectedTask?.human_steps) return null;
+                const secs = selectedTask.human_duration_ms != null ? (selectedTask.human_duration_ms / 1000).toFixed(1) : null;
+                return (
+                  <div style={{ marginTop: 6, fontSize: 11, color: '#8c8c8c', display: 'flex', gap: 8 }}>
+                    <span>Human: <strong style={{ color: '#595959' }}>{selectedTask.human_steps} steps</strong></span>
+                    {secs && <span>({secs}s)</span>}
+                  </div>
+                );
+              })()}
+            </>
           ) : (
             <select
               disabled

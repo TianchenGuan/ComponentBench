@@ -24,15 +24,37 @@ const VERSION_CONFIGS = {
   v1: {
     yamlDir: path.join(REPO_ROOT, 'data/tasks_v1'),
     canonicalTypeFromFilename: true,
+    humanTraces: path.join(REPO_ROOT, 'data/human_traces/v1_reference.jsonl'),
   },
   v2: {
     yamlDir: path.join(REPO_ROOT, 'data/tasks_v2'),
     canonicalTypeFromFilename: false,
+    humanTraces: path.join(REPO_ROOT, 'data/human_traces/v2_reference.jsonl'),
   },
 };
 
-function extractSafeTaskData(task, canonicalTypeOverride) {
+function loadHumanTraces(jsonlPath) {
+  if (!jsonlPath || !fs.existsSync(jsonlPath)) {
+    console.log(`  No human traces file: ${jsonlPath}`);
+    return {};
+  }
+  const map = {};
+  const lines = fs.readFileSync(jsonlPath, 'utf-8').split('\n').filter(Boolean);
+  for (const line of lines) {
+    const entry = JSON.parse(line);
+    map[entry.task_id] = {
+      human_steps: entry.normalized_steps,
+      human_duration_ms: entry.duration_ms,
+      human_raw_steps: entry.raw_steps,
+    };
+  }
+  console.log(`  Loaded ${Object.keys(map).length} human traces from ${path.basename(jsonlPath)}`);
+  return map;
+}
+
+function extractSafeTaskData(task, canonicalTypeOverride, humanTraceMap) {
   try {
+    const humanTrace = humanTraceMap?.[task.id] || {};
     return {
       id: task.id,
       name: task.name,
@@ -53,6 +75,8 @@ function extractSafeTaskData(task, canonicalTypeOverride) {
         guidance: task.scene_context?.guidance || 'text',
         clutter: task.scene_context?.clutter || 'none',
       },
+      human_steps: humanTrace.human_steps ?? null,
+      human_duration_ms: humanTrace.human_duration_ms ?? null,
     };
   } catch (e) {
     console.error(`Failed to extract safe data from task ${task?.id}:`, e);
@@ -129,7 +153,7 @@ function preprocessYaml(content) {
 }
 
 function generateForVersion(version, config) {
-  const { yamlDir, canonicalTypeFromFilename } = config;
+  const { yamlDir, canonicalTypeFromFilename, humanTraces } = config;
 
   console.log(`\n=== Generating task index for ${version} ===`);
   console.log(`  YAML dir: ${yamlDir}`);
@@ -145,6 +169,8 @@ function generateForVersion(version, config) {
       counts: { by_canonical_type: {}, by_library: {}, by_difficulty: {}, by_tier: {} },
     };
   }
+
+  const humanTraceMap = loadHumanTraces(humanTraces);
 
   const allTasks = [];
   const canonicalTypes = new Set();
@@ -176,7 +202,7 @@ function generateForVersion(version, config) {
 
       for (const task of tasks) {
         const canonicalType = canonicalTypeFromFilename ? filenameType : task.canonical_type;
-        const safeTask = extractSafeTaskData(task, canonicalTypeFromFilename ? filenameType : null);
+        const safeTask = extractSafeTaskData(task, canonicalTypeFromFilename ? filenameType : null, humanTraceMap);
         if (safeTask) {
           allTasks.push(safeTask);
           canonicalTypes.add(safeTask.canonical_type);
