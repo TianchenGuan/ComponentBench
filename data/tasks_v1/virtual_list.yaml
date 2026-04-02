@@ -1,0 +1,2078 @@
+- id: virtual_list-antd-T01
+  name: Select a visible ticket row
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + @rc-component/virtual-list (rows styled like List.Item)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Open Tickets list, select “Ticket 0007 — Login fails on iOS”. The task will finish automatically when done.
+  ui_copy: Select “Ticket 0007 — Login fails on iOS” in the Open Tickets list.
+  setup_description: |
+    Layout: a single isolated AntD Card centered in the viewport titled “Open Tickets”.
+    Component: one virtualized list (height ~360px) rendered with @rc-component/virtual-list; about 10 rows are visible at a time with a vertical scrollbar.
+    Row affordances: each row looks like an AntD List item with:
+      - left: “Ticket #### — <short title>”
+      - right: a small status Tag (e.g., New / Investigating / Waiting)
+    Interaction model: single-select. Clicking anywhere on a row selects it and applies a light blue highlight; selecting a different row moves the highlight.
+    Initial state: no row selected; footer text under the list reads “Selected: none”.
+    Distractors: none beyond the non-interactive Card title and a subtle help text (“Scroll to browse all tickets”).
+    Feedback: selection highlight + footer updates immediately to “Selected: Ticket ####”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Target is visible without scrolling and selection is single-click with immediate, clearly labeled feedback.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'ticket-0007'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: ticket-0007
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different ticket is selected (e.g., Ticket 0008).
+  - 'No ticket is selected (footer still shows “Selected: none”).'
+  - Only keyboard focus moves but the selected state does not change (no highlight / aria-selected not updated).
+  expected_interaction_path:
+  - Click the row labeled “Ticket 0007 — Login fails on iOS”.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+- id: virtual_list-antd-T02
+  name: Scroll until a specific ticket becomes visible
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + @rc-component/virtual-list (rows styled like List.Item)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll the Open Tickets list until “Ticket 0040 — Payment timeout” is visible in the list. The task will finish automatically when done.
+  ui_copy: Scroll the list until “Ticket 0040 — Payment timeout” is visible.
+  setup_description: |
+    Layout: isolated AntD Card centered, titled “Open Tickets”.
+    Component: one virtual list (height ~360px) with 200+ tickets; only visible rows are mounted (virtualized).
+    Row content: “Ticket #### — <title>” with a status Tag on the right.
+    Interaction model: scrolling is the key action; clicking is optional and does not affect success for this task.
+    Initial state: scrolled to the very top showing Ticket 0001–0010 approximately; no selection.
+    Distractors: several similar “Payment …” titles appear (e.g., “Payment declined”, “Payment receipt missing”) in nearby rows to create mild interference.
+    Feedback: as you scroll, new rows mount/unmount; the scrollbar thumb position reflects scroll progress.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires only straightforward vertical scrolling with a clearly labeled textual target and no confirmation step.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - The row for item key 'ticket-0040' is rendered and at least 60% of the row is visible within the list viewport.
+    - No click/selection is required; scrolling alone can satisfy the goal.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_key: ticket-0040
+      tolerance:
+        min_visible_ratio: 0.6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The list is scrolled but Ticket 0040 is not actually visible (it exists offscreen or is only partially clipped below the fold).
+  - A different ticket with a similar title is visible instead (e.g., “Payment declined”).
+  - Ticket 0040 is visible only in another list instance (not applicable here, but should not be credited if the page is later extended).
+  expected_interaction_path:
+  - Scroll down within the Open Tickets list until the row “Ticket 0040 — Payment timeout” appears in view.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+- id: virtual_list-antd-T03
+  name: Star a ticket from the list
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + @rc-component/virtual-list (rows styled like List.Item)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Open Tickets list, mark “Ticket 0009 — Export CSV broken” as Starred. The task will finish automatically when done.
+  ui_copy: Star “Ticket 0009 — Export CSV broken”.
+  setup_description: |
+    Layout: isolated AntD Card centered, titled “Open Tickets”.
+    Component: one virtual list (height ~360px) with virtualized rows.
+    Row affordances: each row contains:
+      - main label text “Ticket #### — <title>”
+      - a small Star icon button on the far right (outline when off, filled when on)
+      - a status Tag
+    Interaction model: the Star icon is a per-row toggle; clicking it toggles Starred state without changing list selection.
+    Initial state: all tickets are unstarred; Ticket 0009 is visible in the initial viewport.
+    Distractors: other rows have the same Star icon; only the correct row’s star should change.
+    Feedback: the star icon fills immediately and the row shows a subtle “Starred” tooltip on hover.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Target row is visible and the toggle provides immediate, local visual feedback; only modest precision is needed to hit the star icon.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - For item key 'ticket-0009', the 'Starred' toggle state equals true.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: ticket-0009
+        toggle_name: Starred
+        toggle_value: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different ticket is starred instead of Ticket 0009.
+  - Ticket 0009 remains unstarred (outline star).
+  - List row selection changes but the star toggle state does not change.
+  expected_interaction_path:
+  - Locate the row “Ticket 0009 — Export CSV broken”.
+  - Click its Star icon button to turn Starred on.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+- id: virtual_list-antd-T04
+  name: Check three specific tickets
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + @rc-component/virtual-list (rows styled like List.Item)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Open Tickets list, check exactly these three tickets: “Ticket 0002 — Broken link”, “Ticket 0004 — UI glitch”, and “Ticket 0006 — Email not sent”. The task will finish automatically when done.'
+  ui_copy: Check Ticket 0002, Ticket 0004, and Ticket 0006 (and no others).
+  setup_description: |
+    Layout: isolated AntD Card centered, titled “Open Tickets”.
+    Component: one virtual list with a checkbox column on the left of each row (multi-select mode).
+    Row structure (left → right): Checkbox · “Ticket #### — <title>” · Status Tag.
+    Initial state: no checkboxes selected; all three target tickets are visible in the initial viewport (top of the list).
+    Distractors: adjacent rows (Ticket 0001, 0003, 0005, 0007) are visible and have similar short titles, increasing the chance of off-by-one selection.
+    Feedback: a checked box shows a checkmark; a small counter above the list reads “Selected: N”.
+    No Apply/Confirm button: selection is immediately committed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: All targets are visible, but success requires an exact multi-selection set, making omission/extra checks the main risk.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: ticket-0002, ticket-0004, ticket-0006.'
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - ticket-0002
+        - ticket-0004
+        - ticket-0006
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any non-target ticket is checked (extra selection).
+  - One or more target tickets are not checked (missing selection).
+  - Only row highlight changes but the checkbox state does not reflect the required set.
+  expected_interaction_path:
+  - Click the checkbox for Ticket 0002.
+  - Click the checkbox for Ticket 0004.
+  - Click the checkbox for Ticket 0006.
+  - Verify only these three are checked (counter shows 3).
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+- id: virtual_list-antd-T05
+  name: Search within a virtualized employee list and select one
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Form section + Input.Search + @rc-component/virtual-list (employee rows)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Reviewer field, use the search box to find and select “EMP-0742 — Jordan Lee”. The task will finish automatically when done.
+  ui_copy: 'Reviewer: search for and select “EMP-0742 — Jordan Lee”.'
+  setup_description: |
+    Layout: a form_section centered on the page titled “New Code Review Request”.
+    Clutter (low): above the list there are two unrelated, already-filled inputs (“Repository” and “Branch”) and a disabled “Create request” button.
+    Target component: a virtualized “Reviewer” picker embedded inline (not a modal). It includes:
+      - an AntD Input.Search labeled “Search reviewers”
+      - a virtual list area below (height ~300px) with ~2,000 employees
+    Row content: “EMP-#### — <Full Name>” with a small department Tag (e.g., Eng, Data, Design).
+    Interaction model: single-select. Clicking a row selects it; selected row is highlighted and the label above updates to “Selected reviewer: …”.
+    Initial state: list unfiltered and scrolled to the top; no reviewer selected.
+    Feedback: filtering happens immediately as text is typed; list content changes and the scroll position resets to the top of filtered results.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Adds a text-filter step and mild form clutter; the list is large and names are similar, but selection feedback is clear and immediate.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'emp-0742'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: emp-0742
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different employee is selected (e.g., EMP-0741).
+  - Search text is entered but no row is selected.
+  - Selection is made in a non-target control (e.g., clicking a Tag) without changing the list’s selected state.
+  expected_interaction_path:
+  - Click into the “Search reviewers” input.
+  - Type “0742” or “Jordan Lee”.
+  - Click the result row “EMP-0742 — Jordan Lee”.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+    Checker note: treat the search box as a sub-control of the virtual list component; success depends only on the list’s selected item key.
+- id: virtual_list-antd-T06
+  name: Select an item in the correct list when two are present
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Two Cards + @rc-component/virtual-list (Active vs Suspended lists)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Suspended Users list, select “SUSP-0112 — Morgan Chen”. The task will finish automatically when done.
+  ui_copy: 'Suspended Users: select “SUSP-0112 — Morgan Chen”.'
+  setup_description: |
+    Layout: isolated_card-style two-column layout centered: two AntD Cards side-by-side.
+      - Left card title: “Active Users”
+      - Right card title: “Suspended Users”
+    Target component(s): both cards contain a virtualized list (height ~320px) using @rc-component/virtual-list.
+    Row content: “<STATUS>-#### — <Full Name>” with a small reason Tag on Suspended rows (e.g., Billing, Abuse).
+    Interaction model: each list is independently single-select; clicking a row highlights it inside that list only.
+    Initial state:
+      - Active Users: one row preselected (highlighted) to act as a distractor.
+      - Suspended Users: no selection; scrolled to top.
+    Distractors: the same person name can appear in both lists with different IDs (e.g., “Morgan Chen” exists as ACTIVE-xxxx and SUSP-xxxx).
+    Feedback: each card footer shows its own “Selected: …” line.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two highly similar virtual lists are present with overlapping names; the agent must act on the correct instance and ignore a preselected distractor.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list instance Suspended Users.
+    - List selection is single-select and the selected item's key equals 'susp-0112'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: susp-0112
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Suspended Users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The Active Users list is modified instead of Suspended Users (wrong instance).
+  - A different Suspended user is selected (wrong ID or wrong person).
+  - The row is scrolled into view but not actually selected (no highlight / selected state).
+  expected_interaction_path:
+  - Click inside the right-hand card labeled “Suspended Users”.
+  - Scroll within that list if needed until “SUSP-0112 — Morgan Chen” is visible.
+  - Click the row to select it.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+    Instrumentation hint: assign data-testid 'vl-active' and 'vl-suspended' so the checker can disambiguate instances.
+- id: virtual_list-antd-T07
+  name: Select the row that matches a visual reference card
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + @rc-component/virtual-list (avatar rows) + visual Target card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the People Directory list, select the person whose avatar matches the Target card. The task will finish automatically when done.
+  ui_copy: Select the list row that matches the Target card avatar.
+  setup_description: |
+    Layout: isolated_card titled “People Directory”.
+    Target component: one virtualized list (height ~340px) with 30 unique people.
+    Visual guidance element: above the list, a small “Target” card shows:
+      - a circular avatar with a unique color
+      - a role label (e.g., “Marketing”)
+    Row content: each list row shows a colored avatar + a display name + a role Tag.
+    Each person has a unique avatar color + role combination, so the target is uniquely identifiable.
+    Interaction model: single-select by clicking anywhere on the row; selected row gets a highlight.
+    Initial state: list is at top; no selection.
+    Feedback: selected row highlight; footer shows “Selected person: …”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The goal is specified visually (avatar match) rather than by a unique text label, reducing observability and increasing interference among similar rows.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'p-21'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: p-21
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A person with the same role Tag is selected but the avatar does not match the Target card.
+  - No row is selected (only the Target card is viewed).
+  - A row is clicked that changes focus but does not set the list’s selected state.
+  expected_interaction_path:
+  - Look at the avatar shown in the Target card.
+  - Scroll the People Directory list until you find the row with the matching avatar thumbnail.
+  - Click that row to select it.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+    Checker note: the checker should know the target person key (person-0314) and verify list selected_item_key equals it; the avatar is only for agent guidance.
+- id: virtual_list-antd-T08
+  name: Open a modal list, choose an approver, and apply
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Modal + @rc-component/virtual-list (Approver list) + Apply/Cancel buttons'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Approver picker, select “APR-0031 — Priya Nair”, then click Apply. The task will finish automatically when done.
+  ui_copy: 'Approver: choose “APR-0031 — Priya Nair” and click Apply.'
+  setup_description: |
+    Theme: dark.
+    Layout: modal_flow. The main page shows a compact “Request Approval” card with a single button labeled “Choose approver”.
+    Target component: clicking “Choose approver” opens an AntD Modal titled “Select an approver”.
+    Inside the modal:
+      - a virtualized list (height ~320px) of ~1,200 approvers, virtualized with @rc-component/virtual-list
+      - rows display “APR-#### — <Full Name>” and a small team Tag
+      - a sticky modal footer with two buttons: “Cancel” and primary “Apply”
+    Interaction model: single-select within the modal list. Selection highlight is visible, but the selection is NOT committed to the main card until “Apply” is clicked.
+    Initial state: modal closed; no approver selected on the main card (shows “Approver: none”).
+    Distractors: the modal also contains a non-functional “Sort by” dropdown (disabled) to add realistic noise, but it does not affect the task.
+    Feedback: after Apply, the modal closes and the main card updates to “Approver: APR-0031 — Priya Nair”.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires opening a modal, selecting within a virtual list, and explicitly confirming via Apply; missing the confirm step is a common failure mode.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'apr-0031'.
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: apr-0031
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The correct row is selected in the modal but Apply is not clicked (modal remains open or main card not updated).
+  - Apply is clicked with the wrong approver selected.
+  - Cancel is clicked (modal closes without committing the correct selection).
+  expected_interaction_path:
+  - Click “Choose approver” to open the modal.
+  - Scroll/search within the approver list until “APR-0031 — Priya Nair” is visible.
+  - Click the row to select it.
+  - Click “Apply” in the modal footer.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+    Checker note: if the list state is internal to the modal, record the committed approver key in a stable DOM attribute on the main card after Apply.
+- id: virtual_list-antd-T09
+  name: Select an exact set in a compact virtualized permissions list
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + @rc-component/virtual-list (dense checkbox list)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Permissions list, check exactly these permissions: “PERM-013 View reports”, “PERM-027 Edit reports”, “PERM-031 Export data”, “PERM-044 Manage users”, and “PERM-048 Billing access”. The task will finish automatically when done.'
+  ui_copy: 'Permissions: check PERM-013, PERM-027, PERM-031, PERM-044, PERM-048 (no others).'
+  setup_description: |
+    Spacing mode: compact (reduced padding and smaller row height).
+    Layout: isolated AntD Card centered, titled “Role Permissions”.
+    Target component: one virtualized checkbox list (height ~380px) with ~300 permission rows (virtualized).
+    Row content: a small Checkbox + a code + label, e.g., “PERM-013 View reports”.
+    Interaction model: multi-select. Checked rows stay checked even when scrolled out of view (virtualization preserves state).
+    Initial state: no permissions checked; list starts at the top (PERM-001…).
+    Distractors:
+      - many similarly named permissions (e.g., “View report templates”, “Edit report templates”)
+      - codes are close together and visually dense in compact mode
+    Feedback: a sticky header above the list shows “Checked: N” and updates immediately; no Apply button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Compact spacing makes checkbox targets smaller and closer together; success requires an exact 5-item set amidst many similar labels.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: perm-013, perm-027, perm-031, perm-044, perm-048.'
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - perm-013
+        - perm-027
+        - perm-031
+        - perm-044
+        - perm-048
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any extra permission is checked beyond the required five.
+  - One or more required permissions are missing.
+  - A permission with a similar label is checked instead of the exact code (e.g., PERM-014).
+  expected_interaction_path:
+  - Scroll within the Permissions list to locate each required PERM code.
+  - Check the checkbox for each required permission.
+  - 'Verify the header reads “Checked: 5” and only those codes are selected.'
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+- id: virtual_list-antd-T10
+  name: Clear selections in the correct list and save
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Two virtual lists (Primary/CC) + Save confirmation'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Primary Recipients list, clear all selected recipients, then click “Save changes”. The task will finish automatically when done.
+  ui_copy: 'Primary Recipients: clear all selections and click Save changes.'
+  setup_description: |
+    Layout: isolated_card centered titled “Notification Recipients”.
+    Target components: two side-by-side virtualized checkbox lists (both use @rc-component/virtual-list):
+      - Left: “Primary Recipients” (this is the TARGET)
+      - Right: “CC Recipients” (distractor)
+    Each list:
+      - height ~300px, virtualized
+      - rows: Checkbox + email label (e.g., “alex.lee@example.com”)
+      - a small inline “Clear all” text button in the list header (optional to use)
+    Initial state:
+      - Primary Recipients: 3 emails are pre-checked.
+      - CC Recipients: 2 different emails are pre-checked (must remain unchanged).
+    Confirmation: below both lists is a sticky footer bar with a primary button “Save changes” and a secondary button “Discard”.
+    Feedback:
+      - checked count per list header updates immediately (e.g., “Primary selected: 3” → “0”)
+      - after “Save changes”, a toast appears: “Recipients updated”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 5
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The agent must clear only the target list (not the adjacent distractor list) and must remember to commit via “Save changes”, a frequent omission failure.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list instance Primary Recipients.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: .'
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Primary Recipients
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selections are cleared in CC Recipients instead of Primary Recipients (wrong instance).
+  - Primary Recipients still has at least one checked email.
+  - Primary selections are cleared but “Save changes” is not clicked (no commit).
+  - Discard is clicked (state may revert).
+  expected_interaction_path:
+  - In the left list labeled “Primary Recipients”, click “Clear all” (or uncheck each selected email).
+  - Confirm the Primary selected count is 0.
+  - Click “Save changes” in the footer.
+  notes: |-
+    Composite implementation note: Ant Design does not expose a single 'VirtualList' UI component; this task uses @rc-component/virtual-list to virtualize rows while using AntD components for row chrome (Typography, Tag, Checkbox, Button) to preserve AntD styling.
+    Instrumentation hints: give each list instance a stable data-testid (e.g., vl-primary) and each row a data-item-key. Expose selection/toggle state via aria-selected / aria-checked on the row or checkbox for robust checking.
+    Checker note: verify CC list state is not part of success, but explicitly treat changes to CC as a negative case in evaluation logs.
+- id: virtual_list-mui-T01
+  name: Select a visible contact row
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + react-window (FixedSizeList) (composite)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Contacts list, select “Contact 0005 — Sam Rivera”. The task will finish automatically when done.
+  ui_copy: Select “Contact 0005 — Sam Rivera” in the Contacts list.
+  setup_description: |
+    Layout: isolated_card — a single MUI Paper centered with the title “Contacts”.
+    Target component: a virtualized list (height ~400px, width ~360px) built with react-window and rendered using MUI ListItemButton rows.
+    Row content: “Contact #### — <Full Name>” with a small secondary text (city) under the name.
+    Interaction model: single-select. Clicking a ListItemButton sets aria-selected=true and applies the MUI selected background.
+    Initial state: scrolled to top; no contact selected; helper text below reads “Selected: none”.
+    Distractors: none beyond neighboring contacts.
+    Feedback: selected row styling + helper text updates to show the selected contact ID.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Target is in the initial viewport and selection is a single click with clear selected styling and text feedback.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'contact-0005'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: contact-0005
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different contact is selected.
+  - 'No contact is selected (helper text still shows “Selected: none”).'
+  - Only focus changes without setting the selected state (aria-selected not updated).
+  expected_interaction_path:
+  - Click the list row “Contact 0005 — Sam Rivera”.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+- id: virtual_list-mui-T02
+  name: Toggle a per-row switch in a virtual list
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ListItem + Switch (row toggle) + react-window (composite)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Notification Channels list, turn ON “Muted” for “Channel 0003 — Marketing Updates”. The task will finish automatically when done.
+  ui_copy: Mute Channel 0003 — Marketing Updates.
+  setup_description: |
+    Layout: isolated_card centered, titled “Notification Channels”.
+    Target component: a virtualized MUI List (react-window) showing channels with a Switch on the right.
+    Row content:
+      - primary text: “Channel #### — <name>”
+      - right: a MUI Switch labeled via aria-label “Muted”
+    Interaction model: the Switch is independent per row (does not require selecting the row).
+    Initial state: all switches are OFF; Channel 0003 is visible without scrolling.
+    Distractors: many rows have identical Switch controls; only the correct row’s switch should change.
+    Feedback: Switch thumb moves immediately; row shows a small “Muted” Chip when ON.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Simple visible toggle with immediate visual feedback; only modest precision needed to hit the switch.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - For item key 'channel-0003', the 'Muted' toggle state equals true.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: channel-0003
+        toggle_name: Muted
+        toggle_value: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different channel is muted instead of Channel 0003.
+  - Channel 0003 remains unmuted (switch OFF).
+  - Row selection changes but the switch state does not change.
+  expected_interaction_path:
+  - Locate the row “Channel 0003 — Marketing Updates”.
+  - Click the Muted switch on that row to turn it ON.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+- id: virtual_list-mui-T03
+  name: Scroll until a specific row is visible
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + react-window (FixedSizeList) (composite)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll the Contacts list until “Contact 0035 — Amina Yusuf” is visible. The task will finish automatically when done.
+  ui_copy: Scroll until Contact 0035 — Amina Yusuf is visible.
+  setup_description: |
+    Layout: isolated_card — centered Paper titled “Contacts”.
+    Target component: virtualized list (react-window) with 500 contacts; only visible rows are mounted.
+    Initial state: scrolled to the top (Contact 0001…); no selection.
+    Row content: “Contact #### — <Full Name>”.
+    Distractors: several contacts nearby share the same last name initial, but the numeric ID is unique.
+    Feedback: as you scroll, mounted rows update; scrollbar thumb position changes.
+    Note: selecting/clicking is not required for success; the goal is purely to bring the target row into view.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Straightforward scrolling with a unique textual target; no selection or confirmation required.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - The row for item key 'contact-0035' is rendered and at least 60% of the row is visible within the list viewport.
+    - No click/selection is required; scrolling alone can satisfy the goal.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_key: contact-0035
+      tolerance:
+        min_visible_ratio: 0.6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The list is scrolled but Contact 0035 is not actually visible (still outside the viewport).
+  - A different contact is visible instead (wrong ID).
+  expected_interaction_path:
+  - Scroll within the Contacts list until the row “Contact 0035 — Amina Yusuf” appears in view.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+- id: virtual_list-mui-T04
+  name: Select multiple rows with checkboxes
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + Checkbox (multi-select) + react-window (composite)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Invoices list, check exactly these invoices: “INV-0102”, “INV-0105”, and “INV-0110”. The task will finish automatically when done.'
+  ui_copy: 'Invoices: check INV-0102, INV-0105, INV-0110 (no others).'
+  setup_description: |
+    Layout: isolated_card centered titled “Invoices”.
+    Target component: virtualized list (react-window) with ~1,000 invoice rows; each row includes a Checkbox on the left.
+    Row content: Checkbox · “INV-####” · small secondary text (amount).
+    Interaction model: multi-select via checkboxes; checked rows persist across scrolling.
+    Initial state: no invoices checked; list starts at the top showing INV-0100… around the initial viewport (so only a small scroll is needed).
+    Distractors: INV-0103, INV-0104, INV-0106, etc. are visible and easily confusable due to close numbering.
+    Feedback: a small toolbar above the list reads “Selected: N” and updates immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires an exact 3-item checkbox set among near-numbered distractors; otherwise the interaction is flat with clear feedback.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: inv-0102, inv-0105, inv-0110.'
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - inv-0102
+        - inv-0105
+        - inv-0110
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any extra invoice is checked beyond the required three.
+  - One or more required invoices are not checked.
+  - A close-number distractor is checked instead (e.g., INV-0104).
+  expected_interaction_path:
+  - Scroll slightly if needed so INV-0102, INV-0105, INV-0110 are visible.
+  - Check each target invoice’s checkbox.
+  - Verify only the three targets are checked.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+- id: virtual_list-mui-T05
+  name: Search inside a settings-panel virtual list and select
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Settings panel + TextField filter + react-window virtualized List'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the API Keys list, use the filter box to find and select “Key 7F2A — Analytics”. The task will finish automatically when done.
+  ui_copy: 'API Keys: filter and select “Key 7F2A — Analytics”.'
+  setup_description: |
+    Layout: settings_panel occupying the center-left of the page, titled “Developer Settings”.
+    Clutter (medium): the panel also includes unrelated toggles (e.g., “Enable webhooks”) and a read-only “Client ID” field above the list.
+    Target component: a virtualized “API Keys” list section with:
+      - a MUI TextField labeled “Filter keys”
+      - a react-window virtualized list below (height ~320px) containing ~800 keys
+    Row content: “Key <4-char code> — <purpose>” plus a small “Created” date.
+    Interaction model: single-select by clicking the row (ListItemButton).
+    Initial state: list unfiltered, scrolled to top; no key selected.
+    Feedback: typing filters immediately; selected row shows MUI selected styling and a details pane on the right updates (read-only).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Adds a filter-typing step and moderate settings clutter that competes for attention; the list itself remains single-select with clear feedback.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'key-7f2a'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: key-7f2a
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different key is selected (wrong code).
+  - Filter text is entered but no row selection is made.
+  - A row is focused via keyboard but not selected (selected styling/state not set).
+  expected_interaction_path:
+  - Click the “Filter keys” text field.
+  - Type “7F2A” (or “Analytics”).
+  - Click the row “Key 7F2A — Analytics”.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+    Checker note: treat the filter TextField as a sub-control; success depends only on the selected key in the virtual list.
+- id: virtual_list-mui-T06
+  name: Match a visual icon in dark theme
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ListItemAvatar/Icon + react-window (composite) + visual Target tile'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Status Presets list, select the preset whose icon matches the Target tile. The task will finish automatically when done.
+  ui_copy: Select the list preset that matches the Target tile icon.
+  setup_description: |
+    Theme: dark.
+    Layout: isolated_card titled “Status Presets”.
+    Visual guidance element: a Target tile above the list shows a unique icon + color combination.
+    Target component: a react-window virtualized list with 24 unique presets.
+    Each preset has a unique icon shape + color combination, making the target uniquely identifiable.
+    Row content: each row includes a colored icon avatar + a preset name.
+    Interaction model: single-select; clicking the row selects it.
+    Initial state: top of the list, no selection.
+    Feedback: selected row background + a “Selected preset” label updates under the list.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target is specified visually (icon match) under dark theme, which can reduce contrast and accessibility-tree observability compared to pure text selection.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'preset-18'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: preset-18
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A preset is selected whose name is similar but the icon does not match the Target tile.
+  - No preset is selected.
+  - The target icon is visible but not selected (row not in selected state).
+  expected_interaction_path:
+  - Observe the icon in the Target tile.
+  - Scroll the list until you find the row with the matching icon.
+  - Click that row to select it.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+    Checker note: the target preset key (preset-18) is known to the checker; the Target tile is only for agent guidance.
+- id: virtual_list-mui-T07
+  name: Open a drawer list, pick a member, and confirm
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Drawer + react-window virtualized List + Done/Cancel buttons'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Add member drawer, select “MEM-0204 — Diego Alvarez”, then click Done. The task will finish automatically when done.
+  ui_copy: 'Add member: select “MEM-0204 — Diego Alvarez” and click Done.'
+  setup_description: |
+    Placement: the entry card is anchored near the bottom-right of the viewport.
+    Layout: drawer_flow. The main page shows a small “Team Members” card with a button “Add member”.
+    Target component: clicking “Add member” opens a right-side MUI Drawer titled “Select a member”.
+    Inside the drawer:
+      - a react-window virtualized list (height ~360px) of ~2,000 members
+      - rows show “MEM-#### — <Full Name>” and a small Avatar
+      - drawer footer with “Cancel” and primary “Done”
+    Interaction model: single-select inside the list; selection is staged until Done is clicked.
+    Initial state: drawer closed; no new member selected.
+    Distractors: a non-functional “Only show active” checkbox is present above the list (unchecked) but does not affect success.
+    Feedback: selected row highlight in the drawer; after Done, drawer closes and the main card shows “Pending add: MEM-0204 — Diego Alvarez”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires opening a drawer and explicitly confirming with Done; the list is large but the target label is unambiguous.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'mem-0204'.
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: mem-0204
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Correct member is selected in the drawer but Done is not clicked.
+  - Done is clicked with a different member selected.
+  - Cancel is clicked (drawer closes without committing selection).
+  expected_interaction_path:
+  - Click “Add member” to open the drawer.
+  - Scroll within the member list until “MEM-0204 — Diego Alvarez” is visible.
+  - Click the row to select it.
+  - Click “Done” in the drawer footer.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+- id: virtual_list-mui-T08
+  name: Pick the correct item in a busy dashboard with three lists
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Dashboard cards + 3 react-window virtualized Lists (Alerts/Tasks/Messages)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Alerts list, select “ALERT-0921 — Password expired”. The task will finish automatically when done.
+  ui_copy: 'Alerts: select ALERT-0921 — Password expired.'
+  setup_description: |
+    Layout: dashboard. The page shows a 3-column dashboard with three MUI Cards:
+      1) “Alerts” (TARGET)
+      2) “Tasks”
+      3) “Messages”
+    Each card contains its own react-window virtualized list (height ~260px) with independent scrollbars.
+    Row content:
+      - Alerts rows: “ALERT-#### — <message>” + severity Chip
+      - Tasks rows: “TASK-#### — <title>”
+      - Messages rows: “MSG-#### — <sender>”
+    Interaction model: each list is single-select; selected row is highlighted within its card only.
+    Initial state: all lists are scrolled to top; “Tasks” has a preselected row as a distractor.
+    Clutter (high): dashboard header includes a date picker and a refresh button (non-functional for the task), plus small KPI tiles above the lists.
+    Distractors: IDs can overlap numerically across lists (e.g., TASK-0921 exists), so selecting by number alone is insufficient; must pick from the Alerts list.
+    Feedback: each card footer shows “Selected: …” for that card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: 'High disambiguation burden: three similar virtual lists and heavy dashboard clutter with overlapping ID patterns; the agent must act in the correct list.'
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list instance Alerts.
+    - List selection is single-select and the selected item's key equals 'alert-0921'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: alert-0921
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The correct numeric ID is selected but in the wrong list (e.g., TASK-0921).
+  - A different alert is selected.
+  - No alert is selected in the Alerts card.
+  expected_interaction_path:
+  - Locate the dashboard card titled “Alerts”.
+  - Scroll within the Alerts list if needed until “ALERT-0921 — Password expired” is visible.
+  - Click that row to select it.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+    Instrumentation hint: give each card/list instance a label and data-testid (vl-alerts/vl-tasks/vl-messages) so the checker can enforce correct-instance selection.
+- id: virtual_list-mui-T09
+  name: Select an exact set in a small-scale list and archive
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Dense small List + Checkbox multi-select + react-window + Archive selected button'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Logs list, check exactly “LOG-0004”, “LOG-0011”, and “LOG-0019”, then click “Archive selected”. The task will finish automatically when done.
+  ui_copy: 'Logs: check LOG-0004, LOG-0011, LOG-0019 and click Archive selected.'
+  setup_description: |
+    Scale: small (reduced font size and smaller checkbox targets).
+    Layout: isolated_card centered titled “System Logs”.
+    Target component: a react-window virtualized list (height ~340px) containing ~2,000 log entries.
+    Row content: Checkbox · “LOG-####” · small timestamp.
+    Interaction model: multi-select via checkboxes.
+    Confirmation: a sticky action bar at the bottom of the card contains a primary button “Archive selected”.
+      - Selecting checkboxes updates the button label to “Archive selected (N)”.
+      - Clicking the button commits the action (shows a toast “Archived”).
+    Initial state: no logs selected; list scrolled to top.
+    Distractors: log IDs are sequential and easy to mis-click in small scale; nearby IDs (LOG-0003, 0005, etc.) are visible.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small-scale checkboxes increase acquisition difficulty, and success requires an exact selection set plus an explicit commit via “Archive selected”.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: log-0004, log-0011, log-0019.'
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - log-0004
+        - log-0011
+        - log-0019
+      tolerance: null
+      require_confirm: true
+      confirm_control: Archive selected
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Correct logs are checked but “Archive selected” is not clicked.
+  - Archive selected is clicked with a wrong or extra log checked.
+  - Any required log is missing from the checked set.
+  expected_interaction_path:
+  - Check the boxes for LOG-0004, LOG-0011, and LOG-0019.
+  - Click “Archive selected”.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+- id: virtual_list-mui-T10
+  name: Clear a preselected multi-selection with a confirmation dialog
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Virtualized checkbox list + Clear all action + confirmation Dialog'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear all selected items in the Saved Searches list. When prompted, click Clear to confirm. The task will finish automatically when done.
+  ui_copy: 'Saved Searches: clear all selections and confirm.'
+  setup_description: |
+    Layout: modal_flow. The main view is a centered card titled “Saved Searches”.
+    Target component: a react-window virtualized list (height ~340px) with checkboxes (multi-select).
+    Initial state: 6 items are already checked, and at least 2 of them are offscreen below the fold.
+    Controls: a small toolbar above the list includes an icon button “Clear all”.
+    Confirmation: clicking “Clear all” opens a MUI Dialog:
+      - title: “Clear selection?”
+      - buttons: “Cancel” and destructive “Clear”
+    Feedback:
+      - after confirming Clear, all checkboxes become unchecked and the toolbar counter becomes “Selected: 0”
+      - a snackbar appears: “Selection cleared”
+    Distractors: an adjacent “Select all” button exists but is not needed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires clearing selections that may be offscreen and handling a confirmation dialog; the multi-step flow and confirm requirement increase failure risk.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: .'
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: Clear
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only visible checked items are unchecked but some offscreen items remain selected.
+  - The confirmation dialog appears but Clear is not clicked (Cancel or close).
+  - Clear is confirmed but selection is not fully empty (counter not 0).
+  expected_interaction_path:
+  - Click the “Clear all” control above the list.
+  - In the confirmation dialog, click “Clear”.
+  - Verify the selected count is 0.
+  notes: |-
+    Composite implementation note: MUI does not ship a dedicated 'VirtualList' component; these tasks use MUI's List/ListItem chrome combined with react-window virtualization (as demonstrated in MUI docs).
+    Instrumentation hints: give each list instance a stable data-testid and each rendered row a data-item-key. Expose selection and toggle states via aria-selected / aria-checked / aria-pressed to support non-visual agents.
+    Checker note: selection must be empty after confirmation; do not accept intermediate state where dialog is open or selection is only partially cleared.
+- id: virtual_list-mantine-T01
+  name: Select a visible product row
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: ScrollArea + @tanstack/react-virtual (useVirtualizer) (composite)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Products list, select “Product 0012 — Cedar Mug”. The task will finish automatically when done.
+  ui_copy: Select “Product 0012 — Cedar Mug” in the Products list.
+  setup_description: |
+    Layout: isolated_card — a centered Mantine Paper/Card titled “Products”.
+    Target component: a virtualized list built with Mantine ScrollArea (h≈360px) as the scroll container and @tanstack/react-virtual for row virtualization.
+    Row content: “Product #### — <name>” with a small price on the right.
+    Interaction model: single-select. Clicking a row sets it as selected (row background changes and a small “Selected” indicator appears).
+    Initial state: list at the top; no selection.
+    Distractors: none beyond adjacent products.
+    Feedback: selected row styling + a caption below the list updates to “Selected: Product ####”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single visible target with one-click selection and clear textual confirmation.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'prod-0012'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: prod-0012
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different product is selected.
+  - 'No product is selected (caption remains “Selected: none”).'
+  - Only focus moves without changing the selected state.
+  expected_interaction_path:
+  - Click the row “Product 0012 — Cedar Mug”.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+- id: virtual_list-mantine-T02
+  name: Scroll until a specific product is visible
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: ScrollArea + @tanstack/react-virtual (useVirtualizer) (composite)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll the Products list until “Product 0045 — Linen Tote” is visible. The task will finish automatically when done.
+  ui_copy: Scroll until Product 0045 — Linen Tote is visible.
+  setup_description: |
+    Layout: isolated_card centered titled “Products”.
+    Target component: Mantine ScrollArea with tanstack virtual rows; ~800 products total.
+    Initial state: scrolled to top (Product 0001…).
+    Row content: “Product #### — <name>”.
+    Distractors: nearby product names share similar materials (e.g., Linen, Cotton), but the numeric product ID is unique.
+    Feedback: as you scroll, only a small subset of rows are mounted; the scrollbar thumb position changes.
+    Note: clicking is optional; success is based on visibility of the target row.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Simple scrolling task with a unique textual identifier; no selection or confirmation required.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - The row for item key 'prod-0045' is rendered and at least 60% of the row is visible within the list viewport.
+    - No click/selection is required; scrolling alone can satisfy the goal.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_key: prod-0045
+      tolerance:
+        min_visible_ratio: 0.6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The list is scrolled but Product 0045 is not visible within the viewport.
+  - A different product is visible instead (wrong ID).
+  expected_interaction_path:
+  - Scroll within the Products list until “Product 0045 — Linen Tote” appears.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+- id: virtual_list-mantine-T03
+  name: Favorite a row item
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: ScrollArea + ActionIcon toggle per row + @tanstack/react-virtual'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Products list, mark “Product 0008 — Glass Bottle” as Favorite. The task will finish automatically when done.
+  ui_copy: Favorite Product 0008 — Glass Bottle.
+  setup_description: |
+    Layout: isolated_card centered titled “Products”.
+    Target component: virtualized list within Mantine ScrollArea.
+    Row content: product label + price + a heart-shaped ActionIcon on the far right (outline when not favorited, filled when favorited).
+    Interaction model: clicking the heart toggles Favorite for that row; row selection is not used.
+    Initial state: all items are not favorited; Product 0008 is visible in the initial viewport.
+    Distractors: every row has the same heart icon; only the target row should change.
+    Feedback: heart icon fills immediately; a small “Favorited” badge appears next to the product name.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Visible target with immediate icon feedback; only moderate pointing precision is needed.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - For item key 'prod-0008', the 'Favorite' toggle state equals true.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: prod-0008
+        toggle_name: Favorite
+        toggle_value: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different product is favorited.
+  - Product 0008 remains not favorited.
+  - Row is clicked/selected but the favorite toggle is unchanged.
+  expected_interaction_path:
+  - Find “Product 0008 — Glass Bottle”.
+  - Click the heart ActionIcon on that row.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+- id: virtual_list-mantine-T04
+  name: Filter a large user list and select one
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput filter + ScrollArea virtual list (@tanstack/react-virtual)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the User picker, use the search field to find and select “USR-1203 — Hana Park”. The task will finish automatically when done.
+  ui_copy: 'User picker: search and select USR-1203 — Hana Park.'
+  setup_description: |
+    Layout: form_section titled “Invite a user”.
+    Clutter (low): above the picker there is a non-required “Role” select (left unchanged) and an “Invite” button (disabled until a user is selected).
+    Target component: an inline user picker consisting of:
+      - a Mantine TextInput labeled “Search users”
+      - a virtualized list below inside ScrollArea (h≈300px) with ~5,000 users
+    Row content: “USR-#### — <Full Name>” and a small email preview.
+    Interaction model: single-select by clicking the row; selected row is highlighted.
+    Initial state: unfiltered list at top; no selection.
+    Feedback: filtering updates the list immediately; after selection, the Invite button becomes enabled (visual feedback only; clicking it is not required).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Adds a search/filter step and mild form context; list is very large with similar names, but selection feedback is straightforward.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'usr-1203'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: usr-1203
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different user is selected.
+  - Search text is entered but no user is selected.
+  - The role select is changed but the user selection remains empty.
+  expected_interaction_path:
+  - Click the “Search users” input.
+  - Type “1203” or “Hana Park”.
+  - Click the row “USR-1203 — Hana Park”.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+    Checker note: ignore the Invite button state; success depends only on the selected user key in the virtual list.
+- id: virtual_list-mantine-T05
+  name: Select multiple tags from a virtualized list
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Checkbox list in ScrollArea + @tanstack/react-virtual'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Tags list, check exactly these tags: “Tag 0011 — Urgent”, “Tag 0020 — Finance”, “Tag 0042 — Legal”, and “Tag 0048 — Customer”. The task will finish automatically when done.'
+  ui_copy: 'Tags: check Tag 0011, 0020, 0042, 0048 (no others).'
+  setup_description: |
+    Layout: isolated_card centered titled “Tag Selector”.
+    Target component: virtualized multi-select list within Mantine ScrollArea (h≈340px) with ~500 tags.
+    Row content: Checkbox · “Tag #### — <label>”.
+    Interaction model: multi-select via checkboxes; checked state persists across scroll.
+    Initial state: no tags selected; list starts at top.
+    Distractors: many tags have business-category names (Finance, FinOps, Financial), increasing the chance of picking the wrong one if not careful with the tag number.
+    Feedback: a counter above the list shows “Selected tags: N”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires an exact 4-item set among many similar labels; otherwise the UI is flat and feedback is immediate.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: tag-0011, tag-0020, tag-0042, tag-0048.'
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - tag-0011
+        - tag-0020
+        - tag-0042
+        - tag-0048
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any extra tag is checked.
+  - One or more required tags are missing.
+  - A similarly named tag is selected instead of the exact numbered tag.
+  expected_interaction_path:
+  - Scroll the Tags list as needed to locate each required tag number.
+  - Check each required tag’s checkbox.
+  - 'Verify the counter reads “Selected tags: 4”.'
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+- id: virtual_list-mantine-T06
+  name: Match text plus a visual badge
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: ScrollArea virtual list with Badge + @tanstack/react-virtual + Target badge reference'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Plans list, select the “Starter” plan that has the same badge color as the Target badge. The task will finish automatically when done.
+  ui_copy: Select the Starter plan matching the Target badge color.
+  setup_description: |
+    Layout: isolated_card centered titled “Choose a Plan”.
+    Visual guidance element: a small “Target badge” above the list shows a specific color (e.g., teal) and an icon.
+    Target component: virtualized list (h≈320px) of ~200 plan variations (virtualized).
+    Row content: plan name + a colored Mantine Badge on the right.
+      - Multiple rows share the same plan name (“Starter”) but have different badge colors/icons (A/B testing variants).
+    Interaction model: single-select by clicking a row; selected row gets a subtle border and background.
+    Initial state: list at top; no selection.
+    Distractors: “Starter” appears many times; matching by name alone is insufficient—must match the badge color shown in the Target badge.
+    Feedback: selected row styling + a summary text below shows the selected plan variant code (not needed for the goal).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The target requires matching both a textual plan name and a visual badge color among many similar rows, increasing interference and reducing purely semantic observability.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'plan-starter-teal'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: plan-starter-teal
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A Starter plan is selected with the wrong badge color.
+  - A non-Starter plan is selected.
+  - No plan is selected.
+  expected_interaction_path:
+  - Observe the Target badge color.
+  - Find a row named “Starter” with the matching badge color.
+  - Click the row to select it.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+    Checker note: use a stable item_key for each plan variant (e.g., plan-starter-teal) independent of the displayed badge.
+- id: virtual_list-mantine-T07
+  name: Open a modal list, choose a dataset, and confirm
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Modal + ScrollArea virtual list (Mantine ScrollArea) + Confirm button'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Dataset picker, select “DS-0091 — Sales 2024”, then click “Use dataset”. The task will finish automatically when done.
+  ui_copy: 'Dataset picker: select DS-0091 — Sales 2024 and click Use dataset.'
+  setup_description: |
+    Layout: modal_flow. The main page shows a centered card titled “Create Report” with a button “Choose dataset”.
+    Target component: clicking “Choose dataset” opens a Mantine Modal titled “Select dataset”.
+    Inside the modal:
+      - a virtualized list in a ScrollArea (h≈320px) with ~3,000 datasets, rendered in a Mantine ScrollArea
+      - each row shows “DS-#### — <dataset name>” and a small “Owner” text
+      - modal footer buttons: “Cancel” and primary “Use dataset”
+    Interaction model: single-select in the list; selection is staged until “Use dataset” is clicked.
+    Initial state: modal closed; no dataset chosen (main card shows “Dataset: none”).
+    Distractors: a “Recently used” toggle appears above the list (unchecked) but does not change success criteria.
+    Feedback: selected row highlight inside modal; after Use dataset, modal closes and main card updates to show the chosen dataset label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Multi-step modal flow with an explicit confirm button; missing the final confirmation is a common failure mode in component interaction.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is single-select and the selected item's key equals 'ds-0091'.
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: ds-0091
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use dataset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The correct dataset is highlighted but “Use dataset” is not clicked.
+  - A different dataset is selected and confirmed.
+  - Cancel is clicked (no dataset committed).
+  expected_interaction_path:
+  - Click “Choose dataset” to open the modal.
+  - Scroll/search within the dataset list to find “DS-0091 — Sales 2024”.
+  - Click the row to select it.
+  - Click “Use dataset”.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via Mantine ScrollArea.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+- id: virtual_list-mantine-T08
+  name: Select an item in the correct instance under dark theme
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Two virtual lists (Primary/Backup) in ScrollArea + Mantine ScrollArea'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Backup Endpoints list, select “BKP-0021 — Tokyo”. The task will finish automatically when done.
+  ui_copy: 'Backup Endpoints: select BKP-0021 — Tokyo.'
+  setup_description: |
+    Theme: dark.
+    Layout: isolated_card-style two-column layout: two Mantine Cards side-by-side.
+      - Left card title: “Primary Endpoints”
+      - Right card title: “Backup Endpoints” (TARGET)
+    Target component(s): both cards contain a virtualized list inside ScrollArea (h≈300px), rendered in a Mantine ScrollArea.
+    Row content: “<TYPE>-#### — <region>” with a small latency value on the right.
+    Interaction model: each list is independently single-select; selected row uses a dark-theme highlight.
+    Initial state:
+      - Primary Endpoints: one row is preselected as a distractor.
+      - Backup Endpoints: no selection.
+    Distractors: the same region names may appear in both lists (e.g., Tokyo appears as PRM-xxxx and BKP-xxxx), but only the Backup list counts.
+    Feedback: each card footer shows its own “Selected: …”.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two visually similar virtual lists plus a preselected distractor; dark theme can reduce contrast, making correct-instance selection harder.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list instance Backup Endpoints.
+    - List selection is single-select and the selected item's key equals 'bkp-0021'.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: bkp-0021
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Backup Endpoints
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Tokyo is selected in the Primary Endpoints list instead of Backup (wrong instance).
+  - A different backup endpoint is selected.
+  - No backup endpoint is selected.
+  expected_interaction_path:
+  - Locate the card titled “Backup Endpoints”.
+  - Scroll within that list if needed until “BKP-0021 — Tokyo” is visible.
+  - Click the row to select it.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+    Instrumentation hint: assign data-testid 'vl-primary-endpoints' and 'vl-backup-endpoints'.
+- id: virtual_list-mantine-T09
+  name: Scroll to make a visually specified row visible (top-right placement)
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: ScrollArea virtual list of avatar rows + Target tile (visual) + Mantine ScrollArea'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll the Avatar Gallery list until the row with the avatar matching the Target tile is visible. The task will finish automatically when done.
+  ui_copy: Scroll until the avatar matching the Target tile is visible in the list.
+  setup_description: |
+    Placement: the card is anchored near the top-right of the viewport.
+    Layout: isolated_card titled “Avatar Gallery”.
+    Visual guidance element: a “Target tile” above the list shows a specific avatar image (no name text).
+    Target component: a virtualized list inside Mantine ScrollArea (h≈320px) with ~2,500 avatar rows, rendered in a scrollable container.
+    Row content: each row shows a small avatar thumbnail and a short label like “Profile #0034” (labels are not unique enough to solve the task without the avatar).
+    Interaction model: scrolling only; clicking is not required for success.
+    Initial state: list at top; the target avatar is far enough down that it is not initially rendered.
+    Feedback: rows mount/unmount as you scroll; when the target row becomes visible, it will be present in the DOM and within the viewport.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 1
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: The target is specified only visually and requires scrolling until the correct avatar row is rendered; text cues are intentionally insufficient.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - The row for item key 'av-34' is rendered and at least 60% of the row is visible within the list viewport.
+    - No click/selection is required; scrolling alone can satisfy the goal.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_key: av-34
+      tolerance:
+        min_visible_ratio: 0.6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The list is scrolled but the target avatar row is not visible (still offscreen).
+  - A different avatar that looks similar is visible; only the exact target row counts.
+  - The row is present in the DOM but fully clipped (0% visible).
+  expected_interaction_path:
+  - Observe the avatar in the Target tile.
+  - Scroll within the Avatar Gallery list until the matching avatar thumbnail appears in view.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via Mantine ScrollArea.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.
+    Checker note: the checker identifies the target by item_key (av-34); the Target tile is for agent guidance.
+- id: virtual_list-mantine-T10
+  name: Clear all selections in compact mode and save
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Compact checkbox list in ScrollArea + Reset control + Save button + @tanstack/react-virtual'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Triggers list, clear all selected triggers, then click “Save”. The task will finish automatically when done.
+  ui_copy: 'Triggers: clear all selections and click Save.'
+  setup_description: |
+    Spacing mode: compact (tight vertical spacing and smaller checkboxes).
+    Layout: isolated_card centered titled “Notification Rules”.
+    Target component: a virtualized checkbox list (“Triggers”) inside Mantine ScrollArea (h≈320px), virtualized via @tanstack/react-virtual.
+    Initial state: 5 triggers are pre-checked; at least 2 of them are below the fold and not initially visible.
+    Controls:
+      - a small “Reset selections” button in the list header (clears all checks at once)
+      - a footer bar with a primary “Save” button (must be clicked to commit)
+    Interaction model: clearing can be done by unchecking each item or using “Reset selections”; state is staged until Save.
+    Feedback:
+      - header shows “Selected: N” and updates immediately
+      - after Save, toast appears “Rules updated”
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 5
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Compact spacing makes controls harder to hit, and the agent must clear selections that may be offscreen and then remember to commit with Save.
+  success_trigger:
+    human_readable:
+    - Target component is the virtual list.
+    - List selection is multi-select and the set of checked item keys matches the target set exactly.
+    - 'Target set: .'
+    - User has clicked the confirmation control before finishing.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only some triggers are unchecked; at least one remains selected (including offscreen).
+  - Selections are cleared but Save is not clicked (no commit).
+  - Save is clicked while some triggers remain selected.
+  expected_interaction_path:
+  - Click “Reset selections” (or manually uncheck all selected triggers).
+  - Verify the selected count is 0.
+  - Click “Save”.
+  notes: |-
+    Composite implementation note: Mantine provides scroll containers (e.g., ScrollArea) but not a built-in virtual list component; these tasks pair Mantine UI for row layout with headless virtualization via @tanstack/react-virtual.
+    Instrumentation hints: the scroll viewport element should have a stable data-testid; each virtual row should carry data-item-key. Expose selection/toggle state via data-selected / aria-selected / aria-checked for robust checker access.

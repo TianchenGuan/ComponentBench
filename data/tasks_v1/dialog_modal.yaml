@@ -1,0 +1,2117 @@
+- id: dialog_modal-antd-T01
+  name: Open a basic modal dialog
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Newsletter settings" dialog. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the "Newsletter settings" dialog.'
+  setup_description: |
+    Layout: isolated_card centered in the viewport. The page shows a single card titled "Dialogs".
+    Inside the card there is a short paragraph and one primary button labeled "Newsletter settings".
+
+    Clicking "Newsletter settings" opens an Ant Design Modal with:
+    - Title: "Newsletter settings"
+    - Body: a short static description (no form fields)
+    - Footer: two buttons: "Cancel" (secondary) and "OK" (primary)
+    - Standard close icon (×) in the top-right of the modal header
+    - Default behavior: clicking the mask/outside closes the modal only if implemented by default settings for this task page (do not rely on it for success)
+
+    Initial state: the modal is closed. No other modals exist on the page. No distractors.
+    Feedback: when the modal opens, focus is trapped inside the modal and the background is dimmed by a mask.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single modal instance with one clearly labeled trigger; success is simply the modal becoming visible.
+  success_trigger:
+    human_readable:
+    - The AntD Modal instance labeled 'Newsletter settings' is open/visible.
+    - The checker must confirm the correct modal instance (by data-testid or title) is the one that is open.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Newsletter settings
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any other overlay/popover is open but the 'Newsletter settings' modal is still closed.
+  - A different modal instance is open (not applicable here, but guard against mis-binding).
+  - The modal briefly opens and immediately closes (open must be stable for the checker sample).
+  expected_interaction_path:
+  - Click the 'Newsletter settings' button.
+  - Wait for the modal to appear (title and footer visible).
+  notes: 'Instrumentation: add data-testid=''modal-newsletter-settings'' to the Modal root; expose canonical state {open:boolean}.'
+- id: dialog_modal-antd-T02
+  name: Cancel and close an open modal
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: default_footer
+  implementation_component: 'AntD: Modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Close the "Delete draft" dialog by clicking "Cancel". The task will finish automatically when done.
+  ui_copy: 'A modal titled "Delete draft" is open. Buttons: Cancel, OK.'
+  setup_description: |
+    Layout: isolated_card centered. The page loads with an Ant Design Modal already open.
+
+    Modal configuration:
+    - Title: "Delete draft"
+    - Body: static warning text (no inputs)
+    - Footer: "Cancel" and "OK"
+    - Close icon (×) is present in the header.
+    - Mask is present (clicking outside may close depending on default behavior), and Escape may close depending on default behavior.
+
+    Initial state: the modal is open and focused. Background content is inert. There is a single underlying card but it is not relevant.
+    Feedback: after closing, a small non-interactive status line below the card updates to "Last action: canceled" (for debugging only).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: The dialog is already open and the 'Cancel' button is clearly labeled in the footer.
+  success_trigger:
+    human_readable:
+    - The 'Delete draft' modal is closed.
+    - The modal's recorded close_reason equals 'cancel' (footer Cancel button).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: cancel
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: Delete draft
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The modal closes via the close icon (×) instead of the Cancel button.
+  - The modal closes via clicking the mask/outside instead of Cancel.
+  - The modal closes via the Escape key instead of Cancel.
+  - The modal remains open.
+  - A different modal instance is closed (not applicable here, but guard against mis-binding).
+  expected_interaction_path:
+  - Locate the footer buttons.
+  - Click 'Cancel'.
+  - Ensure the modal disappears.
+  notes: 'Checker note: track close_reason from onCancel handler vs other close paths.'
+- id: dialog_modal-antd-T03
+  name: Close modal using the header X
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: closable_header
+  implementation_component: 'AntD: Modal'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Close the "Help" dialog using the close (×) icon. The task will finish automatically when done.
+  ui_copy: A modal titled "Help" is open. Close it with the × icon.
+  setup_description: |
+    Layout: isolated_card centered. The page loads with one Ant Design Modal open.
+
+    Modal configuration:
+    - Title: "Help"
+    - Body: short help text and a link-styled line (non-interactive in this benchmark)
+    - Footer: hidden (no OK/Cancel buttons) so the primary close affordance is the header close icon (×).
+    - The close icon (×) is visible in the top-right corner of the modal header.
+    - Mask and Escape are enabled but should not be used for this task (they count as wrong close reason).
+
+    Initial state: modal is open; background is dimmed.
+    Feedback: after closing, a small status text below the card updates to "Last close: header-x".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only one modal is present; the close icon is visible and is the intended primary affordance.
+  success_trigger:
+    human_readable:
+    - The 'Help' modal is closed.
+    - The modal's recorded close_reason equals 'close_icon'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: close_icon
+      tolerance: null
+      require_confirm: true
+      confirm_control: Header close (×)
+      require_correct_instance: true
+      target_instance_label_or_id: Help
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The modal closes via mask/outside click instead of the header close icon.
+  - The modal closes via Escape key instead of the header close icon.
+  - The modal closes via any footer button (none should exist).
+  - The modal remains open.
+  expected_interaction_path:
+  - Move to the top-right of the modal header.
+  - Click the × close icon.
+  - Verify the modal disappears.
+  notes: 'Instrumentation: expose close_reason values: cancel, ok, close_icon, mask_click, escape_key.'
+- id: dialog_modal-antd-T04
+  name: Dismiss modal by clicking outside on the mask
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: mask_closable_true
+  implementation_component: 'AntD: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Dismiss the "Quick preview" dialog by clicking outside it (on the dimmed background). The task will finish
+    automatically when done.
+  ui_copy: 'A "Quick preview" modal is open. Tip: you can close it by clicking outside.'
+  setup_description: |
+    Layout: isolated_card centered. One Ant Design Modal is open on page load.
+
+    Modal configuration:
+    - Title: "Quick preview"
+    - Body: a short preview paragraph
+    - Footer: no buttons (footer hidden)
+    - Header close icon (×) is hidden (closable=false) to ensure the intended dismissal is mask click.
+    - maskClosable=true (clicking the mask / dimmed background closes the modal)
+    - keyboard=true (Escape could also close, but should NOT count as success for this task)
+
+    Initial state: modal is open; background is dimmed by the mask.
+    Feedback: after closing, a debug status text updates to "Last close: mask".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The modal is already open and the mask is a large target, but the agent must click outside the dialog rather
+      than pressing Escape.
+  success_trigger:
+    human_readable:
+    - The 'Quick preview' modal is closed.
+    - The modal's recorded close_reason equals 'mask_click'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: mask_click
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Quick preview
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The modal closes via Escape key instead of mask click.
+  - The modal closes via any close icon (should not exist).
+  - The modal remains open.
+  expected_interaction_path:
+  - Click on the dimmed area outside the modal content (the mask).
+  - Confirm the modal disappears.
+  notes: AntD supports maskClosable to close on outside click. Use a distinct close_reason for mask dismissal.
+- id: dialog_modal-antd-T05
+  name: Open the correct dialog when two are available
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: two_instances
+  implementation_component: 'AntD: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Security settings" dialog (the one marked with the orange "Secondary" badge). The task will finish
+    automatically when done.
+  ui_copy: In "Account settings", open the "Security settings" dialog (orange Secondary badge).
+  setup_description: |
+    Layout: form_section centered in the viewport. The page shows a realistic "Account settings" form with several read-only fields (Name, Email, Time zone).
+
+    In the form header there are two adjacent buttons that can open dialogs:
+    1) "Profile details" with a small blue badge labeled "Primary"
+    2) "Security settings" with a small orange badge labeled "Secondary"
+
+    Each button opens its own Ant Design Modal instance:
+    - "Profile details" modal title: "Profile details"
+    - "Security settings" modal title: "Security settings"
+    Both modals use default footer buttons ("Cancel", "OK") and a header close icon (×).
+
+    Initial state: both modals are closed. Only one modal can be open at a time.
+    Distractors: the form contains several non-modal controls (read-only inputs and help text), but they are not required for success.
+    Feedback: when a modal opens, the title appears at the top of the overlay.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar dialog triggers appear in the same header; the agent must choose the correct labeled instance
+      (using both text and the badge cue).
+  success_trigger:
+    human_readable:
+    - The modal instance titled 'Security settings' is open/visible.
+    - The 'Profile details' modal must remain closed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Security settings
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The 'Profile details' modal is opened instead of 'Security settings'.
+  - Both modals are closed.
+  - The correct modal opens and then is immediately closed before the checker samples the open state.
+  expected_interaction_path:
+  - Locate the two dialog buttons in the form header.
+  - Click 'Security settings' (orange 'Secondary' badge).
+  - Verify the modal titled 'Security settings' appears.
+  notes: 'Checker: disambiguate instances by title or data-testid (e.g., modal-security-settings).'
+- id: dialog_modal-antd-T06
+  name: Close a non-dismissible modal by clicking OK
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: non_dismissible_requires_ok
+  implementation_component: 'AntD: Modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Close the "Session timeout" dialog by clicking "OK". The task will finish automatically when done.
+  ui_copy: A "Session timeout" modal is open. Click OK to close it.
+  setup_description: |
+    Layout: isolated_card centered, but the page uses COMPACT spacing (reduced padding and smaller gaps).
+    One Ant Design Modal is open on load.
+
+    Modal configuration:
+    - Title: "Session timeout"
+    - Body: static message: "Your session is about to expire."
+    - Footer: "OK" (primary) and "Cancel" (secondary) buttons
+    - maskClosable=false (clicking outside does NOT close)
+    - keyboard=false (Escape does NOT close)
+    - Header close icon (×) is hidden (closable=false) to force footer interaction.
+
+    Initial state: modal is open.
+    Feedback: when "OK" is clicked, the OK button shows a brief loading spinner for ~300ms before the modal closes.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Outside click and Escape are disabled and the header close icon is removed, so the agent must use the correct
+      footer button and wait for the close animation after a short loading state.
+  success_trigger:
+    human_readable:
+    - The 'Session timeout' modal is closed.
+    - The modal's recorded close_reason equals 'ok'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: ok
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Session timeout
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The modal is closed via Cancel (close_reason='cancel').
+  - The modal is closed via mask click or Escape (should be impossible, but must not count).
+  - The modal remains open because the agent clicked the message body or mask.
+  expected_interaction_path:
+  - Locate the footer action buttons.
+  - Click 'OK'.
+  - Wait for the spinner/transition and confirm the modal disappears.
+  notes: AntD Modal supports disabling mask click and Escape via maskClosable/keyboard; ensure instrumentation records ok
+    vs cancel.
+- id: dialog_modal-antd-T07
+  name: Scroll a long modal to find the close control
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: long_content_footer_in_body
+  implementation_component: 'AntD: Modal'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the "Release notes" dialog, scroll to the bottom and click "Close preview". The task will finish automatically
+    when done.
+  ui_copy: 'Release notes dialog: scroll to the bottom and click "Close preview".'
+  setup_description: |
+    Layout: isolated_card, but the modal is positioned near the BOTTOM-RIGHT of the viewport (custom style top/left offsets).
+    The page loads with an Ant Design Modal open.
+
+    Modal configuration:
+    - Title: "Release notes"
+    - Body: a long, scrollable block of text (~3 screens tall). The modal body scrolls; the page behind does not.
+    - Footer: hidden (footer=null).
+    - At the very end of the scrollable body content there is a single primary button labeled "Close preview".
+    - Header close icon (×) is present but should NOT be used (it produces a different close_reason).
+
+    Initial state: modal open; scroll position is at the top of the release notes.
+    Feedback: after clicking "Close preview", the modal closes and a debug status line shows "Last close: close-preview".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The required button is out of view inside a scrollable modal body, so the agent must scroll within the
+      dialog (not the page) and then click the correct close control.
+  success_trigger:
+    human_readable:
+    - The 'Release notes' modal is closed.
+    - The modal's recorded close_reason equals 'close_preview_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: close_preview_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: Close preview
+      require_correct_instance: true
+      target_instance_label_or_id: Release notes
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing via the header close icon (×) instead of 'Close preview'.
+  - Closing via mask click or Escape instead of 'Close preview'.
+  - Scrolling the underlying page instead of the modal body (button never reached).
+  - Modal remains open because the button was not reached/clicked.
+  expected_interaction_path:
+  - Ensure focus is in the modal.
+  - Scroll the modal body down until the 'Close preview' button appears.
+  - Click 'Close preview' to close the modal.
+  notes: 'Checker: ensure scroll container is the modal body; record close_reason=''close_preview_button'' from that specific
+    button.'
+- id: dialog_modal-antd-T08
+  name: Close only the top modal in a stacked pair
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: stacked_nested
+  implementation_component: 'AntD: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Advanced options" dialog, then close only "Advanced options" using the close (×) icon so that
+    "Settings" stays open. The task will finish automatically when done.
+  ui_copy: Settings is open. Open Advanced options, then close only Advanced options with × (keep Settings open).
+  setup_description: |
+    Layout: isolated_card centered, DARK theme.
+    The page loads with an Ant Design Modal already open:
+    - Outer modal title: "Settings"
+    - Outer body contains static text and a primary button labeled "Advanced options…"
+    - Outer modal is not closable by mask click (maskClosable=false) to prevent accidental closure.
+
+    Clicking "Advanced options…" opens a SECOND Ant Design Modal (inner/topmost):
+    - Inner modal title: "Advanced options"
+    - Inner modal has a header close icon (×) in the top-right.
+    - Inner modal footer is hidden (no buttons), to focus the task on the close icon.
+
+    Initial state: only the "Settings" modal is open. The "Advanced options" modal is closed.
+    During the task, two modals can be present simultaneously (stacked).
+    Feedback: a small debug line under the page indicates which modals are currently open (for developers), but agents should rely on the visible titles.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The agent must manage a two-layer modal stack and interact with the correct (top) instance while ensuring
+      the underlying modal remains open.
+  success_trigger:
+    human_readable:
+    - The inner modal titled 'Advanced options' is closed with close_reason='close_icon'.
+    - The outer modal titled 'Settings' remains open/visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: close_icon
+        related_instances:
+          Settings:
+            open: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Header close (×)
+      require_correct_instance: true
+      target_instance_label_or_id: Advanced options
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the outer 'Settings' modal (even if 'Advanced options' is also closed).
+  - Closing both modals.
+  - Leaving 'Advanced options' open.
+  - Closing 'Advanced options' via Escape/mask click instead of the close icon (if those paths are enabled).
+  expected_interaction_path:
+  - In the 'Settings' modal, click 'Advanced options…' to open the inner modal.
+  - In the 'Advanced options' modal header, click the × close icon.
+  - Verify 'Settings' is still visible and 'Advanced options' is gone.
+  notes: Checker should identify each modal instance by title or data-testid and track open state for both; enforce outer
+    remains open.
+- id: dialog_modal-antd-T09
+  name: Drag a draggable modal to a target corner
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: draggable_modal
+  implementation_component: 'AntD: Modal (modalRender + react-draggable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Drag the "Notes" dialog so it sits near the top-right corner of the page. The task will finish automatically
+    when done.
+  ui_copy: 'Draggable dialog: Move the "Notes" dialog near the top-right corner.'
+  setup_description: |
+    Layout: isolated_card centered. The page loads with a draggable Ant Design Modal open.
+
+    Modal configuration:
+    - Title: "Notes"
+    - Body: short static text; no form fields
+    - Footer: hidden
+    - The modal is DRAGGABLE by its header area (title bar). The rest of the page is not draggable.
+    - A subtle handle hint text "Drag by the header" is shown under the title (non-interactive).
+
+    Initial state: modal is open and centered.
+    Feedback: while dragging, the modal follows the pointer; on drop, it stays at the new position.
+
+    Target: the modal should end up in the top-right region of the viewport (with a small margin from the edges).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Dragging requires continuous control and the final position must fall within a target region that may not
+      be represented explicitly in the accessibility tree.
+  success_trigger:
+    human_readable:
+    - The 'Notes' modal remains open.
+    - The modal's bounding box top-right corner is within tolerance of the viewport's top-right target region (predefined
+      margin).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        open: true
+        position:
+          reference_frame: viewport
+          modal_point: top_right
+          target_anchor: top_right
+          target_margin_px:
+            x: 24
+            y: 24
+      tolerance:
+        x_px: 40
+        y_px: 40
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Notes
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging the modal but releasing it outside the target region (beyond tolerance).
+  - Dragging by the body/content fails to move the modal (wrong grab area).
+  - Closing the modal while attempting to drag.
+  - Moving a different overlay (if any) instead of the 'Notes' modal.
+  expected_interaction_path:
+  - Click and hold the modal header/title area.
+  - Drag toward the top-right corner of the viewport.
+  - Release to drop the modal in place.
+  notes: AntD has an official draggable-modal demo using modalRender; instrument modal bounding box and store last drag position
+    for checking.
+- id: dialog_modal-antd-T10
+  name: Open the dialog that matches a visual reference
+  canonical_type: dialog_modal
+  implementation_source: antd
+  implementation_variant: multi_instance_visual_match
+  implementation_component: 'AntD: Modal'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the dialog that matches the reference header color swatch (purple). The task will finish automatically
+    when done.
+  ui_copy: 'Reference: purple header. Open the matching dialog.'
+  setup_description: "Layout: dashboard with a simple two-column grid (cards for \"Billing\", \"Analytics\", and \"Support\"\
+    ). \nThe dialog triggers live inside these cards, creating realistic clutter.\n\nAt the top of the dashboard there is\
+    \ a small non-interactive \"Reference swatch\" row showing:\n- Label: \"Target dialog header color\"\n- A solid PURPLE\
+    \ swatch\n\nThere are three Ant Design Modal instances on the page, each opened by a different button:\n1) Card \"Billing\"\
+    : button \"Open invoice dialog\" → Modal title \"Invoices\" with a GREEN-tinted header strip\n2) Card \"Analytics\": button\
+    \ \"Open audit dialog\" → Modal title \"Audit log\" with a PURPLE-tinted header strip\n3) Card \"Support\": button \"\
+    Open tips dialog\" → Modal title \"Usage tips\" with a BLUE-tinted header strip\n\nOnly one modal can be open at a time.\
+    \ Each modal has default footer buttons and a close icon.\n\nInitial state: all modals are closed.\nGuidance: primarily\
+    \ visual (match the purple header strip shown in the reference swatch).\nFeedback: when a modal opens, its header strip\
+    \ color is immediately visible behind the title.\n"
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Three similar dialog triggers are spread across a cluttered dashboard and the target is specified visually,
+      increasing disambiguation and observability demands.
+  success_trigger:
+    human_readable:
+    - The modal instance with the PURPLE header strip (title 'Audit log') is open/visible.
+    - No other modal instance is open.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        open: true
+        reference:
+          type: header_color_swatch
+          value: purple
+      tolerance:
+        color_distance: exact_theme_token
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Audit log
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening any other modal ('Invoices' or 'Usage tips').
+  - Opening the correct modal but immediately switching to another modal before the checker evaluates.
+  - No modal is open.
+  expected_interaction_path:
+  - Look at the reference swatch (purple).
+  - Find the trigger that opens the dialog with a matching purple header strip.
+  - Click that trigger and verify the correct modal opens.
+  notes: 'Checker: implement matches_reference by mapping each modal instance to a canonical header_color token; avoid pixel-perfect
+    color checks by using theme token IDs.'
+- id: dialog_modal-mui-T01
+  name: Open a basic dialog
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Invite members" dialog. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the "Invite members" dialog.'
+  setup_description: |
+    Layout: isolated_card centered. The page contains one button labeled "Invite members".
+
+    Clicking the button opens a Material UI Dialog with:
+    - Title: "Invite members"
+    - Content: short static text (no inputs)
+    - Actions row: "Cancel" and "Send invite"
+    - Default behavior: Escape and backdrop click may close the dialog, but they are not required.
+
+    Initial state: dialog is closed.
+    Feedback: when opened, the Dialog backdrop dims the page and focus moves into the dialog.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single clear trigger button opens a single dialog; success only requires the dialog to become visible.
+  success_trigger:
+    human_readable:
+    - The MUI Dialog titled 'Invite members' is open/visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invite members
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - No dialog is open.
+  - A different dialog instance opens (not applicable here, but guard against mis-binding).
+  expected_interaction_path:
+  - Click the 'Invite members' button.
+  - Wait for the dialog title to appear.
+  notes: 'Instrumentation: data-testid=''dialog-invite-members'' on Dialog root; canonical state derived from open prop.'
+- id: dialog_modal-mui-T02
+  name: Cancel and close an open dialog
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: default_actions
+  implementation_component: 'MUI: Dialog'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Close the "Unsaved changes" dialog by clicking "Cancel". The task will finish automatically when done.
+  ui_copy: Unsaved changes dialog is open. Click Cancel to close.
+  setup_description: |
+    Layout: isolated_card centered. A Material UI Dialog is open on page load.
+
+    Dialog configuration:
+    - Title: "Unsaved changes"
+    - Content: static text warning that changes will be lost.
+    - Actions: two buttons at the bottom-right: "Cancel" and "Discard"
+    - Close icon is NOT shown; intended closure is via actions.
+    - Backdrop and Escape are enabled but should not count for success (wrong close_reason).
+
+    Initial state: dialog open and focused.
+    Feedback: after closing, a non-interactive status text updates to "Result: canceled".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Dialog is already open and the required action button is clearly labeled in the actions row.
+  success_trigger:
+    human_readable:
+    - The 'Unsaved changes' dialog is closed.
+    - The dialog's recorded close_reason equals 'cancel'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: cancel
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: Unsaved changes
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dialog closes via Escape or backdrop click instead of Cancel.
+  - Dialog closes via 'Discard' instead of Cancel.
+  - Dialog remains open.
+  expected_interaction_path:
+  - Locate the actions row at the bottom of the dialog.
+  - Click 'Cancel'.
+  notes: 'Checker: close_reason should distinguish cancel vs discard vs escape/backdrop.'
+- id: dialog_modal-mui-T03
+  name: Dismiss a dialog with the Escape key
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: escape_to_close
+  implementation_component: 'MUI: Dialog'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Dismiss the "Keyboard shortcuts" dialog by pressing the Escape key. The task will finish automatically
+    when done.
+  ui_copy: Keyboard shortcuts dialog is open. Press Esc to close.
+  setup_description: |
+    Layout: isolated_card centered. A Material UI Dialog is open on page load.
+
+    Dialog configuration:
+    - Title: "Keyboard shortcuts"
+    - Content: static list of shortcut hints (non-interactive)
+    - Actions: none (no footer buttons)
+    - Backdrop click is disabled for this task page (ignored by onClose), so Escape is the intended close mechanism.
+    - disableEscapeKeyDown=false (Escape triggers onClose)
+
+    Initial state: dialog open; focus is inside the dialog.
+    Feedback: after closing, a debug label updates to "Closed by: escape".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The dialog is already open and has no buttons; pressing Escape is the single required action, but it relies
+      on correct keyboard interaction.
+  success_trigger:
+    human_readable:
+    - The 'Keyboard shortcuts' dialog is closed.
+    - The dialog's recorded close_reason equals 'escape_key'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: escape_key
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Keyboard shortcuts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dialog closes via backdrop click instead of Escape.
+  - Dialog remains open (Escape not delivered).
+  - Dialog closes via any button (none should exist).
+  expected_interaction_path:
+  - Ensure the dialog is focused.
+  - Press the Escape key once.
+  - Verify the dialog disappears.
+  notes: MUI Dialog supports disableEscapeKeyDown; keep it false here and record close_reason from onClose reason='escapeKeyDown'.
+- id: dialog_modal-mui-T04
+  name: Close a dialog by clicking the backdrop
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: backdrop_click_to_close
+  implementation_component: 'MUI: Dialog'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Close the "Image preview" dialog by clicking outside it on the backdrop. The task will finish automatically
+    when done.
+  ui_copy: Image preview dialog is open. Click outside on the backdrop to close.
+  setup_description: |
+    Layout: isolated_card, but the Dialog paper is positioned toward the TOP-LEFT of the viewport (custom PaperProps style).
+    A Material UI Dialog is open on load.
+
+    Dialog configuration:
+    - Title: "Image preview"
+    - Content: short placeholder text (no images in this benchmark)
+    - Actions: none
+    - Escape is disabled for this task (disableEscapeKeyDown=true), so backdrop click is the intended close path.
+    - Backdrop click triggers onClose with reason 'backdropClick'.
+
+    Initial state: dialog open.
+    Feedback: after closing, a status label updates to "Closed by: backdrop".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Backdrop dismissal requires clicking in the correct non-dialog area; the dialog is offset from center which
+      can confuse targeting.
+  success_trigger:
+    human_readable:
+    - The 'Image preview' dialog is closed.
+    - The dialog's recorded close_reason equals 'backdrop_click'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: backdrop_click
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Image preview
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dialog closes via Escape (disabled) or by any button (none).
+  - Clicking inside the dialog content does not count.
+  - Dialog remains open.
+  expected_interaction_path:
+  - Click an empty area of the shaded backdrop outside the dialog paper.
+  - Verify the dialog disappears.
+  notes: 'Checker: use MUI Modal onClose reason (''backdropClick'') to set close_reason=''backdrop_click''.'
+- id: dialog_modal-mui-T05
+  name: Open the correct dialog in a settings panel
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: two_instances_settings_panel
+  implementation_component: 'MUI: Dialog'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Billing address" dialog. The task will finish automatically when done.
+  ui_copy: 'Settings panel: open "Billing address" dialog.'
+  setup_description: |
+    Layout: settings_panel centered. The page resembles an "Account" settings screen with a left nav column (non-interactive) and a right content panel.
+
+    In the "Addresses" section of the right panel there are two rows, each with an "Edit" button:
+    - Row 1 label: "Shipping address" + button "Edit"
+    - Row 2 label: "Billing address" + button "Edit"
+
+    Each "Edit" button opens a different Material UI Dialog:
+    - Dialog A title: "Shipping address"
+    - Dialog B title: "Billing address"
+    Both dialogs have default action buttons ("Cancel", "Save") and a standard backdrop.
+
+    Initial state: no dialogs are open.
+    Distractors/clutter: several other settings sections are visible (notifications, language), but their controls are disabled in this benchmark.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar 'Edit' triggers require correct association with the row label, increasing disambiguation in
+      a realistic settings layout.
+  success_trigger:
+    human_readable:
+    - The dialog titled 'Billing address' is open/visible.
+    - The 'Shipping address' dialog remains closed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing address
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the 'Shipping address' dialog instead of 'Billing address'.
+  - No dialog is open.
+  - Opening and then closing the correct dialog before success is checked.
+  expected_interaction_path:
+  - Find the 'Billing address' row.
+  - Click its 'Edit' button.
+  - Confirm the 'Billing address' dialog appears.
+  notes: 'Instrumentation: set distinct data-testid for each Dialog root; ensure row labels are in the accessibility tree
+    for disambiguation.'
+- id: dialog_modal-mui-T06
+  name: Close a non-dismissible dialog using the explicit Close button
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: disable_escape_and_backdrop
+  implementation_component: 'MUI: Dialog'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Close the "Privacy notice" dialog by clicking "Close". The task will finish automatically when done.
+  ui_copy: Privacy notice dialog is open. Click Close to dismiss.
+  setup_description: |
+    Layout: isolated_card centered, with COMPACT spacing and SMALL scale (reduced font size and tighter buttons).
+    A Material UI Dialog is open on page load.
+
+    Dialog configuration:
+    - Title: "Privacy notice"
+    - Content: short paragraph (static)
+    - Actions: a single button labeled "Close"
+    - Escape is disabled (disableEscapeKeyDown=true).
+    - Backdrop clicks are ignored by the onClose handler (reason='backdropClick' does not close).
+    - No header close icon is shown.
+
+    Initial state: dialog open.
+    Feedback: clicking "Close" immediately closes the dialog and updates a status text to "Dismissed".
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The dialog cannot be dismissed by common shortcuts (Escape/backdrop), and compact+small styling makes the
+      single Close button harder to acquire.
+  success_trigger:
+    human_readable:
+    - The 'Privacy notice' dialog is closed.
+    - The dialog's recorded close_reason equals 'close_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: close_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: Close
+      require_correct_instance: true
+      target_instance_label_or_id: Privacy notice
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dialog closes via Escape (should be disabled).
+  - Dialog closes via backdrop click (should be ignored).
+  - Dialog remains open because clicks miss the small Close button.
+  - Any other dialog instance is closed instead (not applicable here).
+  expected_interaction_path:
+  - Locate the actions row (bottom of the dialog).
+  - Click the 'Close' button.
+  - Verify the dialog disappears.
+  notes: MUI Dialog supports disableEscapeKeyDown; backdrop clicks can be filtered using the onClose 'reason' value.
+- id: dialog_modal-mui-T07
+  name: Navigate to a specific step inside a dialog
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: wizard_steps
+  implementation_component: 'MUI: Dialog'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Open the "Onboarding" dialog and go to the "Review" step (do not close the dialog). The task will finish
+    automatically when done.
+  ui_copy: 'Onboarding dialog: go to the "Review" step.'
+  setup_description: |
+    Layout: form_section centered. The page looks like a simple onboarding card with one button: "Start onboarding".
+
+    Clicking "Start onboarding" opens a Material UI Dialog titled "Onboarding".
+    Inside the dialog:
+    - The top of the content shows the current step label as a bold heading.
+    - There are three steps in order: "Details" → "Preferences" → "Review".
+    - At the bottom of the dialog there are "Back" and "Next" buttons (Back disabled on the first step).
+    - Closing the dialog is possible via backdrop/Escape, but the task requires keeping it open.
+
+    Initial state:
+    - Dialog is closed.
+    - If opened, it starts on step "Details".
+
+    Feedback:
+    - After clicking "Next", the step heading updates immediately to the next step label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Requires a short sequence of within-dialog actions (opening the dialog and advancing steps) and verifying
+      the correct internal step state while keeping the dialog open.
+  success_trigger:
+    human_readable:
+    - The 'Onboarding' dialog is open/visible.
+    - The dialog's internal step state equals 'Review'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        step: Review
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Onboarding
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the dialog after reaching Review (must remain open).
+  - Stopping on 'Details' or 'Preferences' instead of 'Review'.
+  - Opening a different dialog instance (not applicable here).
+  expected_interaction_path:
+  - Click 'Start onboarding' to open the dialog.
+  - Click 'Next' until the step heading reads 'Review'.
+  - Leave the dialog open.
+  notes: 'Checker: store step in dialog component state (e.g., data-step=''Review'') and expose via data-testid; do not depend
+    on reading the page status text.'
+- id: dialog_modal-mui-T08
+  name: Scroll a long dialog and accept at the bottom
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: scroll_paper_long_content
+  implementation_component: 'MUI: Dialog (scroll=''paper'')'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the "Terms of service" dialog, scroll to the bottom and click "I agree". The task will finish automatically
+    when done.
+  ui_copy: 'Terms of service dialog: scroll to the bottom and click I agree.'
+  setup_description: |
+    Layout: isolated_card centered, DARK theme. A Material UI Dialog is open on page load.
+
+    Dialog configuration:
+    - Title: "Terms of service"
+    - scroll="paper" so the dialog content area is internally scrollable.
+    - Content: long terms text (~4 screens) inside the dialog's scrollable content.
+    - At the very bottom of the content (after the text) there is a single button labeled "I agree".
+    - No actions row is pinned; the only close/accept control is the bottom "I agree" button.
+    - Escape/backdrop are enabled but should not count as success (wrong close_reason).
+
+    Initial state: dialog open, scrolled to the top.
+    Feedback: clicking "I agree" closes the dialog and updates a status text to "Accepted".
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The required control is off-screen inside a scrollable dialog and the dark theme reduces contrast, increasing
+      the likelihood of scrolling the wrong container or missing the bottom button.
+  success_trigger:
+    human_readable:
+    - The 'Terms of service' dialog is closed.
+    - The dialog's recorded close_reason equals 'agree_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: agree_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: I agree
+      require_correct_instance: true
+      target_instance_label_or_id: Terms of service
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing via Escape or backdrop click instead of clicking 'I agree'.
+  - Failing to scroll the dialog content (scrolling the page behind).
+  - Not reaching the bottom so 'I agree' is never clicked.
+  - Dialog remains open.
+  expected_interaction_path:
+  - Scroll within the dialog content until the bottom is reached.
+  - Click the 'I agree' button.
+  - Verify the dialog closes.
+  notes: MUI Dialog supports scroll='paper' and scroll='body'; keep it 'paper' and ensure checker observes the dialog content
+    scroll container.
+- id: dialog_modal-mui-T09
+  name: Drag a draggable dialog to a target corner
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: draggable_dialog
+  implementation_component: 'MUI: Dialog (PaperComponent + react-draggable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Drag the "Palette" dialog so it sits near the bottom-left corner of the page. The task will finish automatically
+    when done.
+  ui_copy: 'Draggable Palette dialog: move it near bottom-left.'
+  setup_description: |
+    Layout: isolated_card centered. The page loads with a draggable Material UI Dialog open.
+
+    Dialog configuration:
+    - Title: "Palette"
+    - Content: static text showing a few color names (non-interactive)
+    - Actions: none
+    - The dialog is draggable by the title bar (header). Cursor changes to indicate drag on hover.
+
+    Initial state: dialog open and centered.
+    Feedback: while dragging, the dialog follows pointer movement; on drop, it stays fixed.
+
+    Target: place the dialog near the bottom-left corner of the viewport with a small margin from the edges.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Dragging requires sustained control and the final position must satisfy a geometric constraint that is
+      not explicitly visible in text.
+  success_trigger:
+    human_readable:
+    - The 'Palette' dialog remains open.
+    - The dialog's bounding box bottom-left corner is within tolerance of the viewport's bottom-left target region.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        open: true
+        position:
+          reference_frame: viewport
+          modal_point: bottom_left
+          target_anchor: bottom_left
+          target_margin_px:
+            x: 24
+            y: 24
+      tolerance:
+        x_px: 40
+        y_px: 40
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Palette
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dropping the dialog outside the target region (beyond tolerance).
+  - Attempting to drag by the body content instead of the header (no movement).
+  - Closing the dialog accidentally (e.g., via Escape/backdrop).
+  expected_interaction_path:
+  - Grab the dialog title bar.
+  - Drag it toward the bottom-left corner.
+  - Release to drop within the target region.
+  notes: Based on common MUI draggable dialog demos that wrap Dialog Paper in react-draggable; checker should compute bounding
+    box positions.
+- id: dialog_modal-mui-T10
+  name: Open the dialog that matches a reference icon
+  canonical_type: dialog_modal
+  implementation_source: mui
+  implementation_variant: multi_instance_icon_match
+  implementation_component: 'MUI: Dialog'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the dialog whose title icon matches the reference icon (triangle). The task will finish automatically
+    when done.
+  ui_copy: 'Reference icon: triangle. Open the matching dialog.'
+  setup_description: |
+    Layout: dashboard with multiple cards and controls (search box, filters, and three action cards). This provides realistic clutter.
+
+    At the top of the dashboard there is a non-interactive "Reference icon" indicator:
+    - Label: "Target dialog icon"
+    - Icon shown: TRIANGLE
+
+    There are three buttons spread across the dashboard, each with a distinct icon:
+    1) "Open Status" (circle icon) → Dialog title "Status" with a circle icon shown next to the title
+    2) "Open Alerts" (triangle icon) → Dialog title "Alerts" with a triangle icon next to the title
+    3) "Open Logs" (square icon) → Dialog title "Logs" with a square icon next to the title
+
+    Only one dialog can be open at a time. All dialogs use default MUI Dialog with a backdrop and an actions row containing a single "Close" button.
+
+    Initial state: no dialogs open.
+    Guidance: visual match to the triangle icon (text does not explicitly name the target dialog).
+    Feedback: the title row inside the dialog displays the icon clearly.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The target is specified visually and there are multiple similar dialog triggers dispersed in a cluttered
+      layout, increasing disambiguation and visual verification demands.
+  success_trigger:
+    human_readable:
+    - The dialog whose title icon matches the TRIANGLE reference is open/visible (title 'Alerts').
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        open: true
+        reference:
+          type: title_icon
+          value: triangle
+      tolerance:
+        icon_match: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening 'Status' (circle) or 'Logs' (square) dialogs.
+  - Opening the correct dialog and then switching to another dialog before the checker completes.
+  - No dialog is open.
+  expected_interaction_path:
+  - Look at the reference icon (triangle).
+  - Find the trigger associated with the triangle icon.
+  - Open it and verify the dialog title row shows a triangle icon.
+  notes: 'Checker: implement icon match by using a canonical icon ID (e.g., data-icon=''triangle'') rather than pixel-based
+    image matching.'
+- id: dialog_modal-mantine-T01
+  name: Open a basic modal
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Create folder" dialog. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the "Create folder" dialog.'
+  setup_description: |
+    Layout: isolated_card centered. The page shows a card titled "Files" with one button: "Create folder".
+
+    Clicking "Create folder" opens a Mantine Modal with:
+    - Title: "Create folder"
+    - Content: short static description (no inputs)
+    - Default close button (×) in the header (withCloseButton=true)
+    - Default overlay/backdrop and focus trapping
+
+    Initial state: modal closed.
+    Feedback: on open, the modal appears centered with an overlay; focus moves into the modal.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single clearly labeled trigger opens one modal; success is simply the modal becoming visible.
+  success_trigger:
+    human_readable:
+    - The Mantine Modal titled 'Create folder' is open/visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Create folder
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - No modal is open.
+  - A different modal instance opens (not applicable here).
+  expected_interaction_path:
+  - Click 'Create folder'.
+  - Wait for the modal to appear.
+  notes: 'Instrumentation: data-testid=''modal-create-folder'' on Mantine Modal root; open state from ''opened'' prop.'
+- id: dialog_modal-mantine-T02
+  name: Close a modal using the header close button
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: with_close_button
+  implementation_component: 'Mantine: Modal'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Close the "What’s new" dialog using the close (×) button. The task will finish automatically when done.
+  ui_copy: What’s new dialog is open. Close it with ×.
+  setup_description: |
+    Layout: isolated_card centered. A Mantine Modal is open on page load.
+
+    Modal configuration:
+    - Title: "What’s new"
+    - Content: short changelog text (non-interactive)
+    - withCloseButton=true so a close (×) button appears in the top-right of the header.
+    - closeOnClickOutside=true and closeOnEscape=true are enabled but should not count as success.
+
+    Initial state: modal open.
+    Feedback: after closing, a debug label below the card updates to "Closed by: header-close".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The modal is already open and the close button is visible in the header; only a single click is required.
+  success_trigger:
+    human_readable:
+    - The 'What’s new' modal is closed.
+    - The modal's recorded close_reason equals 'close_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: close_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: Header close (×)
+      require_correct_instance: true
+      target_instance_label_or_id: What’s new
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing by clicking outside the modal (overlay click) instead of using the close button.
+  - Closing by pressing Escape instead of using the close button.
+  - Modal remains open.
+  expected_interaction_path:
+  - Click the × close button in the modal header.
+  - Verify the modal disappears.
+  notes: Mantine Modal provides withCloseButton and supports closeOnEscape/closeOnClickOutside; record which path closed it.
+- id: dialog_modal-mantine-T03
+  name: Dismiss modal by clicking on the overlay
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: overlay_click_to_close
+  implementation_component: 'Mantine: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Dismiss the "Preview" dialog by clicking outside it on the overlay. The task will finish automatically
+    when done.
+  ui_copy: Preview dialog is open. Click outside on the overlay to close.
+  setup_description: |
+    Layout: isolated_card centered. A Mantine Modal is open on page load.
+
+    Modal configuration:
+    - Title: "Preview"
+    - Content: short static preview text
+    - withCloseButton=false (no header close button)
+    - closeOnEscape=false (Escape does not close)
+    - closeOnClickOutside=true (overlay click closes)
+
+    Initial state: modal open.
+    Feedback: after closing, a debug line updates to "Closed by: overlay".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Overlay click is a large target, but the agent must click outside the modal (and Escape is disabled) to
+      produce the correct close reason.
+  success_trigger:
+    human_readable:
+    - The 'Preview' modal is closed.
+    - The modal's recorded close_reason equals 'overlay_click'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: overlay_click
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Preview
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing via Escape (disabled) or by any close button (none).
+  - Clicking inside the modal content does not count.
+  - Modal remains open.
+  expected_interaction_path:
+  - Click the shaded overlay area outside the modal panel.
+  - Verify the modal closes.
+  notes: 'Checker: detect overlay-click closure and record distinct close_reason.'
+- id: dialog_modal-mantine-T04
+  name: Open the correct modal when two triggers are present
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: two_instances_compact
+  implementation_component: 'Mantine: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "API keys" dialog (Secondary). The task will finish automatically when done.
+  ui_copy: Open the "API keys" dialog (Secondary).
+  setup_description: |
+    Layout: isolated_card centered with COMPACT spacing (tight padding and reduced gaps).
+    The card is titled "Developer settings" and contains two adjacent buttons:
+    - "Webhooks" (Primary)
+    - "API keys" (Secondary)
+
+    Each button opens its own Mantine Modal:
+    - Modal A title: "Webhooks"
+    - Modal B title: "API keys"
+    Both modals use default centered positioning with overlay and a header close button.
+
+    Initial state: both modals closed.
+    Only one modal can be open at a time.
+    Distractors: below the buttons there is a short paragraph describing developer features (non-interactive).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar triggers in a compact layout require selecting the correct instance before the overlay opens.
+  success_trigger:
+    human_readable:
+    - The modal titled 'API keys' is open/visible.
+    - The modal titled 'Webhooks' remains closed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: API keys
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening 'Webhooks' instead of 'API keys'.
+  - No modal is open.
+  - Opening and then closing 'API keys' before success is checked.
+  expected_interaction_path:
+  - Click the 'API keys' button.
+  - Verify the 'API keys' modal appears.
+  notes: 'Instrumentation: data-testid=''modal-api-keys'' and ''modal-webhooks'' to disambiguate.'
+- id: dialog_modal-mantine-T05
+  name: Close a modal with Escape
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: escape_to_close
+  implementation_component: 'Mantine: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Close the "Command palette" dialog by pressing the Escape key. The task will finish automatically when
+    done.
+  ui_copy: Command palette dialog is open. Press Esc to close.
+  setup_description: |
+    Layout: isolated_card, but the modal panel is positioned toward the BOTTOM-LEFT of the viewport (custom styles/offsets).
+    A Mantine Modal is open on page load.
+
+    Modal configuration:
+    - Title: "Command palette"
+    - Content: static list of commands (non-interactive)
+    - withCloseButton=false (no header close button)
+    - closeOnClickOutside=false (overlay click does not close)
+    - closeOnEscape=true (Escape closes)
+
+    Initial state: modal open.
+    Feedback: after closing, a status label updates to "Closed by: escape".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The dialog must be closed using a keyboard action (Escape) because other dismissal routes are disabled,
+      testing keyboard interaction and focus management.
+  success_trigger:
+    human_readable:
+    - The 'Command palette' modal is closed.
+    - The modal's recorded close_reason equals 'escape_key'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: escape_key
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Command palette
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing via overlay click (disabled) or close button (none).
+  - Closing via any footer button (none).
+  - Modal remains open.
+  expected_interaction_path:
+  - Ensure focus is inside the modal.
+  - Press Escape.
+  - Confirm the modal closes.
+  notes: Mantine Modal supports closeOnEscape; record close_reason distinctly from close button and overlay click.
+- id: dialog_modal-mantine-T06
+  name: Close a locked modal using the footer button
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: non_dismissible_footer_close
+  implementation_component: 'Mantine: Modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Close the "Connectivity check" dialog by clicking "Close dialog". The task will finish automatically when
+    done.
+  ui_copy: Connectivity check dialog is open. Click Close dialog.
+  setup_description: |
+    Layout: isolated_card centered with SMALL scale (smaller typography and buttons).
+    A Mantine Modal is open on page load.
+
+    Modal configuration:
+    - Title: "Connectivity check"
+    - Content: short static status text
+    - closeOnClickOutside=false (overlay click does not close)
+    - closeOnEscape=false (Escape does not close)
+    - withCloseButton=false (no header close button)
+    - A single footer button at the bottom labeled "Close dialog"
+
+    Initial state: modal open.
+    Feedback: clicking "Close dialog" closes the modal immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Common dismissal routes are disabled and the small-scale footer button is the only way to close the modal,
+      increasing acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The 'Connectivity check' modal is closed.
+    - The modal's recorded close_reason equals 'footer_close_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: footer_close_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: Close dialog
+      require_correct_instance: true
+      target_instance_label_or_id: Connectivity check
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Attempting overlay click or Escape (should not close).
+  - Closing via any header close button (none).
+  - Modal remains open because the footer button wasn't clicked.
+  expected_interaction_path:
+  - Locate the footer button 'Close dialog'.
+  - Click it to close the modal.
+  notes: 'Checker: footer close button should set a unique close_reason distinct from header close and overlay click.'
+- id: dialog_modal-mantine-T07
+  name: Manage stacked modals and close only the top one
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: stacked_modals
+  implementation_component: 'Mantine: Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Details" dialog, then close only "Details" so that "Settings" stays open. The task will finish
+    automatically when done.
+  ui_copy: Settings is open. Open Details, then close Details (keep Settings open).
+  setup_description: |
+    Layout: isolated_card centered. The page loads with one Mantine Modal already open:
+    - Outer modal title: "Settings"
+    - Outer content includes a primary button labeled "Open details"
+    - Outer modal has closeOnClickOutside=false to reduce accidental closure
+
+    Clicking "Open details" opens a second Mantine Modal stacked on top:
+    - Inner modal title: "Details"
+    - Inner modal has withCloseButton=true (header ×)
+    - Inner modal footer is absent (no buttons)
+
+    Initial state: only "Settings" is open.
+    During the task: both modals may be open (stacked), with "Details" on top.
+    Feedback: titles clearly indicate which modal is active.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires correctly handling a stacked modal situation and interacting with the top instance without dismissing
+      the underlying modal.
+  success_trigger:
+    human_readable:
+    - The inner modal titled 'Details' is closed.
+    - The outer modal titled 'Settings' remains open/visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: close_button
+        related_instances:
+          Settings:
+            open: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Header close (×)
+      require_correct_instance: true
+      target_instance_label_or_id: Details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the outer 'Settings' modal.
+  - Closing both modals.
+  - Leaving 'Details' open.
+  - Closing 'Details' via overlay click or Escape when the task expects the close button.
+  expected_interaction_path:
+  - In 'Settings', click 'Open details' to open the 'Details' modal.
+  - Click the × close button in the 'Details' header.
+  - Verify 'Settings' is still visible.
+  notes: 'Checker: track open state for both Mantine Modal instances; enforce that outer remains open.'
+- id: dialog_modal-mantine-T08
+  name: Close a full-screen modal using a custom header action
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: full_screen_done_button
+  implementation_component: 'Mantine: Modal (fullScreen)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Close the full-screen "Photo viewer" dialog by clicking "Done". The task will finish automatically when
+    done.
+  ui_copy: Photo viewer (full-screen) is open. Click Done to close.
+  setup_description: |
+    Layout: modal_flow centered, DARK theme. A full-screen Mantine Modal is open on page load.
+
+    Modal configuration:
+    - Title: "Photo viewer"
+    - fullScreen=true (covers most/all of the viewport)
+    - withCloseButton=false (no × close button)
+    - closeOnEscape=false and closeOnClickOutside=false (no implicit dismissal)
+    - A custom header action button labeled "Done" appears on the right side of the title bar.
+
+    Initial state: modal open in full-screen mode.
+    Feedback: clicking "Done" closes the modal and returns to the underlying page.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: large
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The modal is full-screen and removes standard close affordances, requiring the agent to locate and use
+      a custom header action in a dark theme.
+  success_trigger:
+    human_readable:
+    - The 'Photo viewer' modal is closed.
+    - The modal's recorded close_reason equals 'done_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: done_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: true
+      target_instance_label_or_id: Photo viewer
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Attempting to close via Escape or overlay click (disabled).
+  - Closing via any close icon (none).
+  - Modal remains open because 'Done' was not clicked.
+  expected_interaction_path:
+  - Locate the 'Done' button in the modal header.
+  - Click 'Done' to close the modal.
+  notes: 'Checker: ensure fullScreen mode is enabled for this task variant; close_reason from the Done action.'
+- id: dialog_modal-mantine-T09
+  name: Scroll within a modal to reach the bottom action
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: long_content_bottom_action
+  implementation_component: 'Mantine: Modal'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the "Changelog" dialog, scroll to the bottom and click "Back to app". The task will finish automatically
+    when done.
+  ui_copy: 'Changelog dialog: scroll to bottom and click Back to app.'
+  setup_description: |
+    Layout: isolated_card centered. A Mantine Modal is open on page load.
+
+    Modal configuration:
+    - Title: "Changelog"
+    - Content: long scrollable changelog text (~3 screens)
+    - The content area scrolls inside the modal (the page behind does not scroll).
+    - withCloseButton=true, but using the close button is not the intended path.
+    - At the bottom of the scrollable content there is a single button labeled "Back to app".
+
+    Initial state: modal open and scrolled to the top of the changelog.
+    Feedback: clicking "Back to app" closes the modal and shows a small toast "Welcome back" (toast not required for success).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires scrolling inside the modal to reveal an off-screen action and then selecting the correct close
+      control rather than the header close button.
+  success_trigger:
+    human_readable:
+    - The 'Changelog' modal is closed.
+    - The modal's recorded close_reason equals 'back_to_app_button'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        close_reason: back_to_app_button
+      tolerance: null
+      require_confirm: true
+      confirm_control: Back to app
+      require_correct_instance: true
+      target_instance_label_or_id: Changelog
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing via the header close button instead of 'Back to app'.
+  - Closing via overlay click/Escape (if enabled) instead of 'Back to app'.
+  - Scrolling the underlying page instead of the modal content.
+  - Modal remains open.
+  expected_interaction_path:
+  - Scroll within the modal content to the bottom.
+  - Click 'Back to app'.
+  - Verify the modal closes.
+  notes: 'Checker: identify and instrument the modal''s internal scroll container; record close_reason from the bottom action
+    button.'
+- id: dialog_modal-mantine-T10
+  name: Match a reference avatar to open the correct dialog
+  canonical_type: dialog_modal
+  implementation_source: mantine
+  implementation_variant: multi_instance_mixed_reference
+  implementation_component: 'Mantine: Modal'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the dialog that matches the reference avatar (fox). The task will finish automatically when done.
+  ui_copy: 'Reference avatar: fox. Open the matching dialog.'
+  setup_description: |
+    Layout: settings_panel with HIGH clutter. The page resembles a "Personalization" settings screen with many toggles and explanatory text (non-interactive in this benchmark).
+
+    At the top of the right panel there is a non-interactive "Reference avatar" block:
+    - Label: "Target avatar"
+    - A small fox avatar thumbnail
+
+    Below, there are three rows each with a button "Customize" that opens a Mantine Modal:
+    1) Row "Chat theme" (cat avatar thumbnail) → Modal title "Chat theme" with the cat avatar displayed in the header
+    2) Row "Profile badge" (fox avatar thumbnail) → Modal title "Profile badge" with the fox avatar displayed in the header
+    3) Row "Notification style" (dog avatar thumbnail) → Modal title "Notification style" with the dog avatar displayed in the header
+
+    Only one modal can be open at a time. All modals use the default centered Mantine Modal styling with a header close button.
+
+    Initial state: all modals closed.
+    Guidance: mixed (the goal names the reference avatar 'fox' and also shows the fox thumbnail visually on the page).
+    Feedback: the modal header shows the avatar thumbnail next to the title for quick verification.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: High clutter and three similar 'Customize' triggers require careful instance disambiguation, and the target
+      is specified via a mixed visual/text reference that must be matched to the modal header.
+  success_trigger:
+    human_readable:
+    - The modal whose header avatar matches the fox reference is open/visible (title 'Profile badge').
+    - No other modal is open.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        open: true
+        reference:
+          type: header_avatar
+          value: fox
+      tolerance:
+        avatar_id_match: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Profile badge
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening 'Chat theme' (cat) or 'Notification style' (dog) dialogs.
+  - Opening the correct dialog and then switching to another dialog.
+  - No dialog is open.
+  expected_interaction_path:
+  - Identify the fox reference avatar at the top of the settings panel.
+  - Find the row whose avatar matches fox and click its 'Customize' button.
+  - Verify the opened modal header shows the fox avatar.
+  notes: 'Checker: use canonical avatar IDs (e.g., data-avatar=''fox'') for matching rather than pixel-based image similarity.'

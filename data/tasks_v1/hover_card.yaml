@@ -1,0 +1,2062 @@
+- id: hover_card-antd-T01
+  name: Open customer hover card
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: 'Hover over the “Customer: Ava Chen” name to open the customer preview hover card. The task will finish automatically when done.'
+  ui_copy: 'Goal: Hover over the “Customer: Ava Chen” name to open the customer preview hover card.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport on a light theme with comfortable spacing.
+
+    The card shows a short “Recent Orders” list. The customer name “Ava Chen” is rendered as a link-like text chip that acts as the hover target.
+    - There is exactly one hover card on the page (no other hover previews).
+    - On hover, an AntD Popover appears as a small profile card with: avatar placeholder, email, and a “View profile” link (link is not required for success).
+    - No open/close delays beyond the library default.
+
+    No additional clutter is present; the rest of the page is static text.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single, large hover target with immediate visual feedback and no distractors; success is simply opening the hover card.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Customer: Ava Chen'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card does not open (still closed).
+  - A different overlay/tooltip opens that is not the hover card.
+  - Hover card opens but is anchored to a different trigger (if instrumentation reports a different active_instance).
+  expected_interaction_path:
+  - 'Move pointer to the “Customer: Ava Chen” text.'
+  - Wait for the popover to appear and remain open.
+  notes: 'Instrumentation: add data-testid to the “Customer: Ava Chen” trigger and to the rendered Popover overlay root so the checker can read which trigger is active.'
+- id: hover_card-antd-T02
+  name: Open promo code help hover card
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Hover over the small “?” help icon next to “Promo code” to open the help hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Hover over the “?” icon by “Promo code” to read the help card.'
+  setup_description: |-
+    Layout: form_section centered on a light theme. Comfortable spacing, default scale.
+
+    The page shows a checkout form section with multiple labeled fields (Name, Email, Promo code, Notes).
+    - Only the “Promo code” label has a tiny circular “?” icon immediately to its right; that icon is the hover target.
+    - Hovering opens an AntD Popover that looks like a small card containing two lines:
+      “Promo codes are case-sensitive.” and “Example: SAVE10”.
+    - The Popover includes a title “Promo code help” and a subtle close “x” icon, but no click is required.
+
+    Clutter: low (other inputs and buttons are visible but irrelevant to success).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Still a single hover card, but the target is a small icon inside a busier form layout.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Promo code help
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card does not open.
+  - Hovering over the “Promo code” text field opens nothing (must be the “?” icon).
+  - Focus/click-only overlays open instead of the hover card.
+  expected_interaction_path:
+  - Locate the “Promo code” label.
+  - Move pointer onto the adjacent “?” icon.
+  - Wait until the help Popover is visible.
+  notes: Ensure the help icon has an accessible name (e.g., aria-label="Promo code help") for AT-based agents; add data-testid="promo-help-trigger".
+- id: hover_card-antd-T03
+  name: Pin a project hover card open
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover) with custom pinned state'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Hover over the “Project Alpha” badge to open its hover card, then click the “Pin” control in the hover card so it stays pinned open. The task will finish automatically when done.
+  ui_copy: 'Goal: Pin the “Project Alpha” hover card open.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme, comfortable spacing.
+
+    The card shows three project badges: “Project Alpha”, “Project Beta”, and “Project Gamma”.
+    - Only “Project Alpha” has an attached hover card; the other badges are inert distractors.
+    - Hovering “Project Alpha” opens an overlay card (AntD Popover) that contains a header with the project name and a small “Pin” icon button on the right.
+    - Clicking “Pin” toggles a pinned state:
+      when pinned, the hover card remains open even if the pointer leaves the badge/overlay.
+    - The hover card body contains a short description and is otherwise static.
+
+    Initial state: hover card is closed and unpinned.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires maintaining hover card visibility and clicking a small in-card control to toggle the pinned state.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Project Alpha
+        pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens but is not pinned (Pin not activated).
+  - Pin is toggled on a different overlay or control not belonging to the hover card.
+  - Hover card closes immediately after leaving because it was not pinned.
+  expected_interaction_path:
+  - Hover the “Project Alpha” badge to reveal the hover card.
+  - Move into the hover card header area without closing it.
+  - Click the “Pin” icon/button.
+  notes: 'Checker note: expose pinned state via data attribute (e.g., data-pinned="true") on the hover card root.'
+- id: hover_card-antd-T04
+  name: Unpin and close a pinned hover card
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover) with custom pinned state'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: The “Project Alpha” hover card is currently pinned open. Click the “Unpin” control and make sure the hover card is closed. The task will finish automatically when done.
+  ui_copy: 'Goal: Unpin and close the pinned “Project Alpha” hover card.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme, comfortable spacing.
+
+    This page is the same project badge panel as the previous scenario, but it starts in a non-default state:
+    - The “Project Alpha” hover card is already visible on page load.
+    - The hover card shows a filled “Pin” icon (indicating pinned=true) and also has a close “×” button in the top-right corner.
+    - The pinned hover card remains visible even if you move the pointer away.
+
+    Initial state: open=true, pinned=true for “Project Alpha”.
+    Distractors: “Project Beta” and “Project Gamma” badges remain inert.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires reversing a persistent (pinned) hover card state and ensuring it is fully closed at the end.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be False.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        active_instance: null
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card remains open (even if unpinned).
+  - Hover card closes but pinned state remains true (should reset/unpin).
+  - A different overlay is closed while the hover card stays visible.
+  expected_interaction_path:
+  - Click the “Unpin” (pin) icon if needed.
+  - Close the hover card via the “×” button or by dismissing it (e.g., click outside) once unpinned.
+  - Verify the overlay is gone.
+  notes: If both “Unpin” and “×” exist, either order is acceptable; checker should require final open=false and pinned=false.
+- id: hover_card-antd-T05
+  name: Open the Backup contact hover card (2 instances)
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover), two instances'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the hover card for the “Backup contact” by hovering over the Backup contact name. The task will finish automatically when done.
+  ui_copy: 'Goal: Hover the Backup contact name to open its hover card.'
+  setup_description: |-
+    Layout: isolated_card anchored in the top-right portion of the viewport (not centered). Light theme, comfortable spacing.
+
+    The card is titled “Account contacts” and shows two labeled rows:
+    1) Primary contact — “Lina Soto”
+    2) Backup contact — “Noah Park”
+
+    Each contact name is a hover target with its own AntD Popover hover card.
+    - The two hover cards have similar structure (avatar placeholder + email + phone).
+    - A small hover open delay is configured (slightly delayed reveal) to encourage steady hovering.
+
+    Initial state: both hover cards are closed. No other popovers/tooltips exist.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar instances require choosing the correct labeled trigger; mild hover delay increases the need for stable pointer control.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Active/anchored hover card must be the instance labeled 'Backup contact'.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Backup contact
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Backup contact
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Primary contact hover card is opened instead of Backup contact.
+  - Hover card opens and immediately closes (state not stably open).
+  - Hover card opens but checker reports active_instance not equal to “Backup contact”.
+  expected_interaction_path:
+  - Locate the “Backup contact — Noah Park” row.
+  - Hover directly over the name until the Popover appears.
+  notes: 'Instrumentation: label each instance (Primary contact, Backup contact) via data-cb-instance attribute on the trigger.'
+- id: hover_card-antd-T06
+  name: Match a product preview hover card (visual reference)
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover), three instances'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the product grid, hover over the product whose hover card matches the “Target Preview” shown on the page, and open that hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the product hover card that matches the Target Preview.'
+  setup_description: |-
+    Layout: dashboard with a two-column layout (light theme, comfortable spacing).
+    - Left column: a “Target Preview” box showing a small static preview image (thumbnail-only) of the desired product hover card header.
+    - Right column: a 3-tile product grid. Each tile includes a small thumbnail image and a short SKU label.
+
+    Each product tile has its own hover-triggered AntD Popover hover card:
+    - The hover card shows a larger thumbnail, product name, and price.
+    - All three hover cards share the same layout and typography; only the thumbnail/product content differs.
+
+    Instances: 3 hover cards (one per product tile).
+    Initial state: all hover cards closed. No clicks are required; success is opening the card that corresponds to the Target Preview.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires visually matching the correct trigger among multiple similar options; the state is visible but not purely text-based.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Active/anchored hover card must be the instance labeled 'SKU-148'.
+    - Hover card pinned state must be False.
+    - Open hover card content must match the on-page reference labeled 'target-preview'.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        open: true
+        active_instance: SKU-148
+        pinned: false
+        reference_id: target-preview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: SKU-148
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A hover card opens for the wrong product (does not match the Target Preview).
+  - Hover card opens but the checker cannot associate it with the Target Preview reference.
+  - Hover card opens and closes before success is registered (must be open).
+  expected_interaction_path:
+  - Look at the “Target Preview” thumbnail.
+  - Compare thumbnails on the 3 product tiles.
+  - Hover the matching tile until its hover card appears.
+  notes: Checker needs a deterministic mapping from each tile to a reference hash (e.g., reference_id) computed from the product id, not from pixel similarity.
+- id: hover_card-antd-T07
+  name: Expand 'More details' inside a hover card
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover) with expandable body section'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Hover over “Invoice INV-203” to open its hover card, then expand the “More details” section inside the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the invoice hover card and expand “More details”.'
+  setup_description: |-
+    Layout: isolated_card centered (light theme, comfortable spacing).
+
+    The card shows a single invoice row:
+    - Label: “Invoice”
+    - Value: “INV-203” (rendered as a pill-shaped token). This token is the hover target.
+
+    Hovering the token opens an AntD Popover hover card with:
+    - Header: “INV-203 • Paid”
+    - Body: a short summary line and a collapsed “More details” region.
+    - The collapsed region is controlled by a text button/link labeled “More details” (initially collapsed).
+    - When expanded, two additional lines appear (“Paid on …”, “Payment method …”).
+
+    Initial state: hover card closed; details section collapsed.
+    No other interactive components influence success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Adds an extra in-card disclosure step while requiring the card to remain open during interaction.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    - Hover card details section expanded must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Invoice INV-203
+        pinned: false
+        details_expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card not open.
+  - Hover card open but “More details” remains collapsed.
+  - Details expanded outside the hover card (should be the in-card section).
+  expected_interaction_path:
+  - Hover the “INV-203” token to open the hover card.
+  - Move pointer into the hover card.
+  - Click “More details” to expand.
+  notes: Checker should read an explicit boolean (e.g., data-details-expanded) on the hover card root rather than relying on text visibility.
+- id: hover_card-antd-T08
+  name: Scroll to a table row and open its hover card
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover) in table cell (controlled single instance)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the activity table, scroll until you find the user “Jordan Patel”, then hover over that name to open the user hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Find “Jordan Patel” in the activity table and open the hover card by hovering the name.'
+  setup_description: |-
+    Layout: table_cell scene with a compact, data-dense activity table (light theme, compact spacing, small scale).
+
+    The page resembles an admin “Activity” panel:
+    - A scrollable table container with many rows (virtualized/scrollable) and columns (Time, User, Action, Status).
+    - The “User” column entries are hover targets that can open a single shared AntD Popover hover card (controlled open state).
+    - The hover card shows a small user profile snippet (role + last active date).
+
+    The target row (“Jordan Patel”) is not visible on initial load; it requires scrolling the table container.
+    Distractors:
+    - Sticky table header and a top toolbar with filters/search (not required for success).
+    - Other user names are similar in typography and spacing.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires scrolling within a dense table and accurately hovering the correct row’s small cell target among many similar entries.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'User: Jordan Patel'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens for a different user.
+  - Jordan Patel row is visible but the hover card is not opened.
+  - Hover card opens while pointer is not over the Jordan Patel target (active_instance mismatch).
+  expected_interaction_path:
+  - Scroll the table container until “Jordan Patel” appears in the User column.
+  - Move pointer onto “Jordan Patel”.
+  - Wait for the hover card to appear.
+  notes: For reliable checking, store the currently hovered user id in a global variable or data attribute on the popover (e.g., data-active-user="jordan-patel").
+- id: hover_card-antd-T09
+  name: Dismiss a hover-card prompt with Cancel (dark theme)
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover) with in-card confirm/cancel controls'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Hover over the “Beta tips” badge to open its hover card, then click “Cancel” in the hover card to dismiss it. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the “Beta tips” hover card and press Cancel.'
+  setup_description: |-
+    Layout: settings_panel anchored at the bottom-right of the viewport. Dark theme, comfortable spacing, default scale.
+
+    The panel is titled “Notifications” and contains several toggles and explanatory text (clutter=low).
+    - A small pill badge labeled “Beta tips” appears next to the section header.
+    - Hovering over “Beta tips” opens an AntD Popover hover card containing:
+      * Title: “Try beta tips?”
+      * Body: a short explanation line
+      * Two action buttons at the bottom: “Confirm” and “Cancel”
+    - Clicking either button dismisses the hover card and records the choice (no other UI state is required for success).
+
+    Initial state: hover card closed; no prior choice recorded.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires keeping a hover-triggered overlay open long enough to click a specific action button, in a darker, lower-contrast panel near the viewport edge.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be False.
+    - Hover card pinned state must be False.
+    - Recorded hover card decision must equal 'cancel'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        active_instance: null
+        pinned: false
+        decision: cancel
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Confirm” instead of “Cancel”.
+  - Hover card remains open after the action.
+  - Hover card closes without recording a decision (e.g., mouse leaves, but no Cancel click).
+  expected_interaction_path:
+  - Hover over the “Beta tips” badge to open the hover card.
+  - Move pointer into the hover card without closing it.
+  - Click the “Cancel” button.
+  notes: Checker should distinguish an explicit Cancel click from the hover card closing due to mouse leave. Record decision in component state (e.g., window.__cb.hoverCardDecision).
+- id: hover_card-antd-T10
+  name: Open the correct KPI info hover card (mixed guidance, corner placement)
+  canonical_type: hover_card
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Popover (trigger=hover), two instances on dashboard cards'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: In the KPI dashboard, open the hover card for the info icon on the KPI card that matches the “Target KPI” preview. Hover over the correct info icon until its hover card opens. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the KPI info hover card that matches the Target KPI preview.'
+  setup_description: |-
+    Layout: dashboard with two KPI cards placed near the bottom-left of the viewport (light theme).
+    Spacing: comfortable, but KPI cards are rendered in a compact width and the info icons are small.
+
+    The page has:
+    - A small “Target KPI” preview box showing the label and a tiny icon snapshot of the KPI whose info hover card you should open.
+    - Two KPI cards side-by-side:
+      1) “Churn” with a small ⓘ info icon in the top-right of the card header
+      2) “Revenue” with a similar ⓘ info icon in the same position
+
+    Each ⓘ icon triggers an AntD Popover hover card (two hover card instances total).
+    - The hover cards are similar in layout (title + 2 bullet tips), so the main disambiguation is choosing the correct icon/KPI card.
+    - A longer hover open delay is configured compared to defaults (requires steady hover).
+
+    Initial state: both hover cards closed.
+    Clutter: medium (extra dashboard controls like date range dropdown and refresh button are visible but irrelevant).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Small corner-placed targets with a longer open delay plus two near-identical instances increase both acquisition and disambiguation difficulty.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - 'Active/anchored hover card must be the instance labeled ''KPI: Churn info''.'
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'KPI: Churn info'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'KPI: Churn info'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Revenue KPI info hover card opened instead of Churn.
+  - Hovering near the icon without opening the hover card (delay not satisfied).
+  - Hover card opens but active_instance does not match the Target KPI preview mapping.
+  expected_interaction_path:
+  - Look at the “Target KPI” preview to identify the correct KPI card.
+  - Move pointer to the small ⓘ icon on that KPI card.
+  - Hold hover until the hover card appears.
+  notes: 'For checkability, assign stable ids to each KPI info icon (e.g., data-cb-instance="KPI: Churn info") and expose open/active_instance via a shared store.'
+- id: hover_card-mui-T01
+  name: Open account hover card (MUI Tooltip-based)
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip (interactive) rendering Card content (composite hover card)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: 'Hover over the “Account ID: 2481” chip to open the account hover card. The task will finish automatically when done.'
+  ui_copy: 'Goal: Hover over “Account ID: 2481” to open the hover card.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme, comfortable spacing.
+
+    The page shows a single line item:
+    - Label: “Account ID”
+    - Value: a rounded chip that reads “2481”
+
+    Hovering the chip opens a hover card implemented using MUI Tooltip/Popper with interactive rich content:
+    - The overlay contains a small MUI Card-style panel with account name, plan, and status.
+    - The hover card closes when the pointer leaves the target and the hover overlay (standard hover behavior).
+
+    Instances: 1 hover card on page; no other tooltips.
+    Initial state: closed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single, clearly labeled hover target; the only challenge is triggering the hover-based overlay.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Account ID: 2481'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card does not open.
+  - An unrelated tooltip opens (wrong component).
+  - 'Hover card opens but active_instance does not correspond to “Account ID: 2481”.'
+  expected_interaction_path:
+  - Move pointer to the “2481” chip.
+  - Wait for the hover card to appear.
+  notes: 'Implementation hint: MUI Tooltip supports delays (enterDelay/leaveDelay) and interactivity via disableInteractive; expose current open state through a test id on the Popper element.'
+- id: hover_card-mui-T02
+  name: Pin a team hover card open
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip (interactive) + Card content with pin toggle (composite hover card)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: 'Hover over “Team: Design” to open its hover card, then click the “Pin” control in the hover card to pin it open. The task will finish automatically when done.'
+  ui_copy: 'Goal: Pin the “Team: Design” hover card open.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme.
+
+    The content shows two pill labels: “Team: Design” and “Team: Sales”.
+    - Only “Team: Design” has a hover card; “Team: Sales” is a distractor label with no hover overlay.
+
+    Hover card behavior (MUI composite):
+    - Implemented with MUI Tooltip/Popper rendering a rich card panel.
+    - The hover card header includes a small “Pin” icon/button. Clicking it toggles pinned=true and keeps the overlay visible even if the pointer moves away.
+
+    Initial state: hover card closed and unpinned.
+    No other overlays are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Adds a small in-overlay toggle that must be clicked while keeping the hover card open (interactive hover).
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Team: Design'
+        pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens but is not pinned.
+  - 'Hover card pins a different target (should be Team: Design).'
+  - Hover card closes after leaving because pin was not activated.
+  expected_interaction_path:
+  - 'Hover “Team: Design” to reveal the card.'
+  - Move pointer into the card header area.
+  - Click the “Pin” control.
+  notes: Use disableInteractive={false} on Tooltip so the overlay remains open when the pointer moves into it; record pinned state for the checker.
+- id: hover_card-mui-T03
+  name: Match an avatar preview (mixed guidance, 2 instances)
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip (interactive) rendering profile card (two instances)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the hover card for the user that matches the “Target Preview” (avatar + initials) shown on the page. Hover over the correct avatar until the hover card opens. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the hover card for the user that matches the Target Preview.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme, comfortable spacing.
+
+    The card shows:
+    - A “Target Preview” box with a small avatar preview (colored circle with initials).
+    - Two user entries side-by-side, each rendered as a hoverable avatar chip with initials and a small caption:
+      * “User: AK” (initials “AK”)
+      * “User: LM” (initials “LM”)
+
+    Each avatar has its own hover card (MUI Tooltip/Popper with card content).
+    - The hover card shows the full name and email.
+    - Both cards are structurally identical; only the user identity differs.
+
+    Instances: 2 hover cards (one per avatar).
+    Initial state: both closed.
+    Guidance: mixed — the agent can use the visual avatar preview and/or read the initials caption.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Only two choices, but requires matching against a reference (visual and/or initials) and selecting the correct instance.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - 'Active/anchored hover card must be the instance labeled ''User: LM''.'
+    - Hover card pinned state must be False.
+    - Open hover card content must match the on-page reference labeled 'target-preview'.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        open: true
+        active_instance: 'User: LM'
+        pinned: false
+        reference_id: target-preview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'User: LM'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens for the non-matching avatar.
+  - Hover card opens but does not match the Target Preview mapping.
+  - Hover card remains closed.
+  expected_interaction_path:
+  - Compare the Target Preview avatar/initials to the two candidates.
+  - Hover the matching avatar until the hover card appears.
+  notes: Checker should map reference_id -> user_id deterministically (do not rely on pixel matching of avatars).
+- id: hover_card-mui-T04
+  name: Open delayed help hover card in settings panel
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip (interactive) with enterDelay/leaveDelay (composite hover card)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Hover over the small help icon next to “Webhook URL” until the help hover card opens. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the help hover card for “Webhook URL”.'
+  setup_description: |-
+    Layout: settings_panel centered on a light theme. Comfortable spacing, default scale.
+
+    The panel contains several labeled settings rows (API key, Webhook URL, Retry policy).
+    - Next to the “Webhook URL” label there is a small circular help icon (the hover target).
+    - Hovering the icon opens a rich hover card implemented with MUI Tooltip/Popper.
+    - The hover card has a configured delay: it only appears after a noticeable hover dwell (enterDelay), and it lingers briefly when leaving (leaveDelay).
+    - The content is a small card with a title “Webhook URL” and an example URL in monospace text.
+
+    Instances: 1 hover card in this panel. Other controls are inert distractors for this task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small help icon plus a deliberate hover delay makes timing and stable acquisition more difficult than baseline.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Webhook URL help
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card does not open (hover not maintained long enough).
+  - Hover card opens for a different help icon/setting row.
+  - Hover card opens but closes immediately due to not being hovered/interactive.
+  expected_interaction_path:
+  - Find the “Webhook URL” label.
+  - Hover the adjacent help icon steadily until the hover card appears.
+  notes: MUI Tooltip supports enterDelay and leaveDelay; ensure the hover card is interactive so the pointer can enter the popper without closing (disableInteractive=false).
+- id: hover_card-mui-T05
+  name: Expand 'Usage limits' inside hover card
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip (interactive) with expandable section in content (composite hover card)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Hover over the “Plan limits” label to open its hover card, then expand the “Usage limits” section inside the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the “Plan limits” hover card and expand “Usage limits”.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme.
+
+    The card shows a subscription summary line with a “Plan limits” label rendered as a small underlined text.
+    - Hovering “Plan limits” opens a MUI Tooltip/Popper-based hover card with rich content.
+    - The hover card body contains:
+      * A brief summary line (“This plan includes …”)
+      * A collapsed disclosure row labeled “Usage limits” with a chevron indicator
+    - Clicking “Usage limits” expands an additional list (requests/day, seats, storage).
+
+    Instances: 1 hover card.
+    Initial state: closed and disclosure collapsed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires keeping an interactive hover card open while clicking an in-card disclosure control to reveal additional content.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    - Hover card details section expanded must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Plan limits
+        pinned: false
+        details_expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card not open.
+  - Hover card open but “Usage limits” remains collapsed.
+  - Disclosure expanded outside the hover card (wrong element).
+  expected_interaction_path:
+  - Hover “Plan limits” to open the hover card.
+  - Move into the hover card content.
+  - Click “Usage limits” to expand.
+  notes: Use a deterministic boolean flag for the expanded state (e.g., data-details-expanded) for checking.
+- id: hover_card-mui-T06
+  name: Scroll to metric card and open its info hover card
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip/Popper hover card attached to dashboard info icons (single controlled instance)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll the dashboard until you see the “Retention” metric card, then hover over its info icon to open the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Find the “Retention” metric and open its info hover card.'
+  setup_description: |-
+    Layout: dashboard (light theme, comfortable spacing) with a vertically scrollable main content area.
+
+    The dashboard has several metric cards stacked vertically (e.g., Sessions, Conversion, Retention, ARPU).
+    - Each metric card header contains a small info icon (ⓘ).
+    - Hovering any info icon opens the same MUI Tooltip/Popper-based hover card (single controlled instance), with content based on which metric is hovered.
+
+    The “Retention” card is below the fold; the agent must scroll the page content to bring it into view.
+    Clutter: medium (filters, date range selector, and navigation tabs exist but are not needed).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires scrolling to locate the correct metric and then hovering a small info icon among multiple similar icons on a cluttered dashboard.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Metric: Retention info'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens for a different metric (Sessions/Conversion/etc.).
+  - Retention card is visible but hover card not opened (icon not hovered).
+  - 'Hover card opens but the active_instance does not equal “Metric: Retention info”.'
+  expected_interaction_path:
+  - Scroll down until the “Retention” metric card appears.
+  - Hover the small info icon in the Retention card header.
+  notes: Checker should read which metric is active from a stable id on the info icon or from the computed content key (e.g., data-metric="retention").
+- id: hover_card-mui-T07
+  name: Confirm an action inside hover card
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip/Popper hover card with confirm/cancel actions (composite)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Hover over the “Weekly summary” label to open its hover card, then click “Confirm” in the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the “Weekly summary” hover card and click Confirm.'
+  setup_description: |-
+    Layout: form_section centered, light theme, comfortable spacing.
+
+    The page shows an “Email preferences” section with several rows. One row is:
+    - Label: “Weekly summary”
+    - Value: “Learn more” (small underlined text used as the hover target)
+
+    Hovering the hover target opens a MUI Tooltip/Popper-based hover card with:
+    - A short description of weekly summary emails.
+    - Two buttons at the bottom: “Confirm” and “Cancel”.
+    - Clicking a button dismisses the hover card and records the choice.
+
+    Instances: 1 hover card.
+    Initial state: closed and no decision recorded.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires interacting with buttons inside a hover-triggered overlay and choosing the correct option (Confirm) before the overlay closes.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be False.
+    - Hover card pinned state must be False.
+    - Recorded hover card decision must equal 'confirm'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        active_instance: null
+        pinned: false
+        decision: confirm
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Cancel” instead of “Confirm”.
+  - Hover card closes without recording a Confirm click (mouse leave).
+  - Hover card remains open after pressing Confirm (should dismiss).
+  expected_interaction_path:
+  - Hover “Weekly summary” to open the hover card.
+  - Move into the hover card.
+  - Click “Confirm”.
+  notes: Ensure button clicks are possible without closing the hover card prematurely (interactive popper). Store decision separately from open state for checking.
+- id: hover_card-mui-T08
+  name: Open hover card from dense table icon (dark, compact)
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip/Popper hover card attached to table status icons (two instances)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: In the issues table, hover over the “Flagged” status icon for the “Payment failure” row to open its hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the hover card for the Flagged icon in the Payment failure row.'
+  setup_description: |-
+    Layout: table_cell scene anchored near the top-left of the viewport. Dark theme, compact spacing, small scale.
+
+    The page shows a compact issues table with two rows:
+    - Row 1: “Payment failure”
+    - Row 2: “Signup spike”
+
+    Each row has two tiny status icons in adjacent columns (“Blocked” and “Flagged”).
+    - Hovering each icon opens a MUI Tooltip/Popper-based hover card (two hover card instances total).
+    - The two icons are visually similar (same size, similar color) and close together, increasing mis-hover risk.
+    - The hover card content describes the status and recommended action.
+
+    Initial state: all hover cards closed.
+    Clutter: medium (table header, column sort indicators, and a sidebar are present but irrelevant).
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: top_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Very small adjacent targets in a dense, compact dark table make correct acquisition and instance disambiguation challenging.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - 'Active/anchored hover card must be the instance labeled ''Payment failure: Flagged''.'
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Payment failure: Flagged'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'Payment failure: Flagged'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens for the Blocked icon instead of Flagged.
+  - Hover card opens for the wrong row (Signup spike).
+  - Hover card does not open (hover missed or not held).
+  expected_interaction_path:
+  - Locate the “Payment failure” row.
+  - Hover the “Flagged” icon (not the neighboring icon).
+  - Wait for the hover card to appear.
+  notes: Provide distinct aria-labels for each icon (e.g., aria-label="Payment failure flagged") to help disambiguation for accessibility-tree agents.
+- id: hover_card-mui-T09
+  name: Pin the Secondary owner hover card (3 instances)
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip/Popper hover cards with pin toggles (three instances)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Open the hover card for the “Secondary owner” by hovering over the Secondary owner avatar, then click “Pin” in the hover card to pin it open. The task will finish automatically when done.
+  ui_copy: 'Goal: Pin the Secondary owner hover card open.'
+  setup_description: |-
+    Layout: isolated_card positioned in the top-right of the viewport (light theme, comfortable spacing).
+
+    The card is titled “Workspace owners” and shows three avatar rows:
+    1) Primary owner
+    2) Secondary owner
+    3) Billing owner
+
+    Each avatar row has its own hover card implemented with MUI Tooltip/Popper (three instances).
+    - Hover card contains profile preview and a small “Pin” control in the header.
+    - All three hover cards look nearly identical aside from the owner label and name, creating confusable distractors.
+
+    Initial state: all hover cards closed and unpinned.
+    No other tooltips are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Three near-identical instances plus a small in-card pin control create high disambiguation and acquisition demands.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Active/anchored hover card must be the instance labeled 'Secondary owner'.
+    - Hover card pinned state must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Secondary owner
+        pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary owner
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Pinned state is set for Primary owner or Billing owner instead of Secondary owner.
+  - Hover card is open for Secondary owner but pin is not enabled.
+  - Pinned is enabled but the hover card is not the Secondary owner instance.
+  expected_interaction_path:
+  - Hover the avatar in the “Secondary owner” row to open its hover card.
+  - Move into the hover card and click “Pin”.
+  notes: Checker should verify both active_instance and pinned=true. Use a per-instance identifier for the trigger row label.
+- id: hover_card-mui-T10
+  name: Reset a pinned hover card to closed
+  canonical_type: hover_card
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Tooltip/Popper hover card with pin toggle and close control (composite)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: A hover card is currently pinned open for “Secondary owner”. Click “Unpin” and make sure the hover card is closed. The task will finish automatically when done.
+  ui_copy: 'Goal: Unpin and close the pinned “Secondary owner” hover card.'
+  setup_description: |-
+    Layout: settings_panel centered in the viewport. Dark theme with compact spacing and small scale.
+
+    The page shows a single owner row labeled “Secondary owner”.
+    - The hover card for this row is already visible at load and is pinned open (pinned=true).
+    - The hover card header shows a filled pin icon (acts as “Unpin” when clicked) and a small “×” close button.
+    - After unpinning, the hover card behaves like a normal hover card and can be dismissed (e.g., by clicking outside or using the ×).
+
+    Initial state: open=true, pinned=true, active_instance="Secondary owner".
+    No other hover cards exist.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires reversing a persistent pinned state and ensuring the overlay is fully dismissed, with small controls under compact dark styling.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be False.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        active_instance: null
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card remains open after unpinning.
+  - Hover card closes but pinned remains true.
+  - Only a partial dismiss occurs (e.g., overlay hidden but internal open state still true).
+  expected_interaction_path:
+  - Click the pin icon to unpin.
+  - Dismiss/close the hover card (× or click outside).
+  - Verify the hover card is gone.
+  notes: Checker should assert both open=false and pinned=false. If the close action is click-outside, ensure there is safe whitespace to click without triggering other controls.
+- id: hover_card-mantine-T01
+  name: Open profile hover card (Mantine HoverCard)
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Hover over the “Maria Gomez” avatar to open the profile hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Hover over the Maria Gomez avatar to open the profile card.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme, comfortable spacing.
+
+    The card shows a single user avatar with the label “Maria Gomez”.
+    - The avatar is the HoverCard.Target.
+    - On hover, Mantine HoverCard.Dropdown appears as a small profile card with name, handle, and follower counts.
+
+    Instances: 1 hover card.
+    Initial state: closed.
+    No other interactive UI is present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single large hover target with immediate, clearly visible dropdown card; minimal clutter.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Maria Gomez
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card does not open.
+  - Hover card opens for a different trigger (should be Maria Gomez).
+  - A different overlay component opens instead of the HoverCard dropdown.
+  expected_interaction_path:
+  - Move pointer over the Maria Gomez avatar.
+  - Wait for the HoverCard dropdown to appear.
+  notes: Mantine HoverCard renders dropdown via Portal by default; add data-testid to the dropdown for reliable detection.
+- id: hover_card-mantine-T02
+  name: Pin a hover card open (Mantine)
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard with custom pin behavior'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: 'Hover over “Repository: ComponentBench” to open its hover card, then click the “Pin” control in the hover card to keep it pinned open. The task will finish automatically when done.'
+  ui_copy: 'Goal: Pin the “Repository: ComponentBench” hover card open.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme, comfortable spacing.
+
+    The card shows a single repository row with a link-styled label “Repository: ComponentBench”.
+    - The link is the HoverCard.Target.
+    - Hovering opens a Mantine HoverCard.Dropdown that looks like a mini repo preview (stars, description).
+    - In the dropdown header, there is a small “Pin” icon/button.
+    - Clicking “Pin” toggles pinned=true so the dropdown remains visible even when the pointer leaves.
+
+    Instances: 1 hover card.
+    Initial state: closed, pinned=false.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires moving into the dropdown and clicking a small pin control while keeping the hover card open.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Repository: ComponentBench'
+        pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens but pin is not enabled.
+  - Hover card closes on mouse leave (indicating pin did not take effect).
+  - Pin action affects a different overlay or element.
+  expected_interaction_path:
+  - Hover over the repository label to open the dropdown.
+  - Move pointer into the dropdown header.
+  - Click the “Pin” control.
+  notes: If using HoverCard.Group elsewhere in the page, keep this task isolated to a single HoverCard instance to reduce confounds.
+- id: hover_card-mantine-T03
+  name: Acknowledge a tip inside hover card
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard with confirm/cancel footer'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Hover over the “Keyboard shortcuts” label to open its hover card, then click “Got it” to dismiss the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the Keyboard shortcuts hover card and click “Got it”.'
+  setup_description: |-
+    Layout: isolated_card centered, light theme.
+
+    The page shows a small “Keyboard shortcuts” label with a dotted underline.
+    - Hovering the label opens a Mantine HoverCard dropdown with a short tip about shortcuts.
+    - At the bottom of the dropdown are two buttons: “Got it” and “Remind me later”.
+    - Clicking either button dismisses the dropdown and records the choice.
+
+    Instances: 1 hover card.
+    Initial state: dropdown closed; no choice recorded.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires clicking a specific action within the hover card before it closes; otherwise the scene is simple and uncluttered.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be False.
+    - Hover card pinned state must be False.
+    - Recorded hover card decision must equal 'confirm'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        active_instance: null
+        pinned: false
+        decision: confirm
+      tolerance: null
+      require_confirm: true
+      confirm_control: Got it
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Remind me later” instead of “Got it”.
+  - Hover card closes due to mouse leave without a “Got it” click.
+  - Hover card remains open after clicking “Got it”.
+  expected_interaction_path:
+  - Hover “Keyboard shortcuts” to open dropdown.
+  - Move into dropdown and click “Got it”.
+  notes: Record which button was clicked (decision) separately from open state so the checker can distinguish explicit acknowledgment from accidental close.
+- id: hover_card-mantine-T04
+  name: Match Target Preview among three HoverCards (visual)
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard.Group with three HoverCards'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Look at the “Target Preview” shown on the page and open the matching user hover card by hovering the correct avatar. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the hover card that matches the Target Preview.'
+  setup_description: |-
+    Layout: isolated_card centered (light theme, comfortable spacing).
+
+    The page shows:
+    - A “Target Preview” box on the left containing a static avatar preview (image-only, no name).
+    - Three user avatars arranged in a row on the right. Each avatar has a small caption under it:
+      * Candidate 1
+      * Candidate 2
+      * Candidate 3
+
+    Each candidate avatar is wrapped in its own Mantine HoverCard (and they are grouped with HoverCard.Group so their open/close delays are synchronized).
+    - Each HoverCard.Dropdown contains the candidate’s name and role.
+    - All dropdowns use the same size and styling; only the avatar image differs.
+
+    Instances: 3 hover cards.
+    Initial state: all closed.
+    Guidance: visual (match by avatar image shown in Target Preview).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Three similar options require visual matching; group-synced delays add modest timing sensitivity.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Active/anchored hover card must be the instance labeled 'Candidate 2'.
+    - Hover card pinned state must be False.
+    - Open hover card content must match the on-page reference labeled 'target-preview'.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        open: true
+        active_instance: Candidate 2
+        pinned: false
+        reference_id: target-preview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Candidate 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens for a non-matching avatar.
+  - Hover card opens but does not correspond to the Target Preview reference mapping.
+  - No hover card is open.
+  expected_interaction_path:
+  - Compare the Target Preview avatar to the three candidates.
+  - Hover the matching avatar until the dropdown appears.
+  notes: Provide a stable mapping from reference_id to the correct HoverCard instance id for the checker (avoid pixel comparison).
+- id: hover_card-mantine-T05
+  name: Expand a 'More info' section inside HoverCard
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard with expandable section in dropdown'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Hover over the “Data retention policy” link to open its hover card, then expand the “More info” section inside the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the data retention hover card and expand “More info”.'
+  setup_description: |-
+    Layout: form_section centered (light theme, comfortable spacing).
+
+    The page shows a compliance form section with a line:
+    - “Data retention policy” (rendered as an underlined inline link). This is the HoverCard.Target.
+
+    Hovering opens a Mantine HoverCard.Dropdown containing:
+    - A one-sentence summary
+    - A collapsed disclosure row labeled “More info” with a chevron
+    - When expanded, it reveals two additional bullet points (retention window, deletion behavior)
+
+    Instances: 1 hover card.
+    Initial state: dropdown closed, “More info” collapsed.
+    Clutter: low (other form fields present but not required).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: An additional in-dropdown expansion step is required while maintaining hover, in a mildly cluttered form context.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    - Hover card details section expanded must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Data retention policy
+        pinned: false
+        details_expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card not open.
+  - Hover card open but “More info” is not expanded.
+  - Expanded content appears elsewhere (not inside the hover card dropdown).
+  expected_interaction_path:
+  - Hover the “Data retention policy” link to open dropdown.
+  - Move pointer into dropdown.
+  - Click “More info” to expand.
+  notes: Prefer a dedicated state flag on the dropdown root for expanded state to keep checking robust across minor copy changes.
+- id: hover_card-mantine-T06
+  name: Open delayed HoverCard near bottom-right (2 instances)
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard (openDelay/closeDelay), two instances'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Hover over the “Support hours” label until its hover card opens. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the “Support hours” hover card.'
+  setup_description: |-
+    Layout: dashboard widget placed near the bottom-right corner of the viewport (light theme).
+
+    The widget is titled “Support” and contains two inline info labels:
+    - “SLA”
+    - “Support hours”
+
+    Each label is wrapped in its own Mantine HoverCard (two instances).
+    - Both hover cards use a configured openDelay (requires a short dwell) and closeDelay (lingers briefly).
+    - Dropdown content is similar in structure (title + two bullet points), making the labels the main disambiguator.
+
+    Initial state: both hover cards closed.
+    Clutter: low (a couple of unrelated buttons exist in the widget but are not required).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Corner placement plus hover delay and two similar instances increases timing and disambiguation load compared to baseline.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Active/anchored hover card must be the instance labeled 'Support hours'.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Support hours
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Support hours
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - SLA hover card opens instead of Support hours.
+  - Hover card does not open due to insufficient hover dwell.
+  - Hover card opens but active_instance is not “Support hours”.
+  expected_interaction_path:
+  - Locate “Support hours” in the Support widget.
+  - Hover steadily until the dropdown appears.
+  notes: Mantine supports openDelay/closeDelay on HoverCard; ensure both instances are labeled for the checker.
+- id: hover_card-mantine-T07
+  name: Scroll long list and open topic HoverCard (dark, compact)
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard used as controlled preview for a scrollable list (single instance)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the docs sidebar, scroll until you find “Rate limits”, then hover over it to open the hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Find “Rate limits” in the docs list and open its hover card.'
+  setup_description: |-
+    Layout: settings_panel with a left “Docs topics” sidebar and main content area. Dark theme, compact spacing, small scale.
+
+    The left sidebar is a tall scrollable list of many topic links (e.g., Authentication, Webhooks, Pagination, Errors, …).
+    - Hovering any topic opens a single Mantine HoverCard dropdown (controlled instance) with a short description.
+    - The target topic “Rate limits” is not visible at first; the sidebar must be scrolled to reveal it.
+    - The link row height is small due to compact spacing, increasing hover precision demands.
+
+    Instances: 1 hover card instance (shared).
+    Clutter: medium (main content has headings and buttons, but not required).
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires scrolling a dense sidebar list in compact dark mode and accurately hovering a small target among many similar options.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Topic: Rate limits'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card opens for a different topic.
+  - Rate limits is visible but the hover card is not opened.
+  - 'Hover card opens but active_instance is not “Topic: Rate limits”.'
+  expected_interaction_path:
+  - Scroll the sidebar until “Rate limits” appears.
+  - Hover over “Rate limits” until the dropdown appears.
+  notes: Add a stable data-topic-id on each link so the hover card can report which topic is active to the checker.
+- id: hover_card-mantine-T08
+  name: Open HoverCard inside a drawer flow
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard inside Mantine Drawer'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Team” drawer, then hover over “Alex Nguyen” to open that member’s hover card. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the Team drawer and open the Alex Nguyen hover card.'
+  setup_description: |-
+    Layout: drawer_flow. Light theme, comfortable spacing, default scale.
+
+    The page has a primary button labeled “Open Team Drawer”.
+    - Clicking it opens a right-side Drawer containing a list of two team members:
+      * “Alex Nguyen”
+      * “Samira Khan”
+    - Each team member name is wrapped with a Mantine HoverCard (two instances).
+    - Hovering a name opens a dropdown card with role, timezone, and quick links.
+
+    Initial state: Drawer closed; no hover cards visible.
+    Clutter: medium (drawer contains additional static text like “Invite member”, but it is not required for success).
+
+    Note on layering: hover card dropdown renders above the drawer content via Portal.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires an extra overlay step (drawer) before interacting with the hover card, plus disambiguation between two similar instances inside the drawer.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - 'Active/anchored hover card must be the instance labeled ''Team member: Alex Nguyen''.'
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: 'Team member: Alex Nguyen'
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'Team member: Alex Nguyen'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Drawer not opened (hover targets not accessible).
+  - Hover card opens for Samira Khan instead of Alex Nguyen.
+  - Hover card does not open after hovering Alex Nguyen.
+  expected_interaction_path:
+  - Click “Open Team Drawer”.
+  - In the drawer list, hover “Alex Nguyen” until the dropdown appears.
+  notes: Ensure the drawer open action is not part of success; success should be keyed only to the hover card state once the drawer is open.
+- id: hover_card-mantine-T09
+  name: Pin the Billing contact HoverCard (3 instances, compact)
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard.Group with three HoverCards and custom pin toggle'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Open the hover card for “Billing contact” by hovering it, then click “Pin” in the hover card to pin it open. The task will finish automatically when done.
+  ui_copy: 'Goal: Pin the Billing contact hover card open.'
+  setup_description: |-
+    Layout: isolated_card anchored near the top-left of the viewport. Light theme with compact spacing and small scale.
+
+    The card shows three inline chips in one row:
+    - “Primary contact”
+    - “Billing contact”
+    - “Emergency contact”
+
+    Each chip is wrapped with its own Mantine HoverCard (three instances) inside a HoverCard.Group that applies a shared openDelay/closeDelay.
+    - Hovering a chip opens a dropdown card with contact details.
+    - The dropdown header includes a small “Pin” control to toggle pinned state for that instance.
+
+    Initial state: all dropdowns closed and unpinned.
+    Due to compact spacing, chips are closely spaced, increasing mis-hover and wrong-instance risk.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_left
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Compact, closely spaced targets plus synchronized hover delays and a small pin control make correct instance selection and interaction difficult.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be True.
+    - Active/anchored hover card must be the instance labeled 'Billing contact'.
+    - Hover card pinned state must be True.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        active_instance: Billing contact
+        pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing contact
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Primary contact or Emergency contact is pinned instead of Billing contact.
+  - Billing contact hover card opens but pin is not enabled.
+  - Pin is enabled but the hover card is not the Billing contact instance.
+  expected_interaction_path:
+  - Hover the “Billing contact” chip until its dropdown appears (may require holding due to delay).
+  - Move into the dropdown header and click “Pin”.
+  notes: Checker should verify pinned state per instance; consider storing per-instance pinned in a map keyed by instance label.
+- id: hover_card-mantine-T10
+  name: Reset a pinned HoverCard in a cluttered dashboard
+  canonical_type: hover_card
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: HoverCard with custom pin state and close control'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: The “Billing contact” hover card is currently pinned open. Unpin it and make sure the hover card is closed. The task will finish automatically when done.
+  ui_copy: 'Goal: Unpin and close the Billing contact hover card.'
+  setup_description: |-
+    Layout: dashboard card placed near the bottom-left of the viewport. Light theme, comfortable spacing.
+
+    The dashboard widget shows two contact chips:
+    - “Primary contact”
+    - “Billing contact”
+
+    Each chip has its own Mantine HoverCard (two instances). The page starts with:
+    - The “Billing contact” HoverCard dropdown already open and pinned (pinned=true).
+    - The dropdown header includes a pin icon (toggles to unpinned) and a close “×” button.
+
+    Clutter: medium — the widget also contains unrelated buttons (“Export”, “Refresh”) and a small legend, but they do not affect success.
+    Goal requires returning the hover card state to closed + unpinned.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires reversing a persistent pinned state and dismissing the overlay while avoiding nearby distractor controls and the other instance.
+  success_trigger:
+    human_readable:
+    - Hover card open state must be False.
+    - Hover card pinned state must be False.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: false
+        active_instance: null
+        pinned: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hover card remains open after unpinning.
+  - Hover card closes but pinned remains true.
+  - The Primary contact hover card is opened/pinned while Billing remains unresolved.
+  expected_interaction_path:
+  - Click the pin icon to unpin the Billing contact dropdown.
+  - Close/dismiss the dropdown (× button or click outside).
+  - Ensure no hover card dropdown is visible.
+  notes: If clicking outside is used, ensure the background click target does not trigger navigation; keep a neutral area for safe dismissal.

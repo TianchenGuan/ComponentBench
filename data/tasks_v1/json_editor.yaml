@@ -1,0 +1,2249 @@
+- id: json_editor-antd-T01
+  name: Enable email notifications flag
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Notification settings (JSON) editor, set notifications.email to true, then click Apply. The task will finish automatically when done.
+  ui_copy: Set notifications.email to true in the Notification settings (JSON) editor and apply the change.
+  setup_description: |-
+    Page shows a single centered Ant Design Card titled “Notification settings (JSON)”.
+    Inside the card is an embedded JSON editor widget with a mode switch (Tabs: “Tree” and “Code”). It starts in Tree mode.
+    In Tree mode, the JSON is shown as an expandable tree; boolean values can be edited via an inline true/false control.
+    Below the editor are two buttons: a primary “Apply” button and a secondary “Reset” button.
+    Initial JSON value:
+    {
+      "notifications": {"email": false, "sms": true},
+      "theme": "light"
+    }
+    There are no other required inputs or distractors on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single boolean edit in a single, clearly labeled editor with an explicit Apply button.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.notifications.email` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.notifications.email
+        value: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing notifications.sms instead of notifications.email.
+  - Setting notifications.email to false (no change) or leaving it unchanged.
+  - Making the correct change but not clicking Apply.
+  - Editing in a transient/invalid state where the JSON cannot be parsed.
+  expected_interaction_path:
+  - Click the notifications.email value in the tree.
+  - Toggle/select true.
+  - Click Apply.
+  notes: Checker should read the committed JSON value (post-Apply) from a stable testid or app state, not the raw text in the code editor.
+- id: json_editor-antd-T02
+  name: Set retry count in a form section
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Retry policy (JSON) editor, set retryCount to 3 and click Apply. The task will finish automatically when done.
+  ui_copy: Update retryCount to 3 in the Retry policy (JSON) editor and apply.
+  setup_description: |-
+    Page shows an Ant Design form section titled “Request settings”.
+    The form contains a few standard fields (e.g., Service name text input, Region select) that are NOT required for success.
+    At the bottom of the section there is a labeled JSON editor: “Retry policy (JSON)”. The JSON editor starts in Tree mode.
+    Numeric values are edited inline (click the number to edit).
+    A primary “Apply” button sits directly under this JSON editor (applies only this editor), with a secondary “Reset” button next to it.
+    Initial JSON value in the editor:
+    {
+      "retryCount": 1,
+      "backoffMs": 250,
+      "jitter": false
+    }
+    Other form controls are present as low clutter and should be ignored.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A single numeric field change, but the editor is embedded in a small form section with a few irrelevant inputs.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.retryCount` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.retryCount
+        value: 3
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing backoffMs or jitter instead of retryCount.
+  - Setting retryCount to a different number (e.g., 2 or 30).
+  - Leaving retryCount unchanged at 1.
+  - Making the correct edit but not clicking Apply.
+  - Introducing invalid JSON (e.g., deleting a required comma in Code mode).
+  expected_interaction_path:
+  - Locate the “Retry policy (JSON)” editor in the form section.
+  - Click the value for retryCount and enter 3.
+  - Confirm the inline edit (Enter/blur).
+  - Click Apply.
+  notes: If the editor supports both Tree and Code modes, the checker should evaluate the canonical parsed JSON, not the exact text formatting.
+- id: json_editor-antd-T03
+  name: Replace environment JSON in Code mode
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    In the Environment (JSON) editor, switch to Code mode and replace the JSON with:
+    {
+      "env": "dev",
+      "region": "us-east-1"
+    }
+    Then click Apply. The task will finish automatically when done.
+  ui_copy: Replace the Environment JSON with env=dev and region=us-east-1, then apply.
+  setup_description: |-
+    Page shows a centered Ant Design Card titled “Environment (JSON)”.
+    The card contains an embedded JSON editor with Tabs for “Tree” and “Code”. It starts in Tree mode showing an existing object.
+    In Code mode, the editor is a plain-text JSON area with syntax highlighting and a validation message area.
+    Below the editor are “Apply” (primary) and “Reset” (secondary) buttons.
+    Initial JSON value (before editing):
+    {
+      "env": "local",
+      "region": "us-west-2",
+      "debug": true
+    }
+    No other controls affect task success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Short JSON snippet replacement in a single editor; Code mode makes the target state directly observable as text.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          env: dev
+          region: us-east-1
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving extra keys like debug in the final JSON.
+  - Typos in string values (e.g., us-east1 or DEV).
+  - Valid JSON but not matching the target content.
+  - Correct content entered but Apply not clicked.
+  - Invalid JSON (e.g., missing brace) at the time of Apply.
+  expected_interaction_path:
+  - Click the “Code” tab.
+  - Select all text in the code editor and paste/type the target JSON.
+  - Ensure no validation error is shown.
+  - Click Apply.
+  notes: Canonical equality should ignore whitespace and object key ordering.
+- id: json_editor-antd-T04
+  name: Reset table preferences JSON to defaults
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Table preferences (JSON) back to its saved default using the Reset button. The task will finish automatically when done.
+  ui_copy: Use Reset to restore the Table preferences JSON to the saved default.
+  setup_description: |-
+    Page shows a centered Ant Design Card titled “Table preferences (JSON)”.
+    An embedded JSON editor is displayed in Tree mode.
+    Below the editor are two buttons: “Apply” (primary) and “Reset” (secondary).
+    The page indicates the editor currently has unsaved changes (e.g., a small “Modified” tag).
+    Current (dirty) JSON shown in the editor at load:
+    {
+      "sort": "date",
+      "pageSize": 50,
+      "showArchived": true
+    }
+    Clicking Reset restores the saved default JSON immediately (no extra confirmation) and clears the “Modified” indicator.
+    Target saved default JSON is:
+    {
+      "sort": "name",
+      "pageSize": 20,
+      "showArchived": false
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single reset action with immediate feedback; no multi-instance disambiguation.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - No explicit confirmation is required; live state is used.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          sort: name
+          pageSize: 20
+          showArchived: false
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Manually editing values to something close but not exactly the saved default.
+  - Clicking Apply after making additional edits that deviate from the default.
+  - Ending with invalid JSON in Code mode.
+  - Resetting a different component (there are none in baseline), or leaving the dirty JSON unchanged.
+  expected_interaction_path:
+  - Click the Reset button below the JSON editor.
+  - Verify the JSON updates to the default state.
+  notes: Reset should commit the saved default into the editor’s canonical state; checker should compare against the default JSON object.
+- id: json_editor-antd-T05
+  name: Update maxUsers in the Override config JSON (two editors)
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the Override config (JSON) editor, set limits.maxUsers to 50 and click Apply for that editor. The task will finish automatically when done.
+  ui_copy: Change limits.maxUsers to 50 in the Override config (JSON) editor and apply.
+  setup_description: |-
+    Page shows a single centered Ant Design Card titled “Limits configuration”.
+    Inside the card there are TWO JSON editor instances of the same type, stacked vertically:
+    1) “Primary config (JSON)”
+    2) “Override config (JSON)”
+    Each editor has its own Tree/Code tabs and its own button row directly underneath: “Apply” and “Reset”.
+    Both editors start in Tree mode.
+    Initial JSON in “Primary config (JSON)”: {"limits": {"maxUsers": 25, "maxProjects": 10}, "features": {"beta": false}}
+    Initial JSON in “Override config (JSON)”: {"limits": {"maxUsers": 10, "maxProjects": 5}, "features": {"beta": false}}
+    No other UI on the page affects success; the main challenge is choosing the correct labeled editor instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires editing a nested path and correctly disambiguating between two similar JSON editor instances.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.limits.maxUsers` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - The correct labeled instance is the one that must satisfy the predicate.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.limits.maxUsers
+        value: 50
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Override config (JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Updating limits.maxUsers in the Primary config (JSON) editor instead of the Override config (JSON) editor.
+  - Updating maxProjects instead of maxUsers.
+  - Setting maxUsers to a different number (e.g., 5, 25, or 500).
+  - Making the correct edit in the Override editor but clicking Apply for the Primary editor (or not clicking Apply at all).
+  - Leaving invalid JSON in the Override editor (e.g., by switching to Code mode and breaking syntax).
+  expected_interaction_path:
+  - Locate the “Override config (JSON)” editor (second instance).
+  - Expand limits and click maxUsers.
+  - Enter 50 and confirm the inline edit.
+  - Click Apply under the Override editor.
+  notes: Instrumentation should uniquely identify each editor instance (e.g., data-testid includes the instance label) so the checker can verify the correct instance.
+- id: json_editor-antd-T06
+  name: Find and edit apiBaseUrl in dark theme
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Service settings (JSON) editor, use the editor’s search to find apiBaseUrl, set it to https://api.example.com, and click Apply. The task will finish automatically when done.
+  ui_copy: Search for apiBaseUrl in the Service settings JSON, update it, and apply.
+  setup_description: |-
+    Page uses a dark theme but otherwise follows the baseline isolated card layout.
+    A centered Ant Design Card titled “Service settings (JSON)” contains one JSON editor instance.
+    The editor starts in Tree mode and includes a small search field in the editor toolbar (placeholder “Search…”).
+    When a search term is entered, matching keys in the tree are highlighted and the view scrolls to the match.
+    Below the editor are “Apply” (primary) and “Reset” (secondary) buttons.
+    Initial JSON is a moderately sized object including the key apiBaseUrl near the middle of the document, for example:
+    {
+      "service": "billing",
+      "apiBaseUrl": "https://api.dev.local",
+      "timeouts": {"connectMs": 500, "readMs": 2000},
+      "features": {"newUI": false}
+    }
+    No other components are required.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires using an in-editor search affordance and then editing a specific key in a moderately sized JSON tree.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.apiBaseUrl` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.apiBaseUrl
+        value: https://api.example.com
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing a similarly named field like baseUrl or apiUrl instead of apiBaseUrl.
+  - Setting apiBaseUrl to a different URL (e.g., http instead of https).
+  - Updating the value but not clicking Apply.
+  - Breaking JSON validity while editing in Code mode.
+  expected_interaction_path:
+  - Click into the editor’s Search field.
+  - Type apiBaseUrl and jump to the matching key.
+  - Edit the apiBaseUrl value to https://api.example.com.
+  - Click Apply.
+  notes: If the editor supports multiple matches, the checker should only care about the final JSON value at $.apiBaseUrl.
+- id: json_editor-antd-T07
+  name: Fix invalid JSON and save from a modal
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: Open the raw JSON editor, make the JSON valid, set mode to "safe" and threshold to 0.8, then click Apply. The task will finish automatically when done.
+  ui_copy: Edit the raw configuration JSON in the modal and apply the valid JSON (mode=safe, threshold=0.8).
+  setup_description: |-
+    Page shows an Ant Design Card titled “Advanced configuration”. The card includes a button labeled “Edit raw JSON…”.
+    Clicking “Edit raw JSON…” opens an Ant Design Modal titled “Edit raw configuration JSON”.
+    Inside the modal is the JSON editor (starts in Code mode). The modal footer has “Apply” (primary) and “Cancel” buttons.
+    When the JSON text is invalid, the editor shows a red validation message (e.g., “Invalid JSON”) and the Apply button is disabled.
+    Initial JSON text in the modal is intentionally invalid (for example it contains a trailing comma):
+    {
+      "mode": "safe",
+      "threshold": 0.8,
+    }
+    There are no other steps after Apply; applying closes the modal and commits the JSON value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires interacting with a modal layer and resolving a validation state before the Apply action becomes possible.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          mode: safe
+          threshold: 0.8
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the modal with Cancel (no commit).
+  - Leaving the JSON invalid (Apply disabled) or introducing a different syntax error.
+  - Saving valid JSON but with mode not equal to "safe" or threshold not equal to 0.8.
+  - Changing values in the underlying page outside the JSON editor (should not matter).
+  expected_interaction_path:
+  - Click “Edit raw JSON…” to open the modal.
+  - In Code mode, fix the JSON so it is valid and matches the requested values.
+  - Click Apply in the modal footer.
+  notes: Checker should read the committed JSON after the modal Apply, not the transient invalid text.
+- id: json_editor-antd-T08
+  name: Reorder pipeline steps array by dragging
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Pipeline steps (JSON) editor, reorder the steps array to ["validate", "transform", "send"], then click Apply. The task will finish automatically when done.
+  ui_copy: Drag to reorder the steps array to validate → transform → send, then apply.
+  setup_description: |-
+    The JSON editor card is anchored near the top-right of the viewport.
+    UI uses Ant Design compact spacing (tighter padding and smaller gaps), but the editor remains fully visible.
+    A Card titled “Pipeline steps (JSON)” contains one JSON editor starting in Tree mode.
+    The JSON has an array field steps. In Tree mode, each array item row shows a drag handle icon (grip) used to reorder items.
+    Below the editor are “Apply” and “Reset” buttons.
+    Initial JSON value:
+    {
+      "steps": ["validate", "send", "transform"],
+      "enabled": true
+    }
+    Only the order of the array items matters for success; the enabled flag is a distractor and should remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires precise drag-and-drop reordering within a compact UI; success depends on exact array ordering and an Apply step.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.steps` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.steps
+        value:
+        - validate
+        - transform
+        - send
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the array order as validate → send → transform.
+  - Producing a different order (e.g., transform first).
+  - Deleting or duplicating an array item while dragging.
+  - Reordering correctly but forgetting to click Apply.
+  - Editing the wrong field (e.g., enabled) or making JSON invalid.
+  expected_interaction_path:
+  - In Tree mode, locate steps array.
+  - Drag the “transform” item above “send” using the drag handle.
+  - Verify the array order is validate, transform, send.
+  - Click Apply.
+  notes: Checker should treat the steps array as order-sensitive.
+- id: json_editor-antd-T09
+  name: Match the Target JSON shown in the reference panel
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the editable JSON match the Target JSON shown on the right, then click Apply. The task will finish automatically when done.
+  ui_copy: Match the editable JSON to the Target JSON and apply.
+  setup_description: |-
+    Page shows a centered Ant Design Card titled “Logging configuration”.
+    The card is split into two columns:
+    - Left: an editable JSON editor (Tree/Code tabs, starts in Tree mode).
+    - Right: a read-only panel titled “Target JSON” showing the desired final JSON as formatted text.
+    Below the editable editor are “Apply” and “Reset” buttons.
+    Initial editable JSON:
+    {
+      "enabled": false,
+      "level": "debug",
+      "tags": ["api"]
+    }
+    Target JSON shown in the right panel (reference) is:
+    {
+      "enabled": true,
+      "level": "info",
+      "tags": ["billing", "api"]
+    }
+    The reference panel is for visual guidance; only the left JSON editor is checked.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Multiple coordinated edits are needed (boolean, string, and array content) and must match a reference exactly before applying.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          enabled: true
+          level: info
+          tags:
+          - billing
+          - api
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching only some fields (e.g., enabled=true but level still debug).
+  - Having tags that contain the right strings but in the wrong order (order matters here).
+  - Adding extra keys beyond enabled/level/tags.
+  - Correct JSON in the editor but Apply not clicked.
+  - Copying the target into the wrong place (the reference panel is read-only).
+  expected_interaction_path:
+  - Compare the editable JSON with the Target JSON panel.
+  - Edit enabled to true, set level to "info", and update tags to ["billing", "api"].
+  - Click Apply.
+  notes: For this task, enforce array ordering for tags to make matching strict; object key order should not matter.
+- id: json_editor-antd-T10
+  name: Scroll within a large JSON to enable betaUI
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor
+  implementation_component: 'AntD: Card/Form + Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Feature flags (JSON) editor, set featureFlags.betaUI to true and click Apply. The task will finish automatically when done.
+  ui_copy: Enable featureFlags.betaUI in the Feature flags JSON and apply.
+  setup_description: |-
+    The JSON editor card is anchored near the bottom-left of the viewport; the page itself does not need scrolling.
+    A Card titled “Feature flags (JSON)” contains one JSON editor starting in Tree mode.
+    The JSON document is long (dozens of keys/sections). The editor has its own internal scrollbar.
+    The object featureFlags appears far below the initial viewport of the editor, requiring scrolling inside the editor to reach it.
+    Below the editor are “Apply” and “Reset” buttons.
+    Initial JSON includes (among many other keys):
+    {
+      ...
+      "featureFlags": {
+        "betaUI": false,
+        "newSearch": false,
+        "fastCheckout": true
+      }
+      ...
+    }
+    Only featureFlags.betaUI must be changed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The main difficulty is locating the correct key within a long, scrollable JSON tree and then committing the change.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.featureFlags.betaUI` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.featureFlags.betaUI
+        value: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting a different flag (e.g., newSearch) instead of betaUI.
+  - Setting betaUI to false or leaving it unchanged.
+  - Making the edit but not clicking Apply.
+  - Accidentally collapsing/expanding unrelated sections and leaving betaUI unchanged.
+  - Breaking JSON validity by switching to Code mode and introducing a syntax error.
+  expected_interaction_path:
+  - Scroll inside the JSON editor until featureFlags is visible.
+  - Expand featureFlags if needed and toggle/edit betaUI to true.
+  - Click Apply.
+  notes: If the editor supports search, it should be present but not required; the task is categorized as scroll_find due to the long document.
+- id: json_editor-mui-T01
+  name: Disable logging.enabled and save
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Logging config (JSON) editor, set logging.enabled to false and click Save. The task will finish automatically when done.
+  ui_copy: Set logging.enabled to false in the Logging config JSON and save.
+  setup_description: |-
+    Page shows a centered MUI Card (Paper) titled “Logging config (JSON)”.
+    An embedded JSON editor is shown with a mode selector (MUI ToggleButtonGroup: “Tree” and “Code”). It starts in Tree mode.
+    Booleans can be edited inline via a true/false control.
+    A “Save” button is located under the editor; clicking Save commits the JSON.
+    Initial JSON value:
+    {
+      "logging": {"enabled": true, "level": "info"},
+      "service": "orders"
+    }
+    No other page elements affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single boolean change in a single editor with a clear Save action.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.logging.enabled` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.logging.enabled
+        value: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing logging.level instead of logging.enabled.
+  - Leaving logging.enabled true.
+  - Making the correct change but not clicking Save.
+  - Leaving the JSON invalid/unparseable.
+  expected_interaction_path:
+  - Expand logging in the JSON tree.
+  - Set enabled to false.
+  - Click Save.
+  notes: Prefer reading committed state after Save; avoid reading temporary inline edit buffers.
+- id: json_editor-mui-T02
+  name: Set timeoutMs to 5000
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Timeout config (JSON) editor, set timeoutMs to 5000 and click Save. The task will finish automatically when done.
+  ui_copy: Update timeoutMs to 5000 in the Timeout config JSON and save.
+  setup_description: |-
+    Page shows a centered MUI Card titled “Timeout config (JSON)”.
+    A single JSON editor instance starts in Tree mode.
+    Numeric values are edited inline (click the number to open a small numeric text field).
+    A “Save” button below the editor commits the JSON.
+    Initial JSON value:
+    {
+      "timeoutMs": 2000,
+      "connectMs": 500,
+      "retries": 2
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single numeric edit with an explicit Save button; minimal clutter and no disambiguation.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.timeoutMs` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.timeoutMs
+        value: 5000
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting connectMs or retries instead of timeoutMs.
+  - Entering 500 or 50000 instead of 5000.
+  - Making the correct edit but not clicking Save.
+  - Leaving invalid JSON (e.g., if switched to Code mode and broke syntax).
+  expected_interaction_path:
+  - Click timeoutMs value in the tree.
+  - Enter 5000 and confirm.
+  - Click Save.
+  notes: If the editor auto-coerces numbers, the checker should compare numeric types after parsing.
+- id: json_editor-mui-T03
+  name: Edit env string with live commit
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Environment (JSON) editor, change env to "staging". The task will finish automatically when done.
+  ui_copy: Set env to staging in the Environment JSON.
+  setup_description: |-
+    Page shows a centered MUI Card titled “Environment (JSON)”.
+    The JSON editor starts in Tree mode.
+    String values are edited inline (click the string value to open a small text field).
+    This page uses live commit: once you confirm an inline edit (Enter or blur), the new JSON is immediately committed and a small MUI Snackbar briefly appears saying “Saved”. There is NO separate Save button.
+    Initial JSON value:
+    {
+      "env": "dev",
+      "region": "us-central-1"
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A single inline string edit, but requires noticing that changes are committed automatically without a Save button.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.env` equals the target value.
+    - The JSON document is valid and parseable.
+    - No explicit confirmation is required; live state is used.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.env
+        value: staging
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing region instead of env.
+  - Typing "stagin" or other typos.
+  - Leaving env as "dev".
+  - Switching to Code mode and leaving invalid JSON.
+  expected_interaction_path:
+  - Click the env value in the tree.
+  - Type staging and confirm the inline edit (Enter/blur).
+  - Wait for the editor to commit (e.g., brief “Saved” snackbar).
+  notes: Checker should read the editor’s committed model state (after inline commit), not rely on the transient Snackbar.
+- id: json_editor-mui-T04
+  name: Replace JSON in Code mode (dark theme)
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    In the Deployment settings (JSON) editor, switch to Code mode and replace the JSON with:
+    {
+      "region": "eu-west-1",
+      "debug": false
+    }
+    Then click Save. The task will finish automatically when done.
+  ui_copy: Replace the Deployment settings JSON with region=eu-west-1 and debug=false, then save.
+  setup_description: |-
+    Page uses a dark theme and shows a centered MUI Card titled “Deployment settings (JSON)”.
+    The JSON editor has a ToggleButtonGroup to switch modes (“Tree” and “Code”) and starts in Tree mode.
+    In Code mode, the editor shows raw JSON text with a validation error area. When JSON is invalid, Save is disabled.
+    A “Save” button below the editor commits the JSON.
+    Initial JSON value:
+    {
+      "region": "us-east-2",
+      "debug": true,
+      "replicas": 2
+    }
+    Only the JSON editor state matters for success.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires switching modes and fully replacing JSON content; Save is gated by JSON validity.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          region: eu-west-1
+          debug: false
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving extra keys like replicas in the final JSON.
+  - Using debug=true instead of false.
+  - Correct JSON typed but Save not clicked.
+  - Invalid JSON at the time of Save (e.g., missing brace).
+  expected_interaction_path:
+  - Click Code mode in the mode selector.
+  - Replace the text with the target JSON.
+  - Ensure there is no validation error.
+  - Click Save.
+  notes: Equality should ignore whitespace and object key order.
+- id: json_editor-mui-T05
+  name: Add version field inside a table cell editor
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the Webhook payload template (JSON) editor, add a top-level field version set to 2, then click Save. The task will finish automatically when done.
+  ui_copy: 'Add version: 2 to the Webhook payload template JSON and save.'
+  setup_description: |-
+    Page uses a settings table layout (MUI Table) with two columns: “Setting” and “Value”.
+    Most rows are simple text values (URL, Method) and are irrelevant.
+    One row is labeled “Webhook payload template (JSON)”. Its Value cell contains a compact embedded JSON editor.
+    The JSON editor starts in Tree mode and is slightly narrower than the full page because it lives inside the table cell.
+    A “Save” button for this row is shown directly below the cell editor.
+    Initial JSON value in the cell editor:
+    {
+      "event": "user.created",
+      "data": {"id": "", "email": ""}
+    }
+    You must add a new top-level key version with numeric value 2.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Editing is done in a constrained table-cell layout with surrounding distractor rows, and requires adding a new field before saving.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.version` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.version
+        value: 2
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding version inside data instead of at the top level.
+  - Adding version as a string ("2") instead of a number (2).
+  - Setting version to a different number.
+  - Adding the key but not clicking Save.
+  - Making the JSON invalid (e.g., malformed structure in Code mode).
+  expected_interaction_path:
+  - Locate the row “Webhook payload template (JSON)”.
+  - Add a new top-level field version with value 2 (via Tree add control or Code edit).
+  - Click the row’s Save button.
+  notes: Checker should parse JSON and verify $.version is numeric 2; key ordering is irrelevant.
+- id: json_editor-mui-T06
+  name: Add an allowed origin in the Backend editor (two instances)
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Allowed origins (Backend JSON) editor, add https://example.com to allowedOrigins and click Save for that editor. The task will finish automatically when done.
+  ui_copy: Add https://example.com to allowedOrigins in the Backend JSON editor and save.
+  setup_description: |-
+    Page shows a centered MUI Card titled “CORS settings (JSON)”.
+    Inside are TWO JSON editor instances stacked:
+    1) “Allowed origins (Frontend JSON)”
+    2) “Allowed origins (Backend JSON)”
+    Each editor includes a small in-editor search box (placeholder “Search…”) and starts in Tree mode.
+    Each editor has its own Save button directly below it.
+    Initial JSON in Frontend editor: {"allowedOrigins": ["https://app.example.com"], "allowCredentials": true}
+    Initial JSON in Backend editor: {"allowedOrigins": ["https://api.example.com"], "allowCredentials": false}
+    You must update only the Backend editor so that its allowedOrigins array contains https://example.com.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires choosing the correct of two similar editors and adding an item to an array; search helps locate the field but adds an extra control to use.
+  success_trigger:
+    human_readable:
+    - The array at path `$.allowedOrigins` contains all required members (order does not matter).
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - The correct labeled instance is the one that must satisfy the predicate.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        json_path: $.allowedOrigins
+        must_include:
+        - https://example.com
+        must_exclude: []
+      tolerance:
+        duplicates: ignore
+        order: ignore
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Allowed origins (Backend JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding the URL to the Frontend JSON editor instead of the Backend editor.
+  - Replacing the existing origin instead of adding a new item (array should still contain the original entry).
+  - Adding a malformed URL string (typo).
+  - Adding correctly but not clicking Save for the Backend editor.
+  - Leaving invalid JSON in the Backend editor.
+  expected_interaction_path:
+  - Locate the “Allowed origins (Backend JSON)” editor.
+  - Use the search field to jump to allowedOrigins.
+  - Add a new array item https://example.com.
+  - Click Save under the Backend editor.
+  notes: Checker should treat allowedOrigins as an order-insensitive set for this task.
+- id: json_editor-mui-T07
+  name: Set rateLimit.perMinute inside a form section
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the Rate limit (JSON) editor, set rateLimit.perMinute to 120 and click Save. The task will finish automatically when done.
+  ui_copy: Update rateLimit.perMinute to 120 in the Rate limit JSON and save.
+  setup_description: |-
+    Page shows a MUI form section titled “API limits”.
+    Above the JSON editor are unrelated controls (e.g., a Select for strategy and a TextField for plan name) that are NOT required.
+    A labeled JSON editor “Rate limit (JSON)” appears within the section and starts in Tree mode.
+    The JSON contains a nested object rateLimit with fields perMinute and burst.
+    A Save button under the editor commits changes.
+    Initial JSON value:
+    {
+      "rateLimit": {"perMinute": 60, "burst": 30},
+      "enabled": true
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Nested-path edit within a cluttered form section; requires selecting the correct nested field and saving.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.rateLimit.perMinute` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.rateLimit.perMinute
+        value: 120
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting burst instead of perMinute.
+  - Setting perMinute to 12 or 1200 instead of 120.
+  - Leaving perMinute unchanged at 60.
+  - Making the edit but not clicking Save.
+  - Leaving invalid JSON.
+  expected_interaction_path:
+  - Locate the “Rate limit (JSON)” editor within the form section.
+  - Expand rateLimit and click perMinute.
+  - Enter 120 and confirm the edit.
+  - Click Save.
+  notes: Distraction form controls should not affect the checker; only the JSON editor’s committed value matters.
+- id: json_editor-mui-T08
+  name: Drag to reorder priority array (order-sensitive)
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Priority order (JSON) editor, reorder priority to ["P1", "P2", "P3"], then click Save. The task will finish automatically when done.
+  ui_copy: Reorder priority to P1, P2, P3 and save.
+  setup_description: |-
+    Page shows a centered MUI Card titled “Priority order (JSON)”.
+    A single JSON editor starts in Tree mode.
+    The JSON includes an array field priority. Each item row in the array shows a drag handle used for reordering.
+    A Save button below the editor commits the JSON.
+    Initial JSON value:
+    {
+      "priority": ["P3", "P1", "P2"],
+      "label": "Support queue"
+    }
+    Only the order of the priority array determines success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Order-sensitive drag-and-drop reordering inside the JSON editor with an explicit Save step.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.priority` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.priority
+        value:
+        - P1
+        - P2
+        - P3
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending with a different order (e.g., P1, P3, P2).
+  - Deleting or duplicating an array entry while dragging.
+  - Editing label instead of priority.
+  - Reordering correctly but not clicking Save.
+  - Leaving JSON invalid.
+  expected_interaction_path:
+  - Locate the priority array in Tree mode.
+  - Drag items until the order is P1, P2, P3.
+  - Click Save.
+  notes: Array order must be enforced by the checker; key order is irrelevant.
+- id: json_editor-mui-T09
+  name: Make Draft payload match the reference (two editors)
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Draft payload JSON match the Target payload JSON shown on the page, then click Save draft. The task will finish automatically when done.
+  ui_copy: Match the Draft payload JSON to the Target payload JSON and save the draft.
+  setup_description: |-
+    Page shows a centered MUI Card titled “Webhook payloads”.
+    It contains two editable JSON editor instances side-by-side:
+    - Left: “Draft payload JSON” (editable; has its own “Save draft” button)
+    - Right: “Published payload JSON” (editable; has its own “Save published” button)
+    Below the editors, a read-only panel titled “Target payload JSON” displays the desired JSON for the Draft as formatted text.
+    Both editors start in Tree mode.
+    Initial Draft JSON:
+    {
+      "id": "evt_000",
+      "type": "payment.failed",
+      "amount": 0
+    }
+    Initial Published JSON (distractor; should not be edited):
+    {
+      "id": "evt_999",
+      "type": "payment.succeeded",
+      "amount": 9.99
+    }
+    Target payload JSON shown in the read-only panel is:
+    {
+      "id": "evt_123",
+      "type": "payment.succeeded",
+      "amount": 19.99
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Requires matching multiple fields to a reference while avoiding edits to a similar second editor; also requires using the correct Save button.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - The correct labeled instance is the one that must satisfy the predicate.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          id: evt_123
+          type: payment.succeeded
+          amount: 19.99
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Save draft
+      require_correct_instance: true
+      target_instance_label_or_id: Draft payload JSON
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Published payload JSON instead of (or in addition to) the Draft payload JSON.
+  - Matching only some fields (e.g., correct type but wrong id).
+  - Using amount 19.9 or 19 instead of 19.99.
+  - Draft matches target but Save draft not clicked.
+  - Clicking Save published instead of Save draft.
+  - Leaving invalid JSON in Draft.
+  expected_interaction_path:
+  - Read the Target payload JSON panel.
+  - Edit the Draft payload JSON fields (id, type, amount) to match the target.
+  - Click Save draft.
+  notes: Checker must enforce correct instance and correct confirm control (Save draft).
+- id: json_editor-mui-T10
+  name: Fix invalid JSON in a small drawer editor and set sampleRate
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor
+  implementation_component: 'MUI: Paper/Card + ToggleButtonGroup/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: Open the Advanced sampling (JSON) drawer, make the JSON valid, set sampleRate to 0.25, and click Save. The task will finish automatically when done.
+  ui_copy: 'Edit Advanced sampling JSON in the drawer: valid JSON with sampleRate=0.25; then save.'
+  setup_description: |-
+    Page shows a MUI settings card titled “Telemetry”. It contains a button labeled “Edit advanced sampling (JSON)”.
+    Clicking the button opens a MUI Drawer from the right. The drawer title is “Advanced sampling (JSON)”.
+    Inside the drawer is a small-scale JSON editor (smaller font/controls than default) starting in Code mode.
+    When the JSON text is invalid, an error message is shown and the drawer’s “Save” button is disabled.
+    Initial JSON text in the drawer is invalid (missing a closing brace):
+    {
+      "sampleRate": 0.1,
+      "mode": "adaptive"
+
+    You must fix the syntax so the JSON becomes valid, and set sampleRate to 0.25. Other fields (like mode) can remain unchanged.
+    Clicking Save commits the JSON and closes the drawer.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Combines overlay depth (drawer), validation-gated saving, and a small-scale code editor requiring precise numeric entry.
+  success_trigger:
+    human_readable:
+    - The committed JSON numeric value at path `$.sampleRate` is within ±0.0001 of the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        json_path: $.sampleRate
+        value: 0.25
+      tolerance:
+        type: absolute
+        value: 0.0001
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the JSON invalid so Save cannot be performed.
+  - Setting sampleRate to a different value (e.g., 0.2 or 25).
+  - Entering 0.2502 (outside tolerance) or leaving sampleRate at 0.1.
+  - Fixing JSON and editing sampleRate but not clicking Save.
+  - Editing the wrong field (e.g., mode) without updating sampleRate.
+  expected_interaction_path:
+  - Click “Edit advanced sampling (JSON)” to open the drawer.
+  - In Code mode, fix the JSON syntax (make it valid).
+  - Set sampleRate to 0.25.
+  - Click Save in the drawer.
+  notes: Checker should parse committed JSON after Save and verify sampleRate within tolerance; also ensure JSON is valid.
+- id: json_editor-mantine-T01
+  name: Edit serviceName string and save
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Service metadata (JSON) editor, change serviceName to "Orders API" and click Save. The task will finish automatically when done.
+  ui_copy: Set serviceName to Orders API in the Service metadata JSON and save.
+  setup_description: |-
+    Page shows a centered Mantine Card titled “Service metadata (JSON)”.
+    A single embedded JSON editor starts in Tree mode. Mantine styling is used for surrounding controls.
+    String values are edited inline (click the value to edit).
+    A “Save” button below the editor commits the JSON.
+    Initial JSON value:
+    {
+      "serviceName": "Orders",
+      "owner": "platform"
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single inline text edit in one editor with an explicit Save button.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.serviceName` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.serviceName
+        value: Orders API
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing owner instead of serviceName.
+  - Setting serviceName to a different string (e.g., "Order API").
+  - Correct edit but Save not clicked.
+  - Leaving invalid JSON after switching to Code mode.
+  expected_interaction_path:
+  - Click the serviceName value.
+  - Type Orders API and confirm the edit.
+  - Click Save.
+  notes: Mantine wrapper should expose a stable Save control; checker reads committed JSON after Save.
+- id: json_editor-mantine-T02
+  name: Enable cache.enabled flag
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Cache settings (JSON) editor, set cache.enabled to true and click Save. The task will finish automatically when done.
+  ui_copy: Turn cache.enabled on in the Cache settings JSON and save.
+  setup_description: |-
+    Page shows a centered Mantine Card titled “Cache settings (JSON)”.
+    The JSON editor starts in Tree mode. Boolean values can be edited via an inline true/false control.
+    A Save button is shown under the editor.
+    Initial JSON value:
+    {
+      "cache": {"enabled": false, "ttlSeconds": 60},
+      "strategy": "memory"
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A single boolean toggle in a clearly labeled, single-instance editor.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.cache.enabled` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.cache.enabled
+        value: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing ttlSeconds or strategy instead of cache.enabled.
+  - Leaving cache.enabled false.
+  - Correct toggle but Save not clicked.
+  - Invalid JSON in final state.
+  expected_interaction_path:
+  - Expand cache in the tree.
+  - Set enabled to true.
+  - Click Save.
+- id: json_editor-mantine-T03
+  name: Revert JSON to last saved state
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Use the Revert button to restore the View options (JSON) editor back to the last saved state. The task will finish automatically when done.
+  ui_copy: Revert the View options JSON back to the last saved state.
+  setup_description: |-
+    Page shows a centered Mantine Card titled “View options (JSON)”.
+    A single JSON editor is shown in Tree mode.
+    Below the editor are two controls: a primary “Save” button and a secondary “Revert” button.
+    The editor loads with unsaved changes already present (an inline “Unsaved changes” indicator is visible).
+    Current (dirty) JSON shown at load:
+    {
+      "layout": "list",
+      "pageSize": 50,
+      "showHints": false
+    }
+    Clicking Revert immediately restores the last saved JSON (no confirmation).
+    The last saved JSON should be:
+    {
+      "layout": "grid",
+      "pageSize": 25,
+      "showHints": true
+    }
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single revert action with immediate state change in a single editor.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - No explicit confirmation is required; live state is used.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          layout: grid
+          pageSize: 25
+          showHints: true
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Save instead of Revert and keeping the dirty JSON.
+  - Manually editing values but not restoring the exact saved defaults.
+  - Leaving invalid JSON.
+  - Reverting partially (e.g., only one field changed) instead of the full saved state.
+  expected_interaction_path:
+  - Click the Revert button under the JSON editor.
+  - Verify the JSON updates to the last saved values.
+  notes: Revert should set the editor’s committed JSON state to the saved snapshot; checker compares against that snapshot.
+- id: json_editor-mantine-T04
+  name: Replace limits JSON in a modal (Code mode)
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    Open the Limits (JSON) editor modal, switch to Code mode if needed, and replace the JSON with:
+    {
+      "limits": {"maxItems": 100, "maxSizeMb": 10}
+    }
+    Then click Save. The task will finish automatically when done.
+  ui_copy: In the modal JSON editor, replace the JSON with limits.maxItems=100 and limits.maxSizeMb=10, then save.
+  setup_description: |-
+    Page shows a Mantine Card titled “Upload limits”. It contains a button labeled “Edit limits (JSON)…”.
+    Clicking the button opens a Mantine Modal titled “Limits (JSON)”.
+    Inside the modal is the JSON editor with a mode control (Tree/Code). It starts in Code mode for this task.
+    The modal footer contains “Save” and “Cancel” buttons. Save is disabled if JSON is invalid.
+    Initial JSON in the modal:
+    {
+      "limits": {"maxItems": 50, "maxSizeMb": 5},
+      "enforce": true
+    }
+    You must replace it with the provided JSON (only the limits object; no extra keys like enforce).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires working in a modal and replacing the JSON content precisely in Code mode before saving.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          limits:
+            maxItems: 100
+            maxSizeMb: 10
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving extra keys (e.g., enforce) in the final JSON.
+  - Setting maxItems/maxSizeMb to different values.
+  - Valid JSON but not matching the target structure.
+  - Not clicking Save (closing with Cancel).
+  - Saving invalid JSON (should be prevented by disabled Save).
+  expected_interaction_path:
+  - Click “Edit limits (JSON)…”.
+  - In Code mode, replace the JSON with the target snippet.
+  - Click Save in the modal.
+  notes: For equality, ignore whitespace; enforce that only the limits object is present (no additional keys).
+- id: json_editor-mantine-T05
+  name: Set preferences.locale in User overrides (two editors)
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the User overrides (JSON) editor, set preferences.locale to "fr-CA" and click Save for that editor. The task will finish automatically when done.
+  ui_copy: Update preferences.locale to fr-CA in the User overrides JSON editor and save.
+  setup_description: |-
+    Page shows a centered Mantine Card titled “User preferences”.
+    Inside the card are TWO JSON editor instances:
+    1) “Default preferences (JSON)”
+    2) “User overrides (JSON)”
+    Each editor starts in Tree mode and has its own Save button below it.
+    Initial JSON in Default preferences:
+    {
+      "preferences": {"locale": "en-US", "timezone": "UTC"}
+    }
+    Initial JSON in User overrides:
+    {
+      "preferences": {"locale": "en-US", "timezone": "America/New_York"}
+    }
+    You must edit only the User overrides editor.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Nested-path string edit combined with disambiguation between two similar JSON editor instances.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.preferences.locale` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - The correct labeled instance is the one that must satisfy the predicate.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.preferences.locale
+        value: fr-CA
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: User overrides (JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing locale in the Default preferences (JSON) editor instead of User overrides (JSON).
+  - Changing timezone instead of locale.
+  - Setting locale to "fr" or "fr_CA" instead of "fr-CA".
+  - Correct edit but clicking Save on the wrong editor or not clicking Save.
+  - Leaving invalid JSON in User overrides.
+  expected_interaction_path:
+  - Locate the “User overrides (JSON)” editor.
+  - Expand preferences and edit locale to fr-CA.
+  - Click Save under the User overrides editor.
+  notes: Checker must verify the correct instance label and committed state after the instance’s Save.
+- id: json_editor-mantine-T06
+  name: Match formatting options to a visual reference
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the editable JSON match the Reference JSON shown on the page, then click Save. The task will finish automatically when done.
+  ui_copy: Match the JSON editor to the Reference JSON and save.
+  setup_description: |-
+    Page shows a centered Mantine Card titled “Formatter options (JSON)”.
+    The card is split into two areas:
+    - Left: one editable JSON editor (starts in Tree mode) with a Save button underneath.
+    - Right: a read-only card labeled “Reference JSON” showing the desired final JSON as formatted text.
+    Initial editable JSON:
+    {
+      "format": {"pretty": false, "indent": 4},
+      "sortKeys": false
+    }
+    Reference JSON shown on the right:
+    {
+      "format": {"pretty": true, "indent": 2},
+      "sortKeys": true
+    }
+    Only the editable JSON editor is checked; the reference card is for visual guidance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires coordinating multiple edits across nested and top-level fields to match a reference, with an explicit Save step.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          format:
+            pretty: true
+            indent: 2
+          sortKeys: true
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing only one of the required fields (e.g., pretty=true but indent still 4).
+  - Setting indent to 2 as a string ("2") instead of a number (2).
+  - Correct JSON but Save not clicked.
+  - Adding extra keys beyond format and sortKeys.
+  - Invalid JSON after edits.
+  expected_interaction_path:
+  - Compare editable JSON with the Reference JSON card.
+  - Set format.pretty to true, format.indent to 2, and sortKeys to true.
+  - Click Save.
+  notes: Object key ordering should not affect equality; numeric types should be preserved.
+- id: json_editor-mantine-T07
+  name: Reorder columns array in dark theme
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Table config (JSON) editor, reorder columns to ["id", "email", "createdAt"], then click Save. The task will finish automatically when done.
+  ui_copy: Drag to reorder columns to id, email, createdAt and save.
+  setup_description: |-
+    Page uses a dark theme and shows a centered Mantine Card titled “Table config (JSON)”.
+    A single JSON editor starts in Tree mode.
+    The JSON includes an array field columns. Each item row in the array shows a drag handle used to reorder items.
+    A Save button below the editor commits changes.
+    Initial JSON value:
+    {
+      "columns": ["email", "id", "createdAt"],
+      "pageSize": 25
+    }
+    Only the order of columns matters; pageSize is a distractor.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Order-sensitive drag reordering within the JSON editor, under dark theme styling and requiring a Save confirmation.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.columns` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.columns
+        value:
+        - id
+        - email
+        - createdAt
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending with any other ordering (e.g., email first).
+  - Accidentally removing or duplicating a column entry while dragging.
+  - Editing pageSize instead of columns.
+  - Reordering correctly but not clicking Save.
+  - Invalid JSON state after edits.
+  expected_interaction_path:
+  - Locate columns array.
+  - Drag items until the order is id, email, createdAt.
+  - Click Save.
+  notes: Checker should enforce order-sensitive comparison for the columns array.
+- id: json_editor-mantine-T08
+  name: Scroll to find experimental.searchV2 in compact mode
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Features (JSON) editor, set features.experimental.searchV2 to true and click Save. The task will finish automatically when done.
+  ui_copy: Enable features.experimental.searchV2 in the Features JSON and save.
+  setup_description: |-
+    The JSON editor card is anchored near the top-left of the viewport.
+    The page uses compact spacing (reduced padding and tighter rows) for the editor area.
+    A Mantine Card titled “Features (JSON)” contains a single JSON editor starting in Tree mode.
+    The JSON document is long and requires scrolling inside the editor to reach lower sections.
+    The nested object features.experimental appears far down the tree.
+    A Save button is located below the editor.
+    The JSON includes (among other sections):
+    {
+      ...
+      "features": {
+        "experimental": {
+          "searchV2": false,
+          "checkoutV3": false
+        }
+      }
+      ...
+    }
+    Only features.experimental.searchV2 must be changed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires scrolling within a dense, compact JSON tree to locate a deeply nested boolean and then saving.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.features.experimental.searchV2` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.features.experimental.searchV2
+        value: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting checkoutV3 instead of searchV2.
+  - Leaving searchV2 false or unchanged.
+  - Correct edit but not clicking Save.
+  - Breaking JSON validity (e.g., in Code mode).
+  expected_interaction_path:
+  - Scroll within the editor until features.experimental is visible.
+  - Set searchV2 to true.
+  - Click Save.
+  notes: Even if the editor has a search box, the task is intended to test scrolling/locating within a long document.
+- id: json_editor-mantine-T09
+  name: Add Slack integration object in a dashboard scene
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Integrations (JSON) editor, add integrations.slack with enabled=true and channel="#alerts", then click Save. The task will finish automatically when done.
+  ui_copy: Add integrations.slack (enabled + channel) to the Integrations JSON and save.
+  setup_description: |-
+    Page uses a dashboard layout with multiple Mantine Cards (stats, recent events, and logs) as distractors.
+    One card in the dashboard is titled “Integrations (JSON)”. This card contains the only JSON editor relevant to the task.
+    The JSON editor starts in Tree mode and includes a search field in its toolbar (placeholder “Search…”).
+    Below the editor is a Save button.
+    Initial JSON value:
+    {
+      "integrations": {
+        "email": {"enabled": true, "address": "alerts@example.com"},
+        "pagerduty": {"enabled": false}
+      }
+    }
+    You must add a new object integrations.slack with fields enabled=true and channel="#alerts".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires adding a new nested object with multiple fields in a cluttered dashboard scene, ideally using search to locate the correct insertion point.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at path `$.integrations.slack` equals the target value.
+    - The JSON document is valid and parseable.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.integrations.slack
+        value:
+          enabled: true
+          channel: '#alerts'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding slack at the top level instead of under integrations.
+  - Adding only enabled without channel (or vice versa).
+  - 'Using channel "alerts" without the leading #.'
+  - Editing existing integrations (email/pagerduty) instead of adding slack.
+  - Correct object added but Save not clicked.
+  - Leaving invalid JSON.
+  expected_interaction_path:
+  - Locate the “Integrations (JSON)” card in the dashboard.
+  - Use the editor search to jump to integrations.
+  - Add a new child key slack under integrations and set its fields enabled=true and channel="#alerts".
+  - Click Save.
+  notes: Checker should parse JSON and compare the slack object as a nested structure (key order inside slack can be ignored).
+- id: json_editor-mantine-T10
+  name: Replace advanced JSON, save, and confirm
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor
+  implementation_component: 'Mantine: Card + SegmentedControl/Tabs + Buttons + (external) JSONEditor (josdejong/jsoneditor)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    Open the Advanced config (JSON) modal. In Code mode, replace the JSON with:
+    {
+      "mode": "strict",
+      "sampling": {"sampleRate": 0.5},
+      "tags": ["prod"]
+    }
+    Click Save, then confirm the dialog to apply the change. The task will finish automatically when done.
+  ui_copy: In the Advanced config modal, replace the JSON with the provided target and confirm to apply.
+  setup_description: |-
+    Page shows a Mantine settings card titled “Runtime config”. A button labeled “Edit advanced config (JSON)…“ opens a Mantine Modal.
+    The modal title is “Advanced config (JSON)”. The modal contains:
+    - Left: JSON editor with Tree/Code mode selector (starts in Code mode).
+    - Right: a read-only panel titled “Target JSON” showing the same target snippet (visual reference).
+    Modal footer has a “Save” button and a “Cancel” button.
+    When Save is clicked, a confirmation dialog appears (Mantine confirm modal) with buttons “Confirm” and “Cancel”. The JSON is not committed until “Confirm” is clicked.
+    Initial JSON in the editor is:
+    {
+      "mode": "lenient",
+      "sampling": {"sampleRate": 0.1},
+      "tags": []
+    }
+    You must replace it with the target JSON and complete the confirm step.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires a full JSON replacement in an overlay plus an additional confirmation dialog before the change is committed.
+  success_trigger:
+    human_readable:
+    - The committed JSON document equals the target JSON after canonical parsing (whitespace-insensitive).
+    - Object key order is ignore; array order is respect.
+    - The change is committed via the required confirmation control.
+    - Instance disambiguation is not required (only one target instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          mode: strict
+          sampling:
+            sampleRate: 0.5
+          tags:
+          - prod
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Save but cancelling the confirmation dialog (no commit).
+  - Closing the modal with Cancel.
+  - Committing JSON that is valid but does not match the target (wrong mode/sampleRate/tags).
+  - Leaving extra keys beyond mode, sampling, and tags.
+  - Confirming while the editor content is invalid JSON.
+  expected_interaction_path:
+  - Click “Edit advanced config (JSON)…“ to open the modal.
+  - In Code mode, replace the JSON with the target snippet.
+  - Click Save.
+  - In the confirmation dialog, click Confirm.
+  notes: Checker should verify the committed JSON after the confirm step; it should not pass if the user only clicks Save without Confirm.

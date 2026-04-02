@@ -1,0 +1,2019 @@
+- id: file_upload_button-antd-T01
+  name: Upload a resume PDF (single file)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (default button)
+  implementation_component: 'AntD: Upload'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file "resume.pdf" using the Resume uploader. The task will finish automatically when done.
+  ui_copy: 'Resume uploader: Upload "resume.pdf".'
+  setup_description: 'The page shows a single isolated card titled "Job application – Resume" centered in the viewport. Inside
+    the card there is one Ant Design Upload component rendered as a prominent primary button labeled "Select file" with a
+    small hint text "PDF only" under it. The Upload uses the default (text) listType and shows the upload list below the button
+    once a file is chosen. The component is configured for a single file (multiple=false) and auto-uploads immediately to
+    a mocked endpoint; progress briefly shows as "uploading" then becomes "done". No other interactive elements are present
+    (no extra form fields, no extra uploaders). Initial state: the upload list is empty and no errors are shown.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single, clearly labeled uploader with immediate feedback in the visible file list; only one file is required.
+  success_trigger:
+    human_readable:
+    - The Resume uploader's file list contains exactly one file named "resume.pdf".
+    - The file's upload status is "done" (not "uploading" or "error").
+    - No other file is present in the uploader.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - resume.pdf
+        count: 1
+        status:
+          resume.pdf: done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different file is uploaded (wrong filename).
+  - More than one file is present in the upload list.
+  - '"resume.pdf" is present but still in an "uploading"/"error" state.'
+  - The file is uploaded in some other (non-target) uploader (there is only one on this page, but guard against accidental
+    global matching).
+  expected_interaction_path:
+  - Click the "Select file" upload button
+  - Choose "resume.pdf" in the file picker
+  - Wait until the upload list shows "resume.pdf" with status done
+  notes: 'Checker hint: read AntD Upload fileList and status from the component instance data-testid="uploader-resume".'
+- id: file_upload_button-antd-T02
+  name: Upload profile photo to picture-card uploader (mixed guidance)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (picture-card, maxCount=1)
+  implementation_component: 'AntD: Upload (listType="picture-card")'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file "profile_photo.png" using the Profile photo uploader. The task will finish automatically
+    when done.
+  ui_copy: 'Profile photo: Upload "profile_photo.png" (PNG/JPG).'
+  setup_description: 'A centered isolated card titled "Account – Profile photo" contains an Ant Design Upload configured as
+    a picture-card (thumbnail grid). The uploader shows a single empty picture-card slot with a plus icon and the text "Upload";
+    maxCount is 1 so only one image can be stored. Accepted types are limited to PNG/JPEG, and the helper text below the component
+    says "Images only". To the right of the uploader, a non-interactive Reference panel shows the expected image thumbnail
+    and the filename text "profile_photo.png" (this provides mixed text+visual guidance). After selection, the chosen image
+    appears as a thumbnail tile inside the Upload component with small overlay icons for preview and remove. Initial state:
+    no file is selected, and the upload list grid is empty.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Still a single uploader with clear label; picture-card icons are slightly smaller, but the target file
+      is explicitly named and visually referenced.
+  success_trigger:
+    human_readable:
+    - The Profile photo uploader contains exactly one file named "profile_photo.png".
+    - The thumbnail tile is present and the file status is "done".
+    - No second image is present (maxCount=1).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - profile_photo.png
+        count: 1
+        status:
+          profile_photo.png: done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading a different image file (wrong filename).
+  - The file appears but is in an "error" state (e.g., rejected type).
+  - More than one file is present (should be impossible with maxCount=1, but do not count success if it occurs).
+  - Only opening the preview without actually selecting/uploading the file.
+  expected_interaction_path:
+  - Click the picture-card "Upload" tile
+  - Choose "profile_photo.png" in the file picker
+  - Wait for the thumbnail tile to show as uploaded (done)
+  notes: 'Checker hint: use data-testid="uploader-profile-photo" and read Upload fileList names + status.'
+- id: file_upload_button-antd-T03
+  name: Remove an already uploaded file (no confirmation)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (default list with remove icon)
+  implementation_component: 'AntD: Upload'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: Remove the file "draft_cover_letter.docx" from the Attachment uploader so that no files remain. The task
+    will finish automatically when done.
+  ui_copy: 'Attachment uploader: remove "draft_cover_letter.docx".'
+  setup_description: The page contains one centered isolated card titled "Attachments" with a single Ant Design Upload component
+    in the default (text) list style. The upload list is visible on page load and already contains one completed item named
+    "draft_cover_letter.docx" with status "done". Each list item has a small remove (×) icon on the right. There is no confirmation
+    dialog for removal; clicking the remove icon immediately removes the item from the list. No other uploaders or controls
+    are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single file to remove with a direct remove affordance and immediate visible state change.
+  success_trigger:
+    human_readable:
+    - The Attachment uploader's file list is empty (0 files).
+    - No hidden/stale file remains selected in the underlying input.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files: []
+        count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The file remains in the list (removal not completed).
+  - A different file is removed/affected (not applicable here since only one file exists, but guard against global matching).
+  - The file is marked as removed but still present in the list UI.
+  - Removal is attempted but canceled (there is no confirm in this task).
+  expected_interaction_path:
+  - Locate "draft_cover_letter.docx" in the upload list
+  - Click the remove (×) icon on that list item
+  - Verify the list becomes empty
+  notes: 'Checker hint: treat success as fileList.length==0 for data-testid="uploader-attachment".'
+- id: file_upload_button-antd-T04
+  name: Upload to the correct uploader when two are present
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (two instances)
+  implementation_component: 'AntD: Upload'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file "resume.pdf" using the uploader labeled "Resume" (not the "Profile photo" uploader). The
+    task will finish automatically when done.
+  ui_copy: 'Two uploaders: Profile photo and Resume. Upload "resume.pdf" to Resume.'
+  setup_description: A single isolated card titled "Candidate profile" is centered on the page. Inside the card there are
+    two clearly separated Ant Design Upload components of the same canonical type. The first section is labeled "Profile photo"
+    and uses a picture-card style with image-only accept rules (PNG/JPG) and maxCount=1; it starts empty. The second section
+    is labeled "Resume" and uses the default text list style and accepts PDF; it also starts empty. Both sections have their
+    own "Select file" button and their own independent upload list area directly below. No other controls are on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Requires choosing the correct instance among two labeled uploaders, but labels are clear and the target
+      file is explicit.
+  success_trigger:
+    human_readable:
+    - The uploader labeled "Resume" contains exactly one file named "resume.pdf" with status "done".
+    - The uploader labeled "Profile photo" remains empty (0 files).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Resume
+        files:
+        - resume.pdf
+        count: 1
+        status:
+          resume.pdf: done
+        other_instances_unchanged:
+          Profile photo:
+            count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Resume
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - '"resume.pdf" is uploaded to the Profile photo uploader (wrong instance).'
+  - The Resume uploader contains a different file or multiple files.
+  - '"resume.pdf" is present but still uploading or in error.'
+  - Both uploaders are modified (e.g., a file is also added to Profile photo).
+  expected_interaction_path:
+  - Locate the section labeled "Resume"
+  - Click its "Select file" button
+  - Choose "resume.pdf" in the file picker
+  - Wait until the Resume list shows status done
+  notes: 'Instrumentation: assign data-testid="uploader-profile-photo" and data-testid="uploader-resume"; checker must bind
+    to the Resume instance.'
+- id: file_upload_button-antd-T05
+  name: Confirm removal in Popconfirm (dark form section)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload + Popconfirm on remove
+  implementation_component: 'AntD: Upload + Popconfirm'
+  task_template: confirm_cancel
+  secondary_template: file_manage
+  browsergym_goal: In the uploader labeled "Receipts", remove the file "invoice_2025-11.pdf" and confirm the removal by clicking
+    "Remove" in the confirmation pop-up. The task will finish automatically when done.
+  ui_copy: 'Receipts uploader: remove "invoice_2025-11.pdf" and confirm "Remove".'
+  setup_description: 'The page is a small "Expense report" form section in dark theme. Several non-required inputs (Amount,
+    Category, Notes) appear above, and the target uploader appears below under a label "Receipts". The Ant Design Upload component
+    uses the default text list, and it loads with one existing completed file: "invoice_2025-11.pdf" (status done). Clicking
+    the remove (×) icon does not immediately remove the file; instead it opens an Ant Design Popconfirm anchored near the
+    list item. The pop-up contains the message "Remove this file?" and two buttons: "Cancel" and "Remove". Only after clicking
+    "Remove" is the file actually removed from the upload list.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires hitting a small remove icon and then correctly interacting with a confirmation pop-up in a slightly
+      cluttered form context.
+  success_trigger:
+    human_readable:
+    - In the "Receipts" uploader, the file list becomes empty (0 files).
+    - The confirmation pop-up has been accepted via the "Remove" button (not canceled).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Receipts
+        files: []
+        count: 0
+        confirmation:
+          type: popconfirm
+          accepted: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Remove
+      require_correct_instance: true
+      target_instance_label_or_id: Receipts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking remove but then pressing "Cancel" (file remains).
+  - The file is still present after closing the pop-up.
+  - Removing a different file (if additional files are uploaded).
+  - Removing the file from another uploader (there is only one uploader in this task, but enforce instance binding to "Receipts").
+  expected_interaction_path:
+  - Find "invoice_2025-11.pdf" in the Receipts list
+  - Click its remove (×) icon
+  - In the popconfirm, click "Remove"
+  - Verify the list is empty
+  notes: 'Checker hint: instrument popconfirm result (accepted/canceled) or assert list empty after a confirm click. data-testid="uploader-receipts".'
+- id: file_upload_button-antd-T06
+  name: Upload the file that matches a reference card (visual guidance)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (default) + reference panel
+  implementation_component: 'AntD: Upload'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Upload the same file that is shown in the Reference card using the uploader labeled "Attachment". The task
+    will finish automatically when done.
+  ui_copy: 'Attachment uploader: upload the file shown in the Reference card.'
+  setup_description: The main content is anchored near the top-left of the viewport (not centered). An isolated card titled
+    "Attach a file" contains the target Ant Design Upload component labeled "Attachment" with a "Select file" button and an
+    empty upload list. Next to the uploader, a non-interactive Reference card shows the target file (a file icon plus the
+    filename text). The Reference card is the only place where the target filename is provided; the instruction intentionally
+    refers to the reference instead of naming the file. The Upload component is single-file (multiple=false) and auto-uploads;
+    after selection, the file appears in the list with status done.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires extracting the target filename from an on-screen reference and then completing a standard upload
+      with visible list feedback.
+  success_trigger:
+    human_readable:
+    - The "Attachment" uploader contains exactly one uploaded file.
+    - The uploaded file's name matches the filename displayed in the Reference card.
+    - The uploaded file's status is "done".
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance: Attachment
+        reference_slot: Reference card
+        match_field: file_name
+        count: 1
+        status: done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachment
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading any file that does not match the Reference card filename.
+  - Uploading more than one file.
+  - Uploading the correct file but leaving it in "uploading" or "error" state.
+  - Uploading into the wrong component instance (should only bind to the uploader labeled "Attachment").
+  expected_interaction_path:
+  - Read the filename shown in the Reference card
+  - Click "Select file" in the Attachment uploader
+  - Choose that file in the file picker
+  - Wait until the list shows status done
+  notes: 'Checker hint: store reference filename in data-testid="reference-file-name" and compare to Upload fileList[0].name
+    for data-testid="uploader-attachment".'
+- id: file_upload_button-antd-T07
+  name: Drag-and-drop upload with Upload.Dragger (compact spacing)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload.Dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: drag_operation
+  secondary_template: file_upload
+  browsergym_goal: Drag and drop the file "diagram.svg" into the drag-and-drop uploader. The task will finish automatically
+    when done.
+  ui_copy: 'Drag-and-drop uploader: add "diagram.svg" by dragging it into the drop area.'
+  setup_description: A centered isolated card titled "Upload asset" contains an Ant Design Upload.Dragger component (large
+    dashed drop area). The page is in compact spacing mode, so padding around the drop area and surrounding text is reduced.
+    Inside the drop area, the helper text reads "Click or drag file to this area to upload" and there is no separate button.
+    A small, non-interactive "Test files" note below the card lists available files including "diagram.svg". On drop, the
+    file is added to a file list rendered below the drop area and quickly transitions to status done.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires performing a drag-and-drop interaction on a large target area; compact spacing slightly increases
+      interaction tightness.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop uploader contains exactly one file named "diagram.svg".
+    - The file's status is "done".
+    - The file was provided via a drop interaction (drop event observed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - diagram.svg
+        count: 1
+        status:
+          diagram.svg: done
+        interaction_method: drop
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The file list remains empty (drop not completed).
+  - A different file is uploaded.
+  - '"diagram.svg" is present but in "uploading" or "error" state.'
+  - The file was added via click-to-select instead of drop (if the task run enforces drop-only).
+  expected_interaction_path:
+  - Drag the file "diagram.svg" onto the dashed drop area
+  - Release to drop
+  - Wait until the file appears in the list with status done
+  notes: 'Checker hint: instrument Upload onDrop handler to set data-last-input="drop" for this component; validate it alongside
+    fileList.'
+- id: file_upload_button-antd-T08
+  name: Manual upload with Start upload in a settings panel (3 instances)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (beforeUpload=false manual start)
+  implementation_component: 'AntD: Upload + Button("Start upload")'
+  task_template: file_upload
+  secondary_template: confirm_cancel
+  browsergym_goal: In the settings panel, upload the file "report_final.pdf" using the uploader labeled "Resume (PDF)" and
+    then click "Start upload" for that uploader. The task will finish automatically when done.
+  ui_copy: 'Resume (PDF): add "report_final.pdf" and click Start upload.'
+  setup_description: 'The page uses a settings-panel layout titled "Profile settings" with multiple subsections and medium
+    clutter (toggles and text inputs are visible but irrelevant). In the "Documents" subsection there are three Ant Design
+    Upload instances stacked vertically with headings: "Profile photo", "Resume (PDF)", and "Cover letter". "Profile photo"
+    is a picture-card uploader and already contains one image file (pre-filled) to act as a distractor. "Resume (PDF)" is
+    the target uploader and starts empty; it is configured for manual upload: selecting a file adds it to the list in a "ready"
+    state and does not upload automatically. Directly below the Resume uploader''s file list is a small primary button labeled
+    "Start upload" that must be clicked to complete the upload. "Cover letter" is another text-style uploader with an existing
+    file in its list. Only the Resume uploader''s file list determines success for this task.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Multiple similar uploaders require correct disambiguation, and the manual two-step flow (select → Start
+      upload) increases layering and feedback complexity.
+  success_trigger:
+    human_readable:
+    - The uploader labeled "Resume (PDF)" contains exactly one file named "report_final.pdf".
+    - '"report_final.pdf" has completed uploading (status "done"), which only happens after clicking "Start upload".'
+    - Other uploader instances are not modified (their existing files remain unchanged).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Resume (PDF)
+        files:
+        - report_final.pdf
+        count: 1
+        status:
+          report_final.pdf: done
+        confirm_flow:
+          confirm_control: Start upload
+          activated: true
+        other_instances_unchanged:
+          Profile photo:
+            count: 1
+          Cover letter:
+            count: 1
+      tolerance: null
+      require_confirm: true
+      confirm_control: Start upload
+      require_correct_instance: true
+      target_instance_label_or_id: Resume (PDF)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - '"report_final.pdf" is selected but remains in a pre-upload/ready state (Start upload not clicked).'
+  - Uploading the file into "Profile photo" or "Cover letter" instead of "Resume (PDF)".
+  - Uploading the wrong file, or uploading multiple files to the Resume uploader.
+  - Modifying other uploader instances (e.g., removing their existing files).
+  expected_interaction_path:
+  - Locate the "Resume (PDF)" uploader in the Documents section
+  - Click its "Select file" button and choose "report_final.pdf"
+  - Click the Resume uploader's "Start upload" button
+  - Wait until the list shows status done
+  notes: 'Checker hint: store per-instance data-testid (uploader-profile-photo, uploader-resume, uploader-cover-letter) and
+    instrument Start upload click per instance.'
+- id: file_upload_button-antd-T09
+  name: Replace an existing logo image (dark theme, 2 instances)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (maxCount=1 replace)
+  implementation_component: 'AntD: Upload (maxCount=1, picture-card)'
+  task_template: file_manage
+  secondary_template: file_upload
+  browsergym_goal: In the uploader labeled "Company logo", replace the current file "logo_old.png" with "logo_new.png" so
+    that only "logo_new.png" remains. The task will finish automatically when done.
+  ui_copy: 'Company logo: replace logo_old.png with logo_new.png.'
+  setup_description: 'A dark-themed centered card titled "Brand assets" contains two Ant Design Upload components side-by-side.
+    Left: "Company logo" uses picture-card thumbnails with maxCount=1 and already has one uploaded image tile labeled "logo_old.png".
+    Right: "Team photo" is another picture-card uploader that starts empty and is a distractor. In the Company logo tile,
+    small overlay icons for preview and remove appear on hover. Selecting a new file while maxCount=1 is set replaces the
+    existing file; alternatively, the user may remove the old file and then upload the new one.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires correctly targeting the "Company logo" instance and ensuring the final list contains only the
+      new file, with small picture-card affordances in dark theme.
+  success_trigger:
+    human_readable:
+    - The uploader labeled "Company logo" contains exactly one file named "logo_new.png" with status "done".
+    - '"logo_old.png" is not present in the Company logo uploader.'
+    - The uploader labeled "Team photo" remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Company logo
+        files:
+        - logo_new.png
+        count: 1
+        status:
+          logo_new.png: done
+        not_present:
+        - logo_old.png
+        other_instances_unchanged:
+          Team photo:
+            count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Company logo
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Both files are present (logo_old.png not removed).
+  - The wrong file is uploaded (not logo_new.png).
+  - The file is uploaded to the Team photo uploader (wrong instance).
+  - '"logo_new.png" is present but failed or still uploading.'
+  expected_interaction_path:
+  - Locate the "Company logo" uploader
+  - Either upload "logo_new.png" directly to replace, or remove "logo_old.png" then upload "logo_new.png"
+  - Verify only logo_new.png remains and is done
+  notes: 'Checker hint: enforce instance scoping via data-testid="uploader-company-logo"; validate that fileList names exactly
+    match.'
+- id: file_upload_button-antd-T10
+  name: Clear all uploaded files from a long list (dashboard)
+  canonical_type: file_upload_button
+  implementation_source: antd
+  implementation_variant: Upload (multiple) + Clear all action
+  implementation_component: 'AntD: Upload (multiple=true) + custom Clear all control'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: Clear all files from the uploader labeled "Attachments" and confirm the clear action if prompted. The task
+    will finish automatically when done.
+  ui_copy: 'Attachments uploader: clear all files (confirm if asked).'
+  setup_description: 'The page is a dashboard layout with high clutter: a left navigation menu, a top header, and several
+    statistic cards. In the main area, a card titled "Attachments" contains the target Ant Design Upload component in the
+    default text-list style with multiple files enabled. On load, the upload list already contains a long set of files (about
+    8–12 items) and the list area is vertically scrollable within the card. Above the list there is a small text link/button
+    labeled "Clear all" (part of the uploader''s header controls). Clicking "Clear all" opens a confirmation pop-up asking
+    to confirm clearing all files, with buttons "Cancel" and "Clear". After confirming, the list should become empty.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: A long, scrollable file list in a cluttered dashboard plus a confirmation step increases target acquisition
+      and recovery complexity.
+  success_trigger:
+    human_readable:
+    - The "Attachments" uploader shows 0 files in its file list (completely cleared).
+    - If a confirmation pop-up appears, it has been accepted (not canceled).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Attachments
+        files: []
+        count: 0
+        confirmation:
+          type: popconfirm
+          accepted: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Clear
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Some files remain in the list after the action (partial clear).
+  - The clear action is canceled in the confirmation dialog.
+  - Files are removed one-by-one but at least one remains (still not success).
+  - Clearing happens in a different uploader (guard against accidental matching if the page template is reused).
+  expected_interaction_path:
+  - Locate the "Attachments" uploader card within the dashboard
+  - Click the "Clear all" control
+  - If prompted, click "Clear" to confirm
+  - Verify the upload list becomes empty
+  notes: 'Checker hint: assert fileList length==0 for data-testid="uploader-attachments"; optionally assert a confirm click
+    event was recorded.'
+- id: file_upload_button-mui-T11
+  name: Upload a resume PDF with MUI Button-as-label
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: Button(label)+hidden input'
+  implementation_component: 'MUI: Button (component="label") + visually hidden <input type="file">'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file "resume.pdf" using the button labeled "Upload resume". The task will finish automatically
+    when done.
+  ui_copy: 'Upload resume: choose "resume.pdf".'
+  setup_description: 'A centered isolated card titled "Resume upload" contains a single MUI contained Button labeled "Upload
+    resume". The button is implemented as a label (component="label") wrapping a visually hidden <input type="file"> (standard
+    MUI file upload pattern). The input accepts a single PDF file (accept="application/pdf") and does not allow multiple selection.
+    After a file is selected, the chosen filename is displayed directly below the button in a one-line helper text (Typography)
+    that reads "Selected: <filename>". There are no other interactive elements on the page; initial state shows "Selected:
+    none".'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single large button with immediate visible filename feedback; straightforward single-file selection.
+  success_trigger:
+    human_readable:
+    - The hidden file input associated with "Upload resume" contains exactly one file named "resume.pdf".
+    - 'The on-page helper text reflects "Selected: resume.pdf".'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - resume.pdf
+        count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different file is selected.
+  - 'No file is selected (still "Selected: none").'
+  - Multiple files are selected (should be disallowed).
+  - The filename text updates but the underlying input has no file (stale UI).
+  expected_interaction_path:
+  - Click the "Upload resume" button
+  - Choose "resume.pdf" in the file picker
+  - Verify the helper text shows the selected filename
+  notes: 'Checker hint: query the input[type=file] linked to data-testid="uploader-resume" and validate input.files[0].name.'
+- id: file_upload_button-mui-T12
+  name: Upload a profile picture via small IconButton (corner placement)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: IconButton(label)+hidden input'
+  implementation_component: 'MUI: IconButton + visually hidden <input type="file">'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the image file "profile_photo.png" using the control labeled "Change photo". The task will finish
+    automatically when done.
+  ui_copy: 'Change photo: upload "profile_photo.png".'
+  setup_description: The upload UI is anchored near the bottom-left of the viewport. A small card titled "Profile picture"
+    shows a placeholder avatar and a compact MUI IconButton (camera icon) labeled with aria-label "Change photo". The IconButton
+    is implemented as a label wrapping a hidden input[type=file] that accepts images (PNG/JPG). When a file is chosen, the
+    avatar preview updates and a caption below the avatar shows the selected filename. No other uploaders are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Small IconButton target increases acquisition difficulty, but only one uploader and a single explicit file
+      are required.
+  success_trigger:
+    human_readable:
+    - The "Change photo" file input contains exactly one file named "profile_photo.png".
+    - The preview caption (or avatar alt text) indicates the selected file is profile_photo.png.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - profile_photo.png
+        count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different image file is selected.
+  - No file is selected.
+  - The avatar preview changes but the underlying input file is not profile_photo.png.
+  - Selecting a non-image file that is rejected.
+  expected_interaction_path:
+  - Click the small camera IconButton labeled "Change photo"
+  - Choose "profile_photo.png" in the file picker
+  - Verify the caption/preview reflects the selected file
+  notes: 'Instrumentation: ensure IconButton has aria-label="Change photo" and its associated input has data-testid="uploader-profile-photo".'
+- id: file_upload_button-mui-T13
+  name: Clear a selected file using Chip delete (reset)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: Button+file chip list'
+  implementation_component: 'MUI: Button(label)+hidden input + Chip'
+  task_template: clear_reset
+  secondary_template: file_manage
+  browsergym_goal: Clear the current selection in the uploader labeled "Attachment" so that no file is selected. The task
+    will finish automatically when done.
+  ui_copy: 'Attachment: clear the selected file (currently notes.txt).'
+  setup_description: A centered isolated card titled "Attachment" contains a MUI Button labeled "Choose file" (Button-as-label
+    with hidden input[type=file]). Below the button, the currently selected file is displayed as a MUI Chip reading "notes.txt"
+    with a small delete (×) icon on the right. The page loads with notes.txt already selected (the hidden input has that file
+    in its FileList). Clicking the chip delete icon clears the selection and the UI switches back to a placeholder text "No
+    file selected".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single visible chip delete affordance clears the selection with immediate feedback and no extra steps.
+  success_trigger:
+    human_readable:
+    - The Attachment uploader has 0 selected files (input.files.length == 0).
+    - The on-page state indicates "No file selected" (chip is removed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files: []
+        count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The chip remains visible and the input still contains notes.txt.
+  - A different file remains selected instead of clearing all files.
+  - Clearing is attempted but the UI text changes without clearing the underlying input (stale value).
+  expected_interaction_path:
+  - Find the chip showing the selected file name
+  - Click the chip's delete (×) icon
+  - Verify the chip disappears and selection is empty
+  notes: 'Checker hint: validate both the rendered chip absence and the input.files length for data-testid="uploader-attachment".'
+- id: file_upload_button-mui-T14
+  name: Upload to the correct field in a form (2 instances)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: two Button-as-label uploaders'
+  implementation_component: 'MUI: Button(label)+hidden input (two instances)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: In the form, upload the file "invoice_2025-11.pdf" using the uploader labeled "Proof of address" (not "Passport
+    scan"). The task will finish automatically when done.
+  ui_copy: 'Proof of address: upload invoice_2025-11.pdf.'
+  setup_description: 'The page is a short identity verification form section (low clutter) with two upload fields placed one
+    under another. The first uploader is labeled "Passport scan" and the second is labeled "Proof of address"; both are MUI
+    Buttons implemented as labels wrapping hidden file inputs. Each field shows its own selected filename line below the button
+    (e.g., "Selected: none"). Both uploaders start empty. Other form fields (name, date of birth) are present above but are
+    irrelevant to success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Disambiguation between two similar upload controls in a form is the main challenge; feedback is clear once
+      the correct field is used.
+  success_trigger:
+    human_readable:
+    - The uploader labeled "Proof of address" has exactly one selected file named "invoice_2025-11.pdf".
+    - The uploader labeled "Passport scan" remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Proof of address
+        files:
+        - invoice_2025-11.pdf
+        count: 1
+        other_instances_unchanged:
+          Passport scan:
+            count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Proof of address
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - '"invoice_2025-11.pdf" is selected in the Passport scan uploader (wrong instance).'
+  - The Proof of address uploader has a different file or multiple files.
+  - Both uploaders are filled (should only fill Proof of address).
+  expected_interaction_path:
+  - Locate the "Proof of address" uploader section
+  - Click its "Choose file"/"Upload" button
+  - Select "invoice_2025-11.pdf"
+  - Confirm the selected filename appears under the Proof of address field
+  notes: 'Instrumentation: data-testid="uploader-passport" and data-testid="uploader-proof-address" for instance-scoped checking.'
+- id: file_upload_button-mui-T15
+  name: Confirm removal in a MUI Dialog
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: upload list + confirm dialog on remove'
+  implementation_component: 'MUI: Button(label)+hidden input + List + Dialog'
+  task_template: confirm_cancel
+  secondary_template: file_manage
+  browsergym_goal: Remove the file "data_sample.csv" from the uploader labeled "Data attachment" and confirm by clicking "Remove"
+    in the dialog. The task will finish automatically when done.
+  ui_copy: 'Data attachment: remove data_sample.csv (confirm Remove).'
+  setup_description: 'A centered isolated card titled "Data attachment" contains a MUI upload control (Button-as-label with
+    hidden input) plus a small list area that displays selected/uploaded files. On page load, the list contains exactly one
+    item: "data_sample.csv" with a trailing trash icon button labeled "Remove file". Clicking the trash icon opens a MUI Dialog
+    titled "Remove file?" with two buttons: "Cancel" and "Remove". The file is only removed from the list after clicking the
+    "Remove" button in the dialog.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Adds a modal confirmation step and small remove icon target compared to a simple upload/clear action.
+  success_trigger:
+    human_readable:
+    - The "Data attachment" uploader has 0 files remaining in its list.
+    - The removal confirmation dialog was accepted by clicking "Remove".
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Data attachment
+        files: []
+        count: 0
+        confirmation:
+          type: dialog
+          accepted: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Remove
+      require_correct_instance: true
+      target_instance_label_or_id: Data attachment
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking the trash icon but choosing "Cancel" (file remains).
+  - '"data_sample.csv" remains present after dialog closes.'
+  - Removing a different file (if multiple files are present).
+  - Dialog is opened but no button is clicked.
+  expected_interaction_path:
+  - Click the trash/remove icon on the data_sample.csv row
+  - In the dialog, click "Remove"
+  - Verify the file list is empty
+  notes: 'Checker hint: bind to data-testid="uploader-data-attachment" and confirm the dialog result (accepted) plus list
+    empty.'
+- id: file_upload_button-mui-T16
+  name: Upload a file by matching a reference (MUI)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: Button-as-label + reference card'
+  implementation_component: 'MUI: Button(label)+hidden input'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Upload the same file that is shown in the Reference card using the uploader labeled "Upload". The task
+    will finish automatically when done.
+  ui_copy: 'Upload: choose the file shown in the Reference card.'
+  setup_description: 'A centered isolated card titled "Submit supporting file" contains a single MUI Button labeled "Upload"
+    implemented as a label with a hidden file input. To the right, a Reference card displays the target file''s name and an
+    icon (the reference is non-interactive). The instruction relies on the reference (visual/mixed guidance) rather than embedding
+    the filename in the prompt. After selection, a line of text under the button shows "Selected: <filename>".'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires reading the target from the on-page reference card, then performing a standard single-file upload.
+  success_trigger:
+    human_readable:
+    - The uploader labeled "Upload" has exactly one selected file.
+    - The selected file's name matches the filename displayed in the Reference card.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance: Upload
+        reference_slot: Reference card
+        match_field: file_name
+        count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Upload
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a file that does not match the Reference card.
+  - Selecting multiple files.
+  - Only opening the file picker without selecting a file.
+  expected_interaction_path:
+  - Read the filename from the Reference card
+  - Click the "Upload" button
+  - Select that file
+  - Verify the selected filename matches
+  notes: 'Checker hint: reference filename in data-testid="reference-file-name"; compare to input.files[0].name for data-testid="uploader-upload".'
+- id: file_upload_button-mui-T17
+  name: Open the file preview dialog for an uploaded image
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: upload + preview dialog'
+  implementation_component: 'MUI: Button(label)+hidden input + Dialog (preview)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the preview dialog for the file "screenshot.webp" in the uploader card and leave it open. The task
+    will finish automatically when done.
+  ui_copy: Preview screenshot.webp (open the preview dialog).
+  setup_description: A centered isolated card titled "Screenshot" contains an upload button (MUI Button-as-label) and a single
+    pre-selected image file named "screenshot.webp". Next to the filename is a small text button labeled "Preview". Clicking
+    "Preview" opens a MUI Dialog with the title "Preview" and shows the image along with the filename. The dialog has a "Close"
+    button but the task requires leaving the preview open. No other dialogs or uploaders exist on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Adds one overlay step (opening a preview dialog) with clear UI affordance and no file selection required.
+  success_trigger:
+    human_readable:
+    - A preview dialog is open (visible) for the uploader card.
+    - The dialog content corresponds to the file named "screenshot.webp" (filename shown in the dialog).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay_open: true
+        overlay_type: dialog
+        overlay_file_name: screenshot.webp
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The preview dialog is not open.
+  - A different overlay is open or the dialog shows a different file.
+  - The dialog is opened and then closed before the terminal condition is met.
+  expected_interaction_path:
+  - Locate the row showing screenshot.webp
+  - Click the "Preview" button
+  - Ensure the dialog stays open and shows screenshot.webp
+  notes: 'Checker hint: check Dialog open state and its filename text; attach data-testid="preview-dialog" with data-file-name="screenshot.webp".'
+- id: file_upload_button-mui-T18
+  name: Upload an exact set of 3 similar-named PDFs (dark, compact, small)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: Button(label)+hidden input (multiple)'
+  implementation_component: 'MUI: Button (component="label") + visually hidden <input type="file" multiple>'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: 'Using the uploader labeled "Supporting documents", upload exactly these three files: "appendix_a.pdf",
+    "appendix_b.pdf", and "appendix_c.pdf". The task will finish automatically when done.'
+  ui_copy: 'Supporting documents: upload appendix_a.pdf, appendix_b.pdf, appendix_c.pdf.'
+  setup_description: A compact, small-scale upload card is centered on a dark-themed page. The card is titled "Supporting
+    documents" and contains a single MUI Button-as-label uploader configured with multiple=true and accept="application/pdf".
+    Below the button is a dense list of selected files where each row shows a filename and a small remove icon. The list starts
+    empty. Once files are chosen, each should appear as its own row; the component considers the task complete when the list
+    contains exactly the required three PDFs.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Selecting an exact set of multiple files with highly similar names increases precision and interference,
+      especially in compact/small dark UI.
+  success_trigger:
+    human_readable:
+    - The Supporting documents uploader contains the set of files {appendix_a.pdf, appendix_b.pdf, appendix_c.pdf} and no
+      others.
+    - All three files are present in the rendered list (one row per file).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        files:
+        - appendix_a.pdf
+        - appendix_b.pdf
+        - appendix_c.pdf
+        count: 3
+      tolerance:
+        order: any
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Supporting documents
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only a subset of the three files is uploaded.
+  - An extra file is uploaded in addition to the three required ones.
+  - A similarly named but incorrect file is uploaded (e.g., appendix_d.pdf).
+  - Files appear in UI but underlying input.files does not match exactly.
+  expected_interaction_path:
+  - Click the "Supporting documents" upload button
+  - Select appendix_a.pdf, appendix_b.pdf, and appendix_c.pdf (multi-select)
+  - Verify exactly these three files appear in the list
+  notes: 'Checker hint: compare normalized set(input.files[].name) to target set; use data-testid="uploader-supporting-docs".'
+- id: file_upload_button-mui-T19
+  name: Replace a file in a table row uploader (3 instances, table cell)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: table cell uploaders'
+  implementation_component: 'MUI: Table + Button(label)+hidden input in cells'
+  task_template: table_operation
+  secondary_template: file_manage
+  browsergym_goal: In the "Required documents" table, replace the file in the "Contract" row so that it contains "contract_signed.pdf"
+    (and not "contract_old.pdf"). The task will finish automatically when done.
+  ui_copy: 'Required documents table: Contract row should have contract_signed.pdf.'
+  setup_description: 'The page is a table-cell layout: a MUI Table titled "Required documents" is the main content and occupies
+    most of the viewport (high clutter due to many rows and columns). Each of three relevant rows (Contract, ID, W-9) contains
+    an upload control in the rightmost cell implemented as a small MUI Button-as-label with a hidden file input. The Contract
+    row is pre-filled and currently shows "contract_old.pdf" as the selected file, with a small replace/upload button next
+    to it. The other rows are either empty or have different placeholder statuses and serve as distractors. The user must
+    update only the Contract row so that the selected file becomes "contract_signed.pdf".'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Dense table layout with multiple similar per-row uploaders increases target acquisition and disambiguation;
+      replacement requires ensuring the old file is no longer selected.
+  success_trigger:
+    human_readable:
+    - In the "Contract" row uploader, the selected file is exactly "contract_signed.pdf" (count 1).
+    - '"contract_old.pdf" is not selected in the Contract row.'
+    - Other rows' uploaders are unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Contract row
+        files:
+        - contract_signed.pdf
+        count: 1
+        not_present:
+        - contract_old.pdf
+        other_instances_unchanged:
+          ID row: {}
+          W-9 row: {}
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Contract row
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading the file to a different row (ID or W-9).
+  - Both contract_old.pdf and contract_signed.pdf are present/selected.
+  - The Contract row still shows contract_old.pdf.
+  - Multiple files are selected in the Contract row.
+  expected_interaction_path:
+  - Locate the "Contract" row in the table
+  - Use its upload/replace control
+  - Select contract_signed.pdf
+  - Verify the Contract row shows contract_signed.pdf and not contract_old.pdf
+  notes: 'Checker hint: each row uploader should have a stable data-testid like uploader-contract, uploader-id, uploader-w9
+    for instance scoping.'
+- id: file_upload_button-mui-T20
+  name: Remove one specific file from a long scrollable list (bottom-right)
+  canonical_type: file_upload_button
+  implementation_source: mui
+  implementation_variant: 'composite: multi-file list with scroll'
+  implementation_component: 'MUI: Button(label)+hidden input + scrollable List'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: In the uploader labeled "Logs", remove only the file "log_2025-11-20.txt" from the list and leave all other
+    files untouched. The task will finish automatically when done.
+  ui_copy: 'Logs uploader: remove log_2025-11-20.txt only.'
+  setup_description: 'The upload UI is placed near the bottom-right of the viewport inside a dashboard widget titled "Logs"
+    (medium clutter: other widgets are visible but not relevant). The uploader supports multiple files and shows an already
+    populated scrollable MUI List of many text log files (around 12–20 items) with very similar names and dates. Each list
+    row shows a filename and a small trailing IconButton (trash icon) for removal. The list is constrained to a fixed height,
+    so scrolling is required to reach some filenames. Initial state includes a row named "log_2025-11-20.txt" somewhere in
+    the list.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires finding a specific item among many similar filenames in a scrollable list and clicking a small
+      remove icon without deleting the wrong file.
+  success_trigger:
+    human_readable:
+    - In the "Logs" uploader, the filename "log_2025-11-20.txt" is no longer present in the file list.
+    - All other initial files remain present (no additional deletions).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Logs
+        not_present:
+        - log_2025-11-20.txt
+        preserve_others: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Logs
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The target file is still present.
+  - A different log file is removed instead of the target.
+  - Multiple files are removed (only one should be removed).
+  - The list becomes empty or changes in any way beyond removing the specified file.
+  expected_interaction_path:
+  - Scroll within the Logs file list until log_2025-11-20.txt is visible
+  - Click the trash/remove icon on that row
+  - Verify only that row is gone and others remain
+  notes: 'Checker hint: capture initial file set at task start, then assert final set == initial_set - {target}. data-testid="uploader-logs".'
+- id: file_upload_button-mantine-T21
+  name: Upload a resume with Mantine FileButton
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileButton
+  implementation_component: 'Mantine: FileButton'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file "resume.pdf" using the button labeled "Upload resume". The task will finish automatically
+    when done.
+  ui_copy: 'Upload resume: choose resume.pdf.'
+  setup_description: 'A centered isolated card titled "Resume" contains a Mantine FileButton wrapping a Mantine Button labeled
+    "Upload resume". The FileButton opens the browser file picker and accepts a single PDF file. Below the button, a text
+    line reads "Picked file: <name>" once a selection is made (otherwise it is hidden). Initial state: no file picked and
+    no additional controls are present.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single FileButton with straightforward single-file selection and clear textual feedback.
+  success_trigger:
+    human_readable:
+    - The FileButton-controlled input contains exactly one file named "resume.pdf".
+    - The on-page text shows that the picked file is resume.pdf.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - resume.pdf
+        count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different file is selected.
+  - No file is selected.
+  - Multiple files are selected (should be disallowed).
+  - The UI text updates but the selected file does not match resume.pdf.
+  expected_interaction_path:
+  - Click "Upload resume"
+  - Select resume.pdf
+  - Verify the picked file text shows resume.pdf
+  notes: 'Checker hint: bind to data-testid="uploader-resume" and read the stored File object name from component state.'
+- id: file_upload_button-mantine-T22
+  name: Upload a profile photo with Mantine FileInput
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileInput
+  implementation_component: 'Mantine: FileInput'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the image file "profile_photo.png" using the input labeled "Profile photo". The task will finish
+    automatically when done.
+  ui_copy: 'Profile photo: upload profile_photo.png.'
+  setup_description: 'A centered isolated card titled "Profile photo" contains a Mantine FileInput with an explicit visible
+    label "Profile photo" and placeholder text "Select image". The FileInput is configured with accept="image/png,image/jpeg"
+    and single-file mode (multiple=false). When a file is chosen, the input displays the filename inside the input field.
+    Initial state: the input is empty (no selected file), and there is no clear button in this task.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single labeled FileInput with direct in-field filename display and no additional steps.
+  success_trigger:
+    human_readable:
+    - The FileInput labeled "Profile photo" has exactly one selected file named "profile_photo.png".
+    - The displayed value shows profile_photo.png.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Profile photo
+        files:
+        - profile_photo.png
+        count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Profile photo
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different image file is selected.
+  - No file is selected.
+  - A non-image file is selected and rejected.
+  - The file appears selected but the displayed value does not match.
+  expected_interaction_path:
+  - Click the FileInput field or its button area
+  - Select profile_photo.png
+  - Verify the filename appears in the input
+  notes: 'Checker hint: data-testid="uploader-profile-photo" should expose selected file name via state or input.files[0].name.'
+- id: file_upload_button-mantine-T23
+  name: Clear a selected file with FileInput clear button
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileInput (clearable)
+  implementation_component: 'Mantine: FileInput (clearable)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the selected file in the input labeled "Attachment" so that it becomes empty. The task will finish
+    automatically when done.
+  ui_copy: 'Attachment: clear the selected file (currently notes.txt).'
+  setup_description: 'A centered isolated card titled "Attachment" contains a Mantine FileInput with label "Attachment" and
+    the prop clearable enabled. The page loads with a file already selected: "notes.txt" is displayed as the current value
+    inside the input. Because clearable is enabled, a small clear (×) button appears in the right section of the input when
+    a file is selected. Clicking the clear button resets the FileInput back to its placeholder state with no file selected.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single clearable control with an obvious reset affordance and immediate visual state change.
+  success_trigger:
+    human_readable:
+    - The FileInput labeled "Attachment" has no selected file (0 files).
+    - The input displays its empty/placeholder state (notes.txt is not shown).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Attachment
+        files: []
+        count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachment
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - notes.txt remains selected.
+  - A different file remains selected (not cleared).
+  - The UI appears empty but the underlying file input still contains a file (stale value).
+  expected_interaction_path:
+  - Locate the clear (×) button inside the Attachment FileInput
+  - Click the clear button
+  - Verify the input is empty
+  notes: 'Checker hint: for Mantine FileInput, validate value==null (single) for data-testid="uploader-attachment".'
+- id: file_upload_button-mantine-T24
+  name: Upload to the correct FileInput in a form (2 instances)
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileInput (two instances)
+  implementation_component: 'Mantine: FileInput'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: In the form section, upload the file "id_front.jpg" using the input labeled "ID front" (not "ID back").
+    The task will finish automatically when done.
+  ui_copy: 'ID front: upload id_front.jpg.'
+  setup_description: 'The page is a simple identity form section with low clutter (a few text inputs plus file inputs). There
+    are two Mantine FileInput components stacked vertically with labels "ID front" and "ID back". Both are single-file inputs
+    that accept images and display the selected filename in the field. Initial state: both FileInputs are empty (no file selected).
+    Only the FileInput labeled "ID front" should be filled for this task.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar FileInputs require correct instance selection; otherwise the interaction is straightforward
+      with clear in-field feedback.
+  success_trigger:
+    human_readable:
+    - The FileInput labeled "ID front" has exactly one selected file named "id_front.jpg".
+    - The FileInput labeled "ID back" remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: ID front
+        files:
+        - id_front.jpg
+        count: 1
+        other_instances_unchanged:
+          ID back:
+            count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: ID front
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading id_front.jpg into the ID back field (wrong instance).
+  - Selecting a different image file.
+  - Both fields are filled.
+  expected_interaction_path:
+  - Locate the FileInput labeled "ID front"
+  - Click and select id_front.jpg
+  - Verify the filename appears in the ID front field only
+  notes: 'Instrumentation: data-testid="uploader-id-front" and data-testid="uploader-id-back" for instance binding.'
+- id: file_upload_button-mantine-T25
+  name: Match a reference file using Mantine FileButton (top-right)
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileButton + reference card
+  implementation_component: 'Mantine: FileButton'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Upload the same file that is shown in the Reference card using the "Upload" button. The task will finish
+    automatically when done.
+  ui_copy: 'Upload: choose the file shown in the Reference card.'
+  setup_description: 'The upload UI is placed near the top-right corner of the viewport. An isolated card titled "Attach file"
+    contains a Mantine FileButton wrapping a Button labeled "Upload". Next to it, a Reference card displays the target filename
+    and a small file icon; the reference card is not interactive. After a selection, the page shows a text line under the
+    button: "Picked file: <name>". The prompt uses the reference card for visual guidance rather than directly specifying
+    the filename.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The primary challenge is extracting the target from the reference panel; interaction itself is a simple
+      FileButton upload.
+  success_trigger:
+    human_readable:
+    - Exactly one file is selected via the FileButton.
+    - The selected file's name matches the filename shown in the Reference card.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_slot: Reference card
+        match_field: file_name
+        count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a file that does not match the reference filename.
+  - Selecting multiple files.
+  - No file selected.
+  expected_interaction_path:
+  - Read the filename from the Reference card
+  - Click the "Upload" button
+  - Select the referenced file
+  - Verify the picked file name matches
+  notes: 'Checker hint: store reference filename in data-testid="reference-file-name" and compare to selected file name stored
+    in component state.'
+- id: file_upload_button-mantine-T26
+  name: Confirm file removal in a Mantine Modal
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileInput + Modal confirm on remove
+  implementation_component: 'Mantine: FileInput + Modal'
+  task_template: confirm_cancel
+  secondary_template: file_manage
+  browsergym_goal: Remove the selected file "budget.xlsx" from the input labeled "Attachment" and confirm by clicking "Remove"
+    in the modal. The task will finish automatically when done.
+  ui_copy: 'Attachment: remove budget.xlsx (confirm Remove).'
+  setup_description: 'A centered isolated card titled "Attachment" contains a Mantine FileInput labeled "Attachment" that
+    is pre-filled with the file "budget.xlsx". To the right of the FileInput is a small outlined button labeled "Remove".
+    Clicking the Remove button opens a Mantine Modal titled "Remove file?" with two actions: "Cancel" and "Remove". The file
+    is only cleared from the FileInput after confirming with the modal''s "Remove" button.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Modal confirmation adds layering and requires correctly choosing the confirm action rather than canceling.
+  success_trigger:
+    human_readable:
+    - The FileInput labeled "Attachment" has no selected file (0 files).
+    - The confirmation modal was accepted by clicking "Remove".
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Attachment
+        files: []
+        count: 0
+        confirmation:
+          type: modal
+          accepted: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Remove
+      require_correct_instance: true
+      target_instance_label_or_id: Attachment
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Canceling the modal (file remains selected).
+  - The file remains selected after the modal closes.
+  - Removing the file without confirming (should not be possible in this setup).
+  - Closing the modal via outside click/escape without confirming.
+  expected_interaction_path:
+  - Click the "Remove" button next to the FileInput
+  - In the modal, click "Remove"
+  - Verify the FileInput is empty
+  notes: 'Checker hint: attach data-testid="remove-modal" with a boolean open state and ensure the file value is null after
+    confirmation.'
+- id: file_upload_button-mantine-T27
+  name: Drag-and-drop an image into Mantine Dropzone (dark theme)
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: Dropzone
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: drag_operation
+  secondary_template: file_upload
+  browsergym_goal: Drag and drop the image file "screenshot.webp" into the dropzone area. The task will finish automatically
+    when done.
+  ui_copy: 'Dropzone: drag screenshot.webp here (or click to select).'
+  setup_description: 'A centered isolated card on a dark-themed page contains a Mantine Dropzone component with a large bordered
+    area. The dropzone shows the instructional text "Drag images here or click to select files" and accepts image files. When
+    a file is dragged over the dropzone, its visual state changes (accept/reject indicators). After a successful drop, the
+    page renders a small list under the dropzone titled "Accepted files" showing the uploaded filenames. Initial state: no
+    accepted files are listed.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires a drag-and-drop interaction to the correct target region; Dropzone state changes and acceptance
+      feedback add dynamics, especially in dark theme.
+  success_trigger:
+    human_readable:
+    - The Dropzone accepted-files list contains exactly one file named "screenshot.webp".
+    - The accepted file was provided via a drop interaction (drop event observed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - screenshot.webp
+        count: 1
+        interaction_method: drop
+        accepted: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - No file appears in the accepted list.
+  - A different file is accepted.
+  - The file is rejected (wrong type/too large) and appears only in a rejected list.
+  - The file is selected via click-to-select if the task run enforces drop-only.
+  expected_interaction_path:
+  - Drag screenshot.webp onto the dropzone area
+  - Release to drop
+  - Verify screenshot.webp appears under Accepted files
+  notes: 'Checker hint: instrument Dropzone onDrop to record interaction_method="drop" and store accepted filenames in a data-testid="dropzone-accepted"
+    list.'
+- id: file_upload_button-mantine-T28
+  name: Upload an exact 4-file set in a compact settings panel
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileInput (multiple)
+  implementation_component: 'Mantine: FileInput (multiple)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: 'Using the input labeled "Supporting files", upload exactly these four files: "budget.xlsx", "data_sample.csv",
+    "config.json", and "notes.txt". The task will finish automatically when done.'
+  ui_copy: 'Supporting files: upload budget.xlsx, data_sample.csv, config.json, notes.txt.'
+  setup_description: 'The page uses a settings-panel layout titled "Project settings" with medium clutter (several toggles
+    and small helper texts are visible but not required). All content is in compact spacing mode, making controls closer together.
+    The target component is a Mantine FileInput labeled "Supporting files" configured with multiple=true. Selected files are
+    displayed as a list of pills below the input (each pill shows the filename and has a small remove icon). Initial state:
+    no files are selected.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Exact multi-file selection with mixed file types plus compact spacing increases precision and confusability
+      while still requiring only one component.
+  success_trigger:
+    human_readable:
+    - The FileInput labeled "Supporting files" contains exactly the set {budget.xlsx, data_sample.csv, config.json, notes.txt}
+      and no other files.
+    - All four filenames are visible in the selected-files pills/list.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        instance: Supporting files
+        files:
+        - budget.xlsx
+        - data_sample.csv
+        - config.json
+        - notes.txt
+        count: 4
+      tolerance:
+        order: any
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Supporting files
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only a subset of the required files is selected.
+  - An extra file is selected.
+  - One of the filenames is misspecified (wrong file).
+  - Pills show the names but the underlying selected file list does not match exactly.
+  expected_interaction_path:
+  - Click the Supporting files FileInput
+  - Select the four required files (multi-select)
+  - Verify exactly four pills are present with the correct names
+  notes: 'Checker hint: normalize to set of file names from component state; validate count==4 and names match target set.'
+- id: file_upload_button-mantine-T29
+  name: Clear the Banner file using a small Reset control (3 instances)
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileButton (resetRef pattern, multiple instances)
+  implementation_component: 'Mantine: FileButton + external Reset control (resetRef)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the selected file in the uploader labeled "Banner image" by using its "Reset" control. Leave the
+    "Avatar image" and "Document" uploaders unchanged. The task will finish automatically when done.
+  ui_copy: 'Banner image: reset/clear the selected file (currently banner.png).'
+  setup_description: 'The page is a compact form section titled "Assets" containing three side-by-side upload controls (same
+    canonical type) built with Mantine FileButton. Each uploader has a heading label: "Avatar image", "Banner image", and
+    "Document". Under each label there is a Button labeled "Upload" (FileButton) and a small red "Reset" action (a compact
+    button or action icon) that clears the selection via the FileButton resetRef pattern. Initial state: Avatar image already
+    has "avatar.jpg" selected, Banner image already has "banner.png" selected, and Document already has "resume.pdf" selected;
+    each selection is shown as a text line "Picked file: <name>" under its uploader. The task is only to clear the Banner
+    image selection; other two must remain unchanged.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Multiple similar instances plus very small per-instance Reset controls create high disambiguation and target
+      acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The uploader labeled "Banner image" has no selected file (0 files).
+    - The uploaders labeled "Avatar image" and "Document" still show their original selected files.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance: Banner image
+        files: []
+        count: 0
+        other_instances_unchanged:
+          Avatar image:
+            files:
+            - avatar.jpg
+            count: 1
+          Document:
+            files:
+            - resume.pdf
+            count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Banner image
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Banner image still has banner.png selected.
+  - Avatar image or Document selection changes (cleared or replaced).
+  - Clearing all uploaders instead of only Banner image.
+  - Only hiding the text without clearing the underlying file selection.
+  expected_interaction_path:
+  - Locate the column labeled "Banner image"
+  - Click its small "Reset" control
+  - Verify Banner image shows no picked file while the other two remain unchanged
+  notes: 'Checker hint: provide data-testid per instance (uploader-avatar, uploader-banner, uploader-document) and verify
+    state deltas; instrument resetRef-triggered clear.'
+- id: file_upload_button-mantine-T30
+  name: Open file details overlay from a small icon button
+  canonical_type: file_upload_button
+  implementation_source: mantine
+  implementation_variant: FileInput + details modal
+  implementation_component: 'Mantine: FileInput + Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the file details overlay for the selected file "budget.xlsx" and leave it open. The task will finish
+    automatically when done.
+  ui_copy: 'Budget file: open details for budget.xlsx.'
+  setup_description: A centered isolated card titled "Budget file" uses a small-scale Mantine FileInput labeled "Budget file".
+    The FileInput is pre-filled with the selected file "budget.xlsx" and shows the filename in the field. To the right of
+    the input is a small info/action icon button labeled (via aria-label) "View details". Clicking the icon opens a Mantine
+    Modal overlay titled "File details" that displays the filename and basic metadata (type/size). The modal includes a Close
+    button, but the task requires leaving the overlay open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A small details icon increases target acquisition difficulty; success depends on opening the correct overlay
+      and verifying the file identity inside it.
+  success_trigger:
+    human_readable:
+    - A modal overlay titled "File details" is open.
+    - The overlay shows details for the file named "budget.xlsx".
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay_open: true
+        overlay_type: modal
+        overlay_title: File details
+        overlay_file_name: budget.xlsx
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The details modal is not open.
+  - A modal is open but it shows a different file.
+  - The modal is opened and then closed before success is checked.
+  - The file selection changes (budget.xlsx is replaced) instead of opening details.
+  expected_interaction_path:
+  - Locate the "View details" icon next to the FileInput
+  - Click it to open the modal
+  - Ensure the modal remains open and mentions budget.xlsx
+  notes: 'Checker hint: attach data-testid="file-details-modal" and assert it is open with data-file-name="budget.xlsx".'

@@ -1,0 +1,4014 @@
+- id: virtual_list-antd-v2-T01
+  name: 'Reviewer drawer: exact duplicate assignee and confirm'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Drawer + List chrome + @rc-component/virtual-list [composite]'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Assign reviewer” drawer. In the Reviewer list, select “APR-0204 — Diego Alvarez (Data)”—not the
+    other Diego Alvarez row—then click “Assign reviewer”. The task will finish automatically when done.
+  ui_copy: Open the “Assign reviewer” drawer. In the Reviewer list, select “APR-0204 — Diego Alvarez (Data)”—not the other
+    Diego Alvarez row—then click “Assign reviewer”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing and medium clutter. The page shows a release checklist
+    card, status chips, and a small owner summary. Clicking “Assign reviewer” opens a right-side Ant Design Drawer. Inside
+    the drawer is one virtualized reviewer list built with @rc-component/virtual-list and styled like an AntD List. The list
+    shows about 10 rows at once and a sticky footer that updates as you scroll, for example “Visible 241–252 of 1200”.
+
+    The drawer contains repeated display names on purpose: there is both “APR-0041 — Diego Alvarez (Infra)” and “APR-0204
+    — Diego Alvarez (Data)”. The correct row is not in the initial viewport. Clicking a row makes it the pending single selection,
+    but the assignment is not committed until the drawer-local button “Assign reviewer” is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: This keeps the target semantics simple but makes the agent prove it can bind to the drawer’s inner viewport,
+      distinguish duplicate names by ID and department, and then commit the selection with the drawer-local action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: The target is textually precise, but the hard part is acquiring the correct inner scroll region inside
+      the drawer, disambiguating a duplicated name, and finishing the explicit commit step.
+  success_trigger:
+    human_readable:
+    - The committed single selection equals `apr-0204`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: apr-0204
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Assign reviewer
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the other Diego Alvarez row instead of APR-0204.
+  - Making APR-0204 the pending selection but not clicking “Assign reviewer”.
+  - Scrolling the page or background card instead of the drawer list.
+  - Selecting any other reviewer with department Data but the wrong ID.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll inside the reviewer list until APR-0204 is visible.
+  - Select APR-0204 — Diego Alvarez (Data).
+  - Click “Assign reviewer”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T02
+  name: 'Primary reviewers: filter then activate result and apply'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Card + Input.Search + @rc-component/virtual-list [composite]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the “Primary reviewers” list, use the filter box to find “KEY-7F2A — Analytics”, select that row, and
+    click “Apply reviewers”. Do not change the “Watchers” list. The task will finish automatically when done.
+  ui_copy: In the “Primary reviewers” list, use the filter box to find “KEY-7F2A — Analytics”, select that row, and click
+    “Apply reviewers”. Do not change the “Watchers” list. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and high clutter. The page includes
+    unrelated toggles, a severity select, and a rollout summary. In the main panel there are two side-by-side virtualized
+    lists: “Primary reviewers” and “Watchers”. Each card has its own small filter input and its own footer state.
+
+    The target card is “Primary reviewers”. Typing into its filter narrows the list but does not auto-select any row. The
+    matching result “KEY-7F2A — Analytics” is not initially visible before filtering. The second list “Watchers” contains
+    similar analytics-related names and must remain unchanged. The panel-level button “Apply reviewers” commits the Primary
+    reviewers selection.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: 'The filter is only a precursor, not the completion event: the task stays hard because the agent must
+      use the correct filter, activate the correct resulting row, leave the sibling list untouched, and then apply the state.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: 'This is a strong wrong-instance and post-filter activation test: the filter narrows the space, but the
+      target still has to be selected and committed in the correct card.'
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the committed single selection equals `key-7f2a`.
+    - The local apply/save control has been clicked after selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: key-7f2a
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply reviewers
+      require_correct_instance: true
+      target_instance_label_or_id: Primary reviewers
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing into the Watchers filter instead of the Primary reviewers filter.
+  - Filtering until KEY-7F2A is visible but never selecting it.
+  - Selecting the right row but not clicking “Apply reviewers”.
+  - Changing the Watchers selection or applying a different analytics row.
+  expected_interaction_path:
+  - Find the Primary reviewers card.
+  - Use its filter box to narrow the list to KEY-7F2A — Analytics.
+  - Select the KEY-7F2A row.
+  - Click “Apply reviewers”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T03
+  name: 'Dashboard triage: choose the alert row, not the overlapping task ID'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Dashboard cards + @rc-component/virtual-list [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “Alerts” list, select “ALERT-0923 — Password expired” and then click “Save alert
+    focus”. Do not act in “Tasks” or “Messages”. The task will finish automatically when done.
+  ui_copy: On the dashboard, in the “Alerts” list, select “ALERT-0923 — Password expired” and then click “Save alert focus”.
+    Do not act in “Tasks” or “Messages”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, top-left placement, and high clutter. Three narrow cards
+    share the page: “Alerts”, “Tasks”, and “Messages”. Each card contains its own virtualized list with an independent scrollbar
+    and a small footer that shows the current selection for that card. The dashboard header also contains KPI tiles and two
+    non-functional controls.
+
+    IDs overlap numerically across the cards: for example, there is a “TASK-0923” row in the Tasks list. The Alerts card is
+    the target. All lists start near the top and the target alert is offscreen. Selection is pending until the Alerts-card
+    button “Save alert focus” is clicked.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: Three nearly identical panes with overlapping numeric IDs create a clean disambiguation problem; the
+      explicit save step then checks whether the agent tracked the right card state rather than any plausible nearby row.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The label is explicit, but overlapping IDs, three independent viewports, and a card-local save control
+      make this a hard multi-pane grounding task.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the selected row equals `alert-0921`.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: alert-0921
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save alert focus
+      require_correct_instance: true
+      target_instance_label_or_id: Alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting TASK-0923 or any other row outside the Alerts card.
+  - Selecting ALERT-0923 but saving from the wrong card or not saving at all.
+  - Making the Alerts target visible without actually selecting it.
+  - Changing the Tasks or Messages cards instead of Alerts.
+  expected_interaction_path:
+  - Locate the Alerts card.
+  - Scroll within the Alerts list until ALERT-0923 is visible.
+  - Select ALERT-0923 — Password expired.
+  - Click “Save alert focus” in the Alerts card.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T04
+  name: 'Permissions dialog: exact four-item set in dense list'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Modal + Checkbox rows + @rc-component/virtual-list [composite]'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'Open “Edit permissions”. In the Permissions list, check exactly these four items: PERM-013 SSO config,
+    PERM-027 View report templates, PERM-031 API access, and PERM-044 View dashboards. Check no others, then click “Apply permissions”.
+    The task will finish automatically when done.'
+  ui_copy: 'Open “Edit permissions”. In the Permissions list, check exactly these four items: PERM-013 SSO config, PERM-027
+    View report templates, PERM-031 API access, and PERM-044 View dashboards. Check no others, then click “Apply permissions”. The task
+    will finish automatically when done.'
+  setup_description: 'Layout is modal_flow with compact spacing, bottom-left placement, and medium clutter. Clicking “Edit
+    permissions” opens an Ant Design Modal containing one dense virtualized checkbox list of about 600 permission rows. Only
+    12 rows are visible at a time. A sticky header updates as you scroll and counts pending selections, for example “Selected:
+    2”.
+
+    The required permission rows are separated in the list and some near neighbors are confusable, such as “View report templates”
+    and “Edit report templates”. Changes are not committed until the modal footer button “Apply permissions” is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - spacing
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'A dense checkbox list turns exact-set selection into a real interaction test: the agent must navigate
+      the long inner viewport, avoid near-label distractors, and verify the committed set through the dialog-local apply action.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The exact-set requirement is unforgiving, and compact checkbox rows inside a modal push both target acquisition
+      and commit verification upward.
+  success_trigger:
+    human_readable:
+    - The committed checked-item set equals the required set exactly.
+    - The required apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - perm-013
+        - perm-027
+        - perm-031
+        - perm-044
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply permissions
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking any extra permission beyond the required four.
+  - Missing one of the required permissions.
+  - Selecting a nearby report-template permission instead of the exact code.
+  - Getting the pending set right but closing the modal or not clicking “Apply permissions”.
+  expected_interaction_path:
+  - Open the permissions modal.
+  - Scroll within the virtualized permission list to locate each required code.
+  - Check exactly the four required rows.
+  - Click “Apply permissions”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T05
+  name: 'Artifact browser: scroll inside the browser, pin the exact row, then save'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Nested panel + row actions + @rc-component/virtual-list [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Artifact browser” list, scroll inside the browser until “AST-148 — Migration log” is visible, turn
+    on its “Pinned” row action, and then click “Save pins”. The task will finish automatically when done.
+  ui_copy: In the “Artifact browser” list, scroll inside the browser until “AST-148 — Migration log” is visible, turn on its
+    “Pinned” row action, and then click “Save pins”. The task will finish automatically when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, bottom-right placement, and high clutter. The page contains
+    a page-level scroll region with breadcrumbs, a filter toolbar, and a metadata card. Inside the right pane sits the target
+    “Artifact browser”, which has its own fixed-height virtualized list and its own scrollbar. A footer shows the current
+    viewport range, for example “Visible 97–108 of 500”.
+
+    Each row has a small trailing “Pinned” toggle. The target row AST-148 is not visible initially. Toggling a pin marks the
+    row as pending only; the pane-local button “Save pins” commits the pinned set.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'This isolates the scroll-owner problem that v1 exposed: the page has its own scroll, but only the browser
+      pane should move. The row-level toggle plus save step forces the agent to verify the right row in the right viewport.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Nested scrolling and a small row-end action make this substantially harder than a plain selection list,
+      especially because the pin state is not committed until saved.
+  success_trigger:
+    human_readable:
+    - The row-level toggle is set to the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: ast-148
+        toggle_name: Pinned
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save pins
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Artifact browser pane.
+  - Pinning a different artifact row.
+  - Turning the correct row on but not clicking “Save pins”.
+  - Changing any other pin state while leaving AST-148 off.
+  expected_interaction_path:
+  - Focus the Artifact browser viewport.
+  - Scroll within it until AST-148 — Migration log is visible.
+  - Turn on the Pinned action for AST-148.
+  - Click “Save pins”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T06
+  name: 'Jobs table: open row picker, choose exact lead, save the row'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Table row popover + @rc-component/virtual-list [composite]'
+  task_template: open_and_select
+  secondary_template: table_operation
+  browsergym_goal: In the table row labeled “Pipeline 21”, open the “Assign lead” picker, select “MEM-0204 — Morgan Lee”,
+    and click “Save row”. Do not change any other row. The task will finish automatically when done.
+  ui_copy: In the table row labeled “Pipeline 21”, open the “Assign lead” picker, select “MEM-0204 — Morgan Lee”, and click
+    “Save row”. Do not change any other row. The task will finish automatically when done.
+  setup_description: 'Layout is table_cell with compact spacing, off-center placement, and high clutter. A table of pipelines
+    is shown with inline metrics and small row-level controls. The row for “Pipeline 21” contains a button “Assign lead”.
+    Clicking it opens a small popover anchored to that row; the popover contains a virtualized member list with its own scrollbar
+    and about 8 visible rows.
+
+    A different table row also contains an “Assign lead” button and another Morgan Lee entry with a different ID. In the target
+    popover, selection is pending until the target row’s “Save row” button is clicked.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - layout
+    - overlay_model
+    - instances
+    factor_rationale: The table row acts only as carrier context; the real pressure comes from opening the correct row-scoped
+      picker, using the popover’s inner viewport, and not confusing duplicate controls or duplicate names in nearby rows.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small table controls, nested row-scoped overlays, and duplicate names across rows create a robust wrong-instance
+      stress test.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the committed single selection equals `mem-0204`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: mem-0204
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row
+      require_correct_instance: true
+      target_instance_label_or_id: Pipeline 21
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the picker in a different table row.
+  - Selecting the wrong Morgan Lee row or the right person in the wrong popover.
+  - Selecting MEM-0204 but not clicking “Save row”.
+  - Changing the lead for any row other than Pipeline 21.
+  expected_interaction_path:
+  - Locate the Pipeline 21 row.
+  - Open its Assign lead picker.
+  - Scroll within the popover list until MEM-0204 is visible if needed.
+  - Select MEM-0204 — Morgan Lee and click Save row.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T07
+  name: 'Results pane: choose the row matching the reference badges'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Card + reference chip group + @rc-component/virtual-list [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Candidate matches” list, select the row whose badges match the “Reference badges” card and whose
+    ID is “R-311”, then click “Use selected match”. The task will finish automatically when done.
+  ui_copy: In the “Candidate matches” list, select the row whose badges match the “Reference badges” card and whose ID is
+    “R-311”, then click “Use selected match”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing, top_left placement, and medium clutter. A split panel
+    shows a small “Reference badges” card on the left and a virtualized list titled “Candidate matches” on the right. The
+    list has repeated names and a range footer like “Visible 13–24 of 240”.
+
+    Each row shows an ID, a display name, and two colored category badges. Several rows share one badge but not the full pair.
+    The target row R-311 is not in the initial viewport. Selecting a row highlights it, but the choice is not committed until
+    “Use selected match” is clicked.'
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - confirmation_model
+    factor_rationale: 'The target is not specified by text alone: the agent has to combine the exact ID with the visual badge
+      pair, then verify the selected row before committing from an off-center split panel.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The visual badge match adds real interference even though selection is discrete, and the commit step prevents
+      lucky partial matches from counting.
+  success_trigger:
+    human_readable:
+    - The selected row is the unique item that matches the reference card.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-badges-r311
+        matched_item_key: r-311
+        saved: true
+        match_rule: reference_token_or_style_exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use selected match
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row that shares only one of the two reference badges.
+  - Selecting R-311 with the wrong badge combination due to a stale filter or wrong row.
+  - Choosing the correct row but not clicking “Use selected match”.
+  - Selecting any row that matches the badge pair but has a different ID.
+  expected_interaction_path:
+  - Inspect the Reference badges card.
+  - Scroll the Candidate matches list until R-311 is visible.
+  - Verify its badge pair matches the reference and select it.
+  - Click “Use selected match”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-antd-v2-T08
+  name: 'Four queues: set Hold only in Secondary queue and save'
+  canonical_type: virtual_list
+  implementation_source: antd
+  implementation_variant: composite_rc_virtual_list
+  implementation_component: 'AntD: Four compact cards + @rc-component/virtual-list [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Secondary queue” list, scroll until “JOB-118 — Cert renew” is visible, turn on its “Hold” toggle,
+    and click “Save queue state”. Do not change the other three queues. The task will finish automatically when done.
+  ui_copy: In the “Secondary queue” list, scroll until “JOB-118 — Cert renew” is visible, turn on its “Hold” toggle, and
+    click “Save queue state”. Do not change the other three queues. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, small scale, and high clutter.
+    Four compact cards are arranged in a 2×2 grid: “Primary queue”, “Secondary queue”, “Archive”, and “Watchers”. Each card
+    contains its own virtualized list and a tiny footer state. The row IDs are all job-like and some titles recur across cards.
+
+    Only the Secondary queue card is the target. Its item JOB-118 is below the fold. Each row has a trailing “Hold” switch.
+    Changes are pending until the dashboard button “Save queue state” is clicked; the other three cards must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: 'This deliberately pushes the unit’s strongest factors upward: four tiny independent viewports, repeated
+      job-like rows, and a shared save boundary create a hard wrong-pane and state-verification problem.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Four small queues and a row-end switch create severe target-acquisition and disambiguation pressure even
+      though the final state is discrete.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the row-level toggle is set to the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: job-118
+        toggle_name: Hold
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save queue state
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary queue
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Turning on Hold in any queue other than Secondary queue.
+  - Changing more than one queue before saving.
+  - Making JOB-118 visible but leaving its Hold switch off.
+  - Turning Hold on correctly but not clicking “Save queue state”.
+  expected_interaction_path:
+  - Locate the Secondary queue card.
+  - Scroll within that queue until JOB-118 — Cert renew is visible.
+  - Turn on its Hold toggle.
+  - Click “Save queue state”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T01
+  name: 'Bottom drawer people picker: exact duplicate member and confirm'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: bottom Drawer + virtualized List [composite]'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Choose member” drawer. In the People list, select “USR-0204 — Diego Alvarez (Ops)”—not the other
+    Diego Alvarez row—and click “Use member”. The task will finish automatically when done.
+  ui_copy: Open the “Choose member” drawer. In the People list, select “USR-0204 — Diego Alvarez (Ops)”—not the other Diego
+    Alvarez row—and click “Use member”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, bottom_right placement, and medium clutter. The page shows
+    a handoff form and a status summary. Clicking “Choose member” opens a temporary MUI Drawer anchored to the bottom. Inside
+    is a virtualized people list with a sticky footer that updates the visible range. Only about 9 rows are visible at once.
+
+    The list intentionally contains two Diego Alvarez rows with different IDs and teams. The target USR-0204 — Diego Alvarez
+    (Ops) is not in the initial viewport. Clicking a row marks it pending, but the drawer-local action “Use member” commits
+    the choice.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'This mirrors a common real picker pattern: the drawer creates a clear inner viewport, duplicate names
+      force exact-ID targeting, and the drawer-local commit step prevents premature stopping.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: The target is explicit, but a bottom drawer, duplicate names, and a required commit still make the interaction
+      meaningfully hard.
+  success_trigger:
+    human_readable:
+    - The committed single selection equals `usr-0204`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: usr-0204
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use member
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the wrong Diego Alvarez row.
+  - Selecting USR-0204 but not clicking “Use member”.
+  - Scrolling the page instead of the drawer list.
+  - Selecting a different Ops row with a similar name.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll inside the People list until USR-0204 is visible.
+  - Select USR-0204 — Diego Alvarez (Ops).
+  - Click “Use member”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T02
+  name: 'Primary keys panel: filter, activate result, then apply'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: settings card + TextField + virtualized List [composite]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the “Primary keys” list, use the filter box to find “KEY-7F2A — Analytics”, select it, and click “Apply
+    keys”. Do not change the “Archived keys” list. The task will finish automatically when done.
+  ui_copy: In the “Primary keys” list, use the filter box to find “KEY-7F2A — Analytics”, select it, and click “Apply keys”.
+    Do not change the “Archived keys” list. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, small scale, and high clutter.
+    The page contains two list cards side by side: “Primary keys” and “Archived keys”. Each card has its own MUI TextField
+    filter above a virtualized list and its own local footer status.
+
+    Typing into the Primary keys filter narrows the list but does not auto-select anything. A near-match row “KEY-7F2B — Analytics”
+    also appears in filtered results. The Archived keys card contains related analytics labels and must remain untouched.
+    The panel-level button “Apply keys” commits the Primary keys selection.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: 'The task does not end at filtering: it pressures exact row activation after filtering, leaves a sibling
+      list in view as a distractor, and still requires a commit step.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A near-match result and a second list turn this into a strong post-filter activation and wrong-instance
+      test.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the committed single selection equals `key-7f2a`.
+    - The local apply/save control has been clicked after selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: key-7f2a
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply keys
+      require_correct_instance: true
+      target_instance_label_or_id: Primary keys
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing into the Archived keys filter instead of Primary keys.
+  - Selecting KEY-7F2B instead of KEY-7F2A.
+  - Filtering to the right result but never selecting it.
+  - Selecting the right row but not clicking “Apply keys”.
+  expected_interaction_path:
+  - Find the Primary keys card.
+  - Use its filter box to narrow the list to KEY-7F2A — Analytics.
+  - Select KEY-7F2A.
+  - Click “Apply keys”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T03
+  name: 'Busy dashboard: select the alert row and save that card only'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: dashboard cards + virtualized Lists [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “Alerts” list, select “ALERT-0923 — Password expired” and click “Save alerts card”.
+    Do not act in “Tasks” or “Messages”. The task will finish automatically when done.
+  ui_copy: On the dashboard, in the “Alerts” list, select “ALERT-0923 — Password expired” and click “Save alerts card”. Do
+    not act in “Tasks” or “Messages”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, top_left placement, and high clutter. Three MUI Cards
+    share the page: “Alerts”, “Tasks”, and “Messages”. Each card contains its own virtualized list and its own footer. The
+    dashboard header includes KPI tiles, a date chip, and a refresh icon that do not affect success.
+
+    Numeric IDs overlap across cards; for example, TASK-0923 exists in the Tasks list. The Alerts card is the target. All
+    three cards begin at the top, and ALERT-0923 is below the fold in Alerts. The Alerts card has its own action button “Save
+    alerts card”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: The important pressure is not semantic understanding alone but binding actions to the correct of three
+      repeated viewports and then using the correct card-local commit control.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Three similar cards with overlapping IDs make this a clean disambiguation stress test despite the discrete
+      final state.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the selected row equals `alert-0921`.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: alert-0921
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save alerts card
+      require_correct_instance: true
+      target_instance_label_or_id: Alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting TASK-0923 or any non-alert row.
+  - Selecting ALERT-0923 but saving from the wrong card or not saving.
+  - Making the alert visible without selecting it.
+  - Changing any other card instead of Alerts.
+  expected_interaction_path:
+  - Locate the Alerts card.
+  - Scroll within Alerts until ALERT-0923 is visible.
+  - Select ALERT-0923 — Password expired.
+  - Click “Save alerts card”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T04
+  name: 'Entitlements dialog: exact five-row selection and apply'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: Dialog + Checkbox rows + virtualized List [composite]'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'Open “Edit entitlements”. In the Entitlements list, check exactly these five rows: ENT-011 SSO settings,
+    ENT-019 Cert management, ENT-027 Delete templates, ENT-043 Manage users, and ENT-050 Webhook config. Check no others, then
+    click “Apply entitlements”. The task will finish automatically when done.'
+  ui_copy: 'Open “Edit entitlements”. In the Entitlements list, check exactly these five rows: ENT-011 SSO settings, ENT-019
+    Cert management, ENT-027 Delete templates, ENT-043 Manage users, and ENT-050 Webhook config. Check no others, then click
+    “Apply entitlements”. The task will finish automatically when done.'
+  setup_description: 'Layout is modal_flow with compact spacing, bottom_left placement, and medium clutter. Clicking “Edit
+    entitlements” opens a MUI Dialog containing one dense virtualized checkbox list. A sticky count above the list updates
+    the pending set as rows are checked. The required rows are separated and some neighboring rows have confusable invoice-related
+    titles.
+
+    Only the dialog footer button “Apply entitlements” commits the checked set. Closing the dialog any other way leaves the
+    committed state unchanged.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - spacing
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The inner viewport, dense checkboxes, and exact-set requirement make this a hard multi-select task even
+      though the semantics are straightforward.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Compact checkbox rows and an exact five-item target set create sustained precision pressure and easy recovery
+      mistakes.
+  success_trigger:
+    human_readable:
+    - The committed checked-item set equals the required set exactly.
+    - The required apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - ent-011
+        - ent-019
+        - ent-027
+        - ent-043
+        - ent-050
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply entitlements
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking any extra entitlement beyond the required five.
+  - Missing one required entitlement.
+  - Choosing a nearby invoice-template row instead of the exact invoice row.
+  - Reaching the correct pending set but not clicking “Apply entitlements”.
+  expected_interaction_path:
+  - Open the dialog.
+  - Scroll within the list to locate each required entitlement.
+  - Check exactly the five required rows.
+  - Click “Apply entitlements”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T05
+  name: 'Case review pane: find the row inside nested scroll and enable Review'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: nested pane + virtualized List + Switch rows [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Cases awaiting review” list, scroll inside the list until “CASE-318 — Rate spike” is visible,
+    turn on its “Review” switch, and click “Save review flags”. The task will finish automatically when done.
+  ui_copy: In the “Cases awaiting review” list, scroll inside the list until “CASE-318 — Rate spike” is visible, turn
+    on its “Review” switch, and click “Save review flags”. The task will finish automatically when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, bottom_right placement, and high clutter. A page-level
+    scroll region contains summary cards and a long notes panel. Inside the left content pane is the target card “Cases awaiting
+    review”, which has its own virtualized list, its own thin scrollbar, and its own footer range indicator.
+
+    Each row has a trailing “Review” MUI Switch. The target CASE-318 is offscreen at load. Turning a row on marks a pending
+    change, and the pane-local button “Save review flags” commits the toggle state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'Nested scrolling is the main lever: the task is only solvable if the agent uses the list pane’s viewport,
+      then finds a small row-end switch and still remembers the local save action.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The row-level toggle is small and the list sits inside a nested pane, so both viewport control and exact
+      row action matter.
+  success_trigger:
+    human_readable:
+    - The row-level toggle is set to the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: case-318
+        toggle_name: Review
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save review flags
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Cases list.
+  - Turning on Review for a different case.
+  - Finding CASE-318 but leaving its switch off.
+  - Setting the switch correctly but not clicking “Save review flags”.
+  expected_interaction_path:
+  - Focus the Cases awaiting review list.
+  - Scroll within it until CASE-318 — Rate spike is visible.
+  - Turn on its Review switch.
+  - Click “Save review flags”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T06
+  name: 'Incidents table: row-scoped lead picker with duplicate names'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: Data table row popper + virtualized List [composite]'
+  task_template: open_and_select
+  secondary_template: table_operation
+  browsergym_goal: In the table row labeled “Incident 21”, open the “Assign lead” picker, select “MEM-0204 — Morgan Chen”,
+    and click “Save row”. Do not change any other row. The task will finish automatically when done.
+  ui_copy: In the table row labeled “Incident 21”, open the “Assign lead” picker, select “MEM-0204 — Morgan Chen”, and click
+    “Save row”. Do not change any other row. The task will finish automatically when done.
+  setup_description: 'Layout is table_cell with compact spacing, off-center placement, and high clutter. A dense incident
+    table shows inline metrics and row-level controls. The row for “Incident 21” has an “Assign lead” button. Clicking it
+    opens a Popper attached to that row; the Popper contains a virtualized member list with its own scrollbar.
+
+    Another nearby incident row has the same button and also contains a Morgan Chen with a different ID. In the target row,
+    the selection remains pending until “Save row” is clicked for Incident 21.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - layout
+    - overlay_model
+    - instances
+    factor_rationale: The popper is row-scoped and easy to confuse with neighboring controls, so the task isolates correct
+      row ownership, correct inner viewport use, and correct save attribution.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Dense table controls plus a nested row picker make wrong-row and wrong-name failures very likely unless
+      the agent tracks scope carefully.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the committed single selection equals `mem-0204`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: mem-0204
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row
+      require_correct_instance: true
+      target_instance_label_or_id: Incident 21
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the picker for a different incident row.
+  - Selecting the wrong Morgan Chen or the right person in the wrong row.
+  - Selecting MEM-0204 but never clicking “Save row”.
+  - Changing any row other than Incident 21.
+  expected_interaction_path:
+  - Locate the Incident 21 row.
+  - Open its Assign lead picker.
+  - Scroll within the picker if needed until MEM-0204 is visible.
+  - Select MEM-0204 — Morgan Chen and click Save row.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T07
+  name: 'Reference avatar drawer: choose the exact participant and apply'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: right Drawer + reference card + virtualized List [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the “Participants” drawer. In the Participant list, select the row whose avatar and team chip match
+    the “Reference participant” card and whose ID is “PPL-311”, then click “Use participant”. The task will finish automatically
+    when done.
+  ui_copy: Open the “Participants” drawer. In the Participant list, select the row whose avatar and team chip match the “Reference
+    participant” card and whose ID is “PPL-311”, then click “Use participant”. The task will finish automatically when done.
+  setup_description: 'Layout is drawer_flow with compact spacing, top_right placement, and medium clutter. Clicking “Participants”
+    opens a temporary right Drawer. The drawer header contains a small “Reference participant” card showing the target avatar
+    color, initials, and one team chip. Below it sits a virtualized participant list with repeated display names, team chips,
+    and an updating visible-range footer.
+
+    Several rows share only the avatar color or only the team chip. The target PPL-311 is not initially visible. Clicking
+    a row marks it pending until the drawer action “Use participant” is pressed.'
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The target is defined by both visual and textual cues, so the agent must combine the reference card
+      with the exact ID while operating inside a drawer-local viewport and commit boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: 'This is a clean mixed-guidance task: visual matching alone is insufficient, but exact-ID selection alone
+      is also risky because repeated rows share partial visual features.'
+  success_trigger:
+    human_readable:
+    - The selected row is the unique item that matches the reference card.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-participant-ppl311
+        matched_item_key: ppl-311
+        saved: true
+        match_rule: reference_token_or_style_exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use participant
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing a row that matches only the avatar color or only the team chip.
+  - Selecting a visually matching row with the wrong ID.
+  - Selecting PPL-311 but not clicking “Use participant”.
+  - Trying to act in the background page instead of the drawer.
+  expected_interaction_path:
+  - Open the Participants drawer.
+  - Inspect the Reference participant card.
+  - Scroll the Participant list until PPL-311 is visible, verify the avatar and team chip match, and select it.
+  - Click “Use participant”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mui-v2-T08
+  name: 'Four panes: pick the approval row only in Approvals'
+  canonical_type: virtual_list
+  implementation_source: mui
+  implementation_variant: composite_react_window
+  implementation_component: 'MUI: four compact cards + virtualized Lists [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the “Approvals” list, scroll until “APR-440 — Contract renewal” is visible, select that row, and click
+    “Apply approvals”. Do not change Alerts, Tasks, or Messages. The task will finish automatically when done.
+  ui_copy: In the “Approvals” list, scroll until “APR-440 — Contract renewal” is visible, select that row, and click “Apply
+    approvals”. Do not change Alerts, Tasks, or Messages. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, small scale, and high clutter.
+    Four compact cards appear in a 2×2 grid: “Alerts”, “Tasks”, “Messages”, and “Approvals”. Each card contains its own virtualized
+    list with independent scrolling and a tiny footer showing its selected row.
+
+    The target Approvals row APR-440 is below the fold. Other cards contain similarly formatted IDs and titles. Only the dashboard
+    action “Apply approvals” commits the Approvals card selection.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: Four tiny independent panes with repeated row formats are exactly the sort of wrong-viewport trap that
+      v1 under-tested. The shared apply step then checks that the intended card state, not any plausible row elsewhere, was
+      changed.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The final state is simple, but finding and acting in the correct of four very small panes is a strong acquisition
+      and disambiguation challenge.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the selected row equals `apr-440`.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: apr-440
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply approvals
+      require_correct_instance: true
+      target_instance_label_or_id: Approvals
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row in Alerts, Tasks, or Messages instead of Approvals.
+  - Making APR-440 visible but not selecting it.
+  - Selecting APR-440 but not clicking “Apply approvals”.
+  - Changing more than the Approvals card before applying.
+  expected_interaction_path:
+  - Find the Approvals card.
+  - Scroll within it until APR-440 — Contract renewal is visible.
+  - Select APR-440.
+  - Click “Apply approvals”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T01
+  name: 'Dataset drawer: exact duplicate owner and confirm'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: Drawer + ScrollArea-backed virtualized List [composite]'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Choose dataset owner” drawer. In the Owner list, select “OWN-0204 — Diego Alvarez (Research)”—not
+    the other Diego Alvarez row—and click “Use owner”. The task will finish automatically when done.
+  ui_copy: Open the “Choose dataset owner” drawer. In the Owner list, select “OWN-0204 — Diego Alvarez (Research)”—not the
+    other Diego Alvarez row—and click “Use owner”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, top_right placement, and medium clutter. The page shows
+    a dataset summary and a small permissions card. Clicking “Choose dataset owner” opens a Mantine Drawer on the right. Inside
+    is one virtualized owner list wrapped in Mantine ScrollArea; a sticky footer shows the visible range as you scroll.
+
+    The list contains two Diego Alvarez rows with different IDs and teams. The correct row OWN-0204 — Diego Alvarez (Research)
+    is offscreen initially. Clicking a row marks a pending single selection; the drawer action “Use owner” commits it.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The Drawer and ScrollArea make the correct viewport explicit but still easy to misuse; duplicate names
+      and a local commit step preserve the strong v2 pressure without turning the task into a parser trick.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: 'This is a compact but real picker task: the drawer viewport, duplicate names, and explicit commit step
+      all have to be handled correctly.'
+  success_trigger:
+    human_readable:
+    - The committed single selection equals `own-0204`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: own-0204
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use owner
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the other Diego Alvarez row instead of OWN-0204.
+  - Selecting OWN-0204 but not clicking “Use owner”.
+  - Scrolling the background page instead of the drawer list.
+  - Selecting any other Research owner with the wrong ID.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll within the Owner list until OWN-0204 is visible.
+  - Select OWN-0204 — Diego Alvarez (Research).
+  - Click “Use owner”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T02
+  name: 'Live results: filter then activate result and apply'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: settings card + TextInput + ScrollArea virtualized List [composite]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the “Live results” list, use the filter box to find “RUN-7F2A — Analytics”, select that row, and click
+    “Apply result”. Do not change the “Fallback results” list. The task will finish automatically when done.
+  ui_copy: In the “Live results” list, use the filter box to find “RUN-7F2A — Analytics”, select that row, and click “Apply
+    result”. Do not change the “Fallback results” list. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and high clutter. Two cards appear
+    side by side: “Live results” and “Fallback results”. Each card has its own Mantine TextInput filter above a ScrollArea-backed
+    virtualized list and its own small footer status.
+
+    Typing into the Live results filter narrows the list but does not auto-select. A near-match row “RUN-7F2B — Analytics”
+    remains visible after filtering. The Fallback results card includes related analytics labels and must remain untouched.
+    The panel-level action “Apply result” commits the Live results selection.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The filter is only the first step. The card pair, near-match result, and panel apply action make the
+      task about exact post-filter activation and state tracking, not generic text entry.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two cards and a near-match filtered result make this a high-disambiguation search-and-activate task even
+      though the row label is explicit.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the committed single selection equals `run-7f2a`.
+    - The local apply/save control has been clicked after selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: run-7f2a
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply result
+      require_correct_instance: true
+      target_instance_label_or_id: Live results
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing into the Fallback results filter instead of the Live results filter.
+  - Selecting RUN-7F2B instead of RUN-7F2A.
+  - Filtering until the target is visible but never selecting it.
+  - Selecting the correct row but not clicking “Apply result”.
+  expected_interaction_path:
+  - Find the Live results card.
+  - Use its filter box to narrow the list to RUN-7F2A — Analytics.
+  - Select RUN-7F2A.
+  - Click “Apply result”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T03
+  name: 'Operations dashboard: choose the incident row and save only that pane'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: dashboard cards + ScrollArea virtualized Lists [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the operations dashboard, in the “Incidents” list, select “INC-0923 — Password expired” and click “Save
+    incidents pane”. Do not act in “Jobs” or “Notes”. The task will finish automatically when done.
+  ui_copy: On the operations dashboard, in the “Incidents” list, select “INC-0923 — Password expired” and click “Save incidents
+    pane”. Do not act in “Jobs” or “Notes”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, top_left placement, and high clutter. Three compact
+    Mantine cards share the page: “Incidents”, “Jobs”, and “Notes”. Each card contains its own virtualized list inside a ScrollArea
+    and its own footer showing the current selection.
+
+    Numeric suffixes overlap across panes; for example, JOB-0923 exists in Jobs. The target pane is Incidents. All panes start
+    at the top, and INC-0923 is below the fold. The Incidents pane has a small action button “Save incidents pane”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: Three near-identical panes with overlapping suffixes recreate the exact sort of wrong-viewport failure
+      that the unit report highlighted, while the pane-local save keeps the success condition honest.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The target row is explicit, but overlapping suffixes and three independent pane states make the interaction
+      significantly harder than a plain single-list select.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the selected row equals `inc-0921`.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: inc-0921
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save incidents pane
+      require_correct_instance: true
+      target_instance_label_or_id: Incidents
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting JOB-0923 or any row outside the Incidents pane.
+  - Selecting INC-0923 but not clicking “Save incidents pane”.
+  - Making INC-0923 visible without selecting it.
+  - Changing Jobs or Notes instead of Incidents.
+  expected_interaction_path:
+  - Locate the Incidents pane.
+  - Scroll inside it until INC-0923 — Password expired is visible.
+  - Select INC-0923.
+  - Click “Save incidents pane”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T04
+  name: 'Tag assignment modal: exact four-tag set and apply'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: Modal + Checkbox rows + ScrollArea virtualized List [composite]'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'Open “Assign tags”. In the Tag list, check exactly these four rows: TAG-011 Escalated, TAG-024 Internal only,
+    TAG-037 Private, and TAG-041 High priority. Check no others, then click “Apply tags”. The task will finish automatically
+    when done.'
+  ui_copy: 'Open “Assign tags”. In the Tag list, check exactly these four rows: TAG-011 Escalated, TAG-024 Internal only, TAG-037
+    Private, and TAG-041 High priority. Check no others, then click “Apply tags”. The task will finish automatically
+    when done.'
+  setup_description: 'Layout is modal_flow with compact spacing, bottom_left placement, and medium clutter. Clicking “Assign
+    tags” opens a Mantine Modal containing a dense virtualized checkbox list inside ScrollArea. A sticky count above the list
+    tracks the pending set as rows are checked.
+
+    The required tags are spread apart and there are near-label distractors such as “Customer-visible notes” and “High-priority
+    billing”. The final set is not committed until the modal footer action “Apply tags” is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - spacing
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: This is a dense exact-set task with a long inner viewport, so the benchmark captures omission and extra-selection
+      failures instead of rewarding a single visible click.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The exact four-tag set is unforgiving, and compact checkbox rows plus near-label distractors create meaningful
+      precision and recovery burden.
+  success_trigger:
+    human_readable:
+    - The committed checked-item set equals the required set exactly.
+    - The required apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        selected_item_keys:
+        - tag-011
+        - tag-024
+        - tag-037
+        - tag-041
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply tags
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking any extra tag beyond the requested four.
+  - Missing one of the requested tags.
+  - Choosing a near-label distractor instead of the exact tag code.
+  - Getting the pending set right but not clicking “Apply tags”.
+  expected_interaction_path:
+  - Open the modal.
+  - Scroll within the Tag list to locate each required row.
+  - Check exactly the four required tags.
+  - Click “Apply tags”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T05
+  name: 'Package browser: scroll the inner viewport, star the exact row, then save'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: nested panel + ScrollArea virtualized List [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Package browser” list, scroll inside the browser until “PKG-318 — Asset CDN” is visible, turn
+    on its “Starred” row action, and click “Save stars”. The task will finish automatically when done.
+  ui_copy: In the “Package browser” list, scroll inside the browser until “PKG-318 — Asset CDN” is visible, turn on its
+    “Starred” row action, and click “Save stars”. The task will finish automatically when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, bottom_right placement, and high clutter. The page has
+    a page-level scroll region with notes and a metrics sidebar. The target “Package browser” sits inside a fixed-height inner
+    panel with its own ScrollArea and virtualized rows. A footer shows the currently visible range.
+
+    Each row has a small trailing “Starred” action. The target PKG-318 is below the fold. Toggling a row makes a pending change
+    only; the pane-local button “Save stars” commits the starred set.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'The task stays focused on the virtualized list itself: it is hard because the page and list both scroll,
+      the row-end action is tiny, and the change is only committed after a local save.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Nested scrolling plus a small row-end action make the interaction hard even though the target row text
+      is explicit.
+  success_trigger:
+    human_readable:
+    - The row-level toggle is set to the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: pkg-318
+        toggle_name: Starred
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save stars
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Package browser.
+  - Starring a different package row.
+  - Finding PKG-318 but leaving its Starred action off.
+  - Setting the right pending state but not clicking “Save stars”.
+  expected_interaction_path:
+  - Focus the Package browser viewport.
+  - Scroll within it until PKG-318 — Asset CDN is visible.
+  - Turn on the Starred action for PKG-318.
+  - Click “Save stars”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T06
+  name: 'Jobs table: row-scoped approver picker and row save'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: table row popover + ScrollArea virtualized List [composite]'
+  task_template: open_and_select
+  secondary_template: table_operation
+  browsergym_goal: In the table row labeled “Job 21”, open the “Pick approver” picker, select “APR-0204 — Morgan Lee”, and
+    click “Save row”. Do not change any other row. The task will finish automatically when done.
+  ui_copy: In the table row labeled “Job 21”, open the “Pick approver” picker, select “APR-0204 — Morgan Lee”, and click “Save
+    row”. Do not change any other row. The task will finish automatically when done.
+  setup_description: 'Layout is table_cell with compact spacing, off-center placement, and high clutter. A dense jobs table
+    is shown with row-level actions and small status pills. The target row “Job 21” has a button “Pick approver”. Clicking
+    it opens a small row-anchored popover that contains a ScrollArea-backed virtualized list of approvers.
+
+    A nearby row has the same button and another Morgan Lee entry with a different ID. In the target row, the picked approver
+    is only committed when “Save row” is clicked for Job 21.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - layout
+    - overlay_model
+    - instances
+    factor_rationale: The row-scoped popover is deliberately small and easy to confuse with neighboring rows, so the task
+      pressures correct row ownership and correct inner-viewport use rather than generic table interaction.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because tiny row controls, a nested popover list, and duplicate names across rows all have
+      to be managed together.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the committed single selection equals `apr-0204`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        selected_item_key: apr-0204
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row
+      require_correct_instance: true
+      target_instance_label_or_id: Job 21
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the picker in the wrong row.
+  - Selecting the wrong Morgan Lee row or the right person in the wrong picker.
+  - Selecting APR-0204 but not clicking “Save row”.
+  - Changing any row other than Job 21.
+  expected_interaction_path:
+  - Locate the Job 21 row.
+  - Open its Pick approver popover.
+  - Scroll within the approver list until APR-0204 is visible if needed.
+  - Select APR-0204 — Morgan Lee and click Save row.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T07
+  name: 'Reference chip panel: select the row matching the target card'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: split panel + reference card + ScrollArea virtualized List [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Candidate records” list, select the row whose chip pair matches the “Target card” and whose ID
+    is “REC-311”, then click “Use selected record”. The task will finish automatically when done.
+  ui_copy: In the “Candidate records” list, select the row whose chip pair matches the “Target card” and whose ID is “REC-311”,
+    then click “Use selected record”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing, top_left placement, and medium clutter. A left-side “Target
+    card” shows the required chip pair only. To its right is a fixed-height virtualized list titled “Candidate records”. Each
+    row contains an ID, a display name, and two colored chips. The list footer shows the visible range as you scroll.
+
+    Several rows share one of the two chips but not the full pair. The target REC-311 is below the fold. Selection is pending
+    until the action “Use selected record” is clicked.'
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - confirmation_model
+    factor_rationale: 'The target is not recoverable from text alone: the agent must combine the exact ID with the visual
+      chip pair and then commit the selected row from an off-center split panel.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Mixed visual/text guidance and near-chip matches create real interference, but the final action remains
+      a discrete row selection.
+  success_trigger:
+    human_readable:
+    - The selected row is the unique item that matches the reference card.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: target-card-rec311
+        matched_item_key: rec-311
+        saved: true
+        match_rule: reference_token_or_style_exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use selected record
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row that shares only one target chip.
+  - Selecting a visually matching row with the wrong ID.
+  - Selecting REC-311 but not clicking “Use selected record”.
+  - Trying to act in another widget outside the Candidate records list.
+  expected_interaction_path:
+  - Inspect the Target card.
+  - Scroll the Candidate records list until REC-311 is visible.
+  - Verify that REC-311’s chip pair matches the Target card and select it.
+  - Click “Use selected record”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: virtual_list-mantine-v2-T08
+  name: 'Four panes: enable Hold only in Secondary endpoints and save'
+  canonical_type: virtual_list
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_virtual
+  implementation_component: 'Mantine: four compact cards + ScrollArea virtualized Lists [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Secondary endpoints” list, scroll until “SVC-118 — Cert renew” is visible, turn on its “Hold”
+    toggle, and click “Save endpoint state”. Do not change the other three lists. The task will finish automatically when
+    done.
+  ui_copy: In the “Secondary endpoints” list, scroll until “SVC-118 — Cert renew” is visible, turn on its “Hold” toggle,
+    and click “Save endpoint state”. Do not change the other three lists. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, small scale, and high clutter.
+    Four compact cards appear in a 2×2 grid: “Primary endpoints”, “Secondary endpoints”, “Archive”, and “Watchers”. Each card
+    has its own ScrollArea-backed virtualized list and tiny footer state.
+
+    The target SVC-118 is below the fold in Secondary endpoints. Other cards contain similarly formatted service rows and
+    some repeated titles. The shared action “Save endpoint state” commits only the current card states, so the other three
+    cards must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: Four tiny lists with repeated service-like rows push the strongest v2 levers upward at once. The task
+      is hard because the agent must bind to the correct pane, control the correct viewport, and preserve the others before
+      saving.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Tiny panes, repeated row formats, and a row-end toggle create severe acquisition and wrong-pane risk even
+      though the state itself is discrete.
+  success_trigger:
+    human_readable:
+    - In the target virtual list instance, the row-level toggle is set to the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_key: svc-118
+        toggle_name: Hold
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save endpoint state
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary endpoints
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Turning Hold on in any pane other than Secondary endpoints.
+  - Changing more than one pane before saving.
+  - Making SVC-118 visible but leaving its Hold toggle off.
+  - Turning the toggle on correctly but not clicking “Save endpoint state”.
+  expected_interaction_path:
+  - Locate the Secondary endpoints card.
+  - Scroll within it until SVC-118 — Cert renew is visible.
+  - Turn on its Hold toggle.
+  - Click “Save endpoint state”.
+  notes: Instrument stable per-instance keys, viewport range/loaded counters, and committed selection or toggle state on the
+    wrapper. Check correct-instance scope explicitly; do not credit offscreen mounted rows or pending uncommitted state.
+- id: feed_infinite_scroll-antd-v2-T01
+  name: 'Audit log modal: reveal the target entry, expand it, and apply'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: Modal + List + scrolling-loaded feed [composite]'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Audit log” modal. In the Audit log feed, scroll until “AUD-142 — Token rotation scheduled” is
+    visible, open that entry so its details are expanded, and click “Use selected audit entry”. The task will finish automatically
+    when done.
+  ui_copy: Open the “Audit log” modal. In the Audit log feed, scroll until “AUD-142 — Token rotation scheduled” is visible,
+    open that entry so its details are expanded, and click “Use selected audit entry”. The task will finish automatically
+    when done.
+  setup_description: 'Layout is modal_flow with compact spacing, top_right placement, and medium clutter. A security card
+    sits on the page with a button “View audit log”. Clicking it opens an Ant Design Modal near the top-right. Inside the
+    modal is a fixed-height feed built from AntD List rows with on-scroll loading. A sticky footer shows progress such as
+    “Loaded 40 / 180”.
+
+    The target entry AUD-142 is not in the initially loaded range. Clicking a row expands inline details beneath it, but the
+    modal action “Use selected audit entry” is required to commit the selection. The background page is irrelevant once the
+    modal is open.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'This directly targets one of the unit’s strongest v1 signals: agents understand the target but fail
+      to operationalize the modal’s own viewport. The explicit modal apply step keeps completion state observable and local.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target is clear, but the modal viewport must be controlled correctly across several loads, and the
+      expanded row still has to be committed through a modal-local action.
+  success_trigger:
+    human_readable:
+    - The active expanded item equals `AUD-142`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: AUD-142
+        expanded: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use selected audit entry
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the modal but never reaching AUD-142.
+  - Making AUD-142 visible without expanding it.
+  - Expanding the correct row but not clicking “Use selected audit entry”.
+  - Scrolling the page or background instead of the modal feed.
+  expected_interaction_path:
+  - Open the Audit log modal.
+  - Scroll inside the feed until AUD-142 is visible.
+  - Open AUD-142 so its details are expanded.
+  - Click “Use selected audit entry”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T02
+  name: 'System alerts card: select the right feed item, not the team feed twin'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: dashboard cards + List feeds with on-scroll loading [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “System alerts” feed, scroll until “ALERT-188 — Queue depth spike” is visible,
+    open that row, and click “Save alerts card”. Do not act in the “Team activity” feed. The task will finish automatically
+    when done.
+  ui_copy: On the dashboard, in the “System alerts” feed, scroll until “ALERT-188 — Queue depth spike” is visible, open that
+    row, and click “Save alerts card”. Do not act in the “Team activity” feed. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, off-center placement, and high clutter. Two adjacent
+    AntD cards each contain their own infinite feed with independent scrollbars and similar typography: “Team activity” and
+    “System alerts”. The dashboard header contains KPI chips and a refresh icon.
+
+    Both feeds load more rows when their own bottom sentinel is reached. The target item ALERT-188 exists only in System alerts
+    but a similarly formatted ACT-188 exists in Team activity. Opening a row expands inline details. The System alerts card
+    has a local action “Save alerts card”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Two visually similar feeds recreate the duplicated-viewport failure family identified in the reports.
+      The target row only counts if the correct feed is scrolled, opened, and locally saved.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The hard part is binding actions to the correct feed among two lookalikes, then carrying the correct row
+      state through the card-local save step.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the selected expanded row equals the requested item.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: ALERT-188
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save alerts card
+      require_correct_instance: true
+      target_instance_label_or_id: System alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling or selecting inside Team activity instead of System alerts.
+  - Opening ACT-188 or any other similar row instead of ALERT-188.
+  - Making ALERT-188 visible but not opening it.
+  - Opening ALERT-188 but not clicking “Save alerts card”.
+  expected_interaction_path:
+  - Locate the System alerts card.
+  - Scroll within that feed until ALERT-188 is visible.
+  - Open ALERT-188 so its details expand.
+  - Click “Save alerts card”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T03
+  name: 'Incident feed search: filter, open the right result, then save'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: Card + Input.Search + List feed [composite]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the “Incident feed”, use the search box to find “INC-1088 — VPN login failure”, open that row so its
+    details are expanded, and click “Save incident choice”. The task will finish automatically when done.
+  ui_copy: In the “Incident feed”, use the search box to find “INC-1088 — VPN login failure”, open that row so its details
+    are expanded, and click “Save incident choice”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and medium clutter. The page has
+    an AntD card titled “Incident feed” beside unrelated form controls. The feed is fixed-height and infinite-loading; its
+    header contains an Input.Search field. Typing a query clears the current rows, shows a loader, and then renders the filtered
+    result set in the same feed viewport.
+
+    The target INC-1088 is not visible before filtering. After filtering, the feed may still contain several incident rows
+    with similar VPN-related text. Clicking a row expands inline details. The card-local action “Save incident choice” commits
+    the open row.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'This follows a candidate v2 family from the reports: search is only a precursor. The agent still has
+      to wait for the feed to refresh, open the right filtered row, and explicitly save the result.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Filtering narrows the space, but the feed refresh and post-filter row activation introduce real interaction
+      and recovery burden.
+  success_trigger:
+    human_readable:
+    - The expanded item equals the requested result.
+    - The local apply/save control has been clicked after selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: INC-1088
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save incident choice
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the query but never opening the incident row.
+  - Opening a different VPN-related incident after filtering.
+  - Using the search box correctly but not clicking “Save incident choice”.
+  - Trying to scroll the stale pre-filter list instead of waiting for the filtered feed.
+  expected_interaction_path:
+  - Use the Incident feed search box to query INC-1088.
+  - Wait for the feed to refresh.
+  - Open INC-1088 so its details are expanded.
+  - Click “Save incident choice”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T04
+  name: 'Primary queue feed: exact four-ticket selection and apply'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: dual queue feeds with checkbox rows [composite]'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the “Primary queue” feed, select exactly TCK-021, TCK-024, TCK-027, and TCK-031, then click “Apply selection”.
+    Do not change the “Secondary queue” feed. The task will finish automatically when done.
+  ui_copy: In the “Primary queue” feed, select exactly TCK-021, TCK-024, TCK-027, and TCK-031, then click “Apply selection”.
+    Do not change the “Secondary queue” feed. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, and high clutter. Two stacked
+    feed cards share the panel: “Primary queue” and “Secondary queue”. Each feed uses compact checkbox rows, infinite loading,
+    and a small footer that shows the committed count after applying. Rows are short and visually similar.
+
+    The four target tickets are not all visible at once and require scrolling within Primary queue. Checking a row only changes
+    the pending state; the Primary queue footer button “Apply selection” commits the exact set. Secondary queue must remain
+    unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - confirmation_model
+    factor_rationale: 'This keeps one of the strongest v1 feed patterns but shifts the factor floor upward: compact dual feeds,
+      off-center placement, and explicit apply create a real exact-set and wrong-pane challenge.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The exact four-ticket set is hard because the checkboxes are dense, the targets are separated by scrolling,
+      and the wrong feed is visible at the same time.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the committed selected-item set equals the requested set exactly.
+    - The required apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        committed_selected_item_ids:
+        - TCK-021
+        - TCK-024
+        - TCK-027
+        - TCK-031
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply selection
+      require_correct_instance: true
+      target_instance_label_or_id: Primary queue
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking any extra ticket beyond the required four.
+  - Missing any required ticket.
+  - Applying the selection in Secondary queue instead of Primary queue.
+  - Getting the pending set right but not clicking “Apply selection”.
+  expected_interaction_path:
+  - Find the Primary queue feed.
+  - Scroll within it to locate each required ticket.
+  - Check exactly TCK-021, TCK-024, TCK-027, and TCK-031.
+  - Click “Apply selection” in Primary queue.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T05
+  name: 'Saved posts feed: visual icon match'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: dark card + reference badge + List feed [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Saved posts” feed, select the row whose leading icon matches the “Reference icon” card, then click
+    “Use post”. The task will finish automatically when done.
+  ui_copy: In the “Saved posts” feed, select the row whose leading icon matches the “Reference icon” card, then click “Use
+    post”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with dark theme, compact spacing, and medium clutter. A split card shows a
+    small “Reference icon” badge above the target feed. The feed itself uses compact AntD rows with a leading icon badge,
+    an ID, a generic title, and a small status pill. Infinite loading is enabled and the unique matching row is not in the
+    initial viewport.
+
+    Several rows share the title style, so the icon badge is the main differentiator. Clicking a row makes it active, but
+    the action “Use post” is required to commit the selection.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - confirmation_model
+    factor_rationale: The target is specified only by the visual reference card; the agent must scroll the feed and match the
+      leading icon. The commit action ensures the active row is trusted.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Visual matching increases interference; the correct row must be found by icon and committed after scrolling
+      into view.
+  success_trigger:
+    human_readable:
+    - The active row is the unique row that matches the reference card.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-post-034
+        matched_item_id: POST-034
+        saved: true
+        match_rule: reference_token_or_style_exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use post
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row whose icon does not match the reference card.
+  - Selecting a row after the highlight moved without re-verifying the icon matches the reference.
+  - Matching the reference visually but not clicking “Use post”.
+  - Selecting a row based only on title text.
+  expected_interaction_path:
+  - Inspect the Reference icon card.
+  - Scroll within the Saved posts feed until the row whose leading icon matches the reference is visible.
+  - Select that row and click “Use post”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T06
+  name: 'Build log feed: visibility-gated reveal in nested scroll'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: nested panel + log feed with on-scroll loading [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the “Build log” feed, scroll inside the feed until at least half of the row “LOG-184 — Asset fingerprint
+    complete” is visible in the feed viewport. It only counts when the row itself is visible in the feed. The task will finish
+    automatically when done.
+  ui_copy: In the “Build log” feed, scroll inside the feed until at least half of the row “LOG-184 — Asset fingerprint complete”
+    is visible in the feed viewport. It only counts when the row itself is visible in the feed. The task will finish automatically
+    when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, bottom_right placement, and high clutter. The page contains
+    a long deployment summary column with its own page scroll. Inside the right pane is the target “Build log” feed, a fixed-height
+    AntD List with on-scroll loading and a footer that shows loaded progress, for example “Loaded 120 / 220”.
+
+    The target row LOG-184 is not in the initially loaded range. Merely loading the row is not enough; the row must actually
+    be visible inside the feed viewport. There is no Apply button for this task, but only the Build log feed should move.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - clutter
+    factor_rationale: 'This directly replaces the ambiguous v1 visibility tasks: the row must be truly visible in the correct
+      inner viewport, not merely loaded in the DOM or inferred from the progress counter.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The hard part is not interpreting the target label but controlling the correct nested feed viewport until
+      the target is visibly exposed.
+  success_trigger:
+    human_readable:
+    - The required row is visibly exposed in the feed viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: LOG-184
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Build log feed.
+  - Loading LOG-184 without actually making it visible in the feed viewport.
+  - Stopping with the target clipped below the fold.
+  - Making a different log row visible instead of LOG-184.
+  expected_interaction_path:
+  - Focus the Build log feed.
+  - Scroll within it until LOG-184 is visibly exposed in the feed viewport.
+  - Stop once the target row itself is clearly visible.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T07
+  name: 'Deployment events drawer: open target row and acknowledge selection'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: Drawer + event feed + inline expansion [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Open the “Deployment events” drawer. In the feed, scroll until “EVT-063 — Rollback requested” is visible,
+    open that row so its details are expanded, and click “Acknowledge selected”. The task will finish automatically when done.
+  ui_copy: Open the “Deployment events” drawer. In the feed, scroll until “EVT-063 — Rollback requested” is visible, open
+    that row so its details are expanded, and click “Acknowledge selected”. The task will finish automatically when done.
+  setup_description: 'Layout is drawer_flow with compact spacing, off-center placement, and medium clutter. A deployment summary
+    card contains a button “View deployment events”. Clicking it opens a right-side AntD Drawer. Inside is a fixed-height
+    feed with on-scroll loading. Each row can be expanded inline to reveal a short details block. The drawer header also shows
+    a small selected-item status.
+
+    The target row EVT-063 is below the fold. Expanding a row alone does not commit anything; the drawer action “Acknowledge
+    selected” is required to save the currently open row.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: This is a select-then-confirm feed pattern. The agent must treat the drawer feed as the active viewport,
+      open the correct row, and then preserve that state through the drawer-local acknowledge action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A right-side drawer and a required acknowledge step make this harder than a simple row expansion task,
+      especially when the target is offscreen.
+  success_trigger:
+    human_readable:
+    - The selected expanded row equals the requested item.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: EVT-063
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Acknowledge selected
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening a different event row.
+  - Making EVT-063 visible but not expanding it.
+  - Expanding EVT-063 but not clicking “Acknowledge selected”.
+  - Trying to acknowledge from the background page instead of the drawer.
+  expected_interaction_path:
+  - Open the Deployment events drawer.
+  - Scroll inside the feed until EVT-063 is visible.
+  - Open EVT-063 so its details are expanded.
+  - Click “Acknowledge selected”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-antd-v2-T08
+  name: 'Four feeds: bookmark only the payment row in the Payments feed'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_list
+  implementation_component: 'AntD: four compact feed cards with row actions [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Payments” feed, scroll until “PAY-244 — Card retry scheduled” is visible, turn on its “Bookmarked”
+    row action, and click “Save feed state”. Do not change Orders, Auth, or Ops. The task will finish automatically when done.
+  ui_copy: In the “Payments” feed, scroll until “PAY-244 — Card retry scheduled” is visible, turn on its “Bookmarked” row
+    action, and click “Save feed state”. Do not change Orders, Auth, or Ops. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, small scale, and high clutter.
+    Four compact feed cards appear in a 2×2 grid: “Orders”, “Payments”, “Auth”, and “Ops”. Each feed has its own scrollbar,
+    loading spinner, and tiny footer status. Row formats are visually similar across cards.
+
+    The target PAY-244 is below the fold in Payments. Each row has a small trailing “Bookmarked” action. Turning it on only
+    affects pending state; the shared panel action “Save feed state” commits the row-action states. The other three feeds
+    must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: 'This pushes the unit’s highest-value factors upward: four tiny independent feeds, repeated row structures,
+      and a small row-end action create a difficult wrong-feed and state-tracking problem.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target row action is discrete, but the correct card and correct viewport are very easy to lose in a
+      four-feed compact dashboard.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the row-level toggle has the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_id: PAY-244
+        toggle_name: Bookmarked
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save feed state
+      require_correct_instance: true
+      target_instance_label_or_id: Payments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Bookmarking any row outside the Payments feed.
+  - Changing more than the Payments feed before saving.
+  - Making PAY-244 visible but leaving its Bookmarked action off.
+  - Turning the correct action on but not clicking “Save feed state”.
+  expected_interaction_path:
+  - Find the Payments feed.
+  - Scroll within it until PAY-244 — Card retry scheduled is visible.
+  - Turn on its Bookmarked row action.
+  - Click “Save feed state”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T01
+  name: 'Inbox drawer: reveal the target message, expand it, and apply'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: temporary Drawer + List + ListItemButton/Collapse feed [composite]'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Inbox” drawer. In the Inbox feed, scroll until “MSG-142 · Contract revision requested” is visible,
+    open that row so its preview is expanded, and click “Use selected message”. The task will finish automatically when done.
+  ui_copy: Open the “Inbox” drawer. In the Inbox feed, scroll until “MSG-142 · Contract revision requested” is visible, open
+    that row so its preview is expanded, and click “Use selected message”. The task will finish automatically when done.
+  setup_description: 'Layout is drawer_flow with compact spacing, right placement, and medium clutter. A mail summary card
+    sits on the page with a button “Open inbox”. Clicking it opens a temporary MUI Drawer anchored to the right. Inside is
+    a fixed-height feed built from MUI ListItemButton rows with inline Collapse previews and on-scroll loading. A sticky footer
+    shows loaded progress.
+
+    The target row MSG-142 is below the initially loaded range. Expanding a message preview only changes the active row; the
+    drawer action “Use selected message” commits the open row.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: This uses a standard drawer + ListItemButton/Collapse pattern to test whether the agent can operate
+      the drawer’s inner feed, expand the right row, and then commit the drawer-local state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The interaction is simple conceptually, but the drawer viewport and explicit commit action turn it into
+      a meaningful layered feed test.
+  success_trigger:
+    human_readable:
+    - The active expanded item equals `MSG-142`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: MSG-142
+        expanded: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use selected message
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the drawer but never reaching MSG-142.
+  - Making MSG-142 visible without expanding it.
+  - Expanding the correct row but not clicking “Use selected message”.
+  - Scrolling the background page instead of the drawer feed.
+  expected_interaction_path:
+  - Open the Inbox drawer.
+  - Scroll inside the feed until MSG-142 is visible.
+  - Open MSG-142 so its preview expands.
+  - Click “Use selected message”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T02
+  name: 'Billing activity card: select the right feed row, not the inbox twin'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: dashboard cards + List feeds with on-scroll loading [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “Billing activity” feed, scroll until “ACT-188 · Card retry scheduled” is visible,
+    open that row so its preview is expanded, and click “Save billing card”. Do not act in the “Inbox” or “Tasks” feeds. The
+    task will finish automatically when done.
+  ui_copy: On the dashboard, in the “Billing activity” feed, scroll until “ACT-188 · Card retry scheduled” is visible, open
+    that row so its preview is expanded, and click “Save billing card”. Do not act in the “Inbox” or “Tasks” feeds. The task
+    will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, off-center placement, and high clutter. Three MUI cards
+    appear side by side: “Billing activity”, “Inbox”, and “Tasks”. Each card contains its own fixed-height feed with independent
+    scrollbars and inline Collapse previews. The dashboard header contains KPI tiles and a small date selector.
+
+    The target ACT-188 exists only in Billing activity, but MSG-188 and TASK-188 appear in the other feeds. The Billing card
+    has its own action button “Save billing card”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Three similar feeds with overlapping suffixes make this a clean wrong-pane problem, and the card-local
+      save forces the agent to preserve the state of the correct pane rather than any plausible row elsewhere.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The target label is easy to understand, but selecting, expanding, and saving it in the correct of three
+      feeds is meaningfully hard.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the selected expanded row equals the requested item.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: ACT-188
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save billing card
+      require_correct_instance: true
+      target_instance_label_or_id: Billing activity
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting or expanding MSG-188 or TASK-188 instead of ACT-188.
+  - Acting in Inbox or Tasks instead of Billing activity.
+  - Making ACT-188 visible but not expanding it.
+  - Expanding the correct row but not clicking “Save billing card”.
+  expected_interaction_path:
+  - Find the Billing activity card.
+  - Scroll within it until ACT-188 is visible.
+  - Open ACT-188 so its preview expands.
+  - Click “Save billing card”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T03
+  name: 'Orders feed search: filter, open the exact order, then save'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: Card + TextField + List feed [composite]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the “Orders” feed, use the search box to find “ORD-1088 · Refund requested”, open that row so its preview
+    is expanded, and click “Save order choice”. The task will finish automatically when done.
+  ui_copy: In the “Orders” feed, use the search box to find “ORD-1088 · Refund requested”, open that row so its preview is
+    expanded, and click “Save order choice”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and medium clutter. The page contains
+    unrelated toggles on the left and a target card “Orders” on the right. The card header includes a TextField search box
+    above a fixed-height on-scroll feed. Typing a query refreshes the visible feed rows after a small loading state.
+
+    The target ORD-1088 is not in the initial feed. After filtering, several related refund rows may remain. Clicking a row
+    expands an inline preview. The card-local action “Save order choice” commits the currently open row.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The search field narrows the space but does not finish the task. The agent still has to wait for the
+      feed refresh, open the exact order row, and commit it locally.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is harder than a plain search because the filtered result must still be opened and saved, with plausible
+      near-matches left in view.
+  success_trigger:
+    human_readable:
+    - The expanded item equals the requested result.
+    - The local apply/save control has been clicked after selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: ORD-1088
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save order choice
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the correct query but never opening the order row.
+  - Opening a different refund-related row after filtering.
+  - Opening ORD-1088 but not clicking “Save order choice”.
+  - Interacting with an unrelated settings control instead of the Orders feed.
+  expected_interaction_path:
+  - Use the Orders search box to query ORD-1088.
+  - Wait for the feed to refresh.
+  - Open ORD-1088 so its preview expands.
+  - Click “Save order choice”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T04
+  name: 'Review queue: exact four-case selection and apply'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: dual feed cards with checkbox rows [composite]'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the “Review queue” feed, select exactly CASE-021, CASE-024, CASE-027, and CASE-031, then click “Apply
+    queue selection”. Do not change the “Escalations” feed. The task will finish automatically when done.
+  ui_copy: In the “Review queue” feed, select exactly CASE-021, CASE-024, CASE-027, and CASE-031, then click “Apply queue
+    selection”. Do not change the “Escalations” feed. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, and high clutter. Two compact
+    feed cards are stacked in one panel: “Review queue” and “Escalations”. Both use checkbox rows, on-scroll loading, and
+    small footers showing pending or committed counts. Rows are short and visually similar.
+
+    The four target cases are spread apart in Review queue and require internal scrolling. Checking rows only updates pending
+    state. The Review queue action “Apply queue selection” commits the set; Escalations must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - confirmation_model
+    factor_rationale: Dual queue cards, compact checkbox rows, and a local apply button preserve the strongest feed exact-set
+      pattern while eliminating the trivial v1 variants.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Exact set selection across separated rows is hard in a compact feed, and the sibling queue creates wrong-pane
+      risk during both selection and apply.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the committed selected-item set equals the requested set exactly.
+    - The required apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        committed_selected_item_ids:
+        - CASE-021
+        - CASE-024
+        - CASE-027
+        - CASE-031
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply queue selection
+      require_correct_instance: true
+      target_instance_label_or_id: Review queue
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking any extra case beyond the required four.
+  - Missing any required case.
+  - Applying a selection in Escalations instead of Review queue.
+  - Getting the pending set right but not clicking “Apply queue selection”.
+  expected_interaction_path:
+  - Find the Review queue feed.
+  - Scroll within it to locate each required case.
+  - Check exactly CASE-021, CASE-024, CASE-027, and CASE-031.
+  - Click “Apply queue selection”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T05
+  name: 'Dark chats feed: reference avatar and unread marker match'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: dark card + reference chip + ListItemButton feed [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Chats” feed, select the row whose avatar (color and initial) and unread marker match the “Reference
+    chat” card, then click “Use chat”. The task will finish automatically when done.
+  ui_copy: In the “Chats” feed, select the row whose avatar (color and initial) and unread marker match the “Reference chat”
+    card, then click “Use chat”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with dark theme, compact spacing, and medium clutter. A small “Reference chat”
+    card sits above the target feed. The Chats feed uses ListItemButton rows with an avatar, an unread dot when applicable,
+    a short title, and on-scroll loading. The unique matching row is not initially visible.
+
+    Several rows share the same avatar color or the same unread state, but only one row matches the full combination shown
+    in the reference card. The action “Use chat” commits the currently active row.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - confirmation_model
+    factor_rationale: The row cannot be chosen from title text alone. The agent must match avatar color, initial letter, and
+      unread state to the reference card after scrolling, then carry the selection through a local commit action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: 'This is a genuine visual grounding task inside a feed: several rows partially match the reference, and
+      the final row still has to be selected and committed.'
+  success_trigger:
+    human_readable:
+    - The active row is the unique row that matches the reference card.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-chat-034
+        matched_item_id: CHAT-034
+        saved: true
+        match_rule: reference_token_or_style_exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use chat
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row that matches only part of the reference (avatar color, initial, or unread marker).
+  - Selecting a row that looks close visually but does not fully match the reference card.
+  - Selecting the matching row but not clicking “Use chat”.
+  - Choosing a row based only on title text.
+  expected_interaction_path:
+  - Inspect the Reference chat card.
+  - Scroll the Chats feed until the row that fully matches the reference is visible.
+  - Select that row and click “Use chat”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T06
+  name: 'Activity feed: visibility-gated reveal in nested left pane'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: nested left pane + List feed with on-scroll loading [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the “Activity” feed, scroll inside the feed until at least half of the row “ACT-184 · Cache refresh
+    complete” is visible in the feed viewport. It only counts when the row itself is visible in the feed. The task will finish
+    automatically when done.
+  ui_copy: In the “Activity” feed, scroll inside the feed until at least half of the row “ACT-184 · Cache refresh complete”
+    is visible in the feed viewport. It only counts when the row itself is visible in the feed. The task will finish automatically
+    when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, bottom_left placement, and high clutter. The page has
+    a page-level scroll region with metric cards and a large notes column. In the left content pane sits the target “Activity”
+    feed with its own fixed-height scrollable viewport, on-scroll loading, and a sticky footer showing loaded progress.
+
+    The target ACT-184 is not initially loaded. Merely loading it does not count; the row itself must be visible inside the
+    Activity feed viewport. No Apply button is present for this task.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - placement
+    factor_rationale: 'This is a visibility-gated reveal task by design: it removes the v1 ambiguity between ‘loaded’ and
+      ‘visible’ while preserving the nested left-pane scroll-owner problem.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The target semantics are simple; the real challenge is scrolling the correct inner feed in a nested left-pane
+      layout until the target is genuinely visible.
+  success_trigger:
+    human_readable:
+    - The required row is visibly exposed in the feed viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: ACT-184
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Activity feed.
+  - Loading ACT-184 without making it visible in the feed viewport.
+  - Stopping with the target clipped below the fold.
+  - Making a different activity row visible instead of ACT-184.
+  expected_interaction_path:
+  - Focus the Activity feed viewport.
+  - Scroll within it until ACT-184 is visibly exposed in the feed viewport.
+  - Stop once the target row itself is clearly visible.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T07
+  name: 'Incident feed: open the target row and save the decision'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: card feed + ListItemButton/Collapse + local save [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the “Incidents” feed, scroll until “INC-063 · Rollback requested” is visible, open that row so its preview
+    is expanded, and click “Save incident decision”. The task will finish automatically when done.
+  ui_copy: In the “Incidents” feed, scroll until “INC-063 · Rollback requested” is visible, open that row so its preview is
+    expanded, and click “Save incident decision”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and medium clutter. The target
+    card “Incidents” sits beside unrelated switches and helper text. The feed itself is fixed-height, loads more rows on scroll,
+    and uses ListItemButton rows with inline Collapse previews. A small status chip above the card shows the currently open
+    item.
+
+    The target INC-063 is below the fold. Opening it only changes the active row; the card action “Save incident decision”
+    commits the selected preview state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - clutter
+    factor_rationale: This is a select-then-save feed task rather than a simple expansion. The card-local save step makes
+      recovery and state tracking matter if the wrong row is opened first.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target is explicit, but internal scrolling and a local save boundary make this a meaningful feed-state
+      verification task.
+  success_trigger:
+    human_readable:
+    - The selected expanded row equals the requested item.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: INC-063
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save incident decision
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening a different incident row.
+  - Making INC-063 visible but not expanding it.
+  - Expanding INC-063 but not clicking “Save incident decision”.
+  - Interacting with nearby settings controls instead of the feed.
+  expected_interaction_path:
+  - Find the Incidents card.
+  - Scroll within the feed until INC-063 is visible.
+  - Open INC-063 so its preview expands.
+  - Click “Save incident decision”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mui-v2-T08
+  name: 'Four panes: star only the approval row in Approvals and save'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_list_on_scroll
+  implementation_component: 'MUI: four compact feed cards with row-end icon actions [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Approvals” feed, scroll until “APR-244 · Contract renewal” is visible, turn on its “Starred” row
+    action, and click “Save approval panes”. Do not change Alerts, Messages, or Tasks. The task will finish automatically
+    when done.
+  ui_copy: In the “Approvals” feed, scroll until “APR-244 · Contract renewal” is visible, turn on its “Starred” row action,
+    and click “Save approval panes”. Do not change Alerts, Messages, or Tasks. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, small scale, and high clutter.
+    Four compact cards appear in a 2×2 grid: “Alerts”, “Messages”, “Tasks”, and “Approvals”. Each contains its own on-scroll
+    feed, tiny scrollbar, and footer state. Row structures are visually similar across panes.
+
+    The target APR-244 is below the fold in Approvals. Each row has a small trailing “Starred” icon action. Toggling it changes
+    pending state only; the panel action “Save approval panes” commits all row-action states. The other three panes must remain
+    unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: Four tiny panes plus a tiny row-end action produce a high-pressure wrong-pane problem. The explicit
+      panel save keeps the target state legible and prevents accidental transient states from counting.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the correct of four small panes must be scrolled and the correct row-end action must
+      be toggled before a shared save action.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the row-level toggle has the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_id: APR-244
+        toggle_name: Starred
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save approval panes
+      require_correct_instance: true
+      target_instance_label_or_id: Approvals
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Starring any row outside the Approvals feed.
+  - Changing more than the Approvals pane before saving.
+  - Making APR-244 visible but leaving its Starred action off.
+  - Turning on the correct action but not clicking “Save approval panes”.
+  expected_interaction_path:
+  - Find the Approvals pane.
+  - Scroll within it until APR-244 · Contract renewal is visible.
+  - Turn on its Starred row action.
+  - Click “Save approval panes”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T01
+  name: 'Release notes drawer: reveal the target row, open it, and apply'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: Drawer + ScrollArea feed with on-scroll loading [composite]'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Release notes” drawer. In the Release notes feed, scroll until “NOTE-142 — Token rotation scheduled”
+    is visible, open that row so its details are expanded, and click “Use selected note”. The task will finish automatically
+    when done.
+  ui_copy: Open the “Release notes” drawer. In the Release notes feed, scroll until “NOTE-142 — Token rotation scheduled”
+    is visible, open that row so its details are expanded, and click “Use selected note”. The task will finish automatically
+    when done.
+  setup_description: 'Layout is drawer_flow with compact spacing, top_right placement, and medium clutter. A release summary
+    card includes a button “Open release notes”. Clicking it opens a Mantine Drawer on the right. Inside is a fixed-height
+    feed wrapped in ScrollArea with on-scroll loading and a sticky footer showing loaded progress.
+
+    The target row NOTE-142 is not in the initial range. Clicking a row expands an inline details block beneath it. The drawer
+    action “Use selected note” commits the currently open row; background content should be ignored once the drawer is open.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'This matches Mantine’s ScrollArea + Drawer strengths: the task is easy to describe but only solvable
+      if the agent uses the drawer feed’s own viewport, opens the target row, and then commits the state locally.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target row is explicit, but the drawer viewport and local apply action create a layered feed interaction
+      rather than a simple visible click.
+  success_trigger:
+    human_readable:
+    - The active expanded item equals `NOTE-142`.
+    - The required local confirmation/apply control has been clicked.
+    - The overlay is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: NOTE-142
+        expanded: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use selected note
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the drawer but never reaching NOTE-142.
+  - Making NOTE-142 visible without expanding it.
+  - Expanding the correct row but not clicking “Use selected note”.
+  - Scrolling the background page instead of the drawer feed.
+  expected_interaction_path:
+  - Open the Release notes drawer.
+  - Scroll within the feed until NOTE-142 is visible.
+  - Open NOTE-142 so its details expand.
+  - Click “Use selected note”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T02
+  name: 'Timelines dashboard: open the target row only in Secondary timeline'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: dashboard cards + ScrollArea feeds [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “Secondary timeline” feed, scroll until “EVT-188 — Queue depth spike” is visible,
+    open that row so its details are expanded, and click “Save secondary timeline”. Do not act in “Primary timeline”. The
+    task will finish automatically when done.
+  ui_copy: On the dashboard, in the “Secondary timeline” feed, scroll until “EVT-188 — Queue depth spike” is visible, open
+    that row so its details are expanded, and click “Save secondary timeline”. Do not act in “Primary timeline”. The task
+    will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, off-center placement, and high clutter. Two large feed
+    cards share the panel: “Primary timeline” and “Secondary timeline”. Each uses Mantine ScrollArea, loads more rows on scroll,
+    and expands details inline when a row is opened. The panel header contains non-functional KPI pills and a refresh action.
+
+    A similarly formatted EVT-188 appears in Primary timeline, but only the Secondary timeline row has the target title “Queue
+    depth spike”. The Secondary card has its own action button “Save secondary timeline”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Two nearly identical ScrollArea feeds make this a direct duplicated-viewport task. The row only counts
+      if it is opened in Secondary timeline and then carried through the card-local save action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two similar timelines create strong wrong-pane risk, and the explicit save step checks whether the correct
+      card state was preserved.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the selected expanded row equals the requested item.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: EVT-188
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save secondary timeline
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary timeline
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the corresponding EVT-188 in Primary timeline instead of Secondary timeline.
+  - Making the target visible but not expanding it.
+  - Expanding the correct row but not clicking “Save secondary timeline”.
+  - Changing Primary timeline instead of Secondary timeline.
+  expected_interaction_path:
+  - Locate the Secondary timeline card.
+  - Scroll within it until EVT-188 — Queue depth spike is visible.
+  - Open EVT-188 so its details expand.
+  - Click “Save secondary timeline”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T03
+  name: 'Customer notes feed: filter, open the exact note, then save'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: Card + TextInput + ScrollArea feed [composite]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the “Customer notes” feed, use the search box to find “NOTE-1088 — VPN login failure”, open that row
+    so its details are expanded, and click “Save note choice”. The task will finish automatically when done.
+  ui_copy: In the “Customer notes” feed, use the search box to find “NOTE-1088 — VPN login failure”, open that row so its
+    details are expanded, and click “Save note choice”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and medium clutter. The page includes
+    unrelated selects on the left and the target “Customer notes” card on the right. The card header contains a Mantine TextInput
+    search box above a fixed-height ScrollArea feed with on-scroll loading.
+
+    The target NOTE-1088 is not visible before filtering. After filtering, a few related VPN notes remain in view. Clicking
+    a row expands inline details. The card action “Save note choice” commits the currently open row.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The task intentionally keeps search as a precursor only. The agent must still wait for the refreshed
+      feed, open the exact note, and commit the feed-local state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Filtering helps, but the refreshed feed still requires exact row activation and a local save under moderate
+      clutter.
+  success_trigger:
+    human_readable:
+    - The expanded item equals the requested result.
+    - The local apply/save control has been clicked after selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: NOTE-1088
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save note choice
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the correct query but never opening the note row.
+  - Opening a different VPN-related note after filtering.
+  - Opening NOTE-1088 but not clicking “Save note choice”.
+  - Scrolling the stale pre-filter feed instead of waiting for the refreshed results.
+  expected_interaction_path:
+  - Use the Customer notes search box to query NOTE-1088.
+  - Wait for the feed to refresh.
+  - Open NOTE-1088 so its details expand.
+  - Click “Save note choice”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T04
+  name: 'Triage feed: exact four-alert selection and apply'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: dual ScrollArea feeds with checkbox rows [composite]'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the “Triage feed”, select exactly ALT-021, ALT-024, ALT-027, and ALT-031, then click “Apply triage selection”.
+    Do not change the “Escalated feed”. The task will finish automatically when done.
+  ui_copy: In the “Triage feed”, select exactly ALT-021, ALT-024, ALT-027, and ALT-031, then click “Apply triage selection”.
+    Do not change the “Escalated feed”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, and high clutter. Two compact
+    feed cards are stacked: “Triage feed” and “Escalated feed”. Both use checkbox rows inside ScrollArea and load more rows
+    as their own viewport reaches the bottom. A small footer on each card shows pending or committed counts.
+
+    The four target alerts are separated in Triage feed and require internal scrolling. Checking them only updates pending
+    state. The Triage card action “Apply triage selection” commits the set; Escalated feed must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - confirmation_model
+    factor_rationale: 'This carries over the strongest feed exact-set family but under a harder v2 factor floor: compact dual
+      feeds, dense checkboxes, and a required apply boundary.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The exact four-alert set is demanding because the rows are compact, the targets are separated by scrolling,
+      and the wrong feed is visible throughout.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the committed selected-item set equals the requested set exactly.
+    - The required apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        committed_selected_item_ids:
+        - ALT-021
+        - ALT-024
+        - ALT-027
+        - ALT-031
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply triage selection
+      require_correct_instance: true
+      target_instance_label_or_id: Triage feed
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking any extra alert beyond the required four.
+  - Missing any required alert.
+  - Applying a set in Escalated feed instead of Triage feed.
+  - Getting the pending set right but not clicking “Apply triage selection”.
+  expected_interaction_path:
+  - Find the Triage feed card.
+  - Scroll within it to locate each required alert.
+  - Check exactly ALT-021, ALT-024, ALT-027, and ALT-031.
+  - Click “Apply triage selection”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T05
+  name: 'Pinned notes feed: reference marker match plus exact ID'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: dark split card + reference chip + ScrollArea feed [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Pinned notes” feed, select the row whose marker ring and status chip match the “Reference note”
+    card and whose ID is “PIN-034”, then click “Use note”. The task will finish automatically when done.
+  ui_copy: In the “Pinned notes” feed, select the row whose marker ring and status chip match the “Reference note” card and
+    whose ID is “PIN-034”, then click “Use note”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with dark theme, compact spacing, and medium clutter. A small “Reference note”
+    card sits above the target feed. The feed itself is a fixed-height ScrollArea with compact rows, each showing a marker
+    ring, a status chip, an ID, and a short title. The target PIN-034 is not initially visible.
+
+    Several rows share one of the two visual cues but not the full combination. Clicking a row makes it active. The action
+    “Use note” commits the currently active row.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - confirmation_model
+    factor_rationale: 'This is a visually grounded feed task by design: the target requires both visual matching and exact-ID
+      verification after scrolling, then a final local commit.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The visual marker match adds real interference, and the selected row still has to be committed after it
+      is found.
+  success_trigger:
+    human_readable:
+    - The active row is the unique row that matches the reference card.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-pin-034
+        matched_item_id: PIN-034
+        saved: true
+        match_rule: reference_token_or_style_exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: Use note
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row that matches only the ring or only the status chip.
+  - Selecting a visually matching row with the wrong ID.
+  - Selecting PIN-034 but not clicking “Use note”.
+  - Choosing a row solely by title.
+  expected_interaction_path:
+  - Inspect the Reference note card.
+  - Scroll the Pinned notes feed until PIN-034 is visible.
+  - Verify that its marker ring and status chip match the reference and select it.
+  - Click “Use note”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T06
+  name: 'Changelog panel: visibility-gated reveal in nested ScrollArea'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: nested panel + ScrollArea feed with on-scroll loading [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the “Changelog” feed, scroll inside the feed until at least half of the row “CHG-184 — Cache refresh
+    complete” is visible in the feed viewport. It only counts when the row itself is visible in the feed. The task will finish
+    automatically when done.
+  ui_copy: In the “Changelog” feed, scroll inside the feed until at least half of the row “CHG-184 — Cache refresh complete”
+    is visible in the feed viewport. It only counts when the row itself is visible in the feed. The task will finish automatically
+    when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, bottom_right placement, and high clutter. The page contains
+    a page-level scroll region with release notes and metrics. Inside the right content panel is the target “Changelog” feed,
+    which is a fixed-height ScrollArea with on-scroll loading and a sticky footer showing loaded progress.
+
+    The target CHG-184 is not in the initial range. Loading it is not sufficient; the row itself must be visible in the Changelog
+    viewport. No Apply button is present for this task.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - clutter
+    factor_rationale: This task is explicitly visibility-gated so that DOM presence is irrelevant. The only way to succeed
+      is to drive the feed’s own ScrollArea until the target is truly visible.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The challenge is controlling the correct inner viewport in a nested-scroll scene rather than understanding
+      the target label itself.
+  success_trigger:
+    human_readable:
+    - The required row is visibly exposed in the feed viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: CHG-184
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Changelog feed.
+  - Loading CHG-184 without making it visible in the feed viewport.
+  - Stopping with the target clipped below the fold.
+  - Making a different changelog row visible instead of CHG-184.
+  expected_interaction_path:
+  - Focus the Changelog feed viewport.
+  - Scroll within it until CHG-184 is visibly exposed in the feed viewport.
+  - Stop once the target row itself is clearly visible.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T07
+  name: 'Approvals feed: open the target row and save the decision'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: card feed + ScrollArea + inline expansion [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the “Approvals” feed, scroll until “APR-063 — Rollback requested” is visible, open that row so its details
+    are expanded, and click “Save approval decision”. The task will finish automatically when done.
+  ui_copy: In the “Approvals” feed, scroll until “APR-063 — Rollback requested” is visible, open that row so its details are
+    expanded, and click “Save approval decision”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, and medium clutter. The target
+    card “Approvals” sits beside unrelated settings controls. The feed uses ScrollArea, loads more rows on scroll, and reveals
+    an inline details block when a row is opened. A small status chip above the feed shows the currently open item.
+
+    The target APR-063 is below the fold. Opening it only changes the active row; the card action “Save approval decision”
+    commits the selected row state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - clutter
+    factor_rationale: 'This is a select-then-save feed task rather than a trivial expand action: the open row has to be tracked
+      through the explicit card-local commit step.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target semantics are simple, but the internal viewport and explicit save boundary make state tracking
+      nontrivial.
+  success_trigger:
+    human_readable:
+    - The selected expanded row equals the requested item.
+    - The local confirmation/apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: APR-063
+        expanded: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save approval decision
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening a different approval row.
+  - Making APR-063 visible but not expanding it.
+  - Expanding APR-063 but not clicking “Save approval decision”.
+  - Interacting with nearby settings controls instead of the feed.
+  expected_interaction_path:
+  - Find the Approvals card.
+  - Scroll within the feed until APR-063 is visible.
+  - Open APR-063 so its details expand.
+  - Click “Save approval decision”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.
+- id: feed_infinite_scroll-mantine-v2-T08
+  name: 'Four feeds: pin only the payments row in the Payments feed and save'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_feed
+  implementation_component: 'Mantine: four compact feed cards with row-end pin actions [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the “Payments” feed, scroll until “PAY-244 — Card retry scheduled” is visible, turn on its “Pinned”
+    row action, and click “Save feed panes”. Do not change Orders, Auth, or Ops. The task will finish automatically when done.
+  ui_copy: In the “Payments” feed, scroll until “PAY-244 — Card retry scheduled” is visible, turn on its “Pinned” row action,
+    and click “Save feed panes”. Do not change Orders, Auth, or Ops. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, bottom_left placement, small scale, and high clutter.
+    Four compact feed cards appear in a 2×2 grid: “Orders”, “Payments”, “Auth”, and “Ops”. Each card contains its own ScrollArea
+    feed, tiny scrollbar, loading indicator, and footer state. Row formats are intentionally similar across cards.
+
+    The target PAY-244 is below the fold in Payments. Each row has a small trailing “Pinned” action. Toggling it changes only
+    pending state. The panel action “Save feed panes” commits the row-action states, and the other three feeds must remain
+    unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: 'This is the feed analogue of the hardest multi-pane virtual-list tasks: four small independent feeds,
+      repeated row structures, and a tiny row-end action combine into a strong wrong-pane and state-tracking challenge.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The state is discrete, but the correct pane and correct row-end action are hard to acquire and preserve
+      in a four-feed compact dashboard.
+  success_trigger:
+    human_readable:
+    - Within the target feed instance, the row-level toggle has the requested value for the required item.
+    - The local apply/save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_id: PAY-244
+        toggle_name: Pinned
+        toggle_value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save feed panes
+      require_correct_instance: true
+      target_instance_label_or_id: Payments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Pinning any row outside the Payments feed.
+  - Changing more than the Payments feed before saving.
+  - Making PAY-244 visible but leaving its Pinned action off.
+  - Turning on the correct action but not clicking “Save feed panes”.
+  expected_interaction_path:
+  - Find the Payments feed.
+  - Scroll within it until PAY-244 — Card retry scheduled is visible.
+  - Turn on its Pinned row action.
+  - Click “Save feed panes”.
+  notes: Expose feed-local loaded counters or visible ranges, active item ids, pending vs committed state, and instance labels
+    on the wrapper. Visibility must be computed relative to the feed viewport so merely loaded offscreen rows do not count
+    as success.

@@ -1,0 +1,2372 @@
+- id: split_button-antd-T01
+  name: 'Compose: run Save draft primary action'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown.Button (split button via Dropdown + Menu)'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Click the primary (left) action of the split button to run “Save draft”. The task will finish automatically when done.
+  ui_copy: Click the primary (left) action of the split button to run “Save draft”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Compose message” centered in the viewport.
+
+    Target component: one Ant Design split button implemented with `Dropdown.Button`. The left button shows the currently selected action label; the right segment is a chevron that opens a dropdown menu.
+
+    Configuration and initial state:
+    - Split button label (left segment): “Save draft”.
+    - Dropdown trigger: click on the chevron segment.
+    - Menu items (in order): “Save draft”, “Send now”, “Schedule…”, “Discard”.
+    - The currently selected/default action is “Save draft”.
+
+    Feedback and state observability:
+    - Inside the split-button container (beneath the buttons) there is a small inline status line: “Last action: —” initially.
+    - When the left segment is clicked, the component records `lastInvokedAction` and updates the status line to “Last action: <action label>”.
+    - No toast is required for success; the status line is persistent.
+
+    Distractors:
+    - A non-interactive message body preview above the split button.
+    - No other clickable controls in the card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single split button with a large primary target; success is immediate after one click with persistent feedback.
+  success_trigger:
+    human_readable:
+    - Target split button’s `lastInvokedAction` equals “save_draft”.
+    - No confirmation step is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        last_invoked_action: save_draft
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Opening the dropdown menu without clicking the primary (left) action.
+  - Selecting a menu item but not invoking the action via the primary (left) button.
+  - Invoking any action other than “Save draft” (e.g., “Send now”).
+  expected_interaction_path:
+  - Click the left segment labeled “Save draft”.
+  notes: |-
+    Instrumentation: add `data-testid="split-button-root"` on the Dropdown.Button wrapper and expose `data-selected-action` and `data-last-invoked-action` attributes for the checker.
+- id: split_button-antd-T02
+  name: 'Publish: open split-button dropdown menu'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown.Button (split button via Dropdown + Menu)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the dropdown menu of the split button labeled “Publish”. Do not select any menu item. The task will finish automatically when done.
+  ui_copy: Open the dropdown menu of the split button labeled “Publish”. Do not select any menu item. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Release controls” centered in the viewport.
+
+    Target component: one Ant Design `Dropdown.Button` split button with:
+    - Left segment label: “Publish”.
+    - Right segment: chevron/arrow that opens the dropdown menu on click.
+
+    Menu contents (for realism; not required to select):
+    - “Publish now”
+    - “Schedule…”
+    - “Unpublish” (disabled)
+    - “Preview”
+
+    Initial state:
+    - Menu is closed.
+    - No pending selection; this task is only about opening the overlay.
+
+    Feedback/observability:
+    - When open, the dropdown menu is rendered as a popover list anchored to the button.
+    - The component sets `menuOpen=true` while the overlay is visible.
+
+    Distractors:
+    - A static “Status: Draft” label above the split button (non-interactive).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires acquiring the smaller chevron segment and opening a single-layer dropdown; no selection is needed.
+  success_trigger:
+    human_readable:
+    - Target split button dropdown menu is open (`menuOpen` is true / menu popover is present).
+    - No menu item is required to be selected.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        menu_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking the primary (left) action without opening the dropdown.
+  - Opening and immediately closing the dropdown before the checker can observe the open state (menu must be visibly open).
+  expected_interaction_path:
+  - Click the chevron (right segment) of the “Publish” split button to open the menu.
+  notes: |-
+    Checker hint: consider the overlay open if the menu element with role `menu` (or AntD menu container) is present and associated with the target split button.
+- id: split_button-antd-T03
+  name: 'Report: set split-button action to Export as PDF'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown.Button (split button via Dropdown + Menu)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: On the split button labeled “Export”, open the dropdown and choose “Export as PDF” so it becomes the selected action. The task will finish automatically when done.
+  ui_copy: On the split button labeled “Export”, open the dropdown and choose “Export as PDF” so it becomes the selected action. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Monthly report” centered in the viewport.
+
+    Target component: one `Dropdown.Button` split button labeled “Export”.
+    - The left segment displays the currently selected export format.
+    - The right chevron opens a dropdown menu of export formats.
+
+    Menu items:
+    - “Export as CSV”
+    - “Export as PDF”
+    - “Export as PNG”
+    - “Export as Excel”
+
+    Initial state:
+    - Currently selected action: “Export as CSV” (left segment shows this text).
+
+    Behavior:
+    - Clicking a menu item updates the split button’s `selectedAction` and updates the left segment label accordingly.
+    - No additional Apply/OK step.
+
+    Distractors:
+    - A static chart thumbnail above the button (non-interactive).
+    - A regular (non-split) “Download sample” link below (disabled, not clickable).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple open-and-select with a short, distinct option list and immediate label update.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “export_pdf” (left segment label shows “Export as PDF”).
+    - Dropdown menu is closed after selection (optional but recommended for stability).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: export_pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting any export format other than “Export as PDF”.
+  - Leaving the selected action unchanged (still “Export as CSV”).
+  - Changing a non-target control (e.g., clicking outside without selecting).
+  expected_interaction_path:
+  - Click the chevron on the “Export” split button.
+  - Click “Export as PDF” in the dropdown menu.
+  notes: |-
+    Ensure each Menu.Item has a stable key (e.g., `export_pdf`) so the checker can read `selectedAction`.
+- id: split_button-antd-T04
+  name: 'Email: reset split-button to default Send email'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown.Button (split button via Dropdown + Menu)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the split button back to its default action “Send email”. The task will finish automatically when done.
+  ui_copy: Reset the split button back to its default action “Send email”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Email campaign” centered in the viewport.
+
+    Target component: one `Dropdown.Button` split button in the card footer.
+    - Left segment displays the currently selected sending action.
+    - Right chevron opens the menu.
+
+    Initial state:
+    - The split button is currently set to “Schedule send” (left segment shows “Schedule send”).
+    - A small helper text under the button reads: “Default action: Send email”.
+
+    Dropdown menu items:
+    - “Send email” (default)
+    - “Schedule send”
+    - “Send test email”
+    - Divider
+    - “Reset to default” (secondary text: “Send email”)
+
+    Behavior:
+    - Choosing “Reset to default” sets `selectedAction` back to the default (“send_email”) and updates the left segment label to “Send email”.
+    - No Apply/OK step.
+
+    Distractors:
+    - Non-interactive campaign summary lines above.
+    - A disabled “Preview” button (not part of the split button) to the right.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires recognizing the reset affordance in the menu and verifying the primary label updates to the default.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “send_email”.
+    - Left segment label reads “Send email”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: send_email
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Send email” but leaving the split button in a non-default internal state (checker reads `selectedAction` != `send_email`).
+  - Selecting “Reset to default” on a non-target control (none should exist).
+  - Leaving the current action as “Schedule send”.
+  expected_interaction_path:
+  - Open the split button dropdown.
+  - Click “Reset to default”.
+  notes: |-
+    To keep this component-scoped, keep the “Preview” button disabled and ensure only the split button updates `selectedAction`.
+- id: split_button-antd-T05
+  name: 'Project: switch Actions split-button to Duplicate'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown.Button (split button via Dropdown + Menu)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the “Project settings” section, open the “Actions” split button and choose “Duplicate” so it becomes the selected action. The task will finish automatically when done.
+  ui_copy: In the “Project settings” section, open the “Actions” split button and choose “Duplicate” so it becomes the selected action. The task will finish automatically when done.
+  setup_description: |-
+    Layout: form_section titled “Project settings” centered on the page.
+
+    Target component:
+    - An Ant Design `Dropdown.Button` split button labeled “Actions” aligned to the right of the section header.
+    - The left segment shows the currently selected action label; the right segment opens the menu.
+
+    Other UI (clutter=low, not required for success):
+    - Two text inputs (“Project name”, “Owner”).
+    - A Switch labeled “Private project”.
+    - A helper paragraph about permissions.
+
+    Menu items (with icons):
+    - “Save changes” (currently selected; left segment shows “Save changes”)
+    - “Duplicate”
+    - “Export settings…”
+    - “Archive” (disabled)
+    - Divider
+    - “Delete” (danger)
+
+    Behavior:
+    - Selecting an item updates `selectedAction` and updates the left segment label.
+    - Selecting “Delete” would show a toast, but no confirmation modal is used in this task.
+
+    Initial state:
+    - `selectedAction = save_changes`.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Low clutter and a moderate menu with a disabled item and a danger item increase choice interference slightly.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “duplicate”.
+    - Left segment label shows “Duplicate”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: duplicate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Export settings…” or any option other than “Duplicate”.
+  - Toggling unrelated form controls without changing the split button’s selected action.
+  - Selecting “Duplicate” in the menu but the split button label does not update (state not committed).
+  expected_interaction_path:
+  - Locate the “Actions” split button in the Project settings header.
+  - Open its dropdown and click “Duplicate”.
+  notes: |-
+    Add `aria-label="Actions split button"` to the root for easier targeting in accessibility-tree modes.
+- id: split_button-antd-T06
+  name: 'Inbox: search in split-button menu and select Archive conversation'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: custom_dropdownRender_with_search
+  implementation_component: 'AntD: Dropdown.Button + custom dropdownRender (Menu + Input search)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Open the split button menu and use its search box to select “Archive conversation”. The task will finish automatically when done.
+  ui_copy: Open the split button menu and use its search box to select “Archive conversation”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel titled “Conversation actions” centered in the viewport.
+
+    Target component: a `Dropdown.Button` split button labeled “Conversation”.
+    - Left segment shows the currently selected quick action.
+    - Right chevron opens a custom dropdown panel.
+
+    Custom dropdown panel (still part of the split button overlay):
+    - Top: a small Input field with placeholder “Search actions…”.
+    - Below: a scrollable menu list (initially unfiltered) of ~12 actions:
+      “Move to inbox”, “Mark as unread”, “Mute notifications”, “Assign to me”, “Archive conversation”, “Snooze…”, “Add label…”, etc.
+
+    Initial state:
+    - Selected action is “Move to inbox”.
+    - Menu closed.
+
+    Behavior:
+    - Typing in the search box filters menu items by substring match.
+    - Clicking a filtered item sets `selectedAction` and closes the dropdown.
+
+    Distractors (not required):
+    - Left sidebar with non-interactive section titles (Inbox, Starred, Archived).
+    - A read-only message snippet panel to the left.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Adds an extra control within the dropdown (search input) and requires filtering before selecting, increasing depth and target acquisition demands.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “archive_conversation”.
+    - The dropdown overlay may close after selection (not strictly required if state is set).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: archive_conversation
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Typing in the search box but not selecting the action.
+  - Selecting “Archive” or any similarly named but different action (e.g., “Archive thread” if present).
+  - Selecting the correct item in the menu but leaving `selectedAction` unchanged.
+  expected_interaction_path:
+  - Open the split button dropdown.
+  - Click the search input, type “archive”.
+  - Click “Archive conversation”.
+  notes: |-
+    Implementation hint: use `dropdownRender`/`popupRender` to place the Input above the Menu. Expose the committed selection via a single source of truth (e.g., React state) for the checker.
+- id: split_button-antd-T07
+  name: 'Output: choose action by matching icon reference (Print)'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: icon_menu_items
+  implementation_component: 'AntD: Dropdown.Button (Menu items with icons)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Select the split-button action that matches the reference icon shown on the card. The task will finish automatically when done.
+  ui_copy: Select the split-button action that matches the reference icon shown on the card. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Output” centered in the viewport.
+
+    Guidance (visual):
+    - The card header shows “Match this icon:” followed by a small icon-only chip (no text) showing a printer glyph.
+
+    Target component:
+    - One `Dropdown.Button` split button labeled “Output action”.
+    - The left segment shows the currently selected action label.
+    - The right segment opens a dropdown menu where each item includes an icon + label.
+
+    Menu items (icon + label):
+    - Printer icon — “Print”
+    - Download icon — “Download”
+    - Share icon — “Share”
+    - Link icon — “Copy link”
+
+    Initial state:
+    - Selected action is “Download”.
+
+    Behavior:
+    - Selecting a menu item sets `selectedAction` and updates the left segment label.
+
+    Distractors:
+    - A decorative preview thumbnail (non-interactive).
+    - The reference icon chip is not clickable (purely visual).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires visual matching between a reference icon and menu item icons; otherwise a straightforward open-and-select.
+  success_trigger:
+    human_readable:
+    - Target split button selected action matches the reference icon (printer) → `selectedAction = print`.
+    - Left segment label shows “Print”.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_token: icon_printer
+        selected_action: print
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting an action with a different icon (e.g., Download) even if the text seems related.
+  - Leaving the action as “Download”.
+  - Clicking only the primary action without changing the selected action.
+  expected_interaction_path:
+  - Open the dropdown menu on the split button.
+  - Pick the menu item whose icon matches the printer reference.
+  notes: |-
+    Checker: use the component’s internal `selectedAction` string; do not OCR the icon. The visual reference token can be a fixed id in the DOM (e.g., `data-reference-token="icon_printer"`).
+- id: split_button-antd-T08
+  name: 'Dashboard: set Billing report export to CSV (detailed)'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown.Button (split button via Dropdown + Menu)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the dashboard, find the split button labeled “Billing report export” and set it to “CSV (detailed)”. The task will finish automatically when done.
+  ui_copy: In the dashboard, find the split button labeled “Billing report export” and set it to “CSV (detailed)”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: dashboard with two side-by-side cards (clutter=medium).
+    - Left card: “User report”
+    - Right card: “Billing report”
+
+    Target component: the split button in the “Billing report” card footer.
+    - Each card contains a visually similar Ant Design `Dropdown.Button` split button.
+    - The target instance is explicitly labeled above it as “Billing report export”.
+    - The non-target instance is labeled “User report export”.
+
+    Menu items for BOTH split buttons (same labels to increase confusability):
+    - “CSV (summary)”
+    - “CSV (detailed)”
+    - “PDF”
+    - “Excel”
+
+    Initial state:
+    - Both split buttons start selected on “CSV (summary)”.
+
+    Behavior:
+    - Selecting a menu item updates the corresponding instance’s `selectedAction` and left label.
+
+    Distractors:
+    - Each card has filters and a small table preview (non-interactive in this task).
+    - A “Refresh” icon button in each card header (disabled).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two nearly identical split buttons require careful instance disambiguation, and the target option is confusable with a similar CSV choice.
+  success_trigger:
+    human_readable:
+    - Only the split button labeled “Billing report export” has `selectedAction = csv_detailed`.
+    - Changing the other split button does not count as success.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: csv_detailed
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing report export
+      terminal_condition: true
+  negative_cases:
+  - Setting “CSV (detailed)” on the “User report export” split button.
+  - Selecting “CSV (summary)” or another export format on the Billing report button.
+  - Invoking the primary action without changing the selected export format.
+  expected_interaction_path:
+  - Locate the “Billing report export” split button (right card).
+  - Open its dropdown and click “CSV (detailed)”.
+  notes: |-
+    Instrumentation: assign each instance a stable id (e.g., `data-instance="billing"` / `data-instance="user"`) and include the visible label in `aria-label` for robust disambiguation.
+- id: split_button-antd-T09
+  name: 'Share: select nested action Share > Copy link (dark, corner)'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: cascading_menu
+  implementation_component: 'AntD: Dropdown.Button (cascading Menu items)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: On the “Share” split button, choose the nested menu action “Share” → “Copy link”. The task will finish automatically when done.
+  ui_copy: On the “Share” split button, choose the nested menu action “Share” → “Copy link”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel anchored near the top-right of the viewport (placement=top_right) in dark theme.
+
+    Target component: one Ant Design split button labeled “Share”.
+    - Left segment shows the currently selected sharing action.
+    - Right segment opens a dropdown with a cascading (multi-level) menu.
+
+    Menu structure (two levels):
+    - “Share” (submenu)
+        - “Copy link”
+        - “Email…”
+        - “QR code”
+    - “Export” (submenu)
+        - “PDF”
+        - “PNG”
+    - Divider
+    - “Open in new tab”
+
+    Initial state:
+    - Selected action is “Open in new tab”.
+
+    Behavior:
+    - Hovering or focusing “Share” opens its submenu panel to the side.
+    - Clicking “Copy link” commits `selectedPath=["Share","Copy link"]` and sets `selectedAction = share_copy_link`.
+    - No confirmation required.
+
+    Distractors:
+    - A dark-mode sidebar with section headings (non-interactive).
+    - A “Theme” toggle is present but disabled for this task.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires multi-level menu navigation (submenu reveal) in dark theme with corner placement, increasing layering and acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedPath` equals [“Share”, “Copy link”].
+    - Target split button `selectedAction` equals “share_copy_link”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Share
+        - Copy link
+        selected_action: share_copy_link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting a different leaf under “Share” (e.g., “Email…”).
+  - Selecting an option under “Export” instead of “Share”.
+  - Only opening the submenu without clicking “Copy link”.
+  expected_interaction_path:
+  - Open the dropdown menu on the split button.
+  - Open the “Share” submenu (hover/focus).
+  - Click “Copy link”.
+  notes: |-
+    Checker: store both `selectedAction` and `selectedPath` in component state. For accessibility, ensure submenu items have roles/names so AX-tree agents can traverse.
+- id: split_button-antd-T10
+  name: 'Table row: delete permanently via split-button menu with confirm'
+  canonical_type: split_button
+  implementation_source: antd
+  implementation_variant: scroll_menu_with_inline_confirm
+  implementation_component: 'AntD: Dropdown.Button + custom dropdownRender (scrollable Menu + inline confirm footer)'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Row 12 actions” split button, open the menu, choose “Delete permanently…”, and then click “Confirm”. The task will finish automatically when done.
+  ui_copy: In the “Row 12 actions” split button, open the menu, choose “Delete permanently…”, and then click “Confirm”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: table_cell scene showing a small data table with a highlighted row “Row 12”.
+    - The split button appears inside the last column of Row 12 and is labeled “Row 12 actions”.
+    - Other rows contain plain text only (no other split buttons) to keep the target unique.
+
+    Target component: one `Dropdown.Button` split button embedded in the table cell.
+    - Left segment label: “Actions”.
+    - Right segment: chevron opens dropdown.
+
+    Dropdown content (scroll required):
+    - The dropdown panel has a fixed height with internal scrolling.
+    - It contains a long list of actions (about 18), including:
+      “View details”, “Duplicate”, “Move to folder…”, “Export”, “Archive”, “Disable”, …
+      Near the bottom (requires scrolling): “Delete permanently…” (danger-styled).
+
+    Inline confirmation (within the dropdown overlay):
+    - After clicking “Delete permanently…”, the menu list is replaced by a confirmation panel inside the same dropdown:
+      Text: “Delete permanently?” and two buttons: “Confirm” (danger) and “Cancel”.
+    - Only clicking “Confirm” commits the action.
+
+    Initial state:
+    - `lastInvokedAction = none`.
+    - Dropdown closed.
+
+    Feedback/observability:
+    - After confirmation, the split button container shows an inline status line: “Last action: Delete permanently”.
+    - No modal dialogs are used; confirmation stays within the component overlay.
+
+    Distractors (clutter=high):
+    - Table header includes filter chips and a search input (disabled).
+    - Row selection checkboxes (disabled) are visible.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a constrained, scrollable menu to find a bottom option, then completing an inline confirmation step inside the dropdown.
+  success_trigger:
+    human_readable:
+    - Target split button `lastInvokedAction` equals “delete_permanently”.
+    - Inline confirmation was accepted (Confirm clicked) within the dropdown overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        last_invoked_action: delete_permanently
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Scrolling to or clicking “Delete permanently…” but not clicking “Confirm”.
+  - Clicking “Cancel” in the inline confirmation panel.
+  - Selecting a different delete-like action (e.g., “Delete” without “permanently” if present).
+  - Confirming on any non-target control (should not exist).
+  expected_interaction_path:
+  - Open the split button dropdown in Row 12.
+  - Scroll within the dropdown list to find “Delete permanently…”.
+  - Click it to open inline confirmation.
+  - Click “Confirm”.
+  notes: |-
+    Checker hint: treat `require_confirm=true` as “lastInvokedAction must only update after Confirm”. Add `data-testid="inline-confirm"` and `data-testid="confirm-btn"` inside the dropdown render.
+- id: split_button-mui-T01
+  name: 'Merge options: open split-button menu (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ButtonGroup + Popper/MenuList (SplitButton pattern)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the dropdown menu of the split button labeled “Merge”. Do not choose any option. The task will finish automatically when done.
+  ui_copy: Open the dropdown menu of the split button labeled “Merge”. Do not choose any option. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Pull request” centered in the viewport.
+
+    Target component: a MUI split button built from:
+    - `ButtonGroup` containing:
+      - Main `Button` labeled “Merge”
+      - Secondary `Button` with a down-arrow icon (opens menu)
+    - A `Popper`/`MenuList` overlay anchored to the button group.
+
+    Menu items (not required to pick for this task):
+    - “Merge commit”
+    - “Squash and merge”
+    - “Rebase and merge”
+
+    Initial state:
+    - Menu is closed (`menuOpen=false`).
+
+    Feedback/observability:
+    - When open, the Popper with role `menu` is visible and focus is moved into the menu list.
+
+    Distractors:
+    - Non-interactive PR description text in the card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single split button; only requires clicking the smaller arrow segment to open a one-layer menu.
+  success_trigger:
+    human_readable:
+    - Target split button menu overlay is open (`menuOpen=true` / Popper menu is present).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        menu_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking the main “Merge” button without opening the menu.
+  - Opening and closing the menu before it is observed as open.
+  expected_interaction_path:
+  - Click the down-arrow button in the ButtonGroup to open the menu.
+  notes: |-
+    Composite note: this is the canonical MUI “split button” pattern built from primitives (ButtonGroup + Popper/MenuList). Expose `data-menu-open` on the root for the checker.
+- id: split_button-mui-T02
+  name: 'Merge: select Squash and merge as the main action (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ButtonGroup + Popper/MenuList (SplitButton pattern)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the split button menu and choose “Squash and merge” so it becomes the selected main action. The task will finish automatically when done.
+  ui_copy: Open the split button menu and choose “Squash and merge” so it becomes the selected main action. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Pull request” centered in the viewport.
+
+    Target component: MUI split button (ButtonGroup + Popper MenuList).
+    - Main button shows the currently selected merge strategy.
+    - Arrow button opens the list of strategies.
+
+    Options:
+    - “Merge commit”
+    - “Squash and merge”
+    - “Rebase and merge”
+
+    Initial state:
+    - Selected action: “Merge commit” (main button label).
+
+    Behavior:
+    - Clicking an option sets `selectedAction` and updates the main button label.
+    - Menu closes after selection.
+
+    Distractors:
+    - A static label “Checks: passing” and a disabled “Details” link (non-interactive).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Short, distinct list of options; immediate visible label update on selection.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “squash_and_merge”.
+    - Main button label displays “Squash and merge”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: squash_and_merge
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Merge commit” or “Rebase and merge” instead of “Squash and merge”.
+  - Opening the menu but not selecting an option.
+  expected_interaction_path:
+  - Click the arrow button to open the menu.
+  - Click “Squash and merge”.
+  notes: |-
+    Checker should read the committed selection from component state (`selectedAction`) rather than relying on transient menu focus.
+- id: split_button-mui-T03
+  name: 'Merge: run the selected action via main button (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ButtonGroup + Popper/MenuList (SplitButton pattern)'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Click the main button of the split button to run the selected action “Squash and merge”. The task will finish automatically when done.
+  ui_copy: Click the main button of the split button to run the selected action “Squash and merge”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Pull request” centered in the viewport.
+
+    Target component: MUI split button (ButtonGroup + Popper/MenuList).
+    - Main button triggers the currently selected action.
+    - Arrow button would open the menu (not required for this task).
+
+    Initial state:
+    - Selected action is already set to “Squash and merge”.
+    - Status line under the button reads “Last action: —”.
+
+    Behavior:
+    - Clicking the main button commits `lastInvokedAction = squash_and_merge` and updates the status line to “Last action: Squash and merge”.
+    - No additional confirmation.
+
+    Distractors:
+    - The arrow segment is present but should not be used for this task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: One direct click on a large primary target; the selected action is pre-set.
+  success_trigger:
+    human_readable:
+    - Target split button `lastInvokedAction` equals “squash_and_merge”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        last_invoked_action: squash_and_merge
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Opening the dropdown menu without invoking the main action.
+  - Invoking a different action (e.g., if the selection was changed first).
+  expected_interaction_path:
+  - Click the main button labeled “Squash and merge”.
+  notes: |-
+    Expose `data-last-invoked-action` on the root to avoid relying on reading the status line.
+- id: split_button-mui-T04
+  name: 'Export panel: set split-button to Export Excel (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ButtonGroup + Popper/MenuList (SplitButton pattern)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the “Data export” section, set the “Export” split button to “Export Excel”. The task will finish automatically when done.
+  ui_copy: In the “Data export” section, set the “Export” split button to “Export Excel”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: form_section titled “Data export”.
+
+    Target component:
+    - A MUI split button labeled “Export”.
+    - Main button shows the currently selected export format.
+    - Arrow button opens a Popper menu list.
+
+    Other UI (clutter=low):
+    - A read-only “Rows: 1,248” label.
+    - A disabled checkbox “Include archived”.
+    - A helper tooltip icon (non-interactive).
+
+    Menu items (10 total; some similar):
+    - “Export CSV”
+    - “Export CSV (UTF-8)”
+    - “Export Excel”
+    - “Export PDF”
+    - “Export JSON”
+    - “Export XML” (disabled)
+    - Divider
+    - “Export settings…”
+
+    Initial state:
+    - Selected action: “Export CSV”.
+
+    Behavior:
+    - Selecting a menu item sets `selectedAction` and updates the main button label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Moderate option count with similar labels (CSV variants) and a disabled item; still a single-layer menu.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “export_excel”.
+    - Main button label shows “Export Excel”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: export_excel
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Export CSV (UTF-8)” or any other export option.
+  - Selecting a disabled option (should not commit).
+  - Opening the menu but not changing the selected action.
+  expected_interaction_path:
+  - Open the Export split button menu.
+  - Click “Export Excel”.
+  notes: |-
+    For accessibility: ensure the arrow button has an aria-label like “Open export options”.
+- id: split_button-mui-T05
+  name: 'Sort control: toggle to Descending (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ButtonGroup split button with stateful main toggle'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Use the “Sort” split button to change the sort order to “Descending”. The task will finish automatically when done.
+  ui_copy: Use the “Sort” split button to change the sort order to “Descending”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Files” centered in the viewport.
+
+    Target component: a MUI split button used as a sort control.
+    - Main button text includes both field and order, e.g., “Sort: Date · Ascending”.
+    - Clicking the main button toggles the order between Ascending and Descending (this is the split button’s primary action).
+    - The arrow button opens a Popper menu to change the field (Name, Date, Size).
+
+    Initial state:
+    - Field: Date
+    - Order: Ascending
+    - Main label: “Sort: Date · Ascending”
+
+    Behavior:
+    - Main click toggles `sortOrder` between `asc` and `desc` and updates the label immediately.
+    - Changing the field is optional and not required for success.
+
+    Distractors:
+    - A static list preview of 3 files (non-interactive).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires understanding that the main segment toggles state (ascending/descending) rather than selecting from the menu.
+  success_trigger:
+    human_readable:
+    - Target split button `sortOrder` equals “desc”.
+    - Main button label reflects “Descending”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_order: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Changing the sort field but leaving the order as Ascending.
+  - Opening the dropdown menu without toggling the order.
+  - Toggling twice and returning to Ascending.
+  expected_interaction_path:
+  - 'Click the main “Sort: …” button once to switch to Descending.'
+  notes: |-
+    Expose `data-sort-order` and `data-sort-field` on the split button root for checker reliability.
+- id: split_button-mui-T06
+  name: 'Git actions: search menu and select Cherry-pick (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite_with_search
+  implementation_component: 'MUI: ButtonGroup + Popper (custom header TextField + MenuList)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Git actions” split button menu, use the search box, and select “Cherry-pick”. The task will finish automatically when done.
+  ui_copy: Open the “Git actions” split button menu, use the search box, and select “Cherry-pick”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel titled “Repository” with compact spacing.
+
+    Target component:
+    - A MUI split button labeled “Git actions”.
+    - Arrow opens a Popper overlay.
+    - The Popper overlay includes a small TextField at the top labeled “Search actions”.
+
+    Menu items (~14, filterable):
+    - “Commit”
+    - “Amend commit”
+    - “Cherry-pick”
+    - “Revert”
+    - “Create branch…”
+    - “Tag release…”
+    - … (others)
+
+    Initial state:
+    - Selected action: “Commit”.
+    - Menu closed.
+
+    Behavior:
+    - Typing filters the list in real time.
+    - Clicking an item sets `selectedAction` and closes the menu.
+
+    Distractors:
+    - A vertical list of repository settings links on the left (non-interactive).
+    - A disabled “Save” button in the panel footer.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Adds an additional text input step inside the overlay and increases option count, making the interaction multi-step.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “cherry_pick”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: cherry_pick
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Typing in the search box but not selecting the action.
+  - Selecting “Revert” or another action after searching.
+  - Closing the menu without committing a selection.
+  expected_interaction_path:
+  - Open the dropdown menu.
+  - Type “cherry” in the search field.
+  - Click “Cherry-pick”.
+  notes: |-
+    Ensure the search input is inside the Popper owned by the split button so this remains a single-component interaction.
+- id: split_button-mui-T07
+  name: 'Merge: reset split-button to default Merge commit (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite_with_reset_item
+  implementation_component: 'MUI: ButtonGroup + Popper/MenuList (includes Reset item)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the split button back to the default action “Merge commit”. The task will finish automatically when done.
+  ui_copy: Reset the split button back to the default action “Merge commit”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Pull request” centered in the viewport.
+
+    Target component: MUI split button (ButtonGroup + Popper MenuList).
+    - Main button shows current selection.
+    - Arrow opens menu.
+
+    Initial state:
+    - Selected action is “Rebase and merge” (main label).
+    - A small caption under the control reads: “Default: Merge commit”.
+
+    Menu items:
+    - “Merge commit” (default)
+    - “Squash and merge”
+    - “Rebase and merge”
+    - Divider
+    - “Reset to default”
+
+    Behavior:
+    - Clicking “Reset to default” sets `selectedAction` to `merge_commit` and updates the main label to “Merge commit”.
+    - Menu closes after reset.
+
+    Distractors:
+    - None (single component focus).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires selecting a special reset item rather than the default option directly, adding mild interpretation load.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “merge_commit”.
+    - Main label shows “Merge commit”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: merge_commit
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Merge commit” in the list but not committing reset (checker still sees `selectedAction` as rebase).
+  - Leaving the selection as “Rebase and merge”.
+  - Selecting “Reset to default” on a non-existent control (none).
+  expected_interaction_path:
+  - Open the split button menu.
+  - Click “Reset to default”.
+  notes: |-
+    The reset item should have its own stable action id (e.g., `reset_default`) but should commit `selectedAction=merge_commit`.
+- id: split_button-mui-T08
+  name: 'Deploy dashboard: set Production split-button to Rollback previous (MUI)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: multiple ButtonGroup split buttons + Popper menus'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the dashboard, find the split button labeled “Production deploy” and set it to “Rollback to previous version”. The task will finish automatically when done.
+  ui_copy: In the dashboard, find the split button labeled “Production deploy” and set it to “Rollback to previous version”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: dashboard with three cards in a grid (clutter=medium):
+    1) “Staging deploy”
+    2) “Production deploy”  ← target instance
+    3) “Hotfix deploy”
+
+    Each card contains a similar MUI split button in its footer:
+    - Main button shows the selected deployment action.
+    - Arrow opens a Popper menu.
+
+    Target instance identification:
+    - Above the split button in each card is a small label, e.g., “Staging deploy actions”, “Production deploy actions”, etc.
+    - The goal refers specifically to “Production deploy”.
+
+    Menu items (same across instances):
+    - “Deploy latest”
+    - “Deploy tagged release…”
+    - “Rollback to previous version”
+    - “Rollback to selected version…”
+    - Divider
+    - “Disable deployments” (disabled)
+
+    Initial state:
+    - All three split buttons are set to “Deploy latest”.
+
+    Behavior:
+    - Selecting a menu item updates only that instance’s `selectedAction`.
+
+    Distractors:
+    - Each card contains a status chip (green/yellow) and a read-only environment URL.
+    - A non-interactive sparkline chart in each card header.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three similar instances in a dashboard increase disambiguation load; the rollback options are semantically similar.
+  success_trigger:
+    human_readable:
+    - Only the split button instance labeled “Production deploy” has `selectedAction = rollback_previous`.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: rollback_previous
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Production deploy
+      terminal_condition: true
+  negative_cases:
+  - Setting the correct option on Staging or Hotfix instead of Production.
+  - Selecting “Rollback to selected version…” (wrong rollback option).
+  - Invoking the main action without changing the selected action.
+  expected_interaction_path:
+  - Locate the Production deploy card.
+  - Open its split button menu and choose “Rollback to previous version”.
+  notes: |-
+    Provide stable instance identifiers (e.g., `data-instance="production"`) and mirror the visible label in `aria-label` for robust disambiguation.
+- id: split_button-mui-T09
+  name: 'Actions: match icon reference to select Upload (MUI, small)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite_icon_menu
+  implementation_component: 'MUI: ButtonGroup + Popper/MenuList (MenuItems with leading icons)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Select the split-button action that matches the reference icon shown (no text). The task will finish automatically when done.
+  ui_copy: Select the split-button action that matches the reference icon shown (no text). The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card placed near the bottom-left of the viewport (placement=bottom_left) with small component scale.
+
+    Guidance (visual):
+    - A reference icon-only chip is displayed above the split button, showing a “cloud upload” glyph.
+    - No textual name of the desired action is provided.
+
+    Target component:
+    - One MUI split button (ButtonGroup).
+    - Arrow opens a Popper menu where each MenuItem has a leading icon + label.
+
+    Menu items:
+    - Cloud upload icon — “Upload”
+    - Cloud download icon — “Download”
+    - Trash icon — “Delete”
+    - Link icon — “Copy link”
+
+    Initial state:
+    - Selected action is “Download”.
+
+    Behavior:
+    - Selecting a menu item sets `selectedAction` and updates the main button label.
+
+    Distractors:
+    - A small, disabled ToggleButtonGroup below (non-interactive).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small-scale targets and icon-only guidance increase acquisition difficulty and reliance on visual matching.
+  success_trigger:
+    human_readable:
+    - Target split button selection matches the reference (cloud upload) → `selectedAction = upload`.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_token: icon_cloud_upload
+        selected_action: upload
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Download” (cloud download) due to icon similarity.
+  - Leaving the selection unchanged.
+  - Clicking the main button (invoking) without changing the selected action.
+  expected_interaction_path:
+  - Open the menu using the arrow button.
+  - Choose the item whose icon matches the reference chip.
+  notes: |-
+    Provide stable `data-reference-token="icon_cloud_upload"` on the reference element. Checker should read `selectedAction` from component state.
+- id: split_button-mui-T10
+  name: 'Export: choose nested path Export → PDF (MUI, dark)'
+  canonical_type: split_button
+  implementation_source: mui
+  implementation_variant: composite_nested_panel
+  implementation_component: 'MUI: ButtonGroup + Popper (two-step panel inside overlay)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Using the split button, choose the nested export option “Export” → “PDF”. The task will finish automatically when done.
+  ui_copy: Using the split button, choose the nested export option “Export” → “PDF”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card in dark theme placed near the top-left of the viewport (placement=top_left).
+
+    Target component: a MUI split button labeled “Export”.
+    - Arrow opens a Popper overlay.
+    - The overlay uses a two-step nested panel (still inside the Popper) to simulate hierarchical choices.
+
+    Overlay step 1 (root menu):
+    - “Quick export (CSV)” (immediately selectable)
+    - “Export” (opens step 2 panel)
+    - “Share” (disabled)
+
+    Overlay step 2 (Export panel):
+    - Back control labeled “Back”
+    - Format options:
+      - “CSV”
+      - “PDF”
+      - “PNG”
+      - “Excel”
+
+    Initial state:
+    - Selected action: “Quick export (CSV)”.
+    - Overlay closed.
+
+    Behavior:
+    - Selecting “Export” in step 1 transitions to the Export panel (step 2) within the same Popper (depth_layering increases).
+    - Clicking “PDF” in step 2 commits `selectedPath=["Export","PDF"]` and sets `selectedAction=export_pdf`.
+    - Overlay closes after selection.
+
+    Distractors:
+    - None besides the component; this task isolates layering difficulty.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Two-step nested overlay flow within the split button increases depth/layering and requires correct navigation before selection.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedPath` equals [“Export”, “PDF”].
+    - Target split button `selectedAction` equals “export_pdf”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Export
+        - PDF
+        selected_action: export_pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Quick export (CSV)” or any format other than PDF.
+  - Opening the Export panel but not choosing a format.
+  - Using Back and leaving without committing PDF.
+  expected_interaction_path:
+  - Open the split button overlay.
+  - Click “Export” to open the second panel.
+  - Click “PDF”.
+  notes: |-
+    Implement step transitions within the Popper owned by the split button (no separate modal). Expose `data-selected-path` as a serialized string for the checker.
+- id: split_button-mantine-T01
+  name: 'Send: run primary action on Mantine split button'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Group + Button + Menu (Split button pattern)'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Click the primary (left) button to run “Send now” on the split button. The task will finish automatically when done.
+  ui_copy: Click the primary (left) button to run “Send now” on the split button. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Message” centered in the viewport.
+
+    Target component: Mantine split button pattern composed of:
+    - A left `Button` (primary action) labeled with the current action.
+    - A right `ActionIcon`/small `Button` with a chevron that opens a `Menu` dropdown.
+    - Both are visually grouped to look like a single split button.
+
+    Initial state:
+    - Current selected action: “Send now” (left button label).
+    - Status text inside the split button container reads “Last action: —”.
+
+    Behavior:
+    - Clicking the left button invokes the current action and commits `lastInvokedAction=send_now`.
+    - The status text updates to “Last action: Send now”.
+    - The dropdown menu is not required for this task.
+
+    Distractors:
+    - Non-interactive message preview text above.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single large primary button; one-step activation with persistent feedback.
+  success_trigger:
+    human_readable:
+    - Target split button `lastInvokedAction` equals “send_now”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        last_invoked_action: send_now
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Opening the dropdown menu without clicking the primary action.
+  - Invoking any other action via the menu.
+  expected_interaction_path:
+  - Click the left button labeled “Send now”.
+  notes: |-
+    Composite note: implement as Mantine `Menu` wrapping a right-side trigger and a left-side `Button` in a `Group`. Expose `data-last-invoked-action` on the root container.
+- id: split_button-mantine-T02
+  name: 'Send: open Mantine split-button menu'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Group + Button + Menu (Split button pattern)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the dropdown menu of the “Send” split button. Do not select any option. The task will finish automatically when done.
+  ui_copy: Open the dropdown menu of the “Send” split button. Do not select any option. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Message” centered in the viewport.
+
+    Target component: Mantine split button pattern:
+    - Left primary Button: “Send”
+    - Right chevron trigger: opens a Mantine `Menu` dropdown.
+
+    Menu items (for context only):
+    - “Send now”
+    - “Schedule send…”
+    - “Send test”
+    - “Save draft”
+
+    Initial state:
+    - Menu closed (`menuOpen=false`).
+
+    Feedback/observability:
+    - When open, the Menu dropdown appears below the trigger and the component sets `menuOpen=true`.
+
+    Distractors:
+    - None besides the card title and a static helper caption.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires clicking the smaller chevron segment to open a single dropdown layer.
+  success_trigger:
+    human_readable:
+    - Target split button menu is open (`menuOpen=true` / menu dropdown is visible).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        menu_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking the left primary button instead of opening the menu.
+  - Opening and closing the menu immediately (menu must be open).
+  expected_interaction_path:
+  - Click the chevron (right segment) to open the menu.
+  notes: |-
+    Checker: identify menu open state via `aria-expanded` on the trigger or presence of the dropdown element within the split button subtree.
+- id: split_button-mantine-T03
+  name: 'Send: set selected action to Schedule send (Mantine)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Group + Button + Menu (Split button pattern)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the split button menu and choose “Schedule send” so it becomes the selected action. The task will finish automatically when done.
+  ui_copy: Open the split button menu and choose “Schedule send” so it becomes the selected action. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Message” centered in the viewport.
+
+    Target component: Mantine split button pattern (Button + Menu).
+    - Left button shows the currently selected action.
+    - Right trigger opens the Menu.
+
+    Menu items:
+    - “Send now”
+    - “Schedule send”
+    - “Save draft”
+    - “Discard”
+
+    Initial state:
+    - Selected action is “Send now” (left label).
+
+    Behavior:
+    - Selecting a menu item updates `selectedAction` and updates the left button label.
+    - Menu closes after selection.
+
+    Distractors:
+    - A read-only “To:” field and “Subject:” field rendered as plain text (not inputs).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Basic open-and-select interaction with a short list and immediate label update.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “schedule_send”.
+    - Left button label shows “Schedule send”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: schedule_send
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Send now” or any other menu option.
+  - Opening the menu but not selecting “Schedule send”.
+  expected_interaction_path:
+  - Open the split button menu.
+  - Click “Schedule send”.
+  notes: |-
+    Maintain a single `selectedAction` state variable and reflect it in the left button label for observability.
+- id: split_button-mantine-T04
+  name: 'Output: match example chip to select Download (Mantine)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite_icon_menu
+  implementation_component: 'Mantine: Group + Button + Menu (Menu items with icons)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Select the split-button action that matches the example chip shown above the button. The task will finish automatically when done.
+  ui_copy: Select the split-button action that matches the example chip shown above the button. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Output” centered in the viewport.
+
+    Guidance (mixed):
+    - Above the split button is an “Example” chip that includes BOTH:
+      - an icon (download arrow)
+      - the text label “Download”
+    - The agent should match this example to a menu item.
+
+    Target component:
+    - Mantine split button pattern with a left Button (current selection) and right chevron trigger opening a Menu.
+    - Each Menu.Item includes a leading icon + label.
+
+    Menu items:
+    - Printer icon — “Print”
+    - Download icon — “Download”
+    - Share icon — “Share”
+    - Link icon — “Copy link”
+
+    Initial state:
+    - Selected action is “Share”.
+
+    Behavior:
+    - Selecting a menu item sets `selectedAction` and updates the left label.
+
+    Distractors:
+    - A non-interactive preview image placeholder.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires matching an example (icon + text) to the correct menu item; otherwise a standard open-and-select.
+  success_trigger:
+    human_readable:
+    - Selected action matches the example chip (Download) → `selectedAction = download`.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_token: example_download_chip
+        selected_action: download
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting Print/Share/Copy link instead of Download.
+  - Leaving the action as Share.
+  - Clicking the left primary button without changing selection.
+  expected_interaction_path:
+  - Open the split button menu.
+  - Click the menu item labeled “Download” (matching the example).
+  notes: |-
+    The example chip should have a stable reference token attribute so the checker can associate it with the expected action without image processing.
+- id: split_button-mantine-T05
+  name: 'Library: search split-button menu and select Duplicate (Mantine)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite_with_search
+  implementation_component: 'Mantine: Group + Button + Menu (custom dropdown with search input)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Item actions” split button menu, use the search box, and select “Duplicate”. The task will finish automatically when done.
+  ui_copy: Open the “Item actions” split button menu, use the search box, and select “Duplicate”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel titled “Item actions”.
+
+    Target component:
+    - A Mantine split button pattern in the panel header labeled “Item actions”.
+    - Right chevron opens a Menu dropdown rendered with a custom content area.
+
+    Menu dropdown content:
+    - Top: a small search input (TextInput) with placeholder “Search actions…”.
+    - Below: a vertical list of actions (about 10):
+      “Open”, “Rename…”, “Duplicate”, “Move…”, “Share…”, “Archive”, “Delete”, etc.
+
+    Initial state:
+    - Selected action: “Open”.
+    - Menu closed.
+
+    Behavior:
+    - Typing in the search input filters the visible list.
+    - Clicking an item commits `selectedAction` and closes the menu.
+
+    Distractors (clutter=low):
+    - A read-only breadcrumb bar above (non-interactive).
+    - A disabled “New folder” button in the footer.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires multi-step interaction within the dropdown (search then select) and handling a filtered list.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “duplicate”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: duplicate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Typing the search term but not selecting “Duplicate”.
+  - Selecting “Duplicate” in the UI but the committed `selectedAction` remains unchanged.
+  - Selecting “Rename…” or “Move…” instead of Duplicate.
+  expected_interaction_path:
+  - Open the split button menu.
+  - Type “dup” in the search box.
+  - Click “Duplicate”.
+  notes: |-
+    Keep the search input inside the Menu dropdown so it is part of the split button component. Expose `data-selected-action`.
+- id: split_button-mantine-T06
+  name: 'Send: reset to default Send now (Mantine)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite_with_reset_item
+  implementation_component: 'Mantine: Group + Button + Menu (includes Reset item)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the split button back to its default action “Send now”. The task will finish automatically when done.
+  ui_copy: Reset the split button back to its default action “Send now”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Message” centered in the viewport.
+
+    Target component: Mantine split button pattern.
+    - Left button: shows selected action.
+    - Right chevron: opens menu.
+
+    Initial state:
+    - Selected action is “Save draft” (left label).
+    - A helper text below reads: “Default action: Send now”.
+
+    Menu items:
+    - “Send now” (default)
+    - “Schedule send”
+    - “Save draft”
+    - Divider
+    - “Reset to default”
+
+    Behavior:
+    - Clicking “Reset to default” sets `selectedAction=send_now` and updates the left label to “Send now”.
+
+    Distractors:
+    - None (component focus).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Reset requires selecting a special control rather than directly choosing the default option, adding mild complexity.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “send_now”.
+    - Left label shows “Send now”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: send_now
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Send now” in the list but leaving the internal state unchanged.
+  - Leaving the action as “Save draft”.
+  - Opening and closing the menu without resetting.
+  expected_interaction_path:
+  - Open the menu.
+  - Click “Reset to default”.
+  notes: |-
+    The reset item should be visually distinct but not hidden; avoid placing it outside the Menu to keep the task component-scoped.
+- id: split_button-mantine-T07
+  name: 'Settings: set Invoice actions split-button to Export CSV (Mantine, 2 instances)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Group + Button + Menu (multiple instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the settings panel, find the split button labeled “Invoice actions” and set it to “Export CSV”. The task will finish automatically when done.
+  ui_copy: In the settings panel, find the split button labeled “Invoice actions” and set it to “Export CSV”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel titled “Documents” with clutter=medium.
+
+    Target component: there are TWO Mantine split buttons in the panel header area:
+    1) “Invoice actions”  ← target
+    2) “Quote actions”    ← distractor
+
+    Both split buttons share the same menu items (to increase disambiguation load):
+    - “Export CSV”
+    - “Export PDF”
+    - “Duplicate”
+    - “Archive”
+    - Divider
+    - “Delete” (danger)
+
+    Initial state:
+    - Both instances are set to “Export PDF”.
+
+    Behavior:
+    - Selecting a menu item updates the left label of the corresponding instance only.
+
+    Other UI (distractors, not required):
+    - A list of documents with status pills.
+    - A right-side details panel showing read-only text.
+    - A disabled “New document” button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two near-identical split buttons with identical menus require careful selection of the correct labeled instance.
+  success_trigger:
+    human_readable:
+    - Only the split button labeled “Invoice actions” has `selectedAction = export_csv`.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: export_csv
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invoice actions
+      terminal_condition: true
+  negative_cases:
+  - Setting Export CSV on the “Quote actions” split button.
+  - Selecting Export PDF (already selected) or another option on Invoice actions.
+  - Changing unrelated settings in the panel.
+  expected_interaction_path:
+  - Locate the “Invoice actions” split button.
+  - Open its menu and click “Export CSV”.
+  notes: |-
+    Add instance labels both visually and as `aria-label` on the split button root (e.g., `aria-label="Invoice actions split button"`).
+- id: split_button-mantine-T08
+  name: 'Project: scroll menu to select Archive project (Mantine, dark)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite_scroll_menu
+  implementation_component: 'Mantine: Group + Button + Menu (scrollable Menu dropdown)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Open the split button menu and select “Archive project”. The task will finish automatically when done.
+  ui_copy: Open the split button menu and select “Archive project”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card titled “Project” in dark theme, positioned near the bottom-right of the viewport (placement=bottom_right) with compact spacing.
+
+    Target component: one Mantine split button pattern labeled “Project actions”.
+    - Right chevron opens a dropdown Menu with a constrained height.
+
+    Menu behavior (scroll required):
+    - The menu list is long (~16 items) and internally scrollable.
+    - “Archive project” is not visible initially; it appears near the bottom of the list (requires scrolling).
+
+    Example items near the top:
+    - “Open”
+    - “Rename…”
+    - “Change owner…”
+    - “Export…”
+    - …
+    Near the bottom:
+    - “Archive project”
+    - “Delete project” (danger)
+
+    Initial state:
+    - Selected action is “Open”.
+
+    Behavior:
+    - Clicking “Archive project” commits `selectedAction=archive_project` and updates the left label.
+    - No confirmation modal is used.
+
+    Distractors:
+    - None besides a static project summary line.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires scrolling within a constrained dropdown in dark theme and selecting a lower-list item among many actions.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedAction` equals “archive_project”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_action: archive_project
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Archive” of a different object (if present) or “Delete project” due to proximity.
+  - Not scrolling and selecting a visible but incorrect option.
+  - Opening the menu but leaving the selected action unchanged.
+  expected_interaction_path:
+  - Open the menu via the chevron trigger.
+  - Scroll the dropdown list until “Archive project” is visible.
+  - Click “Archive project”.
+  notes: |-
+    Ensure the Menu dropdown has a fixed max-height and overflow scrolling so the “scroll_find” template is meaningful.
+- id: split_button-mantine-T09
+  name: 'Export: pick nested path shown by icons (Export → PDF) (Mantine)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite_nested_panel_icons
+  implementation_component: 'Mantine: Group + Button + Menu (two-step dropdown panel)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Using the split button, choose the nested option indicated by the breadcrumb icons (Export → PDF). The task will finish automatically when done.
+  ui_copy: Using the split button, choose the nested option indicated by the breadcrumb icons (Export → PDF). The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card placed near the top-left of the viewport (placement=top_left).
+
+    Guidance (visual):
+    - Above the split button is a small breadcrumb made of two icon-only chips:
+      Chip 1: “export” icon
+      Arrow
+      Chip 2: “PDF document” icon
+    - No text labels are shown in the breadcrumb.
+
+    Target component: Mantine split button pattern with a dropdown that uses a two-step nested panel.
+    - Opening the menu shows the root panel (step 1) with icon + label items.
+    - Choosing the “Export” item transitions to the format panel (step 2) within the same dropdown.
+
+    Step 1 (root panel):
+    - Export icon — “Export” (opens step 2)
+    - Share icon — “Share” (disabled)
+    - Download icon — “Quick download” (immediate)
+
+    Step 2 (Export formats):
+    - Back control labeled “Back”
+    - CSV icon — “CSV”
+    - PDF icon — “PDF”
+    - Image icon — “PNG”
+    - Sheet icon — “Excel”
+
+    Initial state:
+    - Selected action is “Quick download”.
+
+    Behavior:
+    - Selecting the PDF format commits `selectedPath=["Export","PDF"]` and sets `selectedAction=export_pdf`.
+
+    Distractors:
+    - None besides the visual breadcrumb.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Combines a two-step nested overlay flow with icon-only guidance, increasing layering and reliance on visual semantics.
+  success_trigger:
+    human_readable:
+    - Target split button `selectedPath` equals [“Export”, “PDF”].
+    - Target split button `selectedAction` equals “export_pdf”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Export
+        - PDF
+        selected_action: export_pdf
+        reference_token: icon_breadcrumb_export_pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting CSV/PNG/Excel instead of PDF.
+  - Staying on the root panel and selecting Quick download.
+  - Opening the Export panel but not committing a format.
+  expected_interaction_path:
+  - Open the split button menu.
+  - Select the Export item to open the formats panel.
+  - Select PDF.
+  notes: |-
+    The breadcrumb element should be non-interactive and carry `data-reference-token="icon_breadcrumb_export_pdf"`. Checker should use internal state, not icon recognition.
+- id: split_button-mantine-T10
+  name: 'Table: start Delete then Cancel in the correct row (Mantine)'
+  canonical_type: split_button
+  implementation_source: mantine
+  implementation_variant: composite_inline_confirm
+  implementation_component: 'Mantine: Group + Button + Menu (inline confirm inside dropdown)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the table, open the “Row 7 actions” split button, choose “Delete…”, then click “Cancel”. The task will finish automatically when done.
+  ui_copy: In the table, open the “Row 7 actions” split button, choose “Delete…”, then click “Cancel”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: table_cell scene with a compact data table (clutter=high).
+    - Two rows have split buttons in the “Actions” column:
+      - Row 5 actions (distractor instance)
+      - Row 7 actions (target instance)
+
+    Target component: the split button in Row 7.
+    - Left segment: “Actions”
+    - Right chevron: opens a Menu dropdown.
+
+    Menu items:
+    - “View”
+    - “Duplicate”
+    - Divider
+    - “Delete…” (danger)
+
+    Inline confirmation (inside the dropdown overlay):
+    - After clicking “Delete…”, an inline confirmation panel replaces the menu list with:
+      Text: “Delete this row?”
+      Buttons: “Confirm” and “Cancel”
+    - Clicking “Cancel” closes the confirmation panel and returns the component to its idle state without invoking delete.
+
+    Initial state:
+    - `lastInvokedAction = none` for both instances.
+    - `confirmationResult = none`.
+
+    Success expectation:
+    - The agent must explicitly cancel (not confirm).
+
+    Distractors:
+    - Search input and filter chips above the table (disabled).
+    - Row selection checkboxes (disabled).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires selecting the correct row instance and completing a two-step destructive flow while choosing Cancel instead of Confirm.
+  success_trigger:
+    human_readable:
+    - On the split button instance labeled “Row 7 actions”, `confirmationResult` equals “cancelled”.
+    - '`lastInvokedAction` remains “none” (delete was not executed).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmation_result: cancelled
+        last_invoked_action: none
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: Row 7 actions
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Confirm” instead of “Cancel”.
+  - Cancelling on the Row 5 actions split button (wrong instance).
+  - Opening the confirmation panel but closing it without clicking Cancel (e.g., clicking outside).
+  - Invoking any action other than cancel (e.g., selecting Duplicate).
+  expected_interaction_path:
+  - Locate Row 7 actions split button.
+  - Open menu → click “Delete…”.
+  - Click “Cancel” in the inline confirmation panel.
+  notes: |-
+    Checker: track `confirmationResult` per instance (none/confirmed/cancelled). Ensure Cancel is a real button inside the dropdown overlay (not just click-away).

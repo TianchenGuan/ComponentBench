@@ -1,0 +1,1828 @@
+- id: kanban_board_drag_drop-antd-T01
+  name: Move a single card into In progress
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + Typography + Tag + external DnD (@dnd-kit/core, @dnd-kit/sortable)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the Sprint Planning board, move the card “OPS-14 Update status page” into the “In progress” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Move “OPS-14 Update status page” to the “In progress” column on the Sprint Planning board.'
+  setup_description: 'The page shows a single centered card titled “Sprint Planning” (isolated_card layout). Inside the card is one Kanban board with four labeled columns arranged left-to-right: “Backlog”, “To do”, “In progress”, and “Done”.
+
+    Each column contains 2–4 draggable task cards. Each task card is rendered as an Ant Design Card with a bold title that starts with a short code (e.g., “OPS-14”) followed by a short description. The entire card surface is draggable (no separate drag handle required).
+
+    Initial state: the card titled “OPS-14 Update status page” starts in the “To do” column. The other cards are already placed and should be left unchanged.
+
+    There is no Apply/Save button; dropping the card immediately commits the new column placement. There are no other Kanban boards on the page and no other components are required for success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single-board, few cards, and the goal only requires placing one uniquely titled card into a clearly labeled column with immediate feedback.
+  success_trigger:
+    human_readable:
+    - The target Kanban instance is “Sprint Planning”.
+    - Card OPS-14 is located in column “In progress” (membership only; order within the column does not matter).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Sprint Planning
+        card_id: card_ops_14
+        card_title: OPS-14 Update status page
+        column_id: in_progress
+        column_label: In progress
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The card is moved to any column other than “In progress” (including “Done”).
+  - A different card is moved into “In progress” while OPS-14 remains in its original column.
+  - OPS-14 is picked up/dragged but dropped back into “To do” (no state change).
+  expected_interaction_path: Drag the “OPS-14 Update status page” card from “To do” and drop it anywhere inside the “In progress” column.
+  notes: 'Checker hint: read data attributes like data-board-id, data-column-id, and data-card-id from the rendered DOM. Card titles are also present as visible text.
+
+    DnD implementation: external dnd-kit SortableContext wrapping columns and cards; AntD provides the visual Card/Tag/Typography only.'
+- id: kanban_board_drag_drop-antd-T02
+  name: Reorder a card to the bottom of a column
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List + external DnD (@dnd-kit/sortable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “To do” column, move the card “BUG-142 Fix login bug” to the bottom of the column. The task will finish automatically when done.
+  ui_copy: 'Goal: Make “BUG-142 Fix login bug” the last card in “To do”.'
+  setup_description: "The page contains one centered Kanban board inside an Ant Design Card. Columns are labeled “To do”, “In progress”, and “Done”.\nThe “To do” column contains exactly three draggable cards in this initial top-to-bottom order:\n  1) “BUG-142 Fix login bug”\n  2) “DOC-8 Update README”\n  3) “QA-3 Add regression tests”\nCards can be dragged by grabbing anywhere on the card surface. As you drag, a placeholder gap indicates the drop position. Dropping immediately commits the new order; there is no Apply/OK step.\nNo other board instances are present, and other UI on the page is limited to a non-interactive hint text above the board."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Requires a simple within-column reorder among only three clearly titled cards with strong visual drop feedback.
+  success_trigger:
+    human_readable:
+    - 'In column “To do”, the card order (top → bottom) is: DOC-8, QA-3, then BUG-142.'
+    - Cards in other columns are ignored by the checker.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Primary
+        column_id: todo
+        column_label: To do
+        ordered_card_ids:
+        - card_doc_8
+        - card_qa_3
+        - card_bug_142
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - BUG-142 is not the last card in “To do” (e.g., it remains first or is placed in the middle).
+  - BUG-142 is moved to another column instead of being reordered within “To do”.
+  - DOC-8 and QA-3 are swapped but BUG-142 is still not last.
+  expected_interaction_path: Drag “BUG-142 Fix login bug” downward within the “To do” column until the placeholder indicates the last position, then drop.
+  notes: Checker should compare the DOM order of cards within the To do column container (by data-card-id) to the expected list.
+- id: kanban_board_drag_drop-antd-T03
+  name: Reset the board to its default arrangement
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + Button + external DnD (@dnd-kit/core)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Kanban board back to its default layout using the “Reset board” button. The task will finish automatically when done.
+  ui_copy: 'Goal: Click “Reset board” so the Kanban board returns to its default layout.'
+  setup_description: "The page shows a single Kanban board inside an Ant Design Card. The board header contains two controls on the right:\n  - “Reset board” (primary for this task)\n  - “Help” (opens a tooltip; irrelevant)\nThe Kanban board has four columns with multiple cards; it starts in a deliberately modified state (some cards have been moved from their defaults).\nPressing “Reset board” immediately restores a known default state (no confirmation dialog). A small inline message “Board reset” briefly appears under the header after a successful reset.\nSuccess is defined only by the resulting board state, not by whether the toast/message is shown."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single visible reset control returns the board to a predefined state; the main challenge is recognizing the correct reset button among light header clutter.
+  success_trigger:
+    human_readable:
+    - The board matches the stored default snapshot “default_state_v1” for this page (all columns and card orders).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Primary
+        board_state_id: default_state_v1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Help” or other non-reset controls without restoring the default board arrangement.
+  - Reset is initiated but the board remains in the modified (non-default) state.
+  - Only some columns match the default while others remain changed.
+  expected_interaction_path: Locate the board header and click “Reset board”. Wait for the board to snap back to its default arrangement.
+  notes: 'Checker hint: keep a canonical serialized representation of the default board state (column ids + ordered card ids) and compare to the current state.'
+- id: kanban_board_drag_drop-antd-T04
+  name: Match a reference order in the Review column
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + Divider + external DnD (@dnd-kit/sortable)'
+  task_template: match_reference
+  secondary_template: drag_operation
+  browsergym_goal: Reorder the cards in the “Review” column so they match the reference order shown in the “Reference (Review)” panel. The task will finish automatically when done.
+  ui_copy: 'Goal: Make the “Review” column match the “Reference (Review)” panel order.'
+  setup_description: "The page shows one Kanban board inside an Ant Design Card with columns: “To do”, “In progress”, “Review”, “Done”.\nTo the right of the board header, there is a small static panel titled “Reference (Review)” that lists the correct top-to-bottom order for the Review column as a numbered list.\nThe Review column in the interactive board contains the same three cards, but they start in the wrong order:\n  - “PR-17 Refactor date utils”\n  - “PR-12 Add loading skeleton”\n  - “PR-19 Remove dead code”\nYou can drag cards within the Review column by grabbing anywhere on the card. Dropping commits immediately (no Apply button).\nOther columns and cards are distractors and do not need to be changed."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only a single column with three cards must be reordered, but the agent must read and follow a separate reference panel.
+  success_trigger:
+    human_readable:
+    - In column “Review”, the card order (top → bottom) matches the “Reference (Review)” panel.
+    - 'Specifically, the order is: PR-12, then PR-17, then PR-19.'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        board_instance: Primary
+        reference_panel_id: ref_review_v1
+        match_scope:
+          column_id: review
+          column_label: Review
+        expected_ordered_card_ids:
+        - card_pr_12
+        - card_pr_17
+        - card_pr_19
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Cards in “Review” are reordered but do not match the reference (e.g., PR-19 is in the middle).
+  - The correct order is achieved in a different column instead of “Review”.
+  - Cards are moved across columns (membership changes) rather than just reordering within Review.
+  expected_interaction_path: Read the “Reference (Review)” order → drag cards within the Review column until the top-to-bottom order matches → stop when stable.
+  notes: 'Instrumentation: the reference panel should expose its target order via data-ref-id and data-ordered-card-ids to simplify checker-side auditing.'
+- id: kanban_board_drag_drop-antd-T05
+  name: Open a modal board and move a card
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Modal + Button + Card + external DnD (@dnd-kit/core)'
+  task_template: open_overlay
+  secondary_template: transfer_move
+  browsergym_goal: Open the “Sprint Board” modal, then move the card “DEP-7 Deploy to staging” into the “Review” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Open “Sprint Board” and move “DEP-7 Deploy to staging” to “Review”.'
+  setup_description: 'The page contains a primary Ant Design Button labeled “Open Sprint Board”. Clicking it opens an Ant Design Modal titled “Sprint Board”.
+
+    Inside the modal is the Kanban board (this is the only interactive Kanban instance). The modal board has four columns: “Backlog”, “To do”, “Review”, and “Done”.
+
+    Initial state: the card titled “DEP-7 Deploy to staging” is currently in the “To do” column. The “Review” column already contains other cards.
+
+    Drag-and-drop is enabled inside the modal; dropping a card commits immediately. The modal has standard close controls (X in the top-right and Cancel/Close buttons), but closing the modal is not required for success.
+
+    Outside the modal (behind it) there is a faint, non-interactive preview of the board used as a visual backdrop and should be ignored.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires an extra overlay-opening step and interacting inside a modal, which adds layering and potential focus/scroll constraints.
+  success_trigger:
+    human_readable:
+    - The “Sprint Board” modal is open OR has been opened (modal visibility is not required at terminal time).
+    - Card DEP-7 is located in column “Review” within the modal’s Kanban board.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Sprint Board (modal)
+        card_id: card_dep_7
+        card_title: DEP-7 Deploy to staging
+        column_id: review
+        column_label: Review
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Sprint Board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - DEP-7 is moved to “Done” or any column other than “Review”.
+  - DEP-7 is moved on the background preview board (non-interactive) rather than the modal board (should not be possible; checker should still guard by instance id).
+  - The modal is opened but DEP-7 remains in “To do”.
+  expected_interaction_path: Click “Open Sprint Board” → in the modal, drag “DEP-7 Deploy to staging” from “To do” to “Review” → drop.
+  notes: 'Checker hint: modal Kanban root should have a distinct data-board-id (e.g., sprint_modal) so the checker can disambiguate from any background preview elements.
+
+    If the modal can be closed mid-task, the checker should still read board state from the persisted store, not DOM visibility alone.'
+- id: kanban_board_drag_drop-antd-T06
+  name: Move a card on the correct board when two boards are visible
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Layout + Card + Tabs + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the “Engineering” board (not the “Marketing” board), move the card “ENG-21 API pagination” into the “To do” column. The task will finish automatically when done.
+  ui_copy: 'Goal: In the Engineering board, move “ENG-21 API pagination” to “To do”.'
+  setup_description: 'The page uses a simple dashboard layout with a header row (project name, a date range selector, and two small KPI cards). Below the header are two Kanban boards rendered side-by-side.
+
+    - Left board is labeled “Marketing”.
+
+    - Right board is labeled “Engineering” (this is the target instance).
+
+    Each board has the same four columns: “Backlog”, “To do”, “In progress”, “Done”, and each uses Ant Design Cards for its draggable items.
+
+    Initial state (Engineering board only): the card titled “ENG-21 API pagination” starts in the “Backlog” column.
+
+    Drag-and-drop commits immediately with no Apply step. Both boards are functional; moving the right card on the wrong board is a common failure mode.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The move itself is simple, but two near-identical boards are present and the agent must correctly target the labeled instance.
+  success_trigger:
+    human_readable:
+    - The target instance is the Kanban board labeled “Engineering”.
+    - Within “Engineering”, card ENG-21 is in the “To do” column.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Engineering
+        card_id: card_eng_21
+        card_title: ENG-21 API pagination
+        column_id: todo
+        column_label: To do
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Engineering
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - ENG-21 is moved on the Marketing board instead of the Engineering board.
+  - ENG-21 is moved to a column other than “To do” within the Engineering board.
+  - A different Engineering card is moved to “To do” while ENG-21 stays in “Backlog”.
+  expected_interaction_path: Locate the board titled “Engineering” → find the card “ENG-21 API pagination” in Backlog → drag it to the “To do” column → drop.
+  notes: 'Instrumentation: each board root should expose data-board-label and a unique data-board-id; the checker should validate the correct board is modified.'
+- id: kanban_board_drag_drop-antd-T07
+  name: Move a card and click Apply changes
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + Button (Apply/Cancel) + external DnD (@dnd-kit/core)'
+  task_template: confirm_cancel
+  secondary_template: transfer_move
+  browsergym_goal: Move the card “DESIGN-5 Update icons” into the “Done” column, then click “Apply changes” to save. The task will finish automatically when done.
+  ui_copy: 'Goal: Move “DESIGN-5 Update icons” to Done and click Apply changes.'
+  setup_description: "The page is in dark theme. A single Kanban board is shown in a centered card titled “Design Tasks”.\nThe board has four columns: “To do”, “In progress”, “Review”, and “Done”. Cards are draggable by grabbing anywhere on the card.\nInitial state: “DESIGN-5 Update icons” is in the “Review” column.\nImportant feedback behavior: dragging a card creates an “Unsaved changes” banner below the board and reveals two buttons in a footer bar:\n  - “Apply changes” (primary)\n  - “Cancel”\nThe board does NOT commit changes until “Apply changes” is clicked. If you click “Cancel”, the board reverts to the last saved state.\nSuccess requires both the correct final placement and a committed (applied) state."
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Adds a required confirmation step and a reversible pending state; the agent must notice that dragging alone does not commit.
+  success_trigger:
+    human_readable:
+    - Card DESIGN-5 is located in column “Done”.
+    - The board has no pending/unsaved state (changes have been applied via “Apply changes”).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Design Tasks
+        card_id: card_design_5
+        card_title: DESIGN-5 Update icons
+        expected_column_id: done
+        expected_column_label: Done
+        requires_committed_state: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - DESIGN-5 is in the correct column but “Apply changes” was not clicked (pending/unsaved state remains).
+  - DESIGN-5 is moved to the wrong column (e.g., “In progress”) even if Apply changes is clicked.
+  - The agent clicks “Cancel” after moving the card, causing the board to revert.
+  expected_interaction_path: Drag “DESIGN-5 Update icons” to “Done” → click “Apply changes” in the footer → verify the unsaved banner disappears.
+  notes: 'Checker hint: track a committed_version counter or a boolean dirty flag in app state; require dirty=false and card membership correct.'
+- id: kanban_board_drag_drop-antd-T08
+  name: Precise reorder with small cards in compact mode
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card (small) + Typography (ellipsis) + external DnD (@dnd-kit/sortable) with drag handles'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “In progress” column, place the card “BUG-210 Fix footer overflow” between “BUG-205 Fix navbar” and “BUG-212 Fix dropdown”. The task will finish automatically when done.
+  ui_copy: 'Goal: Put “BUG-210 Fix footer overflow” between “BUG-205 Fix navbar” and “BUG-212 Fix dropdown” in In progress.'
+  setup_description: 'The board is rendered in compact spacing with small-scale cards: reduced padding, smaller fonts, and tighter vertical gaps. The Kanban is inside a centered card titled “UI Bug Triage”.
+
+    Columns are “To do”, “In progress”, “Review”, and “Done”. The “In progress” column contains seven cards with similar “BUG-###” prefixes, making them easy to confuse at a glance.
+
+    Drag affordance: cards are draggable ONLY by a small “grip” (⋮⋮) drag handle icon on the left edge of each card. The rest of the card is clickable but not draggable.
+
+    Initial state: “BUG-210 Fix footer overflow” starts in “In progress”, but not in the correct position relative to the two reference cards.
+
+    Dropping commits immediately; no Apply/Save control is present.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small dense targets, drag-handle-only interaction, and many similar card titles increase both acquisition difficulty and the chance of ordering mistakes.
+  success_trigger:
+    human_readable:
+    - In column “In progress”, BUG-210 appears immediately below BUG-205 and immediately above BUG-212.
+    - Only the relative order among these three cards is checked; other cards may remain in any order.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: UI Bug Triage
+        column_id: in_progress
+        column_label: In progress
+        relative_order_constraint:
+          must_be_between:
+            card_id: card_bug_210
+            above_card_id: card_bug_212
+            below_card_id: card_bug_205
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - BUG-210 is above BUG-205 or below BUG-212 (wrong relative placement).
+  - BUG-210 is moved to another column.
+  - The agent drags by the card body (which does not start a drag) and leaves the order unchanged.
+  expected_interaction_path: Use the small grip handle on BUG-210 → drag within In progress until the placeholder is between BUG-205 and BUG-212 → drop.
+  notes: 'Checker hint: compute indices of the three relevant card ids within the In progress column and verify index(BUG-205) < index(BUG-210) < index(BUG-212).'
+- id: kanban_board_drag_drop-antd-T09
+  name: Match highlighted cards to a visual reference mini-board
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + Badge + external DnD (@dnd-kit/core)'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: 'Arrange the board so it matches the visual reference for the highlighted cards: put “PM-2 Draft Q2 roadmap” at the top of “To do”, move “QA-12 Smoke test signup” to “Review”, and move “SEC-9 Rotate API keys” to “Done”. The task will finish automatically when done.'
+  ui_copy: 'Goal: Match the visual reference for the highlighted cards (PM-2, QA-12, SEC-9).'
+  setup_description: "The page shows one Kanban board inside an Ant Design Card titled “Weekly Priorities”.\nAbove the board (still inside the same card) there is a static “Reference” mini-board: a small, non-interactive preview of the desired end state. In the reference preview, three specific cards are highlighted with a bright outline.\nThe interactive board has four columns: “Backlog”, “To do”, “Review”, “Done”, each with several cards. The same three highlighted card titles exist on the interactive board, but they start in the wrong columns and/or wrong position:\n  - “PM-2 Draft Q2 roadmap” (should end up as the FIRST card in “To do”)\n  - “QA-12 Smoke test signup” (should end up anywhere in “Review”)\n  - “SEC-9 Rotate API keys” (should end up anywhere in “Done”)\nCards are draggable by grabbing anywhere on the card surface; dropping commits immediately. The mini-board is purely visual guidance and is not interactive."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple moves are required and one card must land at an exact position; the goal is primarily conveyed through a visual reference, increasing interpretation and tracking load.
+  success_trigger:
+    human_readable:
+    - PM-2 is the first (topmost) card in column “To do”.
+    - QA-12 is located in column “Review”.
+    - SEC-9 is located in column “Done”.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        board_instance: Weekly Priorities
+        reference_panel_id: ref_miniboard_v2
+        match_scope: highlighted_cards_only
+        expected:
+          card_pm_2:
+            column_id: todo
+            column_label: To do
+            order_index: 0
+          card_qa_12:
+            column_id: review
+            column_label: Review
+            order_index: null
+          card_sec_9:
+            column_id: done
+            column_label: Done
+            order_index: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - PM-2 is in “To do” but not in the first position (e.g., second).
+  - QA-12 or SEC-9 is moved to the wrong column.
+  - The correct arrangement is achieved for only one or two of the three highlighted cards.
+  expected_interaction_path: Compare the interactive board to the mini reference → drag PM-2 into “To do” and position it at the top → drag QA-12 into “Review” → drag SEC-9 into “Done”.
+  notes: 'Checker hint: treat the reference mini-board as guidance only; the canonical predicate directly checks the highlighted cards’ column ids (and PM-2 index=0).'
+- id: kanban_board_drag_drop-antd-T10
+  name: Find an off-screen column and move a card
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + Scroll container + external DnD (@dnd-kit/core) with horizontal overflow'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Find the card “OPS-33 Investigate outage” (it starts in the “Blocked” column) and move it into the “Backlog” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Move “OPS-33 Investigate outage” from Blocked to Backlog.'
+  setup_description: 'The Kanban board is placed in the bottom-right area of the viewport (placement bottom_right) inside an Ant Design Card titled “Operations Queue”.
+
+    The board has five columns laid out left-to-right: “Backlog”, “To do”, “In progress”, “Review”, and “Blocked”. Because the board is wider than the card container, the board region scrolls horizontally (a horizontal scrollbar appears at the bottom of the board container).
+
+    Initial state: the card titled “OPS-33 Investigate outage” is in the far-right “Blocked” column, which may be off-screen initially. Columns and cards are draggable and droppable as usual; dropping commits immediately.
+
+    There are no other Kanban instances. A small “Legend” box sits above the board but is not interactive and serves only as light visual clutter.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target card starts in a horizontally off-screen column, requiring scrolling/panning and maintaining context while dragging across a wide board.
+  success_trigger:
+    human_readable:
+    - Card OPS-33 is located in the “Backlog” column.
+    - Order within Backlog is not checked.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Operations Queue
+        card_id: card_ops_33
+        card_title: OPS-33 Investigate outage
+        column_id: backlog
+        column_label: Backlog
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - OPS-33 is moved to a column other than “Backlog” (e.g., “To do”).
+  - A different OPS card is moved while OPS-33 remains in “Blocked”.
+  - OPS-33 is dragged but dropped back into “Blocked” (no membership change).
+  expected_interaction_path: Horizontally scroll the board until “Blocked” is visible → drag “OPS-33 Investigate outage” toward the left → drop it into “Backlog” (scrolling as needed).
+  notes: 'Checker hint: horizontal scroll should not affect evaluation; read the canonical column_id for the card from state/DOM attributes.'
+- id: kanban_board_drag_drop-mui-T01
+  name: Move a task card to In progress
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Card + Paper + Stack + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the “Release Board”, move the card “REL-4 Update changelog” into the “In progress” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Move “REL-4 Update changelog” to “In progress” on the Release Board.'
+  setup_description: 'The page shows a single centered MUI Paper titled “Release Board”. Inside is a Kanban board with columns “Backlog”, “In progress”, and “Done”.
+
+    Each card is a Material UI Card with a title line (including a short code like “REL-4”) and a small Chip indicating priority. The whole card is draggable (no separate handle).
+
+    Initial state: “REL-4 Update changelog” is in the “Backlog” column. Other cards should remain unchanged.
+
+    Dropping a card immediately commits its new column membership; there is no Save/Apply control.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single board, few columns, unique card title, and no confirmation step.
+  success_trigger:
+    human_readable:
+    - On the “Release Board”, card REL-4 is in column “In progress”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Release Board
+        card_id: card_rel_4
+        card_title: REL-4 Update changelog
+        column_id: in_progress
+        column_label: In progress
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - REL-4 is moved to “Done” or left in “Backlog”.
+  - A different REL card is moved while REL-4 stays in the original column.
+  expected_interaction_path: Drag “REL-4 Update changelog” from Backlog and drop it into In progress.
+  notes: MUI version uses MUI Card/Chip for visuals; external dnd-kit handles the drag/drop interactions.
+- id: kanban_board_drag_drop-mui-T02
+  name: Reorder cards within Done
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Card + List + external DnD (@dnd-kit/sortable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “Done” column, move the card “DOC-2 Publish API docs” to the top of the column. The task will finish automatically when done.
+  ui_copy: 'Goal: Make “DOC-2 Publish API docs” the first card in Done.'
+  setup_description: "The page shows one Kanban board. Columns are “To do”, “In progress”, and “Done”.\nThe Done column contains three cards in this initial order:\n  1) “OPS-8 Enable backups”\n  2) “DOC-2 Publish API docs”   (target)\n  3) “UX-1 Fix contrast”\nCards are draggable by grabbing anywhere on the card. A thin insertion line appears to indicate where the card will be placed on drop.\nDropping commits immediately; there is no confirmation step."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: A straightforward within-column reorder among only three items with clear drop-position feedback.
+  success_trigger:
+    human_readable:
+    - In column “Done”, DOC-2 is the first (topmost) card.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Primary
+        column_id: done
+        column_label: Done
+        top_card_id: card_doc_2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - DOC-2 is in Done but not in the top position.
+  - DOC-2 is moved out of Done into another column.
+  - OPS-8 is moved instead and DOC-2 remains second.
+  expected_interaction_path: Drag “DOC-2 Publish API docs” upward within Done until it is placed above OPS-8, then drop.
+  notes: Checker can compare the first child card id in the Done column container to card_doc_2.
+- id: kanban_board_drag_drop-mui-T03
+  name: Reset a moved board back to default
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Button + Snackbar + external DnD (@dnd-kit/core)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Use the “Reset board” control to restore the Kanban board to its default arrangement. The task will finish automatically when done.
+  ui_copy: 'Goal: Reset the board to default using “Reset board”.'
+  setup_description: "A single Kanban board is shown on the page. Above it is a small toolbar with:\n  - “Reset board” (a MUI Button)\n  - “Export” (disabled; distractor)\nThe board starts in a non-default state (several cards were moved earlier). Clicking “Reset board” immediately restores the default arrangement and shows a brief MUI Snackbar “Board reset”.\nSuccess is based on the resulting card positions/order across the board matching the saved default snapshot."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The reset control is clearly labeled and immediately restores a known default state; minor toolbar clutter is the only distractor.
+  success_trigger:
+    human_readable:
+    - The board matches the stored default snapshot “mui_default_state_v1”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Primary
+        board_state_id: mui_default_state_v1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Export is clicked (no effect) and the board remains non-default.
+  - Only some columns match the default while others remain changed.
+  - Reset is clicked but the board does not change (e.g., due to focus on another control).
+  expected_interaction_path: Click the “Reset board” button in the toolbar and verify the board snaps back to its default state.
+  notes: Checker should ignore the snackbar and validate the canonical serialized board state equals mui_default_state_v1.
+- id: kanban_board_drag_drop-mui-T04
+  name: Choose the correct board instance and move a card
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Paper + Typography + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the “Team” board (not “Personal”), move the card “TEAM-6 Prepare demo” into the “Done” column. The task will finish automatically when done.
+  ui_copy: 'Goal: In the Team board, move “TEAM-6 Prepare demo” to Done.'
+  setup_description: "The page shows two Kanban boards stacked vertically, each in its own MUI Paper container with a clear heading:\n  - “Personal” (top)\n  - “Team” (bottom; target instance)\nBoth boards share the same column labels (“To do”, “In progress”, “Done”) and use similar-looking cards, so instance disambiguation is important.\nInitial state: on the Team board, the card “TEAM-6 Prepare demo” is in the “In progress” column.\nCards are draggable by grabbing anywhere on the card; dropping commits immediately. No save/apply is required."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Two boards look similar; the agent must correctly target the labeled instance before performing a simple move.
+  success_trigger:
+    human_readable:
+    - Target instance is the board labeled “Team”.
+    - Within “Team”, TEAM-6 is in column “Done”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Team
+        card_id: card_team_6
+        card_title: TEAM-6 Prepare demo
+        column_id: done
+        column_label: Done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Team
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - TEAM-6 is moved on the Personal board (wrong instance).
+  - TEAM-6 is moved to “To do” instead of “Done”.
+  - A different TEAM card is moved while TEAM-6 remains in “In progress”.
+  expected_interaction_path: Scroll to the Team board → drag “TEAM-6 Prepare demo” from In progress to Done → drop.
+  notes: Board roots should carry data-board-label so the checker can ensure the Team instance is evaluated.
+- id: kanban_board_drag_drop-mui-T05
+  name: Open a drawer and move a card inside
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Drawer + Button + Card + external DnD (@dnd-kit/core)'
+  task_template: open_overlay
+  secondary_template: transfer_move
+  browsergym_goal: Open the “Board drawer”, then move the card “BUG-51 Fix crash on start” into the “In progress” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Open the Board drawer and move “BUG-51 Fix crash on start” to In progress.'
+  setup_description: 'The main page shows a settings-like panel with a left sidebar and a primary button labeled “Open board drawer”.
+
+    Clicking the button opens a right-side MUI Drawer titled “Board drawer”. The Kanban board is inside this drawer and is the only board that counts for success.
+
+    The drawer board has three columns: “To do”, “In progress”, and “Done”.
+
+    Initial state: “BUG-51 Fix crash on start” is in “To do”.
+
+    Cards can be dragged within the drawer; dropping commits immediately. Closing the drawer is optional; success depends only on the card’s final column membership within the drawer board.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Interacting inside a drawer adds layering and constrained space, increasing the chance of mis-clicks and scroll issues compared to an inline board.
+  success_trigger:
+    human_readable:
+    - Within the Drawer board, BUG-51 is in column “In progress”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Board drawer
+        card_id: card_bug_51
+        card_title: BUG-51 Fix crash on start
+        column_id: in_progress
+        column_label: In progress
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Board drawer
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - BUG-51 is moved on the background page (if any preview exists) rather than inside the drawer board.
+  - BUG-51 is moved to “Done” or left in “To do”.
+  - The drawer is opened/closed but the card never changes columns.
+  expected_interaction_path: Click “Open board drawer” → in the drawer, drag “BUG-51 Fix crash on start” from To do to In progress → drop.
+  notes: Checker should evaluate state for the drawer board instance id regardless of drawer open/closed state at terminal time.
+- id: kanban_board_drag_drop-mui-T06
+  name: Scroll within a long column to find and move a card
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Card + Scrollable column container + external DnD (@dnd-kit/core) with auto-scroll'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: In the Kanban board, find the card “BUG-77 Slow search” (it may be lower in the Backlog list) and move it into the “To do” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Find “BUG-77 Slow search” and move it to To do.'
+  setup_description: 'The board is shown in a centered card titled “Bug Backlog”. Columns are “Backlog”, “To do”, and “Done”.
+
+    The Backlog column is intentionally long (about 12 cards) and rendered inside a fixed-height scroll area, so the column itself scrolls vertically. Some cards are initially off-screen within that column.
+
+    Initial state: “BUG-77 Slow search” is in the Backlog column, near the bottom of the list (not necessarily visible without scrolling).
+
+    Cards are draggable by grabbing anywhere on the card surface. The board supports auto-scrolling: if you drag near the top/bottom edge of the scroll area, it scrolls.
+
+    There is no Save/Apply step; dropping commits immediately.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling within a column to locate an off-screen item and maintaining control while dragging across a scrollable region.
+  success_trigger:
+    human_readable:
+    - Card BUG-77 is located in column “To do”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Bug Backlog
+        card_id: card_bug_77
+        card_title: BUG-77 Slow search
+        column_id: todo
+        column_label: To do
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - BUG-77 remains in Backlog (even if it is reordered within Backlog).
+  - BUG-77 is moved to Done instead of To do.
+  - A different BUG card is moved while BUG-77 stays unchanged.
+  expected_interaction_path: Scroll the Backlog column until “BUG-77 Slow search” is visible → drag it to the “To do” column → drop.
+  notes: Checker should not assume visibility; it should read canonical column membership from state/DOM regardless of scroll position.
+- id: kanban_board_drag_drop-mui-T07
+  name: Move a card in a crowded form section
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Select + Card + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the “Work items” section, move the card “DOC-11 Update API docs” into the “Review” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Move “DOC-11 Update API docs” to Review (Work items section).'
+  setup_description: 'The page is a form_section layout titled “Create sprint”. The top of the page contains standard MUI form fields (Sprint name TextField, Owner Select, and a Date field). These are distractors and do not affect success.
+
+    Below the fields is a section header “Work items” with the Kanban board embedded directly under it.
+
+    The board has four columns: “Backlog”, “To do”, “Review”, and “Done”. Each card is a MUI Card with a title and a small secondary line (assignee).
+
+    Initial state: “DOC-11 Update API docs” is in the “To do” column.
+
+    Cards are draggable by grabbing anywhere on the card. Dropping commits immediately; there is no save/apply step for the board.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The Kanban interaction is simple, but surrounding form controls increase visual clutter and potential mis-targeting.
+  success_trigger:
+    human_readable:
+    - Within the “Work items” Kanban board, DOC-11 is in column “Review”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Work items
+        card_id: card_doc_11
+        card_title: DOC-11 Update API docs
+        column_id: review
+        column_label: Review
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - DOC-11 is moved to a column other than Review.
+  - A different DOC card is moved while DOC-11 remains in To do.
+  - The agent edits form fields but does not move DOC-11 (no success).
+  expected_interaction_path: Scroll to the “Work items” section → drag “DOC-11 Update API docs” from To do to Review → drop.
+  notes: Checker should locate the board by a stable section/board id (e.g., data-board-id='work_items') rather than relying on page position.
+- id: kanban_board_drag_drop-mui-T08
+  name: Handle-only drag in dark compact mode
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Card (dense) + IconButton drag handle + external DnD (@dnd-kit/sortable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “In progress” column, move the card “BUG-320 Fix modal focus” so it is directly below “BUG-314 Fix tooltip”. Use the card’s drag handle. The task will finish automatically when done.
+  ui_copy: 'Goal: Place “BUG-320 Fix modal focus” directly below “BUG-314 Fix tooltip” in In progress.'
+  setup_description: 'The page is rendered in dark theme with compact spacing (smaller gaps and tighter padding).
+
+    The Kanban board is inside a single MUI Paper titled “Accessibility fixes”. Columns are “To do”, “In progress”, “Review”, and “Done”.
+
+    The In progress column contains eight cards with similar “BUG-3xx” titles. Each card has a small drag-handle icon button (grip/drag indicator) in its top-left corner.
+
+    Important: cards are draggable ONLY by the drag-handle icon; grabbing the card body selects text but does not start a drag.
+
+    Initial state: “BUG-320 Fix modal focus” is in In progress but not directly below “BUG-314 Fix tooltip”.
+
+    Dropping commits immediately; there is no Apply step.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dark+compact presentation reduces visual separability, and the small drag-handle-only affordance raises acquisition difficulty under dense, similar options.
+  success_trigger:
+    human_readable:
+    - Within column “In progress”, BUG-320 appears immediately below BUG-314.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Accessibility fixes
+        column_id: in_progress
+        column_label: In progress
+        adjacency_constraint:
+          upper_card_id: card_bug_314
+          lower_card_id: card_bug_320
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - BUG-320 is above BUG-314 or separated by another card (not adjacent).
+  - BUG-320 is moved into another column.
+  - The agent attempts to drag by the card body (no drag occurs) and leaves the order unchanged.
+  expected_interaction_path: Grab the drag-handle on BUG-320 → drag within In progress until it drops right under BUG-314 → drop.
+  notes: Checker computes indices of card_bug_314 and card_bug_320 within the In progress column and requires index(320) = index(314) + 1.
+- id: kanban_board_drag_drop-mui-T09
+  name: Move two specific cards on a busy dashboard
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar + Drawer + Card + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the Operations dashboard board, move “OPS-19 Rotate logs” into “In progress” and move “FIN-2 Approve budget” into “Done”. The task will finish automatically when done.
+  ui_copy: 'Goal: OPS-19 → In progress, FIN-2 → Done (Operations dashboard).'
+  setup_description: "The page is a dashboard layout with typical MUI chrome: a top AppBar, a left navigation Drawer, and several widgets (a small chart placeholder, a notifications list, and a filter row).\nIn the main content area, there is a Kanban board titled “Operations dashboard board”. This is the only Kanban instance on the page.\nColumns are “Backlog”, “To do”, “In progress”, “Review”, and “Done”. Each column contains several cards (around 5 each).\nTwo target cards must be moved:\n  - “OPS-19 Rotate logs” (starts in “Backlog”)\n  - “FIN-2 Approve budget” (starts in “Review”)\nCards are draggable by grabbing anywhere on the card surface; dropping commits immediately (no Apply).\nOther widgets are distractors and do not affect success."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: High dashboard clutter increases disambiguation and target acquisition load, and the task requires tracking and completing two separate card moves.
+  success_trigger:
+    human_readable:
+    - OPS-19 is in column “In progress”.
+    - FIN-2 is in column “Done”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Operations dashboard board
+        expected:
+          card_ops_19:
+            column_id: in_progress
+            column_label: In progress
+          card_fin_2:
+            column_id: done
+            column_label: Done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two cards is moved to the correct column.
+  - Either card is moved to the wrong column (e.g., OPS-19 to Review).
+  - A different OPS/FIN card is moved instead while the target card remains in its original column.
+  expected_interaction_path: Locate the board in the main dashboard area → drag OPS-19 to In progress → drag FIN-2 to Done → ensure both are placed.
+  notes: Checker should verify both card memberships simultaneously; success requires both conditions true at the same time.
+- id: kanban_board_drag_drop-mui-T10
+  name: Match a visual reference for highlighted cards (top-left placement)
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Card + Tooltip + external DnD (@dnd-kit/core)'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: 'Match the visual reference for the highlighted cards: move “REL-7 Cut release branch” to “In progress”, move “REL-8 Tag v1.2.0” to “Done”, and make “REL-9 Announce release” the first card in “Done”. The task will finish automatically when done.'
+  ui_copy: 'Goal: Match the visual reference for REL-7, REL-8, REL-9.'
+  setup_description: "The board is anchored near the top-left of the viewport (placement top_left) inside a MUI Card titled “Release checklist”.\nA static visual reference strip appears above the board: it shows small colored mini-columns with three highlighted card titles (REL-7, REL-8, REL-9) placed where they should end up. This strip is non-interactive and serves as visual guidance.\nThe interactive board has four columns: “Backlog”, “To do”, “In progress”, and “Done”. There are many release-related cards, and the three target cards are highlighted with a subtle border to help locate them.\nInitial state:\n  - “REL-7 Cut release branch” starts in “To do”.\n  - “REL-8 Tag v1.2.0” starts in “In progress”.\n  - “REL-9 Announce release” starts in “Done” but not at the top.\nCards are draggable by grabbing anywhere on the card; dropping commits immediately (no Apply)."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires interpreting a visual reference and completing multiple moves, including one exact positional constraint (REL-9 must be first in Done).
+  success_trigger:
+    human_readable:
+    - REL-7 is in column “In progress”.
+    - REL-8 is in column “Done”.
+    - REL-9 is the first card in column “Done”.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        board_instance: Release checklist
+        reference_panel_id: ref_release_strip_v1
+        match_scope: highlighted_cards_only
+        expected:
+          card_rel_7:
+            column_id: in_progress
+            column_label: In progress
+            order_index: null
+          card_rel_8:
+            column_id: done
+            column_label: Done
+            order_index: null
+          card_rel_9:
+            column_id: done
+            column_label: Done
+            order_index: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - REL-7 or REL-8 ends up in the wrong column.
+  - REL-9 is in Done but not the first card.
+  - Only a subset of the highlighted-card requirements is satisfied.
+  expected_interaction_path: Use the visual strip to identify targets → drag REL-7 to In progress → drag REL-8 to Done → reorder within Done so REL-9 is first.
+  notes: Checker should read card indices within the Done column to enforce REL-9 index=0; REL-7/REL-8 are membership-only.
+- id: kanban_board_drag_drop-mantine-T01
+  name: Move a card to Done
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + Badge + Group + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the “Personal Tasks” board, move the card “HOME-3 Call plumber” into the “Done” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Move “HOME-3 Call plumber” to Done on Personal Tasks.'
+  setup_description: 'The page shows one centered Mantine Paper titled “Personal Tasks”. Inside is a Kanban board with columns “To do”, “In progress”, and “Done”.
+
+    Each task card is a Mantine Card with a small Badge (category) and a bold title that includes an ID like “HOME-3”.
+
+    Initial state: “HOME-3 Call plumber” is in the “In progress” column.
+
+    Cards are draggable by grabbing anywhere on the card; dropping commits immediately. There are no other boards and no Apply step.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: A single uniquely titled card must be moved to a clearly labeled column with immediate commit.
+  success_trigger:
+    human_readable:
+    - On “Personal Tasks”, HOME-3 is in column “Done”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Personal Tasks
+        card_id: card_home_3
+        card_title: HOME-3 Call plumber
+        column_id: done
+        column_label: Done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - HOME-3 remains in “In progress” or is moved to “To do”.
+  - A different HOME card is moved while HOME-3 stays unchanged.
+  expected_interaction_path: Drag the “HOME-3 Call plumber” card into the Done column and drop.
+  notes: Mantine provides the Card/Badge visuals; external dnd-kit provides drag/drop. Card ids should be exposed via data-card-id.
+- id: kanban_board_drag_drop-mantine-T02
+  name: Reorder within a column (top position)
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + Stack + external DnD (@dnd-kit/sortable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “To do” column, move the card “SHOP-1 Buy groceries” to the top of the column. The task will finish automatically when done.
+  ui_copy: 'Goal: Make “SHOP-1 Buy groceries” the first card in To do.'
+  setup_description: "One Kanban board is displayed inside a Mantine Card. Columns are “To do”, “In progress”, and “Done”.\nThe To do column contains three cards in this initial order:\n  1) “PAY-2 Pay electricity bill”\n  2) “SHOP-1 Buy groceries” (target)\n  3) “MAIL-4 Return package”\nCards are draggable by grabbing anywhere on the card, and a placeholder gap shows the target insertion spot.\nThere is no Save/Apply step; dropping commits immediately."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Simple within-column reorder among three clearly distinct items.
+  success_trigger:
+    human_readable:
+    - In column “To do”, SHOP-1 is the first card.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Primary
+        column_id: todo
+        column_label: To do
+        top_card_id: card_shop_1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - SHOP-1 is in To do but not first.
+  - SHOP-1 is moved to a different column.
+  - A different card is moved instead and SHOP-1 remains second.
+  expected_interaction_path: Drag “SHOP-1 Buy groceries” upward within To do until it is above PAY-2, then drop.
+  notes: Checker can simply verify the first card id in the To do column is card_shop_1.
+- id: kanban_board_drag_drop-mantine-T03
+  name: Restore the default board layout
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Button + Notification + external DnD (@dnd-kit/core)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Click “Restore defaults” to return the Kanban board to its default layout. The task will finish automatically when done.
+  ui_copy: 'Goal: Restore defaults for the Kanban board.'
+  setup_description: 'The page shows a Kanban board inside a Mantine Paper titled “Household board”. The board is currently in a non-default state (some cards are shuffled).
+
+    In the board header, there is a “Restore defaults” button and a smaller “About” link (distractor).
+
+    Clicking “Restore defaults” immediately resets the board to the predefined default state and briefly shows a Mantine notification “Defaults restored”.
+
+    Success depends on the board state matching the stored default snapshot; the notification is not required.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single clearly labeled reset action restores a known default state; light header clutter only.
+  success_trigger:
+    human_readable:
+    - The board equals default snapshot “mantine_default_state_v1”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Household board
+        board_state_id: mantine_default_state_v1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “About” instead of restoring defaults.
+  - Only partial reset occurs (some columns still differ from default).
+  - No change to the board state after interacting with header controls.
+  expected_interaction_path: Click “Restore defaults” in the board header and wait for the board to reset.
+  notes: Checker should compare a serialized (column_id -> ordered_card_ids) state to mantine_default_state_v1.
+- id: kanban_board_drag_drop-mantine-T04
+  name: Move a card on the correct board when two boards exist
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Paper + Title + Grid + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the “Work” board (not “Home”), move the card “WORK-10 Prepare invoice” into the “In progress” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Work board — move “WORK-10 Prepare invoice” to In progress.'
+  setup_description: "Two Mantine Paper panels are displayed in a two-column grid:\n  - Left panel: “Home”\n  - Right panel: “Work” (target)\nEach panel contains its own Kanban board with identical column labels (“To do”, “In progress”, “Done”) and similar card styling, creating a disambiguation challenge.\nInitial state: on the Work board, “WORK-10 Prepare invoice” starts in “To do”.\nDrag-and-drop commits immediately; there is no Apply step. Both boards are active, so moving the wrong board’s card should not count as success."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Correctly selecting the target board instance is the main difficulty; the card move itself is straightforward.
+  success_trigger:
+    human_readable:
+    - Target instance is the board labeled “Work”.
+    - Within “Work”, WORK-10 is in column “In progress”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Work
+        card_id: card_work_10
+        card_title: WORK-10 Prepare invoice
+        column_id: in_progress
+        column_label: In progress
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Work
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - WORK-10 is moved on the Home board (wrong instance).
+  - WORK-10 is moved to Done instead of In progress.
+  - A different Work card is moved while WORK-10 stays in To do.
+  expected_interaction_path: Locate the “Work” panel → drag “WORK-10 Prepare invoice” from To do to In progress → drop.
+  notes: Each board should have a distinct data-board-id; checker must verify the Work board’s state, not the Home board’s.
+- id: kanban_board_drag_drop-mantine-T05
+  name: Open a modal and move a card inside the modal board
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Modal + Button + Card + external DnD (@dnd-kit/core)'
+  task_template: open_overlay
+  secondary_template: transfer_move
+  browsergym_goal: Open the “Project board” modal, then move the card “PROJ-2 Draft proposal” into the “Review” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Open Project board and move “PROJ-2 Draft proposal” to Review.'
+  setup_description: 'The page contains a primary Mantine Button labeled “Open Project board”. Clicking it opens a Mantine Modal titled “Project board”.
+
+    The Kanban board is inside the modal. Columns are “To do”, “In progress”, “Review”, and “Done”.
+
+    Initial state: the card “PROJ-2 Draft proposal” starts in “In progress”.
+
+    Cards are draggable by grabbing anywhere on the card; dropping commits immediately. Closing the modal is optional and does not affect success.
+
+    Behind the modal is a simple page with explanatory text; it is irrelevant.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The modal adds overlay layering and focus management; otherwise the card move is straightforward.
+  success_trigger:
+    human_readable:
+    - Within the modal Kanban instance “Project board”, PROJ-2 is in column “Review”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Project board (modal)
+        card_id: card_proj_2
+        card_title: PROJ-2 Draft proposal
+        column_id: review
+        column_label: Review
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Project board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - PROJ-2 remains in In progress after opening the modal.
+  - PROJ-2 is moved to Done or To do instead of Review.
+  - Interactions occur outside the modal without changing the modal board state.
+  expected_interaction_path: Click “Open Project board” → drag “PROJ-2 Draft proposal” to “Review” inside the modal → drop.
+  notes: Modal board root should have a unique data-board-id distinct from any background elements.
+- id: kanban_board_drag_drop-mantine-T06
+  name: Scroll within a column to locate a card, then move it
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: ScrollArea + Card + external DnD (@dnd-kit/core)'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Find the card “BUG-9 Fix notifications” in the “To do” column (it may be off-screen) and move it into “In progress”. The task will finish automatically when done.
+  ui_copy: 'Goal: BUG-9 → In progress (it may be off-screen in To do).'
+  setup_description: 'The board appears inside a centered Mantine Card titled “Sprint queue”. Columns are “To do”, “In progress”, and “Done”.
+
+    The To do column contains many cards and is rendered inside a Mantine ScrollArea with a fixed height; you must scroll within that column to see all items.
+
+    Initial state: “BUG-9 Fix notifications” is in To do near the bottom of the scrollable list.
+
+    Cards are draggable by grabbing anywhere on the card; dropping commits immediately. No Apply step is required.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target is initially off-screen within a scrollable column, requiring scroll management during search and drag.
+  success_trigger:
+    human_readable:
+    - BUG-9 is located in column “In progress”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Sprint queue
+        card_id: card_bug_9
+        card_title: BUG-9 Fix notifications
+        column_id: in_progress
+        column_label: In progress
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - BUG-9 is reordered within To do but not moved to In progress.
+  - BUG-9 is moved to Done instead of In progress.
+  - Another BUG card is moved while BUG-9 remains unchanged.
+  expected_interaction_path: Scroll within To do until BUG-9 is visible → drag it into In progress → drop.
+  notes: Checker reads canonical membership; scroll position is irrelevant.
+- id: kanban_board_drag_drop-mantine-T07
+  name: Dense reorder in dark theme
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card (dense) + ActionIcon drag handle + external DnD (@dnd-kit/sortable)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “Done” column, move “REL-12 Ship hotfix” so it is directly above “REL-13 Write postmortem”. Use the small drag handle on the card. The task will finish automatically when done.
+  ui_copy: 'Goal: REL-12 must be directly above REL-13 in Done.'
+  setup_description: 'The page is in dark theme. The Kanban board is inside a Mantine Paper titled “Release follow-ups”.
+
+    Columns are “To do”, “In progress”, “Review”, and “Done”. The Done column contains many release-related cards (about 9), most of which start with “REL-”.
+
+    Each card includes a small ActionIcon “grip” handle; dragging is enabled only via this handle (not the full card body).
+
+    Initial state: both “REL-12 Ship hotfix” and “REL-13 Write postmortem” are in Done, but they are separated by other cards.
+
+    Dropping commits immediately; there is no Apply step.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dark theme and dense similar card titles increase confusability; handle-only dragging adds precision and acquisition difficulty to achieve an adjacency constraint.
+  success_trigger:
+    human_readable:
+    - In column “Done”, REL-12 appears immediately above REL-13 (adjacent with no cards between).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Release follow-ups
+        column_id: done
+        column_label: Done
+        adjacency_constraint:
+          upper_card_id: card_rel_12
+          lower_card_id: card_rel_13
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - REL-12 is in Done but not adjacent to REL-13 (still separated).
+  - REL-12 or REL-13 is moved out of Done into another column.
+  - Dragging attempts use the card body rather than the handle (no reorder occurs).
+  expected_interaction_path: Grab REL-12 by its handle → drag within Done until it lands just above REL-13 → drop.
+  notes: Checker should compute indices within Done and enforce index(REL-12) = index(REL-13) - 1.
+- id: kanban_board_drag_drop-mantine-T08
+  name: Move a card and explicitly save changes
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + ButtonGroup (Save/Discard) + external DnD (@dnd-kit/core)'
+  task_template: confirm_cancel
+  secondary_template: transfer_move
+  browsergym_goal: Move the card “OPS-2 Rotate secrets” into the “Done” column, then click “Save changes”. The task will finish automatically when done.
+  ui_copy: 'Goal: OPS-2 → Done, then Save changes.'
+  setup_description: "The board is shown inside a Mantine Card titled “Ops checklist”. Columns are “To do”, “In progress”, and “Done”.\nInitial state: “OPS-2 Rotate secrets” is in “In progress”.\nFeedback behavior: dragging any card puts the board into a “pending” state and shows a footer bar with two buttons:\n  - “Save changes” (primary)\n  - “Discard”\nThe board reverts if “Discard” is clicked. The move is not considered committed until “Save changes” is pressed (the pending indicator disappears afterwards).\nCards are draggable by grabbing the card body. Dropping updates the pending layout immediately, but the saved state only updates on Save."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires understanding and completing a two-phase interaction (pending vs saved), with an explicit Save step and a potential Discard action that can undo progress.
+  success_trigger:
+    human_readable:
+    - OPS-2 is located in column “Done”.
+    - The board has no pending/dirty state (changes were saved via “Save changes”).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Ops checklist
+        card_id: card_ops_2
+        card_title: OPS-2 Rotate secrets
+        expected_column_id: done
+        expected_column_label: Done
+        requires_committed_state: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - OPS-2 is in Done but the pending indicator is still present (Save changes not clicked).
+  - OPS-2 is moved to the wrong column even if Save changes is clicked.
+  - Discard is clicked after moving OPS-2, reverting the board.
+  expected_interaction_path: Drag OPS-2 from In progress to Done → click “Save changes” in the footer → confirm pending state clears.
+  notes: Checker should read a boolean dirty flag or version counter and require dirty=false in addition to card membership.
+- id: kanban_board_drag_drop-mantine-T09
+  name: Visual reference matching with non-center placement
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + AspectRatio (reference preview) + external DnD (@dnd-kit/core)'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: 'Match the visual reference: move “FEAT-4 Add dark mode” to “In progress”, move “BUG-88 Fix sync issue” to “Done”, and make the top of “To do” read “CHORE-1 Update dependencies” then “DOC-6 Write release notes”. The task will finish automatically when done.'
+  ui_copy: 'Goal: Match the visual reference for FEAT-4, BUG-88, and the top of To do.'
+  setup_description: "The Kanban board is placed near the top-right of the viewport (placement top_right) inside a Mantine Card titled “Sprint board”.\nA visual reference preview is shown above the board: a small non-interactive mini-board image that depicts where certain highlighted cards should end up. Four card titles in the live board are marked with a subtle highlight border to help identify them.\nInteractive board columns are “Backlog”, “To do”, “In progress”, and “Done”.\nInitial state:\n  - “FEAT-4 Add dark mode” starts in “To do”.\n  - “BUG-88 Fix sync issue” starts in “In progress”.\n  - “CHORE-1 Update dependencies” is in “To do” but not at the top.\n  - “DOC-6 Write release notes” is also in “To do” but not second.\nDragging is enabled on the full card body, and dropping commits immediately (no Apply)."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple coordinated moves plus a strict ordering constraint must be completed while interpreting a visual reference, and non-center placement can affect camera/scroll behavior.
+  success_trigger:
+    human_readable:
+    - FEAT-4 is located in column “In progress”.
+    - BUG-88 is located in column “Done”.
+    - In column “To do”, the first card is CHORE-1 and the second card is DOC-6.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        board_instance: Sprint board
+        reference_panel_id: ref_miniboard_mantine_v1
+        match_scope: highlighted_cards_and_todo_top2
+        expected:
+          card_feat_4:
+            column_id: in_progress
+            column_label: In progress
+            order_index: null
+          card_bug_88:
+            column_id: done
+            column_label: Done
+            order_index: null
+          todo_top:
+          - card_chore_1
+          - card_doc_6
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - FEAT-4 or BUG-88 ends up in the wrong column.
+  - The top two cards in To do are not exactly CHORE-1 then DOC-6 (even if both are somewhere in To do).
+  - Only part of the required arrangement is satisfied.
+  expected_interaction_path: Use the reference preview to identify targets → drag FEAT-4 to In progress → drag BUG-88 to Done → reorder To do so CHORE-1 is first and DOC-6 is second.
+  notes: Checker should verify To do index 0 and 1 card ids equal the required list; other To do cards can be in any order below.
+- id: kanban_board_drag_drop-mantine-T10
+  name: Move a card in a mini-board inside a table row
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Paper + Card (mini) + external DnD (@dnd-kit/core)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the table row for “Project Atlas”, move the card “ATLAS-7 Fix billing export” into the “Done” column. The task will finish automatically when done.
+  ui_copy: 'Goal: Project Atlas — move “ATLAS-7 Fix billing export” to Done.'
+  setup_description: 'The page is a table_cell layout: a Mantine Table lists three projects (“Project Atlas”, “Project Beacon”, “Project Cascade”). Each row contains a compact mini Kanban board in the “Board” column.
+
+    This means there are three Kanban instances on the page (one per row). Each mini-board has three narrow columns (“To do”, “In progress”, “Done”) and uses small Mantine Cards with truncated (ellipsis) titles due to limited width.
+
+    Target instance: the mini-board in the row labeled “Project Atlas”.
+
+    Initial state (Project Atlas only): the card “ATLAS-7 Fix billing export” is in the “In progress” column.
+
+    Drag-and-drop commits immediately. The table also has non-interactive column headers and a “Download CSV” button above it; these are distractors and not required.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Very small targets inside a dense table, plus multiple similar board instances, make correct acquisition and instance disambiguation challenging even though the semantic goal is simple.
+  success_trigger:
+    human_readable:
+    - The target instance is the mini-board in the table row labeled “Project Atlas”.
+    - Within that instance, ATLAS-7 is located in column “Done”.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Project Atlas
+        card_id: card_atlas_7
+        card_title: ATLAS-7 Fix billing export
+        column_id: done
+        column_label: Done
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Project Atlas
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - ATLAS-7 is moved on the wrong project row’s mini-board (Beacon/Cascade) instead of Atlas.
+  - ATLAS-7 is moved to To do instead of Done.
+  - The agent interacts with table controls (e.g., Download CSV) without moving ATLAS-7.
+  expected_interaction_path: Find the “Project Atlas” row → within its mini-board, drag “ATLAS-7 Fix billing export” from In progress to Done → drop.
+  notes: Checker should use a stable row identifier (e.g., data-project='atlas') to bind the correct board instance; relying on position in the table can be brittle.

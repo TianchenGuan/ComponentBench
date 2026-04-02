@@ -1,0 +1,2409 @@
+- id: menu-antd-T01
+  name: Navigate to Reports in sidebar menu
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (mode=inline, selectable)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Sidebar navigation menu, go to “Reports”. The task will finish automatically when done.
+  ui_copy: 'Sidebar navigation: Home, Billing, Reports, Settings. Current section: Home.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    The page shows an isolated card centered in the viewport with a typical “app shell” mock:
+    - Left side: a vertical Ant Design Menu labeled “Sidebar navigation”.
+    - Right side: a read-only content panel that mirrors the currently active menu item as text: “Current section: …”.
+
+    Menu configuration:
+    - Mode: inline (vertical), light theme, comfortable spacing, default size.
+    - Items (top to bottom): Home (initially selected), Billing, Reports, Settings.
+    - Clicking an item changes the menu selected key and updates the mirrored “Current section” text.
+
+    There are no other interactive components on the page besides this menu (no clutter).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single visible menu with four clearly labeled items; selection is immediately reflected by highlight and
+      mirrored text.
+  success_trigger:
+    human_readable:
+    - The sidebar menu’s selected item is “Reports” (selected_path == [“Reports”]).
+    - No Apply/OK confirmation is required.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Reports
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any item other than “Reports”.
+  - Focusing/hovering “Reports” without actually selecting it (selected key does not change).
+  - Using a different menu instance (not applicable here, but if instrumentation detects multiple menus, only the labeled
+    Sidebar navigation menu counts).
+  expected_interaction_path:
+  - Click the “Reports” item in the Sidebar navigation menu.
+  - Verify the highlight moves to “Reports” / the content panel updates.
+  notes: |-
+    Instrumentation hint: assign stable data-testid to the Menu root (e.g., data-testid="menu-sidebar") and to each item key.
+    Checker can read AntD Menu selectedKeys or mirrored “Current section” text as a fallback observability channel.
+- id: menu-antd-T02
+  name: Enable sounds via checkable menu item
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (inline) with checkable items (custom render)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Preferences menu, turn ON “Enable sounds”. The task will finish automatically when done.
+  ui_copy: 'Preferences menu: Show hints (on), Enable sounds (off), Send weekly summary (off).'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    The page uses the baseline isolated card layout centered on screen.
+
+    Component:
+    - A vertical Ant Design Menu titled “Preferences”.
+    - Each menu row behaves like a checkbox-style toggle: a checkmark indicator appears on the left when enabled.
+
+    Items and initial state:
+    - Show hints: ON (checked)
+    - Enable sounds: OFF (unchecked)  ← target
+    - Send weekly summary: OFF (unchecked)
+
+    Interaction/feedback:
+    - Clicking an item toggles that item’s checked state immediately.
+    - A small status line under the menu mirrors the toggle states as text (e.g., “Enable sounds: Off”).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Large, clearly labeled menu items; the toggle state is visible via a checkmark and mirrored status text.
+  success_trigger:
+    human_readable:
+    - The “Enable sounds” menu item is in the checked/on state.
+    - No Apply/OK confirmation is required; the toggle commits immediately.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        toggles:
+          Enable sounds: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving “Enable sounds” off.
+  - Toggling a different item (e.g., only turning on “Send weekly summary”).
+  - Turning “Enable sounds” on and then off again (final state must be ON).
+  expected_interaction_path:
+  - Locate “Enable sounds” in the Preferences menu.
+  - Click it once to enable the checkmark / update the mirrored status line.
+  notes: |-
+    Checker should read a canonical boolean for each toggle item (e.g., via data attributes like data-checked=true on the item)
+    rather than relying on icon pixels. Provide data-testid for each item.
+- id: menu-antd-T03
+  name: Expand Analytics submenu
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu with SubMenu (inline, collapsible)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: In the Sidebar navigation menu, expand the “Analytics” section so its submenu items are visible. The task
+    will finish automatically when done.
+  ui_copy: 'Sidebar navigation sections: Analytics (collapsed), Operations (collapsed).'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card centered in the viewport.
+
+    Component:
+    - A vertical Ant Design Menu labeled “Sidebar navigation”.
+    - The menu contains two top-level SubMenus, each with a caret/arrow disclosure affordance:
+      1) Analytics (collapsed initially) with children: Traffic, Conversions
+      2) Operations (collapsed initially) with children: Jobs, Logs
+
+    Initial state:
+    - Both top-level sections are collapsed; only the two top-level rows are visible.
+
+    Interaction/feedback:
+    - Clicking the “Analytics” row (or its caret) expands it inline and reveals “Traffic” and “Conversions” beneath it.
+    - Expanded state is visible via caret rotation and the appearance of child rows.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires using the disclosure affordance on a single submenu; labels are distinct and the expanded state
+      is visually obvious.
+  success_trigger:
+    human_readable:
+    - The “Analytics” SubMenu is expanded (its child items are rendered/visible).
+    - No other top-level SubMenu is expanded (open_submenus == [“Analytics”]).
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        open_submenus:
+        - Analytics
+      tolerance:
+        order_insensitive: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving “Analytics” collapsed (child items not visible).
+  - Expanding “Operations” instead of “Analytics”.
+  - Having both “Analytics” and “Operations” expanded at the same time (only Analytics should be open).
+  expected_interaction_path:
+  - Click the “Analytics” section row (or its caret) to expand it.
+  - Confirm that “Traffic” and “Conversions” appear beneath it.
+  notes: |-
+    Instrumentation hint: expose openKeys (AntD Menu) or aria-expanded on SubMenu title.
+    Checker should compute open_submenus from the menu’s internal openKeys / DOM state.
+- id: menu-antd-T04
+  name: Clear the status filter selection
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (inline) with a ''Clear selection'' action item'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the current selection in the Status filter menu so that no status is selected. The task will finish
+    automatically when done.
+  ui_copy: 'Status filter menu. Current filter: Open.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card layout centered in the viewport.
+
+    Component:
+    - A vertical Ant Design Menu titled “Status filter”.
+    - The menu is selectable (single selection).
+
+    Items (top to bottom):
+    - All
+    - Open  (initially selected)
+    - In progress
+    - Closed
+    - Divider
+    - Clear selection  (action item)
+
+    Feedback:
+    - A text line under the menu shows the effective filter, e.g., “Current filter: Open”.
+    - Clicking “Clear selection” removes any selected menu item and updates the text to “Current filter: None”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Simple menu with an explicit 'Clear selection' action; success is clearly observable via no highlighted
+      item and the mirrored text.
+  success_trigger:
+    human_readable:
+    - No status item is selected in the Status filter menu (selected_path is empty).
+    - 'The page’s mirrored status text reads “Current filter: None” (or equivalent).'
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “All” (this is still a selection and does not count as cleared).
+  - Leaving “Open” or any other status selected.
+  - Clicking “Clear selection” but a status remains selected due to focus/hover without state change.
+  expected_interaction_path:
+  - Click the “Clear selection” item at the bottom of the Status filter menu.
+  - Verify no menu item is highlighted and the text shows the filter is None.
+  notes: |-
+    Checker should read selectedKeys (expected empty array) for the Status filter menu instance.
+    Provide a data-testid for the 'Clear selection' item to avoid ambiguity with other action items.
+- id: menu-antd-T05
+  name: Select nested menu path File → Export → PDF
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu with nested SubMenu (multi-level)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the File actions menu, choose “File → Export → PDF”. The task will finish automatically when done.
+  ui_copy: 'File actions menu (dark theme): File, Edit, View. File contains Export and Import.'
+  setup_description: |-
+    Scene: theme=dark, spacing=comfortable, layout=settings_panel, placement=center, scale=default, instances=1.
+
+    The UI is presented as a dark-themed settings panel centered in the viewport.
+
+    Component:
+    - A vertical Ant Design Menu titled “File actions”.
+    - Top-level sections are SubMenus with nested children.
+
+    Structure (relevant parts):
+    - File
+      - Export
+        - PDF
+        - CSV
+      - Import
+    - Edit
+      - Undo
+      - Redo
+    - View
+      - Zoom in
+      - Zoom out
+
+    Initial state:
+    - No leaf item is selected.
+    - All top-level sections start collapsed.
+
+    Interaction:
+    - Expanding “File” reveals “Export” and “Import”.
+    - Expanding “Export” reveals “PDF” and “CSV”.
+    - Clicking a leaf item selects it (highlight) and updates a small breadcrumb text above the menu, e.g., “Selected: File / Export / PDF”.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires multi-level submenu navigation to a specific leaf item; the correct path is explicit and the selected
+      breadcrumb provides strong feedback.
+  success_trigger:
+    human_readable:
+    - The selected leaf path in the File actions menu is exactly [“File”, “Export”, “PDF”].
+    - No Apply/OK confirmation is required.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - File
+        - Export
+        - PDF
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “CSV” instead of “PDF”.
+  - Stopping after opening “File” or “Export” without selecting the “PDF” leaf item (partial path).
+  - Selecting an item under a different top-level section (e.g., Edit → Undo).
+  expected_interaction_path:
+  - Expand “File”.
+  - Expand “Export”.
+  - Click “PDF”.
+  - Verify the breadcrumb shows “File / Export / PDF”.
+  notes: |-
+    Checker can derive selected_path from Menu selectedKeys plus a parent map, or from the rendered breadcrumb text.
+    Add stable keys per item so the checker is robust to localization/visual changes.
+- id: menu-antd-T06
+  name: Select Logs in the Secondary navigation menu
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Two Menu instances (inline) with similar items'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Secondary navigation menu, select “Logs”. The task will finish automatically when done.
+  ui_copy: 'Two menus: Primary navigation and Secondary navigation.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=form_section, placement=top_left, scale=default, instances=2.
+
+    The page uses a form_section layout anchored near the top-left of the viewport.
+
+    Components:
+    - Two vertical Ant Design Menus placed side-by-side in the same card:
+      1) “Primary navigation” (left)
+      2) “Secondary navigation” (right)
+
+    Each menu has its own mirrored status line directly beneath it: “Primary selected: …” and “Secondary selected: …”.
+
+    Menu items (both menus intentionally share similar labels):
+    - Primary navigation: Overview (selected initially), Logs, Alerts, Settings
+    - Secondary navigation: Events (selected initially), Logs, Alerts, Settings
+
+    Distractors/clutter:
+    - The rest of the form section contains non-interactive text fields as placeholders (read-only) to simulate a realistic page section, but they do not affect success.
+
+    Interaction:
+    - Clicking an item updates only that menu’s selected state and its corresponding status line.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: Two similar menus appear in the same area, so the agent must disambiguate the correct instance before selecting
+      the target item.
+  success_trigger:
+    human_readable:
+    - In the menu labeled “Secondary navigation”, the selected item is “Logs”.
+    - Changes in the “Primary navigation” menu do not count toward success.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Logs
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary navigation
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Logs” in the Primary navigation menu instead of Secondary (wrong instance).
+  - Selecting “Alerts” or “Settings” in Secondary instead of “Logs”.
+  - Only hovering/focusing “Logs” without changing the selected state.
+  expected_interaction_path:
+  - Locate the menu titled “Secondary navigation” (right-hand menu).
+  - Click the “Logs” item within that menu.
+  - 'Verify the “Secondary selected: Logs” status line updates.'
+  notes: |-
+    Instrumentation: give each Menu root a unique data-testid that matches the visible label (e.g., menu-primary, menu-secondary).
+    Checker should scope selection reading to the target instance only.
+- id: menu-antd-T07
+  name: Select the menu item matching a visual icon reference
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu with icons (inline, compact)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Tools menu, select the option that matches the icon shown in the Target card. The task will finish
+    automatically when done.
+  ui_copy: Target card shows an icon. Tools menu items each have an icon and label.
+  setup_description: |-
+    Scene: theme=light, spacing=compact, layout=isolated_card, placement=center, scale=small, instances=1.
+
+    The page displays a compact isolated card centered in the viewport.
+
+    Left side: a “Target” card that shows ONLY a large reference icon (no label text). The icon is a bell symbol.
+
+    Right side: a vertical Ant Design Menu titled “Tools” in compact spacing and small size.
+    Menu items (each row has a leading icon + a label):
+    - Notifications (bell icon)
+    - Calendar (calendar icon)
+    - Search (magnifying glass icon)
+    - Help (question mark icon)
+
+    Initial state:
+    - No item is selected.
+
+    Interaction/feedback:
+    - Clicking a menu item highlights it and updates a small line under the menu: “Selected tool: …”.
+
+    No other interactive elements are present.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Goal is specified visually via an icon reference rather than text, requiring correct visual matching and
+      accurate clicking in a compact menu.
+  success_trigger:
+    human_readable:
+    - The selected Tools menu item corresponds to the bell icon reference (label “Notifications”).
+    - The menu’s selected_path is exactly [“Notifications”].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Notifications
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different tool (e.g., “Calendar” or “Help”) whose icon does not match the Target card.
+  - Only hovering over “Notifications” without selecting it.
+  - Selecting an item in a different component (none present in baseline).
+  expected_interaction_path:
+  - Look at the Target card’s icon (bell).
+  - Find the menu row with the matching bell icon (“Notifications”).
+  - Click that row and verify the selection text updates.
+  notes: |-
+    Provide stable ids for each menu item (e.g., key='notifications') so the checker does not depend on icon SVG parsing.
+    Checker should map the visual reference to the target key internally (reference_id='bell' → key='notifications').
+- id: menu-antd-T08
+  name: Scroll a long menu to select Audit Trail
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Scrollable Menu (inline, compact, small)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Activity menu, scroll until you find “Audit Trail” and select it. The task will finish automatically
+    when done.
+  ui_copy: 'Activity menu (scrollable). Target item: Audit Trail.'
+  setup_description: |-
+    Scene: theme=light, spacing=compact, layout=dashboard, placement=bottom_right, scale=small, instances=1.
+
+    The page uses a dashboard-style layout with multiple non-interactive cards (charts as placeholders) to create realistic clutter.
+    The target component is anchored at the bottom-right of the viewport inside a card titled “Activity”.
+
+    Component:
+    - A vertical Ant Design Menu rendered inside a fixed-height container (so it must scroll).
+    - Spacing mode is compact and overall scale is small; item rows are tighter than default.
+
+    Items:
+    - A long list (~30 items) mixing activity-related options, e.g., Overview, Recent events, Access history, Audit settings, …
+    - The target leaf item “Audit Trail” appears near the bottom of the list (not initially visible without scrolling).
+    - A similarly named distractor “Audit settings” appears higher up.
+
+    Initial state:
+    - “Overview” is selected initially.
+
+    Interaction/feedback:
+    - Selecting an item highlights it and updates a status line: “Activity view: …”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires scrolling within a compact, small menu containing many similar options; the target is off-screen
+      and confusable with a similarly named item.
+  success_trigger:
+    human_readable:
+    - The Activity menu’s selected item is “Audit Trail”.
+    - The menu must reflect the selection change (highlight/status line).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Audit Trail
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Audit settings” instead of “Audit Trail”.
+  - Scrolling the page instead of the menu so “Audit Trail” is never reached.
+  - Selecting any other activity option (e.g., “Access history”).
+  expected_interaction_path:
+  - Click inside the Activity menu scroll area.
+  - Scroll down within the menu list until “Audit Trail” becomes visible.
+  - Click “Audit Trail” and verify it becomes selected.
+  notes: |-
+    Checker should ensure the scroll container is the menu’s own list element, not the page.
+    Add data-testid for the scroll container and for each menu item key to make selection detection robust.
+- id: menu-antd-T09
+  name: Select exactly three notification channels in a multi-select menu
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (multiple selection) with checkmarks'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Notification channels menu, select exactly these items: Email, SMS, and Push. The task will finish
+    automatically when done.'
+  ui_copy: Notification channels menu with multiple selectable items.
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=settings_panel, placement=center, scale=default, instances=1.
+
+    The UI is a settings_panel layout centered in the viewport with several read-only settings fields around the target.
+
+    Component:
+    - A vertical Ant Design Menu titled “Notification channels”.
+    - The menu is configured for multiple selection: each selected item shows a check indicator and stays highlighted.
+
+    Items (with intentionally similar distractors):
+    - Email  (selected initially)
+    - Email digest
+    - SMS
+    - Push
+    - Push (silent)
+    - In-app
+    - Webhook
+
+    Goal state:
+    - Exactly Email, SMS, and Push are selected.
+
+    Feedback:
+    - A summary line under the menu lists selected channels as comma-separated text, e.g., “Selected: Email, SMS, Push”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires achieving an exact multi-selection set among several confusable options (e.g., 'Email' vs 'Email
+      digest', 'Push' vs 'Push (silent)').
+  success_trigger:
+    human_readable:
+    - The Notification channels menu has exactly the selected set {Email, SMS, Push}.
+    - No additional channels (e.g., Email digest, Push (silent)) are selected.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        checked_items:
+        - Email
+        - SMS
+        - Push
+      tolerance:
+        order_insensitive: true
+        allow_extras: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting only a subset of the required channels (e.g., Email + SMS only).
+  - Selecting any extra channel beyond Email, SMS, and Push (e.g., In-app or Email digest).
+  - Selecting a similarly named distractor (e.g., Push (silent) instead of Push).
+  expected_interaction_path:
+  - Verify Email is selected initially.
+  - Click SMS to add it to the selection.
+  - Click Push (not Push (silent)) to add it.
+  - If any wrong items are selected, click them again to deselect.
+  - Confirm the summary line lists exactly Email, SMS, Push.
+  notes: |-
+    Checker should treat selection as a set and ignore ordering in the summary text.
+    Provide per-item stable keys; avoid relying on checkmark icon detection.
+- id: menu-antd-T10
+  name: Choose a sort option and apply it
+  canonical_type: menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu-style option list inside a popover panel with Apply/Cancel footer (composite container)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Sort menu, set the sort order to “Last updated”, then click “Apply”. The task will finish automatically
+    when done.
+  ui_copy: Sort menu with options and Apply/Cancel buttons.
+  setup_description: |-
+    Scene: theme=dark, spacing=comfortable, layout=isolated_card, placement=bottom_left, scale=default, instances=1.
+
+    The page shows a dark-themed isolated card placed near the bottom-left of the viewport.
+
+    Component:
+    - A menu-like vertical list titled “Sort”.
+    - The list behaves like a single-choice menu (radio semantics): only one option can be chosen at a time.
+    - Under the list is a small footer row with two buttons: “Apply” and “Cancel”.
+
+    Options (top to bottom):
+    - Name (currently applied)
+    - Last updated
+    - Priority
+
+    State model / feedback:
+    - Selecting an option changes a “Pending selection” line immediately (e.g., “Pending: Last updated”).
+    - The “Applied sort” line updates ONLY after pressing “Apply” (e.g., “Applied: Last updated”).
+    - Pressing “Cancel” discards the pending choice and restores the applied sort.
+
+    Distractors:
+    - A small non-interactive text block explains sorting; no other controls affect success.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: 'Requires a two-step commit (select option + Apply). Mistakes are easy: selecting the right option without
+      applying does not change the committed state.'
+  success_trigger:
+    human_readable:
+    - The committed/applied sort value equals “Last updated”.
+    - The Apply control has been used to commit the selection (require_confirm=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selection: Last updated
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the pending selection to “Last updated” but not pressing Apply (applied sort remains Name).
+  - Pressing Cancel after selecting “Last updated”.
+  - Applying a different option (e.g., Priority).
+  expected_interaction_path:
+  - Click the “Last updated” option in the Sort menu.
+  - Click the “Apply” button in the footer.
+  - Verify the “Applied sort” line updates to Last updated.
+  notes: |-
+    Implementation note: although the option list is rendered in a menu-like style, the Apply/Cancel footer is part of the same panel.
+    Checker should read the committed value (e.g., from a data-testid='applied-sort' element) rather than pending selection.
+- id: menu-mui-T01
+  name: Navigate to Team in a MenuList
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: MenuList + MenuItem (in Paper) (approx for persistent menu)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Navigation menu, go to “Team”. The task will finish automatically when done.
+  ui_copy: 'Navigation menu: Home, Projects, Team, Settings. Current page: Home.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    The baseline isolated card is centered on the page.
+
+    Component:
+    - A persistent vertical menu built with MUI MenuList and MenuItem components, placed inside a Paper container.
+    - The menu is labeled “Navigation”.
+
+    Items:
+    - Home (initially selected/active)
+    - Projects
+    - Team
+    - Settings
+
+    Feedback:
+    - The selected item is highlighted using MUI’s selected styling.
+    - A text line to the right reads “Current page: …” and updates when selection changes.
+
+    No additional interactive components are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Straightforward single menu selection with clear highlighting and mirrored text feedback.
+  success_trigger:
+    human_readable:
+    - The Navigation menu’s selected item is “Team”.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Team
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Projects” or “Settings” instead of “Team”.
+  - Only focusing “Team” via keyboard without committing selection (if the implementation distinguishes focus vs selected).
+  - Changing the right-side content without the menu selected state changing (should not happen, but disallow).
+  expected_interaction_path:
+  - Click “Team” in the Navigation menu.
+  - Verify the menu highlight and “Current page” text update.
+  notes: |-
+    MUI MenuList primarily manages focus; ensure the demo sets a controlled selected state (e.g., via a 'selectedKey' in app state)
+    so the checker can reliably read selected_path. Expose data-testid on the MenuList root.
+- id: menu-mui-T02
+  name: Open the Quick actions menu
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Menu (Popover-based) anchored to a button'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Quick actions” menu so that its options are visible. The task will finish automatically when
+    done.
+  ui_copy: 'Button: Quick actions. Menu is closed.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card centered in the viewport.
+
+    Component:
+    - A MUI Menu component (popover) titled “Quick actions”.
+    - A single trigger button labeled “Quick actions” sits above; when pressed, it opens the Menu anchored to the button.
+
+    Initial state:
+    - The menu is closed (no menu items visible).
+
+    Menu contents (for realism; not required for success):
+    - Refresh
+    - Duplicate
+    - Archive
+
+    Interaction/feedback:
+    - Opening the menu renders the list of MenuItems in an overlay with elevation/shadow.
+    - The trigger button gains an aria-expanded=true state when open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single button-to-menu interaction with immediate visual feedback when the popover appears.
+  success_trigger:
+    human_readable:
+    - The Quick actions menu is open (menu overlay is visible / open state true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the menu closed.
+  - Opening a different overlay (none present in baseline).
+  - Opening the menu and immediately closing it so the final state is closed.
+  expected_interaction_path:
+  - Click the “Quick actions” button.
+  - Verify the menu popover appears with its items visible.
+  notes: |-
+    Checker should read the Menu 'open' state from the controlled prop or from aria-expanded on the trigger.
+    This task intentionally isolates opening behavior (no item selection required).
+- id: menu-mui-T03
+  name: Toggle off Show archived in a menu
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: MenuList + MenuItem with Checkbox icon'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the View options menu, turn OFF “Show archived”. The task will finish automatically when done.
+  ui_copy: 'View options: Show archived (on), Show completed (off), Compact mode (off).'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card centered in the viewport.
+
+    Component:
+    - A vertical menu built with MUI MenuList/MenuItem, labeled “View options”.
+    - Each item has a leading checkbox indicator (checked/unchecked).
+
+    Items and initial state:
+    - Show archived: ON (checked)  ← target is to turn it OFF
+    - Show completed: OFF
+    - Compact mode: OFF
+
+    Feedback:
+    - Toggling updates the checkbox icon immediately.
+    - A status line beneath the menu mirrors the state as text (e.g., “Show archived: Off”).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Simple checkbox-style toggle within a single menu; state is clearly visible and mirrored.
+  success_trigger:
+    human_readable:
+    - The “Show archived” menu toggle is OFF (unchecked).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        toggles:
+          Show archived: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving “Show archived” ON.
+  - Toggling the wrong option (e.g., only enabling Compact mode).
+  - Toggling “Show archived” off and then back on (final state must be OFF).
+  expected_interaction_path:
+  - Click the “Show archived” menu item to toggle it.
+  - Verify the checkbox and status line show it is Off.
+  notes: Provide a deterministic DOM attribute (e.g., data-checked) on each MenuItem for check state so the checker does not
+    depend on icon rendering.
+- id: menu-mui-T04
+  name: Select nested path Account → Security → Two-factor authentication
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Nested Menus (Menu + MenuItem) (composite nesting)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the Account menu, choose “Account → Security → Two-factor authentication”. The task will finish automatically
+    when done.
+  ui_copy: Account menu with nested submenu Security.
+  setup_description: |-
+    Scene: theme=dark, spacing=comfortable, layout=settings_panel, placement=center, scale=default, instances=1.
+
+    The UI is a dark-themed settings_panel centered in the viewport.
+
+    Component:
+    - A MUI Menu-based nested menu system displayed open by default (for easier access).
+    - Top-level menu contains several items; one item (“Security”) opens a nested submenu to the side.
+
+    Structure:
+    - Account (top-level label; shown as the menu title header)
+      - Profile
+      - Security  ▶ (opens submenu)
+      - Billing
+    - Security submenu (appears to the right when Security is activated)
+      - Password
+      - Two-factor authentication  ← target leaf
+      - Sessions
+
+    Initial state:
+    - Only the top-level menu is visible; the Security submenu is closed.
+    - No leaf is selected.
+
+    Feedback:
+    - Selecting a leaf sets a breadcrumb text above the menu: “Selected: Account / Security / Two-factor authentication”.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires opening a side submenu and then selecting the correct leaf; overlay layering and hover/focus handling
+      adds complexity.
+  success_trigger:
+    human_readable:
+    - The selected leaf path equals [“Account”, “Security”, “Two-factor authentication”].
+    - No Apply/OK confirmation is required.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Account
+        - Security
+        - Two-factor authentication
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Password” or “Sessions” instead of “Two-factor authentication”.
+  - Opening the Security submenu but not selecting the Two-factor authentication leaf (partial path).
+  - Selecting a top-level item like “Billing” (wrong branch).
+  expected_interaction_path:
+  - Activate the “Security” menu item to open its submenu.
+  - Click “Two-factor authentication” in the submenu.
+  - Verify the breadcrumb reflects the full path.
+  notes: |-
+    For robustness, disable portals for nested menus if needed so both menus remain in the same DOM subtree for the checker.
+    Provide stable keys and a parent map so selected_path can be computed reliably.
+- id: menu-mui-T05
+  name: Select Export in the Right menu on a dashboard
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Two MenuList instances (in Paper) within a dashboard card'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Right menu, select “Export”. The task will finish automatically when done.
+  ui_copy: 'Dashboard with two menus: Left menu and Right menu.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=dashboard, placement=top_right, scale=default, instances=2.
+
+    The page is a dashboard layout anchored near the top-right of the viewport with multiple cards (table preview, chart preview) as realistic clutter.
+
+    Target area:
+    - A card titled “Admin tools” contains two side-by-side vertical menus:
+      - “Left menu” (left column)
+      - “Right menu” (right column)
+
+    Menus:
+    - Both menus use MUI MenuList/MenuItem inside Paper.
+    - Both contain similar action items to create disambiguation.
+
+    Items:
+    - Left menu: Overview (selected), Export, Import, Settings
+    - Right menu: Overview (selected), Export, Import, Settings
+
+    Feedback:
+    - Each menu has its own line below it: “Left menu selected: …” and “Right menu selected: …”.
+    - Selecting an item updates only the corresponding menu’s selection and status line.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: Two nearly identical menus appear in a cluttered dashboard card; the agent must select the correct instance
+      before choosing the item.
+  success_trigger:
+    human_readable:
+    - In the menu labeled “Right menu”, the selected item is “Export”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Export
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Right menu
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Export” in the Left menu (wrong instance).
+  - Selecting “Import” or “Settings” in the Right menu instead of “Export”.
+  - Only focusing/highlighting without committing the selected state.
+  expected_interaction_path:
+  - Locate the Right menu (right-hand column in the Admin tools card).
+  - Click “Export” within that menu.
+  - Verify the “Right menu selected” status line updates.
+  notes: |-
+    Instrumentation: data-testid should include the visible menu label (left-menu, right-menu).
+    Checker should scope to the Right menu root only when evaluating selected_path.
+- id: menu-mui-T06
+  name: Match a reference icon to the correct menu item
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: MenuList/MenuItem with leading icons (compact, small)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Select the menu option that matches the icon shown in the Target card. The task will finish automatically
+    when done.
+  ui_copy: Target card shows a star icon. Menu items have icons.
+  setup_description: |-
+    Scene: theme=light, spacing=compact, layout=isolated_card, placement=center, scale=small, instances=1.
+
+    A compact isolated card is centered in the viewport.
+
+    Left: a “Target” card shows a single large icon as the reference (a star).
+
+    Right: a vertical menu built with MUI MenuList and MenuItems, rendered in compact spacing and small size.
+    Each menu item has a leading icon:
+    - Favorites (star icon)
+    - History (clock icon)
+    - Downloads (down arrow icon)
+    - Share (share icon)
+
+    Initial state:
+    - No item is selected.
+
+    Feedback:
+    - Selected menu item receives MUI selected highlight.
+    - A small label beneath the menu shows “Selected: …”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The goal is specified by a visual reference icon, and the menu is compact/small, increasing click precision
+      and visual matching demands.
+  success_trigger:
+    human_readable:
+    - The selected menu item matches the star icon reference (Favorites).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Favorites
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting an item whose icon does not match (e.g., History).
+  - Only hovering over Favorites without selecting it.
+  - Selecting any item but leaving the selected state unset.
+  expected_interaction_path:
+  - Identify the reference icon (star) in the Target card.
+  - Find the menu item with the star icon (Favorites).
+  - Click it and verify the selected state updates.
+  notes: |-
+    Use stable keys for each MenuItem so the checker can map the visual reference to a known target key.
+    Avoid relying on SVG pixel comparison for success.
+- id: menu-mui-T07
+  name: Scroll within a constrained table-cell menu to select South America
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: MenuList in a constrained container (table cell)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Region menu, scroll if needed and select “South America”. The task will finish automatically when
+    done.
+  ui_copy: Table with a Region menu embedded in one cell.
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=table_cell, placement=center, scale=default, instances=1.
+
+    The page uses a table_cell layout: a small data table is shown inside a centered card.
+
+    Target component placement:
+    - In the table’s first row, the “Region” column contains an embedded vertical menu (MUI MenuList) inside a constrained-height cell.
+    - Because the cell is short, the menu list itself scrolls (not the whole page).
+
+    Menu items (alphabetical regions/continents):
+    - Africa
+    - Asia
+    - Europe
+    - North America
+    - Oceania
+    - South America  ← target (positioned below the fold in the cell)
+    - … (plus additional items like “Antarctica”, “Middle East”, etc., to force scrolling)
+
+    Initial state:
+    - “Europe” is selected initially.
+
+    Feedback:
+    - Selected item is highlighted.
+    - A small text under the table reads “Region filter: …” and updates on selection.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires scrolling inside a small table-cell container to reach the target option; the scrollable region
+      can be confused with page scrolling.
+  success_trigger:
+    human_readable:
+    - The Region menu selection is “South America”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - South America
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Region menu list so the target never becomes visible.
+  - Selecting “North America” instead of “South America”.
+  - Leaving the initial selection (“Europe”) unchanged.
+  expected_interaction_path:
+  - Click inside the Region menu list area in the table cell.
+  - Scroll within that list until “South America” is visible.
+  - Click “South America” and verify the Region filter text updates.
+  notes: |-
+    Instrumentation: mark the scroll container with data-testid='region-menu-scroll'.
+    Checker should verify scroll was on the menu container (optional) and read selected key from app state.
+- id: menu-mui-T08
+  name: Select an exact set of columns in a dense multi-select menu
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: MenuList/MenuItem with Checkbox (dense multi-select)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Columns menu, select exactly these columns: Name, Status, Owner, and Last updated. The task will
+    finish automatically when done.'
+  ui_copy: Columns menu with many checkboxes (dense).
+  setup_description: |-
+    Scene: theme=light, spacing=compact, layout=settings_panel, placement=center, scale=small, instances=1.
+
+    The UI is a settings_panel with medium clutter (read-only filter chips and a preview table) to simulate a realistic configuration screen.
+
+    Component:
+    - A vertical checkbox-style menu labeled “Columns”.
+    - Implemented with MUI MenuList/MenuItem where each item includes a checkbox icon.
+    - The menu is rendered in compact spacing and small scale to increase density.
+
+    Column options (many, with similar names):
+    - Name (checked initially)
+    - Status (checked initially)
+    - Owner (unchecked initially)
+    - Last updated (unchecked initially)
+    - Created at (checked initially)  ← distractor that must be unchecked
+    - Updated by
+    - Priority
+    - Tags
+    - Description
+    - Due date
+    - ID
+    - Source
+
+    Feedback:
+    - A summary line under the menu lists the currently selected columns in a compact comma-separated format.
+
+    Goal:
+    - Exactly {Name, Status, Owner, Last updated} are checked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Dense checkbox list with many options requires precise selection/deselection to match an exact target set;
+      similar labels increase interference.
+  success_trigger:
+    human_readable:
+    - The Columns menu checked set is exactly {Name, Status, Owner, Last updated}.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        checked_items:
+        - Name
+        - Status
+        - Owner
+        - Last updated
+      tolerance:
+        order_insensitive: true
+        allow_extras: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving “Created at” checked (extra selection).
+  - Missing one required column (e.g., not checking Owner).
+  - Checking a similarly named distractor instead of the target (e.g., selecting “Updated by” instead of “Last updated”).
+  expected_interaction_path:
+  - Verify currently checked items include Name and Status.
+  - Uncheck “Created at”.
+  - Check “Owner” and “Last updated”.
+  - Ensure no other columns remain checked by mistake.
+  notes: |-
+    Checker should use app state for the checked set (e.g., an array of column ids) and compare as a set.
+    Provide stable ids (e.g., col_last_updated) because labels can be similar.
+- id: menu-mui-T09
+  name: Change sort option and click Apply in menu panel
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: MenuList-style option list with Apply/Cancel footer (composite container)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Sort menu, choose “Last updated” and click “Apply”. The task will finish automatically when done.
+  ui_copy: Sort menu with options and an Apply button.
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    The page shows a centered card with a “Results” header and a sort control panel.
+
+    Component:
+    - A menu-like list titled “Sort” built with MUI MenuList/MenuItem (radio behavior: one selected at a time).
+    - A footer row in the same panel contains “Apply” and “Cancel” buttons.
+
+    Options:
+    - Relevance (currently applied)
+    - Last updated  ← target
+    - Title
+
+    State model / feedback:
+    - Clicking an option updates a “Pending sort” label immediately.
+    - Only clicking “Apply” updates “Applied sort: …”.
+    - Clicking “Cancel” reverts the pending choice back to the applied sort.
+
+    No other interactive controls affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Two-step commit is required; selecting the correct option without applying does not change the committed
+      state.
+  success_trigger:
+    human_readable:
+    - The committed/applied sort equals “Last updated”.
+    - The Apply step was completed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selection: Last updated
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Last updated” but not clicking Apply (applied remains Relevance).
+  - Clicking Cancel after selecting “Last updated”.
+  - Applying “Title” instead of “Last updated”.
+  expected_interaction_path:
+  - Click “Last updated” in the Sort menu list.
+  - Click the “Apply” button in the footer.
+  - Verify the Applied sort label updates.
+  notes: |-
+    Checker should read the committed value from a dedicated element (e.g., data-testid='applied-sort') rather than from the highlighted menu item,
+    since highlight might reflect a pending state before Apply.
+- id: menu-mui-T10
+  name: Deep cascading menu path File → Share → Advanced → Copy link
+  canonical_type: menu
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Cascading nested Menus (multi-level popovers)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Use the File menu to select “File → Share → Advanced → Copy link”. The task will finish automatically when
+    done.
+  ui_copy: Cascading File menu with multiple nested submenus.
+  setup_description: |-
+    Scene: theme=light, spacing=compact, layout=drawer_flow, placement=bottom_left, scale=small, instances=1.
+
+    The scene is a drawer_flow mock anchored near the bottom-left of the viewport:
+    - A small “Tools drawer” is already open, and within it the File menu panel is visible.
+
+    Component:
+    - A cascading (multi-popover) menu system implemented with MUI Menu/MenuItem.
+    - Menus open side-by-side as you activate submenu items.
+
+    Structure:
+    - File (top-level menu panel)
+      - New
+      - Open
+      - Share  ▶ (opens submenu)
+      - Export ▶ (opens submenu; distractor)
+    - Share submenu
+      - Email link
+      - Advanced ▶ (opens submenu)
+      - Permissions ▶ (opens submenu; distractor)
+    - Advanced submenu
+      - Copy link  ← target leaf
+      - Embed code
+      - QR code
+
+    Initial state:
+    - Only the top-level File panel is visible; no submenus are open.
+    - No leaf is selected.
+
+    Interaction/feedback:
+    - Submenus appear adjacent to the right when their parent item is activated.
+    - Selecting a leaf updates a breadcrumb label above: “Selected: File / Share / Advanced / Copy link”.
+
+    Density/size:
+    - The menu uses compact spacing and small scale to make rows tighter than default.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A deep cascading menu requires maintaining the correct open submenu chain across multiple popovers and
+      selecting a specific leaf in a compact, small layout.
+  success_trigger:
+    human_readable:
+    - The selected path equals [“File”, “Share”, “Advanced”, “Copy link”].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - File
+        - Share
+        - Advanced
+        - Copy link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the wrong branch (e.g., File → Export …).
+  - Stopping at an intermediate submenu without selecting the Copy link leaf (partial path).
+  - Selecting a different leaf in the Advanced submenu (e.g., Embed code).
+  expected_interaction_path:
+  - Activate “Share” to open the Share submenu.
+  - Activate “Advanced” to open the Advanced submenu.
+  - Click “Copy link”.
+  - Confirm the breadcrumb shows the full path.
+  notes: |-
+    Nested menu robustness: if using Popover/Portal, ensure the checker can still associate submenu panels to the same logical menu instance.
+    Provide explicit ids for each panel level and each item key to compute selected_path reliably.
+- id: menu-mantine-T01
+  name: Open Actions menu and choose Download
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu (Menu.Target + Menu.Dropdown) triggered by Button'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Actions menu and select “Download”. The task will finish automatically when done.
+  ui_copy: 'Button: Actions. Menu items include Download.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card centered in the viewport.
+
+    Component:
+    - A Mantine Menu component with a Button as Menu.Target labeled “Actions”.
+    - The dropdown (Menu.Dropdown) contains a short list of Menu.Item actions.
+
+    Initial state:
+    - The menu is closed.
+    - A text label below reads “Last action: None”.
+
+    Menu items:
+    - Download  ← target
+    - Duplicate
+    - Archive
+
+    Interaction/feedback:
+    - Clicking the Actions button opens the dropdown under the button.
+    - Clicking a menu item closes the menu and updates “Last action: …” with the chosen label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Simple open-and-select pattern with a short list; the result is mirrored in a dedicated status line.
+  success_trigger:
+    human_readable:
+    - The last selected action from the Actions menu is “Download”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Download
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the menu but selecting a different item (Duplicate/Archive).
+  - Closing the menu without selecting any item (Last action remains None).
+  - Selecting Download from a different menu instance (not applicable here).
+  expected_interaction_path:
+  - Click the “Actions” button to open the dropdown.
+  - Click “Download” in the menu.
+  - Verify “Last action” updates to Download.
+  notes: |-
+    Checker can read a 'lastAction' state mirrored in the DOM (data-testid='last-action').
+    Provide stable item keys for Mantine Menu.Item (e.g., 'download', 'duplicate', 'archive').
+- id: menu-mantine-T02
+  name: Select Rename from an already open menu
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu (opened=true) with Menu.Dropdown visible'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the open Item menu, select “Rename”. The task will finish automatically when done.
+  ui_copy: 'Item menu is open. Options: Rename, Move, Delete.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card centered in the viewport.
+
+    Component:
+    - A Mantine Menu component rendered with its dropdown already open (opened=true) so the menu items are visible without clicking a trigger.
+    - A small label above the dropdown reads “Item menu”.
+
+    Menu items:
+    - Rename  ← target
+    - Move
+    - Delete
+
+    Initial state:
+    - No item is selected.
+    - A status line under the menu reads “Selected item: None”.
+
+    Feedback:
+    - Clicking a menu item highlights it and updates the status line to the selected label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Menu is already open and contains only three clear options; selection feedback is immediate and textual.
+  success_trigger:
+    human_readable:
+    - The selected menu item is “Rename”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Rename
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Move” or “Delete” instead of “Rename”.
+  - Clicking outside the menu (closing it) without selecting Rename.
+  - Hover/focus without committing a selection.
+  expected_interaction_path:
+  - Click the “Rename” menu item.
+  - 'Verify the status line updates to “Selected item: Rename”.'
+  notes: For Mantine, selection highlight may be custom in the demo; ensure the app keeps a controlled selected key for deterministic
+    checking.
+- id: menu-mantine-T03
+  name: Enable Compact view via a checkable menu item
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu with checkable items (custom content in Menu.Item)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the View menu, turn ON “Compact view”. The task will finish automatically when done.
+  ui_copy: 'View menu: Compact view (off), Show gridlines (on), Show totals (off).'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    Baseline isolated card centered in the viewport.
+
+    Component:
+    - A Mantine Menu with a small trigger button labeled “View”.
+    - Menu items behave as independent toggles and show a check indicator when enabled.
+
+    Initial state:
+    - Compact view: OFF (unchecked)  ← target
+    - Show gridlines: ON (checked)
+    - Show totals: OFF (unchecked)
+
+    Interaction/feedback:
+    - Clicking a toggle item immediately flips its check indicator.
+    - A summary line below the menu shows “Compact view: On/Off” and updates live.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single toggle within a short menu; state is clearly visible via check indicator and mirrored text.
+  success_trigger:
+    human_readable:
+    - The “Compact view” toggle is ON.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        toggles:
+          Compact view: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving “Compact view” OFF.
+  - Toggling only other options (e.g., Show totals) without enabling Compact view.
+  - Enabling Compact view and then disabling it again (final state must be ON).
+  expected_interaction_path:
+  - Click the “View” button to open the menu (if not already open).
+  - Click “Compact view” to enable it.
+  - Verify the summary line shows it is On.
+  notes: |-
+    Ensure the Menu stays open long enough for the agent to observe the check indicator after toggling.
+    Checker should read a canonical boolean state from the DOM/app state.
+- id: menu-mantine-T04
+  name: Use the Folder actions menu to choose Move to…
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Two Menu instances (Menu.Target + Menu.Dropdown) in a form section'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Folder actions menu and select “Move to…”. The task will finish automatically when done.
+  ui_copy: 'Two menus: File actions and Folder actions.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=form_section, placement=center, scale=default, instances=2.
+
+    The page uses a form_section layout with the content centered and slightly above mid-screen.
+
+    Components:
+    - Two Mantine Menus placed side-by-side:
+      - “File actions” (left)
+      - “Folder actions” (right)
+    - Each menu is triggered by its own button and opens its own dropdown.
+
+    Menu contents (both are similar to increase disambiguation):
+    - Open
+    - Rename
+    - Move to…  ← target item exists in both menus
+    - Delete
+
+    Initial state:
+    - Both menus are closed.
+    - Under each menu is a status line: “File last action: …” and “Folder last action: …”.
+
+    Feedback:
+    - Selecting an item updates ONLY the corresponding status line for that menu instance.
+
+    Clutter:
+    - The form section includes several read-only inputs (name, path, owner) as realistic context, but they do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: Two similar menus require selecting the correct instance (Folder actions) before choosing the target item.
+  success_trigger:
+    human_readable:
+    - The last action recorded for the “Folder actions” menu equals “Move to…”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Move to…
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Folder actions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Move to…” from the File actions menu (wrong instance).
+  - Selecting a different item from Folder actions (Open/Rename/Delete).
+  - Opening the Folder actions menu but closing it without making a selection.
+  expected_interaction_path:
+  - Click the “Folder actions” button to open its menu.
+  - Click “Move to…”.
+  - Verify the “Folder last action” status line updates.
+  notes: |-
+    Instrumentation: data-testid on each Menu root/button using the visible label (menu-folder-actions).
+    Checker should read the folder action state only, ignoring the file menu state.
+- id: menu-mantine-T05
+  name: Match a colored badge reference to the correct menu item
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu with colored leftSection indicators'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Priority menu, select the option that matches the colored badge shown in the Target card. The task
+    will finish automatically when done.
+  ui_copy: Target card shows a colored badge. Priority menu items have colored dots.
+  setup_description: |-
+    Scene: theme=dark, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1.
+
+    The page is dark-themed and uses an isolated card centered in the viewport.
+
+    Left: a “Target” card shows a single colored badge (a purple dot) with no text.
+
+    Right: a Mantine Menu triggered by a button labeled “Priority”.
+    - When opened, each Menu.Item displays a colored dot in the leftSection and a label:
+      - High (red dot)
+      - Medium (purple dot)  ← target
+      - Low (blue dot)
+      - Info (green dot)
+
+    Initial state:
+    - Menu is closed.
+    - Status text below reads “Selected priority: None”.
+
+    Feedback:
+    - Selecting an item closes the menu and updates the status text to the selected label.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Target is specified purely by a visual color cue on a dark theme; the agent must open the menu and visually
+      match the indicator.
+  success_trigger:
+    human_readable:
+    - The selected priority corresponds to the purple badge reference (label “Medium”).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Medium
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a priority with a different color indicator (High/Low/Info).
+  - Opening the menu but not making a selection (Selected priority remains None).
+  - Selecting “Medium” from a different menu instance (not applicable here).
+  expected_interaction_path:
+  - Note the Target card’s purple badge.
+  - Open the Priority menu.
+  - Click the item with the purple dot (Medium).
+  - Verify the Selected priority text updates.
+  notes: |-
+    The checker should map reference_id='purple' to key='medium' internally; avoid relying on exact pixel RGB.
+    Provide stable keys for each Menu.Item.
+- id: menu-mantine-T06
+  name: Select System from a hover-triggered menu
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu (trigger=''hover'')'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Theme menu (it opens on hover) and select “System”. The task will finish automatically when done.
+  ui_copy: 'Theme menu opens on hover. Options: Light, Dark, System.'
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=settings_panel, placement=center, scale=default, instances=1.
+
+    The page is a settings_panel layout centered in the viewport with a few non-interactive settings rows for context.
+
+    Component:
+    - A Mantine Menu configured with trigger="hover" and a small openDelay/closeDelay.
+    - The Menu.Target is a button labeled “Theme”.
+
+    Initial state:
+    - The dropdown is closed.
+    - Current theme text reads “Theme: Light”.
+
+    Menu items:
+    - Light
+    - Dark
+    - System  ← target
+
+    Interaction/feedback:
+    - Hovering over the “Theme” button opens the dropdown (no click required).
+    - Moving the pointer away closes the menu after a short delay.
+    - Selecting an item closes the menu and updates the “Theme: …” text.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Hover-triggered menus require different interaction timing than click-to-open; opening must be maintained
+      long enough to click the intended item.
+  success_trigger:
+    human_readable:
+    - The committed theme value shown on the page is “System”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selection: System
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the theme as “Light” or changing it to “Dark”.
+  - Hovering opens the menu but no selection is made (menu closes with theme unchanged).
+  - Clicking elsewhere so the menu closes before the selection is applied.
+  expected_interaction_path:
+  - Hover over the “Theme” button to open the menu.
+  - Click “System” in the dropdown.
+  - 'Verify the “Theme: …” text updates to System.'
+  notes: |-
+    Mantine Menu supports hover/click triggers; ensure closeDelay is not too short to avoid flakiness.
+    Checker should read the committed theme text/state, not transient hover/focus.
+- id: menu-mantine-T07
+  name: Scroll a long Mantine menu to select Audit log
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu with scrollable dropdown (size=''sm'', compact)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Open the Activity menu, scroll within it if needed, and select “Audit log”. The task will finish automatically
+    when done.
+  ui_copy: 'Activity menu (scrollable dropdown). Target: Audit log.'
+  setup_description: |-
+    Scene: theme=light, spacing=compact, layout=dashboard, placement=bottom_right, scale=small, instances=1.
+
+    The page uses a dashboard layout with multiple cards and widgets (high clutter) to simulate a realistic admin page.
+    The target menu is placed in a small card anchored at the bottom-right of the viewport.
+
+    Component:
+    - A Mantine Menu triggered by a small button labeled “Activity”.
+    - The dropdown has a fixed max-height and becomes internally scrollable.
+    - Spacing is compact and scale is small (smaller paddings and font).
+
+    Menu items:
+    - A long list (~25 items), e.g., Overview, Recent events, Access history, Audit settings, …
+    - The target item “Audit log” is near the bottom of the list and not visible without scrolling.
+    - A similarly named distractor “Audit settings” appears earlier.
+
+    Initial state:
+    - Menu is closed.
+    - Status line below reads “Activity view: Overview”.
+
+    Feedback:
+    - Selecting an item closes the menu and updates the status line to the selected label.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Requires opening a small, scrollable dropdown in a cluttered dashboard and finding a target item near the
+      end of a long, confusable list.
+  success_trigger:
+    human_readable:
+    - The selected Activity menu item is “Audit log”.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Audit log
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Audit settings” instead of “Audit log”.
+  - Scrolling the page rather than the menu dropdown so the target never becomes visible.
+  - Closing the menu without selecting anything (status line unchanged).
+  expected_interaction_path:
+  - Click the “Activity” button to open the menu.
+  - Scroll inside the menu dropdown until “Audit log” is visible.
+  - Click “Audit log” and verify the status line updates.
+  notes: |-
+    Mark the dropdown scroll container with data-testid to distinguish it from page scrolling.
+    Checker should read the committed selection from the status line/app state.
+- id: menu-mantine-T08
+  name: Choose Most recent and apply in a menu with footer actions
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu with custom dropdown content (options + Apply/Cancel footer)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Sort menu, choose “Most recent”, then click “Apply”. The task will finish automatically when done.
+  ui_copy: Sort menu with options and Apply/Cancel buttons.
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=settings_panel, placement=center, scale=default, instances=1.
+
+    The UI is a centered settings_panel with a “Results” header and minimal surrounding clutter.
+
+    Component:
+    - A Mantine Menu triggered by a button labeled “Sort”.
+    - The dropdown contains a single-choice option list (radio-like) plus a footer row with “Apply” and “Cancel”.
+
+    Options:
+    - Name (currently applied)
+    - Most recent  ← target
+    - Oldest
+
+    State model / feedback:
+    - Clicking an option updates “Pending sort: …” immediately.
+    - The “Applied sort: …” line updates only after clicking Apply.
+    - Clicking Cancel discards the pending choice.
+
+    Initial state:
+    - Menu is closed.
+    - Applied sort is Name.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: 'A multi-step commit is required within a dropdown: the agent must choose the correct option and then press
+      Apply to update the committed state.'
+  success_trigger:
+    human_readable:
+    - The committed/applied sort value is “Most recent” after pressing Apply.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selection: Most recent
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Most recent” but not clicking Apply (applied sort remains Name).
+  - Clicking Cancel after selecting “Most recent”.
+  - Applying “Oldest” or leaving the default “Name”.
+  expected_interaction_path:
+  - Open the Sort menu.
+  - Select “Most recent”.
+  - Click “Apply”.
+  - Verify the Applied sort line updates.
+  notes: |-
+    Checker should evaluate the committed value, not the currently highlighted/pending option.
+    Place Apply/Cancel inside the same dropdown panel so it is clearly associated with the menu interaction.
+- id: menu-mantine-T09
+  name: Select an exact set of tags in a multi-select menu
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Menu with checkbox-style items (multi-select state)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Project tags menu, select exactly these tags: Billing, Security, and Integrations. The task will
+    finish automatically when done.'
+  ui_copy: Project tags menu with many checkbox items.
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=form_section, placement=center, scale=default, instances=1.
+
+    The page shows a form_section titled “Project settings” with medium clutter (read-only inputs and helper text).
+
+    Component:
+    - A Mantine Menu triggered by a button labeled “Project tags”.
+    - The dropdown shows a checkbox-style list where multiple tags can be selected.
+
+    Tags (with some confusable distractors):
+    - Billing  (unchecked initially)
+    - Security (unchecked initially)
+    - Integrations (checked initially)  ← already selected
+    - Integration tests (unchecked)  ← distractor
+    - Analytics (unchecked)
+    - Payments (unchecked)
+    - Support (unchecked)
+    - Notifications (unchecked)
+    - Audit (unchecked)
+
+    Initial state:
+    - Integrations is checked; others are unchecked.
+
+    Feedback:
+    - A chip row below the button shows selected tags as pills.
+
+    Goal:
+    - Exactly {Billing, Security, Integrations} are selected.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Exact multi-selection with confusable tag names (Integrations vs Integration tests) requires careful checking
+      and deselection of any extras.
+  success_trigger:
+    human_readable:
+    - The selected tag set is exactly {Billing, Security, Integrations}.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        checked_items:
+        - Billing
+        - Security
+        - Integrations
+      tolerance:
+        order_insensitive: true
+        allow_extras: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Integration tests” instead of (or in addition to) “Integrations”.
+  - Missing one required tag (e.g., Billing not selected).
+  - Selecting any extra tag beyond the required three.
+  expected_interaction_path:
+  - Open the Project tags menu.
+  - Ensure Integrations remains selected.
+  - Select Billing and Security.
+  - Deselect any accidentally selected extra tags.
+  - Verify the chip row shows exactly three tags.
+  notes: |-
+    Checker can read selected tag ids from app state or from the rendered chip row.
+    Use stable ids for tags to avoid string-similarity ambiguity.
+- id: menu-mantine-T10
+  name: Pick the referenced option from the Secondary menu (3 menus on page)
+  canonical_type: menu
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Multiple Menu instances with icon+label items'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Secondary menu, select the option that matches the Reference preview (label and icon). The task
+    will finish automatically when done.
+  ui_copy: Three menus (Primary/Secondary/Tertiary) and a Reference preview showing the target option.
+  setup_description: |-
+    Scene: theme=light, spacing=comfortable, layout=form_section, placement=center, scale=default, instances=3.
+
+    The page is a form_section layout centered in the viewport with medium clutter (read-only inputs and helper text blocks).
+
+    Guidance (mixed):
+    - A “Reference preview” card at the top shows the exact target menu row appearance: a bell icon next to the text “Notifications”.
+
+    Components:
+    - Three Mantine Menus arranged in a row, each with its own trigger button and dropdown:
+      1) Primary menu
+      2) Secondary menu  ← target instance
+      3) Tertiary menu
+
+    Menu contents:
+    - Each dropdown contains the same icon+label items to make instance disambiguation necessary:
+      - Notifications (bell icon)  ← target item (exists in all menus)
+      - Messages (chat icon)
+      - Calendar (calendar icon)
+      - Settings (gear icon)
+
+    Initial state:
+    - All menus are closed.
+    - Under each menu is a status line: “Primary selected: …”, “Secondary selected: …”, “Tertiary selected: …” (all start as None).
+
+    Interaction/feedback:
+    - Opening a menu shows its dropdown.
+    - Clicking an item closes that menu and updates only that menu’s status line.
+    - The Reference preview never changes; it is only a guide.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Three similar menus require careful instance disambiguation, and the goal is provided as a mixed visual+text
+      reference rather than a simple label-only instruction.
+  success_trigger:
+    human_readable:
+    - 'In the menu labeled “Secondary menu”, the selected item matches the Reference preview: “Notifications”.'
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Notifications
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary menu
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Notifications” in the Primary or Tertiary menu (wrong instance).
+  - Selecting “Messages”, “Calendar”, or “Settings” in the Secondary menu (wrong item).
+  - Opening menus but closing them without selecting anything (Secondary remains None).
+  expected_interaction_path:
+  - Look at the Reference preview (bell icon + Notifications).
+  - Open the Secondary menu dropdown.
+  - Click “Notifications”.
+  - Verify only the Secondary selected status line updates to Notifications.
+  notes: |-
+    Instrumentation: each menu root should have a stable id corresponding to its label (primary/secondary/tertiary).
+    Checker should scope evaluation to Secondary menu’s recorded selection state only.

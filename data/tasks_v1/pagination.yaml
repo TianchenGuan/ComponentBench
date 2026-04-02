@@ -1,0 +1,1732 @@
+# Pagination component tasks for ComponentBench
+# 30 tasks: 10 for antd, 10 for mui, 10 for mantine
+# Tests navigation, page jumping, and size changing interactions
+
+- id: pagination-antd-T01
+  name: Navigate to page 4 (direct click)
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 4 in the pagination control. The task will finish automatically when done.
+  ui_copy: 'Data table: Navigate to page 4.'
+  setup_description: |
+    Centered isolated card titled "Data Table".
+    The card contains a simple data table with placeholder rows and an Ant Design Pagination component below it.
+    The pagination shows pages 1-5 with page 1 currently active.
+    Total items: 50, page size: 10 (showing "1-10 of 50 items").
+    The goal is to click directly on page number 4.
+    When page 4 is reached, a status line shows "Viewing page 4".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Direct page number click with clearly visible numbered buttons.
+  success_trigger:
+    human_readable:
+    - The current page is 4.
+    - Navigation must happen via clicking page number 4.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-main
+        current_page: 4
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking a different page number.
+  - Using next/previous buttons instead of direct click.
+  - Not navigating at all.
+  expected_interaction_path: Click page number 4 → observe page change.
+  notes: "Instrumentation: data-testid='antd-pagination-main'; track current_page state."
+
+- id: pagination-antd-T02
+  name: Navigate using next button twice
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: next_prev
+  implementation_component: 'AntD: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the "Next" button (>) twice to reach page 3 from page 1. The task will finish automatically when done.
+  ui_copy: 'Articles list: Use Next button to reach page 3.'
+  setup_description: |
+    Centered isolated card titled "Articles".
+    Contains a list of article previews and an Ant Design Pagination at the bottom.
+    Currently on page 1 of 10 pages.
+    The pagination shows prev/next arrows (< >) and page numbers.
+    The goal is to click the next (>) button exactly twice to reach page 3.
+    A status line shows the current page number.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Sequential navigation with clear arrow buttons; requires two clicks.
+  success_trigger:
+    human_readable:
+    - The current page is 3.
+    - Navigation must happen via the next button.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-articles
+        current_page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking directly on page 3.
+  - Using previous button.
+  - Stopping at page 2.
+  expected_interaction_path: Click next → page 2 → click next → page 3.
+  notes: Track navigation method; data-testid='antd-pagination-next'.
+
+- id: pagination-antd-T03
+  name: Jump to page 42 using quick jumper
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: quick_jumper
+  implementation_component: 'AntD: Pagination (showQuickJumper)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Type "42" in the quick jumper input and press Enter to jump to page 42. The task will finish automatically when done.
+  ui_copy: 'Large dataset: Jump to page 42 using the Go to input.'
+  setup_description: |
+    Form section layout with a "Search Results" header.
+    An Ant Design Pagination with showQuickJumper enabled.
+    Total 100 pages. Currently on page 1.
+    At the end of pagination, there's a "Go to" input field.
+    The goal is to type "42" in the input and press Enter.
+    The page display updates to show "Page 42 of 100".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires text input and keyboard action (Enter) after typing.
+  success_trigger:
+    human_readable:
+    - The current page is 42.
+    - Navigation must happen via the quick jumper input.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-search
+        current_page: 42
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking page numbers instead.
+  - Typing a different number.
+  - Not pressing Enter after typing.
+  expected_interaction_path: Click on jumper input → type 42 → press Enter.
+  notes: data-testid='antd-pagination-jumper-input'.
+
+- id: pagination-antd-T04
+  name: Change page size to 50 per page
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: size_changer
+  implementation_component: 'AntD: Pagination (showSizeChanger)'
+  task_template: select_one
+  secondary_template: open_overlay
+  browsergym_goal: Change the page size to "50 / page" using the page size dropdown. The task will finish automatically when done.
+  ui_copy: 'Products list: Change page size to 50 per page.'
+  setup_description: |
+    Centered isolated card titled "Products".
+    An Ant Design Pagination with showSizeChanger enabled.
+    Currently showing "10 / page" in the dropdown.
+    Options available: 10 / page, 20 / page, 50 / page, 100 / page.
+    Click the dropdown and select "50 / page".
+    When changed, the status shows "Showing 50 items per page".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: medium
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening dropdown and selecting correct option from list.
+  success_trigger:
+    human_readable:
+    - The page size is 50.
+    - Selection must come from the size changer dropdown.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-products
+        page_size: 50
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different page size.
+  - Not opening the dropdown.
+  - Opening but not selecting.
+  expected_interaction_path: Click size dropdown → select "50 / page".
+  notes: data-testid='antd-pagination-size-changer'.
+
+- id: pagination-antd-T05
+  name: Navigate to last page via ellipsis
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: ellipsis
+  implementation_component: 'AntD: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Navigate to page 50 (the last page) using any method. The task will finish automatically when done.
+  ui_copy: 'Reports archive: Go to the last page (50).'
+  setup_description: |
+    Settings panel layout titled "Reports Archive".
+    An Ant Design Pagination showing pages 1, 2, 3, ..., 50.
+    Currently on page 1. Total 50 pages.
+    The ellipsis (...) can be clicked to jump forward.
+    Alternatively, page 50 is visible at the end.
+    Goal is to reach page 50 by any navigation method.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Multiple navigation paths available; must reach correct end page.
+  success_trigger:
+    human_readable:
+    - The current page is 50.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-reports
+        current_page: 50
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at any page other than 50.
+  - Not navigating at all.
+  expected_interaction_path: Click page 50 or use ellipsis/jumper to reach page 50.
+  notes: data-testid='antd-pagination-reports'.
+
+- id: pagination-antd-T06
+  name: Navigate to page 3 in dark theme table
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 3 in the pagination control. The task will finish automatically when done.
+  ui_copy: 'Logs table: Navigate to page 3.'
+  setup_description: |
+    Dark theme table_cell layout titled "System Logs".
+    A compact data table with Ant Design Pagination below.
+    Pagination shows pages 1-5 with page 1 active.
+    Dark background with light text.
+    Goal is to click page 3.
+    Status updates to "Viewing page 3 of 5".
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: medium
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dark theme with compact spacing increases visual complexity.
+  success_trigger:
+    human_readable:
+    - The current page is 3.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-logs
+        current_page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking a different page.
+  - Not navigating.
+  expected_interaction_path: Click page number 3.
+  notes: data-testid='antd-pagination-logs'.
+
+- id: pagination-antd-T07
+  name: Navigate using previous button
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: next_prev
+  implementation_component: 'AntD: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the "Previous" button (<) to go back to page 2 from page 3. The task will finish automatically when done.
+  ui_copy: 'Comments section: Go back to page 2.'
+  setup_description: |
+    Isolated card in bottom-left placement titled "Comments".
+    Ant Design Pagination currently on page 3 of 5.
+    Prev/next arrows are visible.
+    Goal is to click the previous (<) button once to reach page 2.
+    Status shows current page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single click on previous button with clear visual feedback.
+  success_trigger:
+    human_readable:
+    - The current page is 2.
+    - Navigation via previous button.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-comments
+        current_page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking next button.
+  - Clicking a page number directly.
+  - Going to a different page.
+  expected_interaction_path: Click previous button → page 2.
+  notes: data-testid='antd-pagination-prev'.
+
+- id: pagination-antd-T08
+  name: Small pagination in top-right toolbar
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: simple
+  implementation_component: 'AntD: Pagination (simple)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Navigate to page 5 using the simple pagination in the toolbar. The task will finish automatically when done.
+  ui_copy: 'Dashboard toolbar: Go to page 5.'
+  setup_description: |
+    Dashboard layout with small pagination in top-right corner.
+    Ant Design Pagination with simple mode (no page numbers, just prev/next and jumper).
+    Shows "1 / 10" format.
+    Small scale controls.
+    Goal is to reach page 5.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small controls in corner with simple mode requires more clicks or jumper use.
+  success_trigger:
+    human_readable:
+    - The current page is 5.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-toolbar
+        current_page: 5
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at wrong page.
+  expected_interaction_path: Use next button or jumper to reach page 5.
+  notes: data-testid='antd-pagination-toolbar'.
+
+- id: pagination-antd-T09
+  name: Navigate to specific page in modal
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: modal_pagination
+  implementation_component: 'AntD: Modal + Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the open modal, navigate to page 2 in the pagination. The task will finish automatically when done.
+  ui_copy: 'File browser modal: Go to page 2.'
+  setup_description: |
+    Modal flow layout with an Ant Design Modal already open.
+    Modal title: "Select File".
+    Modal contains a file list and pagination at the bottom.
+    Currently on page 1 of 4.
+    Goal is to click page 2.
+    Modal remains open after navigation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Pagination within modal adds depth; must interact with overlay content.
+  success_trigger:
+    human_readable:
+    - The current page is 2.
+    - Pagination is within the modal.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: antd-pagination-modal
+        current_page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking outside modal to close it.
+  - Not navigating.
+  expected_interaction_path: Click page 2 in modal pagination.
+  notes: data-testid='antd-pagination-modal'.
+
+- id: pagination-antd-T10
+  name: Match reference page indicator style
+  canonical_type: pagination
+  implementation_source: antd
+  implementation_variant: match_page
+  implementation_component: 'AntD: Pagination'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Navigate to the page number shown in the Target sample (page 7). The task will finish automatically when done.
+  ui_copy: 'Target shows page 7 highlighted. Navigate to match.'
+  setup_description: |
+    Centered isolated card titled "Match the page".
+    At the top, a Target sample shows pagination with page 7 highlighted/active.
+    Below, an Ant Design Pagination with 10 pages, currently on page 1.
+    Goal is to click page 7 to match the target.
+    A "Match found" status appears when correct.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires visual reference matching to determine target page.
+  success_trigger:
+    human_readable:
+    - The current page is 7.
+    - Matches the target sample.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: antd-target-page-7
+        component_id: antd-pagination-match
+        current_page: 7
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Navigating to a different page.
+  expected_interaction_path: Observe target → click page 7.
+  notes: data-testid='antd-pagination-match'.
+
+# MUI Pagination Tasks
+- id: pagination-mui-T01
+  name: Navigate to page 3 (direct click)
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 3 in the pagination control. The task will finish automatically when done.
+  ui_copy: 'User list: Navigate to page 3.'
+  setup_description: |
+    Centered isolated card titled "Users".
+    Contains a user list and MUI Pagination component below.
+    Pagination shows pages 1-5 with page 1 active (filled circle style).
+    Total 50 users, 10 per page.
+    Goal is to click page 3.
+    Status shows "Showing page 3 of 5".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Direct click on clearly visible page number.
+  success_trigger:
+    human_readable:
+    - The current page is 3.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-users
+        current_page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking different page.
+  - Using prev/next arrows.
+  expected_interaction_path: Click page 3.
+  notes: data-testid='mui-pagination-users'.
+
+- id: pagination-mui-T02
+  name: Navigate using next button
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: next_prev
+  implementation_component: 'MUI: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the next arrow button twice to reach page 3 from page 1. The task will finish automatically when done.
+  ui_copy: 'News feed: Use next arrow to reach page 3.'
+  setup_description: |
+    Centered isolated card titled "News Feed".
+    MUI Pagination with prev/next arrows enabled.
+    Currently on page 1 of 8.
+    Goal is to click next arrow twice.
+    Shows current page indicator.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Sequential clicks on arrow buttons.
+  success_trigger:
+    human_readable:
+    - The current page is 3.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-news
+        current_page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking page numbers directly.
+  - Stopping at page 2.
+  expected_interaction_path: Click next → click next → page 3.
+  notes: data-testid='mui-pagination-next'.
+
+- id: pagination-mui-T03
+  name: Navigate to first page using first-page button
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: first_last
+  implementation_component: 'MUI: Pagination (showFirstButton, showLastButton)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the "First page" button (|<) to go to page 1 from page 5. The task will finish automatically when done.
+  ui_copy: 'Orders table: Return to first page.'
+  setup_description: |
+    Form section layout titled "Order History".
+    MUI Pagination with showFirstButton and showLastButton enabled.
+    Currently on page 5 of 10.
+    First (|<) and Last (>|) buttons are visible.
+    Goal is to click the first page button.
+    Status updates to "Page 1 of 10".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Must identify first-page button among other navigation controls.
+  success_trigger:
+    human_readable:
+    - The current page is 1.
+    - Navigation via first page button.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-orders
+        current_page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using previous button multiple times.
+  - Clicking page 1 directly.
+  expected_interaction_path: Click first-page button.
+  notes: data-testid='mui-pagination-first'.
+
+- id: pagination-mui-T04
+  name: Navigate to last page
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: first_last
+  implementation_component: 'MUI: Pagination (showFirstButton, showLastButton)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the "Last page" button (>|) to go to the last page. The task will finish automatically when done.
+  ui_copy: 'Transactions: Jump to last page.'
+  setup_description: |
+    Centered isolated card titled "Transactions".
+    MUI Pagination with first/last buttons.
+    Currently on page 3 of 20.
+    Last button (>|) visible.
+    Goal is to click last page button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Single click on last page button.
+  success_trigger:
+    human_readable:
+    - The current page is 20.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-transactions
+        current_page: 20
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking page numbers.
+  - Using next button.
+  expected_interaction_path: Click last-page button.
+  notes: data-testid='mui-pagination-last'.
+
+- id: pagination-mui-T05
+  name: Navigate in dark theme settings
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 4 in the pagination. The task will finish automatically when done.
+  ui_copy: 'Settings history: Navigate to page 4.'
+  setup_description: |
+    Dark theme settings panel titled "Change History".
+    MUI Pagination at bottom, pages 1-6.
+    Currently on page 1.
+    Dark background with MUI dark theme.
+    Goal is to click page 4.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dark theme requires careful visual targeting.
+  success_trigger:
+    human_readable:
+    - The current page is 4.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-history
+        current_page: 4
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking different page.
+  expected_interaction_path: Click page 4.
+  notes: data-testid='mui-pagination-history'.
+
+- id: pagination-mui-T06
+  name: Navigate to page 5 in compact table
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: table_pagination
+  implementation_component: 'MUI: TablePagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Navigate to page 5 using the table pagination controls. The task will finish automatically when done.
+  ui_copy: 'Inventory table: Go to page 5.'
+  setup_description: |
+    Table cell layout with compact inventory table.
+    MUI TablePagination below the table.
+    Shows "1-10 of 100" with page navigation arrows.
+    Currently on page 1. Need to reach page 5.
+    Compact spacing makes controls smaller.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: TablePagination uses arrows only; must click multiple times.
+  success_trigger:
+    human_readable:
+    - The current page is 5 (showing items 41-50).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-tablepagination-inventory
+        current_page: 5
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at wrong page.
+  expected_interaction_path: Click next button 4 times → page 5.
+  notes: data-testid='mui-tablepagination-inventory'.
+
+- id: pagination-mui-T07
+  name: Change rows per page in table
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: rows_per_page
+  implementation_component: 'MUI: TablePagination'
+  task_template: select_one
+  secondary_template: open_overlay
+  browsergym_goal: Change the "Rows per page" to 25 using the dropdown. The task will finish automatically when done.
+  ui_copy: 'Data grid: Change rows per page to 25.'
+  setup_description: |
+    Form section layout with data grid.
+    MUI TablePagination with rows per page selector.
+    Currently showing "10" rows per page.
+    Options: 10, 25, 50, 100.
+    Click dropdown and select 25.
+    Display updates to show more rows.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dropdown selection with multiple options.
+  success_trigger:
+    human_readable:
+    - Rows per page is 25.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-tablepagination-grid
+        rows_per_page: 25
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting different size.
+  - Not opening dropdown.
+  expected_interaction_path: Click rows dropdown → select 25.
+  notes: data-testid='mui-tablepagination-rows'.
+
+- id: pagination-mui-T08
+  name: Small pagination in bottom-right
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: small
+  implementation_component: 'MUI: Pagination (size=small)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Navigate to page 6 using the small pagination. The task will finish automatically when done.
+  ui_copy: 'Image gallery: Go to page 6.'
+  setup_description: |
+    Dashboard layout with small pagination in bottom-right.
+    MUI Pagination with size="small".
+    Shows pages with smaller buttons.
+    Currently on page 2 of 10.
+    Goal is to reach page 6.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small targets in corner placement.
+  success_trigger:
+    human_readable:
+    - The current page is 6.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-gallery
+        current_page: 6
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking wrong page.
+  expected_interaction_path: Click page 6.
+  notes: data-testid='mui-pagination-gallery'.
+
+- id: pagination-mui-T09
+  name: Outlined pagination style
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: outlined
+  implementation_component: 'MUI: Pagination (variant=outlined)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 5 in the outlined pagination. The task will finish automatically when done.
+  ui_copy: 'Blog posts: Navigate to page 5.'
+  setup_description: |
+    Centered isolated card titled "Blog Posts".
+    MUI Pagination with variant="outlined".
+    Pagination buttons have outlined (bordered) style.
+    Currently on page 1 of 8.
+    Goal is to click page 5.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Clear outlined buttons with direct click.
+  success_trigger:
+    human_readable:
+    - The current page is 5.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-blog
+        current_page: 5
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking different page.
+  expected_interaction_path: Click page 5.
+  notes: data-testid='mui-pagination-blog'.
+
+- id: pagination-mui-T10
+  name: Navigate in modal dialog
+  canonical_type: pagination
+  implementation_source: mui
+  implementation_variant: dialog_pagination
+  implementation_component: 'MUI: Dialog + Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the open dialog, navigate to page 3 using the pagination. The task will finish automatically when done.
+  ui_copy: 'Search results modal: Go to page 3.'
+  setup_description: |
+    Modal flow layout with MUI Dialog already open.
+    Dialog title: "Search Results".
+    Contains search results list with pagination at bottom.
+    Currently on page 1 of 5.
+    Goal is to click page 3.
+    Dialog remains open after navigation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Pagination within dialog overlay.
+  success_trigger:
+    human_readable:
+    - The current page is 3.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mui-pagination-dialog
+        current_page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing dialog.
+  - Wrong page.
+  expected_interaction_path: Click page 3 in dialog.
+  notes: data-testid='mui-pagination-dialog'.
+
+# Mantine Pagination Tasks
+- id: pagination-mantine-T01
+  name: Navigate to page 4 (direct click)
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 4 in the pagination control. The task will finish automatically when done.
+  ui_copy: 'Members list: Navigate to page 4.'
+  setup_description: |
+    Centered isolated card titled "Team Members".
+    Contains member list with Mantine Pagination below.
+    Pagination shows pages 1-5 with page 1 active.
+    Mantine's rounded button style.
+    Goal is to click page 4.
+    Status shows "Page 4 of 5".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Direct page number click.
+  success_trigger:
+    human_readable:
+    - The current page is 4.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-members
+        current_page: 4
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking different page.
+  - Using arrows.
+  expected_interaction_path: Click page 4.
+  notes: data-testid='mantine-pagination-members'.
+
+- id: pagination-mantine-T02
+  name: Navigate using next control
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: with_controls
+  implementation_component: 'Mantine: Pagination (withControls)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the next arrow button twice to reach page 3 from page 1. The task will finish automatically when done.
+  ui_copy: 'Notifications: Use next button to reach page 3.'
+  setup_description: |
+    Centered isolated card titled "Notifications".
+    Mantine Pagination with withControls enabled.
+    Shows prev/next arrows and page numbers.
+    Currently on page 1 of 6.
+    Goal is to click next twice.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Sequential arrow clicks.
+  success_trigger:
+    human_readable:
+    - The current page is 3.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-notifications
+        current_page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking page numbers.
+  - Stopping early.
+  expected_interaction_path: Click next → click next.
+  notes: data-testid='mantine-pagination-next'.
+
+- id: pagination-mantine-T03
+  name: Jump to first page using edge control
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: with_edges
+  implementation_component: 'Mantine: Pagination (withEdges)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the first-page button to go to page 1 from page 7. The task will finish automatically when done.
+  ui_copy: 'Documents: Return to first page.'
+  setup_description: |
+    Form section titled "Documents".
+    Mantine Pagination with withEdges enabled.
+    First/last page buttons visible.
+    Currently on page 7 of 10.
+    Goal is to click first-page button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Single click on first-page button.
+  success_trigger:
+    human_readable:
+    - The current page is 1.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-docs
+        current_page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using previous button multiple times.
+  - Clicking page 1 directly.
+  expected_interaction_path: Click first-page button.
+  notes: data-testid='mantine-pagination-first'.
+
+- id: pagination-mantine-T04
+  name: Navigate to last page
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: with_edges
+  implementation_component: 'Mantine: Pagination (withEdges)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the last-page button to jump to the last page. The task will finish automatically when done.
+  ui_copy: 'Events log: Jump to last page.'
+  setup_description: |
+    Settings panel titled "Events Log".
+    Mantine Pagination with withEdges.
+    Currently on page 2 of 15.
+    Last-page button visible.
+    Goal is to click last-page button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Single click on last button.
+  success_trigger:
+    human_readable:
+    - The current page is 15.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-events
+        current_page: 15
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking page numbers.
+  - Using next button.
+  expected_interaction_path: Click last-page button.
+  notes: data-testid='mantine-pagination-last'.
+
+- id: pagination-mantine-T05
+  name: Navigate in dark theme panel
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Click on page number 5 in the pagination. The task will finish automatically when done.
+  ui_copy: 'Analytics: Navigate to page 5.'
+  setup_description: |
+    Dark theme dashboard titled "Analytics Data".
+    Mantine Pagination with dark color scheme.
+    Pages 1-8 visible, currently on page 1.
+    Goal is to click page 5.
+    Dark background with proper contrast.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dark theme visual targeting.
+  success_trigger:
+    human_readable:
+    - The current page is 5.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-analytics
+        current_page: 5
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking different page.
+  expected_interaction_path: Click page 5.
+  notes: data-testid='mantine-pagination-analytics'.
+
+- id: pagination-mantine-T06
+  name: Compact pagination in top-right
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: compact
+  implementation_component: 'Mantine: Pagination (size=xs)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Navigate to page 4 using the compact pagination. The task will finish automatically when done.
+  ui_copy: 'Toolbar: Go to page 4.'
+  setup_description: |
+    Dashboard layout with compact pagination in top-right.
+    Mantine Pagination with size="xs".
+    Small buttons, compact spacing.
+    Currently on page 1 of 8.
+    Goal is to reach page 4.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small controls in corner placement.
+  success_trigger:
+    human_readable:
+    - The current page is 4.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-toolbar
+        current_page: 4
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Wrong page.
+  expected_interaction_path: Click page 4.
+  notes: data-testid='mantine-pagination-toolbar'.
+
+- id: pagination-mantine-T07
+  name: Navigate using previous control
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: with_controls
+  implementation_component: 'Mantine: Pagination (withControls)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Use the previous button to go back to page 2 from page 3. The task will finish automatically when done.
+  ui_copy: 'Tasks list: Go back to page 2.'
+  setup_description: |
+    Isolated card in bottom-left titled "Tasks".
+    Mantine Pagination with controls.
+    Currently on page 3 of 5.
+    Goal is to click previous once.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single click on previous button.
+  success_trigger:
+    human_readable:
+    - The current page is 2.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-tasks
+        current_page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking next.
+  - Clicking page numbers.
+  expected_interaction_path: Click previous button.
+  notes: data-testid='mantine-pagination-prev'.
+
+- id: pagination-mantine-T08
+  name: Navigate in table with siblings
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: siblings
+  implementation_component: 'Mantine: Pagination (siblings)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Navigate to page 10 in the table pagination. The task will finish automatically when done.
+  ui_copy: 'Products table: Go to page 10.'
+  setup_description: |
+    Table cell layout with product table.
+    Mantine Pagination below with siblings=2 (showing more page numbers).
+    Total 20 pages, currently on page 5.
+    Pages 3-7 visible due to siblings setting.
+    Goal is to reach page 10.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Multiple clicks or ellipsis navigation needed.
+  success_trigger:
+    human_readable:
+    - The current page is 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-products
+        current_page: 10
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at wrong page.
+  expected_interaction_path: Click page numbers or use arrows to reach page 10.
+  notes: data-testid='mantine-pagination-products'.
+
+- id: pagination-mantine-T09
+  name: Navigate in modal
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: modal_pagination
+  implementation_component: 'Mantine: Modal + Pagination'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the open modal, navigate to page 2 using the pagination. The task will finish automatically when done.
+  ui_copy: 'File picker modal: Go to page 2.'
+  setup_description: |
+    Modal flow with Mantine Modal already open.
+    Modal title: "Select File".
+    Contains file list and pagination at bottom.
+    Currently on page 1 of 4.
+    Goal is to click page 2.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Pagination in modal overlay.
+  success_trigger:
+    human_readable:
+    - The current page is 2.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        component_id: mantine-pagination-modal
+        current_page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing modal.
+  - Wrong page.
+  expected_interaction_path: Click page 2 in modal.
+  notes: data-testid='mantine-pagination-modal'.
+
+- id: pagination-mantine-T10
+  name: Match reference page in dark theme
+  canonical_type: pagination
+  implementation_source: mantine
+  implementation_variant: match_page
+  implementation_component: 'Mantine: Pagination'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Navigate to the page number shown in the Target sample (page 6). The task will finish automatically when done.
+  ui_copy: 'Target shows page 6 highlighted. Navigate to match.'
+  setup_description: |
+    Dark theme form section titled "Match the page".
+    Target sample shows pagination with page 6 highlighted.
+    Below, Mantine Pagination with 10 pages, currently on page 1.
+    Dark color scheme.
+    Goal is to click page 6 to match target.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: medium
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Visual reference matching in dark theme.
+  success_trigger:
+    human_readable:
+    - The current page is 6.
+    - Matches the target sample.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: mantine-target-page-6
+        component_id: mantine-pagination-match
+        current_page: 6
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Navigating to different page.
+  expected_interaction_path: Observe target → click page 6.
+  notes: data-testid='mantine-pagination-match'.

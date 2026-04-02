@@ -1,0 +1,2026 @@
+- id: autocomplete_freeform-antd-T01
+  name: Set a custom city query
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the City search field, type the value "Boston". The task will finish automatically when done.
+  ui_copy: |-
+    City search: [ AutoComplete input ]
+    Goal: Enter "Boston" in the City search field.
+  setup_description: |-
+    A single isolated card is centered on the page with the title "Travel Search". It contains one Ant Design AutoComplete labeled "City search" with a placeholder "Type a city".
+
+    The AutoComplete is configured with a short suggestion list (Boston, Chicago, Denver, Miami), but it allows free input. As you type, a dropdown list appears directly under the input. The input has a standard text caret and supports typing/pasting.
+
+    Initial state: the input is empty and the dropdown is closed. There is no separate Submit/Search button and no other form fields on the card, so the only meaningful state is the value currently shown in the AutoComplete input.
+
+    Distractors: none. Feedback: the typed value is immediately visible in the input; selecting a suggestion would also fill the input, but selection is optional.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single inline AutoComplete with one value to type and immediate visible feedback. Suggestions exist but are not required to complete the task.
+  success_trigger:
+    human_readable:
+    - The "City search" AutoComplete input's displayed value equals "Boston" (after trimming whitespace).
+    - No confirmation button is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Boston
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any value other than "Boston" (e.g., "Boston, MA" or "Bostonn").
+  - Value entered into any other field (there are no other AutoCompletes in this task).
+  - Only opening the suggestion dropdown without setting the final input value.
+  expected_interaction_path:
+  - Click the "City search" input
+  - Type Boston
+  notes: 'Instrumentation: add data-testid="city-search" on the AutoComplete root; checker should read the underlying input value (e.g., from the <input> element) for canonical_state.value.'
+- id: autocomplete_freeform-antd-T02
+  name: Pick an airport from suggestions
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Airport field, open the suggestions and select "LAX - Los Angeles" (it is also shown in the reference pill). The task will finish automatically when done.
+  ui_copy: |-
+    Airport: [ AutoComplete input ]
+    Reference: LAX - Los Angeles
+    Goal: Select "LAX - Los Angeles" for Airport.
+  setup_description: |-
+    The page shows an isolated card titled "Flight Finder" in the center of the viewport. Inside the card there is one Ant Design AutoComplete labeled "Airport" with placeholder "Start typing an airport".
+
+    To the right of the input (still inside the card) there is a small non-interactive reference pill labeled "Reference" that displays the target text "LAX - Los Angeles". This gives a visual cross-check but the value is also written in the instruction.
+
+    The AutoComplete has a dropdown of 8 airport options (e.g., "LAX - Los Angeles", "JFK - New York", "SFO - San Francisco", "SEA - Seattle", "LAS - Las Vegas", "LHR - London Heathrow", "NRT - Tokyo Narita", "CDG - Paris Charles de Gaulle"). The dropdown opens when the user clicks the input or types, and closes after an option is selected.
+
+    Initial state: the input is empty. Distractors: the reference pill and a short help text below the input ("Pick from the list or type your own") are present but are not interactive. Feedback: when an option is selected, the input displays the selected option text.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires opening the suggestion popup and choosing one clearly labeled option. The reference pill reduces ambiguity and the option list is short.
+  success_trigger:
+    human_readable:
+    - The "Airport" AutoComplete input's displayed value equals "LAX - Los Angeles" (after trimming whitespace).
+    - No confirmation button is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: LAX - Los Angeles
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing or selecting a different airport (e.g., "LAS - Las Vegas" or "LAX").
+  - Leaving the input empty while only opening/closing the dropdown.
+  - Entering the correct airport into any non-target control (the reference pill is not editable).
+  expected_interaction_path:
+  - Click the "Airport" input to open the dropdown
+  - Click the "LAX - Los Angeles" option (or type LAX and select it)
+  notes: 'Instrumentation: data-testid="airport" on AutoComplete. Checker reads input.value and compares to target string.'
+- id: autocomplete_freeform-antd-T03
+  name: Clear a prefilled autocomplete
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the value in the City search field so it is empty. The task will finish automatically when done.
+  ui_copy: |-
+    City search: [ AutoComplete input prefilled with "Seattle" ]
+    Goal: Clear the City search field.
+  setup_description: |-
+    A centered isolated card titled "Trip Preferences" contains a single Ant Design AutoComplete labeled "City search". The AutoComplete is configured with allowClear so a clear (×) icon appears when the field has a value.
+
+    Initial state: the input already contains the text "Seattle" and the dropdown is closed. A short suggestion list (Seattle, San Diego, San Jose, Santa Fe) exists but is not needed.
+
+    There are no other inputs on the page. Feedback: when cleared, the input becomes empty and the clear icon disappears.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single field with an explicit clear control and a binary end state (non-empty vs empty).
+  success_trigger:
+    human_readable:
+    - The "City search" AutoComplete input's displayed value is an empty string after trimming whitespace.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: ''
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any non-whitespace characters in the input (e.g., " ", "Sea").
+  - Replacing the value with a different city instead of clearing it.
+  - Clearing a different control (there are no other AutoCompletes in this task).
+  expected_interaction_path:
+  - Click the clear (×) icon inside the input (or select all text and delete)
+  - Verify the input is empty
+  notes: Checker should treat whitespace-only as empty by trimming. Prefer reading <input>.value for canonical_state.value.
+- id: autocomplete_freeform-antd-T04
+  name: Add a single tag in tags mode (dark theme)
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: Select.tags
+  implementation_component: 'AntD: Select (mode="tags")'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Labels field, add the tag "urgent". The task will finish automatically when done.
+  ui_copy: |-
+    Labels (tags): [ Select input ]
+    Goal: Add tag "urgent".
+  setup_description: |-
+    The page uses a dark theme (dark background with light text). A single centered card titled "Issue Labels" contains an Ant Design Select configured with mode="tags".
+
+    The Select is labeled "Labels" and shows an input area where new tags can be typed. The dropdown may show a few suggested tags (e.g., bug, feature, urgent), but the component accepts custom tags that are not in the list. Comma (,) is enabled as a token separator so typing "urgent," will submit the tag.
+
+    Initial state: no tags are selected (empty). Distractors: none. Feedback: once added, the tag appears as a pill/chip inside the Select input.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single tags input with one tag to add. Dark theme slightly reduces contrast but the target string is short and feedback is immediate as a visible tag pill.
+  success_trigger:
+    human_readable:
+    - 'The "Labels" tags Select contains exactly one selected tag: "urgent".'
+    - No confirmation button is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        values:
+        - urgent
+      tolerance:
+        type: set_equality
+        order_insensitive: true
+        case_sensitive: false
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding a different tag (e.g., "Urgent" if case-sensitive in the UI, or "urgent!" with extra punctuation).
+  - Leaving the typed text in the input without committing it as a tag pill.
+  - Adding "urgent" plus any extra tags (e.g., "bug").
+  expected_interaction_path:
+  - Click into the Labels tags input
+  - Type urgent and press Enter (or type urgent,)
+  - Confirm the tag appears as a pill
+  notes: 'Instrumentation: data-testid="labels-tags" on Select root. Checker should read selected tag labels from rendered tag/pill elements, normalized by trim.'
+- id: autocomplete_freeform-antd-T05
+  name: Search and select a company in a form section
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Company field, search and select "Acme Corporation". The task will finish automatically when done.
+  ui_copy: |-
+    New customer form
+    Company: [ AutoComplete ]
+    Other fields: Contact name, Email, Notes
+    Goal: Company = "Acme Corporation".
+  setup_description: |-
+    The UI is a "New customer" form_section centered on the page. It uses Ant Design Form styling with labels aligned on the left and inputs on the right.
+
+    The target control is an Ant Design AutoComplete labeled "Company" with placeholder "Start typing a company". The dropdown suggestions contain several similar-looking entries such as "Acme", "Acme Corp", "Acme Corporation", and "ACME Consulting".
+
+    Clutter/distractors (not required for success): a normal text input for "Contact name", a normal text input for "Email", and a multiline "Notes" textarea appear below. They are enabled and can receive focus, so the agent must avoid typing into them.
+
+    Initial state: all fields are empty and no dropdown is open. Feedback: selecting a company fills the AutoComplete input with the full company name.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: The target is embedded in a realistic form with nearby distractor inputs and multiple similar company options that require careful selection.
+  success_trigger:
+    human_readable:
+    - The "Company" AutoComplete input's displayed value equals "Acme Corporation" (after trimming whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Acme Corporation
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a near-match such as "Acme" or "Acme Corp".
+  - Typing the right text into "Contact name" or "Email" instead of "Company".
+  - Leaving a partially typed value like "Acme" without the final "Acme Corporation" selection/value.
+  expected_interaction_path:
+  - Click the Company AutoComplete
+  - Type Acme to filter suggestions
+  - Click "Acme Corporation" in the dropdown
+  notes: 'Instrumentation: data-testid="company-autocomplete". Checker reads the underlying input value; ensure labels are programmatically associated for accessibility.'
+- id: autocomplete_freeform-antd-T06
+  name: Set Billing city when two autocompletes are present
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: There are two city fields. In the Billing city field (not Shipping city), enter "Austin". The task will finish automatically when done.
+  ui_copy: |-
+    Address card
+    Shipping city: [ AutoComplete ]
+    Billing city: [ AutoComplete ]
+    Goal: Billing city = Austin.
+  setup_description: |-
+    A centered isolated card titled "Address" contains two stacked Ant Design AutoComplete inputs.
+
+    Instance 1 is labeled "Shipping city" with placeholder "Type shipping city".
+    Instance 2 is labeled "Billing city" with placeholder "Type billing city".
+
+    Both AutoCompletes use the same suggestion set of US cities (Austin, Atlanta, Boston, Chicago, Denver). The dropdown opens on typing, but selecting from suggestions is optional.
+
+    Initial state: both fields are empty. Distractors: none outside the two similar AutoComplete controls. Feedback: the entered text is visible in the chosen field.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 3
+    justification: Two nearly identical AutoComplete instances require correctly targeting the Billing field; otherwise the interaction is straightforward.
+  success_trigger:
+    human_readable:
+    - The AutoComplete labeled "Billing city" has displayed value "Austin" (after trimming whitespace).
+    - The "Shipping city" value does not affect success as long as Billing city is correct.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Austin
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing city
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering "Austin" into Shipping city instead of Billing city.
+  - Billing city is close but not exact (e.g., "Austin, TX" or "Austn").
+  - Leaving Billing city empty.
+  expected_interaction_path:
+  - Locate the Billing city AutoComplete (second field)
+  - Click it and type Austin
+  - Optionally select Austin from the dropdown
+  notes: 'Instrumentation: add data-testid="shipping-city" and data-testid="billing-city". Checker must verify the correct instance by label or testid.'
+- id: autocomplete_freeform-antd-T07
+  name: Match the team nickname from a reference badge
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Team nickname field to exactly match the text shown in the Reference badge on the card. The task will finish automatically when done.
+  ui_copy: |-
+    Team setup
+    Reference badge: ORCHID
+    Team nickname: [ AutoComplete ]
+  setup_description: |-
+    A centered isolated card titled "Team setup" contains a small "Reference" area and one Ant Design AutoComplete.
+
+    The Reference area shows a prominent pill/badge with uppercase text "ORCHID" (non-interactive). This is the only place where the target value is shown; the instruction tells the user to match it.
+
+    Below the reference, the target AutoComplete is labeled "Team nickname" with placeholder "Type a nickname". Its suggestion list contains several flower-like strings (ORCHID, ORANGE BLOSSOM, OLIVE, OPAL) to create mild confusability.
+
+    Initial state: the AutoComplete input is empty and the dropdown is closed. Distractors: none besides the reference badge and a short note "Nicknames can be custom". Feedback: the entered nickname is visible as plain text in the input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target is specified via an on-page reference badge rather than in the instruction, and the suggestion list contains similar-looking options.
+  success_trigger:
+    human_readable:
+    - The "Team nickname" AutoComplete input's displayed value equals "ORCHID" (case-insensitive match allowed, whitespace trimmed).
+    - No confirmation button is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: ORCHID
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering a similar value like "OLIVE" or "ORCHIDS".
+  - Copying the wrong nearby text (e.g., the note) instead of the badge text.
+  - Leaving the value empty while the dropdown is open.
+  expected_interaction_path:
+  - Read the text in the Reference badge
+  - Click Team nickname and type the same text (or select it from suggestions)
+  notes: 'Instrumentation: data-testid="team-nickname" for AutoComplete and data-testid="reference-badge" for the displayed target (useful for debugging, not needed by checker).'
+- id: autocomplete_freeform-antd-T08
+  name: Edit the Approver cell for a specific invoice row
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete (in table cell)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the invoice table, find the row for "INV-1042" and set its Approver field to "Dana Wu". The task will finish automatically when done.
+  ui_copy: |-
+    Invoice assignments table
+    Rows include INV-1040, INV-1042, INV-1047
+    Only INV-1042 Approver is editable
+    Goal: INV-1042 Approver = Dana Wu.
+  setup_description: |-
+    The page shows a compact Ant Design Table in the center of the viewport with the caption "Invoice assignments".
+
+    There are three visible rows with invoice IDs in the first column: "INV-1040", "INV-1042", and "INV-1047". The second column is labeled "Approver".
+
+    Only the row "INV-1042" has an editable Ant Design AutoComplete in its Approver cell (single instance of the canonical component on the page). The other rows show plain text approver names and are not editable.
+
+    The AutoComplete suggestion list includes similar staff names ("Dana Wu", "Daniel Wu", "Dina Wu", "Alex Kim", "Morgan Lee"). The dropdown opens when the user clicks into the INV-1042 Approver cell.
+
+    Initial state: INV-1042 Approver is empty. Distractors: a read-only Status column and Amount column are present but not interactive. Feedback: once a name is selected/entered, it is shown inline in the INV-1042 Approver cell.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Even with a single editable cell, the table context and very similar option labels increase acquisition and choice interference.
+  success_trigger:
+    human_readable:
+    - The INV-1042 Approver AutoComplete cell's displayed value equals "Dana Wu" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Dana Wu
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a near-match like "Daniel Wu" or "Dina Wu".
+  - Leaving INV-1042 Approver empty.
+  - Changing read-only text in other rows (should not be possible).
+  expected_interaction_path:
+  - Locate the row labeled INV-1042
+  - Click into its Approver AutoComplete
+  - Type Dana and select "Dana Wu" (or type the full name)
+  - Verify the value appears in that row
+  notes: 'Instrumentation: provide stable row identifiers (data-row-id="INV-1042") and data-testid per Approver cell (e.g., approver-inv-1042) so the checker can bind to the correct instance.'
+- id: autocomplete_freeform-antd-T09
+  name: Edit tags in a modal and confirm
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: Select.tags
+  implementation_component: 'AntD: Select (mode="tags") inside Modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Click "Edit labels" to open the dialog. In the Labels field, make the selected tags exactly: backend, urgent, needs-review. Then click "OK". The task will finish automatically when done.'
+  ui_copy: |-
+    Button: Edit labels
+    Modal title: Edit labels
+    Labels (tags): [ Select tags input ]
+    Buttons: Cancel, OK
+    Goal: backend + urgent + needs-review, then OK.
+  setup_description: |-
+    The main page shows a small card titled "Issue" with a single button labeled "Edit labels". Clicking it opens an Ant Design Modal dialog.
+
+    Inside the modal, there is one Ant Design Select configured with mode="tags" and labeled "Labels". The input shows existing tags as pills. The modal footer contains two buttons: "Cancel" and a primary "OK".
+
+    Initial state inside the modal: one tag pill "backend" is already selected. Suggested tags in the dropdown include "urgent" and "needs-review", but the component accepts free custom tags as well. Tags are committed by pressing Enter after typing, or by selecting from the dropdown.
+
+    Distractors: a short paragraph above the input explains labels are used for triage; it is non-interactive. Feedback: tags appear as pills immediately, but the changes are considered committed only after pressing the modal "OK" button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires multi-tag editing in tags mode plus an explicit modal confirmation step; mistakes require removing pills and re-entering tags.
+  success_trigger:
+    human_readable:
+    - The "Labels" tags Select has selected tags exactly {backend, urgent, needs-review} (order does not matter; trim whitespace).
+    - The modal "OK" button has been pressed to confirm/commit the selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        values:
+        - backend
+        - urgent
+        - needs-review
+      tolerance:
+        type: set_equality
+        order_insensitive: true
+        case_sensitive: false
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Having the right tags selected but clicking "Cancel" or closing the modal without clicking "OK".
+  - Missing a tag (e.g., only backend + urgent).
+  - Extra tags beyond the required three.
+  - Using a near-miss tag like "needs review" (space) instead of "needs-review".
+  expected_interaction_path:
+  - Click "Edit labels"
+  - In the Labels tags input, add urgent and needs-review (select from dropdown or type and press Enter)
+  - Remove any extra tags if present
+  - Click OK
+  notes: 'Checker should track a committed_state for the modal: only count the tags after the OK button click event. Instrument modal buttons with data-testid="labels-ok" and "labels-cancel".'
+- id: autocomplete_freeform-antd-T10
+  name: Scroll the suggestion list and pick a diacritic city
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete
+  implementation_component: 'AntD: AutoComplete'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Destination city field, select "Zürich" from the suggestions list. The task will finish automatically when done.
+  ui_copy: |-
+    Destination city: [ small AutoComplete ]
+    Goal: Destination city = Zürich (with umlaut).
+  setup_description: |-
+    A small travel widget is anchored in the bottom-right corner of the viewport. It contains a small-sized Ant Design AutoComplete labeled "Destination city".
+
+    The AutoComplete uses a long suggestion list of European cities (about 40 items) rendered in a scrollable dropdown with a fixed max height. The list includes many similar names and diacritics (e.g., "Zurich" is NOT present, but "Zürich" is present; also items like "Zagreb", "Zaragoza", "Žilina").
+
+    The component is rendered at small scale (smaller input and option height than default), so the click targets are tighter. Selecting from the dropdown is the most reliable way to get the exact spelling with diacritics.
+
+    Initial state: the input is empty. Distractors: none. Feedback: after selection, the input displays the chosen city text exactly as in the option.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires an exact string with diacritics and interacting with a long, scrollable dropdown in a small component placed near the viewport edge.
+  success_trigger:
+    human_readable:
+    - The "Destination city" AutoComplete input's displayed value equals "Zürich" exactly (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Zürich
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing "Zurich" without the umlaut.
+  - Selecting a different city that starts with Z (e.g., Zagreb, Zaragoza).
+  - Leaving the input empty while only scrolling the dropdown.
+  expected_interaction_path:
+  - Click Destination city to open the dropdown
+  - Scroll within the dropdown until "Zürich" is visible
+  - Click "Zürich"
+  notes: 'Instrumentation: data-testid="destination-city". If the dropdown renders in a portal, ensure the checker still reads the input value from the correct field.'
+- id: autocomplete_freeform-mui-T01
+  name: Type a freeSolo search term
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Search field, type the value "giraffe". The task will finish automatically when done.
+  ui_copy: |-
+    Search: [ Autocomplete input ]
+    Goal: Enter giraffe.
+  setup_description: |-
+    A centered isolated card titled "Quick Search" contains a single MUI Autocomplete configured with freeSolo so it accepts arbitrary text.
+
+    The field label is "Search" and the placeholder reads "Type to search". A short suggestion list (giraffe, gorilla, gazelle, gibbon) appears in a popup listbox as the user types, but choosing a suggestion is not required.
+
+    Initial state: the input is empty and the popup is closed. Distractors: none. Feedback: the typed value is immediately visible in the input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single freeSolo Autocomplete with a short, lowercase target and no surrounding clutter.
+  success_trigger:
+    human_readable:
+    - The "Search" Autocomplete input's displayed value equals "giraffe" (case-insensitive, trimmed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: giraffe
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any other animal name (e.g., "gorilla").
+  - Only opening the popup list without setting the input value.
+  - Typing into a non-target control (none exist).
+  expected_interaction_path:
+  - Click the Search input
+  - Type giraffe
+  notes: 'Instrumentation: data-testid="mui-search" on the Autocomplete root (or TextField). Checker reads the input element''s value.'
+- id: autocomplete_freeform-mui-T02
+  name: Select a country from the popup list
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Country field, open the options and select "Canada". The task will finish automatically when done.
+  ui_copy: |-
+    Country: [ Autocomplete input ]
+    Goal: Select Canada.
+  setup_description: |-
+    A centered isolated card titled "Profile" contains a single MUI Autocomplete labeled "Country". It is configured with freeSolo so the user can type any country name, but a popup list of suggested countries is provided.
+
+    The options list contains 10 common countries (Canada, United States, Mexico, Brazil, France, Germany, Japan, Australia, India, South Africa). The popup listbox opens when the input is focused or when typing begins.
+
+    Initial state: empty input. Distractors: none. Feedback: selecting an option fills the input with the selected country name.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Short option list with a clearly named target and standard MUI listbox interaction.
+  success_trigger:
+    human_readable:
+    - The "Country" Autocomplete input's displayed value equals "Canada" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Canada
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing a different country (e.g., "United States") or leaving the field empty.
+  - Selecting "Canada" in some other field (none exist).
+  - Only opening the listbox without setting the value.
+  expected_interaction_path:
+  - Click the Country input to open the listbox
+  - Click the "Canada" option
+  notes: Checker should read the value shown in the TextField input associated with the Autocomplete.
+- id: autocomplete_freeform-mui-T03
+  name: Clear a selected assignee
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Assignee field so it is empty. The task will finish automatically when done.
+  ui_copy: |-
+    Assignee: [ Autocomplete input prefilled with "Mia" ] (clear icon visible)
+    Goal: Assignee is empty.
+  setup_description: |-
+    A centered isolated card titled "Task" contains one MUI Autocomplete labeled "Assignee". It is configured with freeSolo and uses the default clear indicator (an X icon) when a value is present.
+
+    Initial state: the input displays "Mia" and the clear icon is visible inside the input on the right. A suggestion list of names exists but is not necessary.
+
+    There are no other interactive elements. Feedback: clearing removes the text and the clear icon disappears.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Binary reset task using a prominent clear indicator with immediate visible state change.
+  success_trigger:
+    human_readable:
+    - The "Assignee" Autocomplete input's displayed value is empty (after trimming whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: ''
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing "Mia" with another name instead of clearing.
+  - Leaving any characters (including whitespace) in the input.
+  - Interacting with the popup without clearing the final value.
+  expected_interaction_path:
+  - Click the clear (X) icon in the Assignee input (or select all and delete)
+  - Verify the input is blank
+  notes: 'Instrumentation: data-testid="assignee". Checker reads input value; treat whitespace-only as empty.'
+- id: autocomplete_freeform-mui-T04
+  name: Enter a formatted email into freeSolo autocomplete
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the Contact email field, enter "alex.jordan@example.com". The task will finish automatically when done.
+  ui_copy: |-
+    Contact email: [ Autocomplete input ]
+    Helper: "Use a valid email address"
+    Goal: alex.jordan@example.com
+  setup_description: |-
+    A centered isolated card titled "Invite" contains one MUI Autocomplete labeled "Contact email". It is configured in freeSolo mode to allow typing any email address, while still showing suggestions for common domains (e.g., gmail.com, outlook.com).
+
+    A helper text under the field says "Use a valid email address". The component shows a red error state if the text does not look like an email when the input loses focus.
+
+    Initial state: empty input, no error. Distractors: none. Feedback: the full email string is visible in the input; on blur, the error indicator appears/disappears based on formatting.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires precise formatted text including punctuation and domain; validation feedback on blur increases the need for correct formatting.
+  success_trigger:
+    human_readable:
+    - The "Contact email" Autocomplete input's displayed value equals "alex.jordan@example.com" exactly (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: alex.jordan@example.com
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any typo (e.g., missing dot, wrong domain, extra spaces).
+  - Entering the email into a non-target control (none exist).
+  - Leaving the field partially filled (e.g., "alex.jordan@").
+  expected_interaction_path:
+  - Click Contact email
+  - Type alex.jordan@example.com
+  - Optionally blur the field to confirm no error
+  notes: Checker should only verify the canonical value; error styling may be used for debugging but is not required for success unless you extend predicate to include validity.
+- id: autocomplete_freeform-mui-T05
+  name: Set the To airport when two fields exist
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: There are two airport fields. In the To airport field (not From), set the value to "JFK - New York". The task will finish automatically when done.
+  ui_copy: |-
+    From airport: [ Autocomplete ]
+    To airport: [ Autocomplete ]
+    Goal: To airport = JFK - New York.
+  setup_description: |-
+    A centered isolated card titled "Route" contains two MUI Autocomplete inputs stacked vertically.
+
+    Instance labels:
+    - "From airport" (top)
+    - "To airport" (bottom)
+
+    Both are configured with freeSolo and share the same options list (JFK - New York, LAX - Los Angeles, SFO - San Francisco, SEA - Seattle, BOS - Boston). The listbox opens under whichever field is focused.
+
+    Initial state: From airport is prefilled with "SFO - San Francisco"; To airport is empty. Distractors: none. Feedback: chosen value appears in the focused input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: The main challenge is disambiguating two similar Autocomplete instances with shared options and ensuring the correct one is edited.
+  success_trigger:
+    human_readable:
+    - The Autocomplete labeled "To airport" has displayed value "JFK - New York" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: JFK - New York
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: To airport
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting "JFK - New York" in the From airport field.
+  - Using a shortened value like "JFK" or "New York" only.
+  - Leaving To airport empty.
+  expected_interaction_path:
+  - Click into the To airport field
+  - Type JFK - New York (or type JFK and pick from list)
+  - Verify the value is in the To airport field
+  notes: 'Instrumentation: data-testid="from-airport" and data-testid="to-airport". Checker must bind to the To airport instance.'
+- id: autocomplete_freeform-mui-T06
+  name: Match a release label from a reference chip
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Release label field to "Beta-7" (this value is also shown in the reference chip). The task will finish automatically when done.
+  ui_copy: |-
+    Reference chip: Beta-7
+    Release label: [ Autocomplete ]
+    Goal: Release label = Beta-7.
+  setup_description: |-
+    A centered isolated card titled "Release" contains a small visual reference chip and a MUI Autocomplete.
+
+    At the top of the card there is a non-interactive MUI Chip labeled "Reference" displaying "Beta-7". Below it, the target MUI Autocomplete is labeled "Release label" and is configured with freeSolo so custom labels are allowed.
+
+    Suggestions include similar labels such as "Beta-6", "Beta-7", "Beta-70", "Release Candidate". Initial state: the input is empty. Distractors: the chip and a short description paragraph. Feedback: the chosen label is shown in the input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Requires matching a short hyphenated code that is visually referenced, with several similar options that can cause off-by-one mistakes.
+  success_trigger:
+    human_readable:
+    - The "Release label" Autocomplete input's displayed value equals "Beta-7" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Beta-7
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting or typing "Beta-6" or "Beta-70".
+  - Entering "Beta 7" (space instead of hyphen).
+  - Leaving the field empty.
+  expected_interaction_path:
+  - Read the reference chip value
+  - Click Release label and type Beta-7 (or select it from the list)
+  notes: 'Instrumentation: data-testid="release-label" and data-testid="reference-chip". Checker should read input value.'
+- id: autocomplete_freeform-mui-T07
+  name: Open the suggestions popup and keep it open
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the suggestions list for the Search field and leave it open. Do not select an option. The task will finish automatically when done.
+  ui_copy: |-
+    Search: [ Autocomplete ]
+    Goal: Suggestions list is open.
+  setup_description: |-
+    A small isolated card is positioned near the top-right corner of the viewport. It contains one MUI Autocomplete labeled "Search" in freeSolo mode.
+
+    The Autocomplete has a popup icon (dropdown arrow) and opens a listbox of suggestions when focused, when the popup icon is clicked, or when typing begins. Options include a few generic terms (alpha, beta, gamma, delta).
+
+    Initial state: input is empty and the listbox is closed (aria-expanded=false). Distractors: none. Feedback: when opened, the listbox becomes visible under the input and aria-expanded becomes true.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Opening (but not selecting) requires controlling overlay state; the component is placed near the viewport edge which can affect popup placement.
+  success_trigger:
+    human_readable:
+    - The "Search" Autocomplete listbox/popup is open (e.g., input has aria-expanded=true and listbox is rendered).
+    - The input value remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open: true
+        value: ''
+      tolerance:
+        type: boolean_and_string
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any option from the listbox.
+  - Closing the listbox (aria-expanded=false) before the checker runs.
+  - Typing any characters into the input.
+  expected_interaction_path:
+  - Click the Search input or its popup indicator
+  - Ensure the options list is visible and no value is entered
+  notes: 'Checker: verify aria-expanded=true on the element with role="combobox" and input.value=="". Provide data-testid="search-open-state".'
+- id: autocomplete_freeform-mui-T08
+  name: Search and select within grouped suggestions (compact dashboard)
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo
+  implementation_component: 'MUI: Autocomplete (freeSolo, grouped options)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Metric field, search and select "CPU Usage" from the suggestions. The task will finish automatically when done.
+  ui_copy: |-
+    Metric: [ Autocomplete ] (grouped suggestions)
+    Goal: Metric = CPU Usage.
+  setup_description: |-
+    A centered isolated card titled "Metric picker" contains one MUI Autocomplete labeled "Metric".
+
+    The Autocomplete is freeSolo but provides a grouped suggestions list using headers such as "CPU", "Memory", and "Network". Options include similar phrases ("CPU Usage", "CPU User Time", "CPU System Time", "Memory Usage", "Network Usage"). The listbox is scrollable and uses compact spacing (reduced padding and smaller line height).
+
+    Initial state: the Metric field is empty. Distractors: none. Feedback: selecting an option populates the Metric input with the selected text.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Grouped, scrollable suggestions with many similar metric names in compact spacing increase choice interference and selection accuracy requirements.
+  success_trigger:
+    human_readable:
+    - The "Metric" Autocomplete input's displayed value equals "CPU Usage" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: CPU Usage
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a similar metric such as "Memory Usage" or "CPU User Time".
+  - Typing a partial string like "CPU" without selecting/finishing the intended value.
+  - Interacting with the dashboard toggles instead of the Metric field.
+  expected_interaction_path:
+  - Click the Metric Autocomplete
+  - Type CPU to filter
+  - Click "CPU Usage" in the list
+  notes: 'Instrumentation: data-testid="metric". If grouping headers are rendered, ensure options have stable text content for selection.'
+- id: autocomplete_freeform-mui-T09
+  name: Add multiple freeSolo chips (dark theme)
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo+multiple
+  implementation_component: 'MUI: Autocomplete (multiple, freeSolo)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Labels field, make the selected labels exactly: backend, urgent, p0. The task will finish automatically when done.'
+  ui_copy: |-
+    Labels: [ Autocomplete with chips ] (starts with backend)
+    Goal: backend + urgent + p0.
+  setup_description: |-
+    The page uses a dark theme and shows a centered isolated card titled "Ticket labels". The target control is a MUI Autocomplete configured with multiple=true and freeSolo=true, so values are represented as chips inside the input.
+
+    Initial state: one chip "backend" is already present. The dropdown suggestion list includes common labels such as "urgent", "p0", "p1", "bug", "frontend". New values can be added by typing and pressing Enter, or by selecting an option from the popup list.
+
+    The component supports removing chips via small delete (×) icons on each chip. Distractors: none. Feedback: chips update immediately as values are added/removed.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Managing multiple chips requires precise interactions with small targets (chip delete icons) and maintaining an exact set of values.
+  success_trigger:
+    human_readable:
+    - The Labels Autocomplete has selected chip values exactly {backend, urgent, p0} (order-insensitive; trim whitespace).
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        values:
+        - backend
+        - urgent
+        - p0
+      tolerance:
+        type: set_equality
+        order_insensitive: true
+        case_sensitive: false
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing a required label (e.g., backend + urgent only).
+  - Having any extra labels beyond the three.
+  - Entering "P0" if the checker is case-sensitive and the UI displays lowercase (normalize via tolerance if desired).
+  expected_interaction_path:
+  - Click into the Labels input
+  - Add urgent (type and press Enter or select from list)
+  - Add p0
+  - Remove any extra chips if accidentally added
+  notes: 'Instrumentation: data-testid="labels". Checker should read chip texts from rendered Chip components (or the Autocomplete value state) and compare as a set.'
+- id: autocomplete_freeform-mui-T10
+  name: Edit Owner in a dense ticket table
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete.freeSolo (table cell editor)
+  implementation_component: 'MUI: Autocomplete (freeSolo) embedded in table cell'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Tickets table, set the Owner for ticket "#1042" to "Daisy Ray". The task will finish automatically when done.
+  ui_copy: |-
+    Tickets table
+    Only ticket #1042 Owner cell is editable
+    Goal: #1042 Owner = Daisy Ray.
+  setup_description: |-
+    A tickets table is centered on the page with a header "Tickets" and a light toolbar (refresh icon and column menu) that is not required.
+
+    The table shows three rows with IDs "#1041", "#1042", and "#1043". One column is labeled "Owner".
+
+    Only the Owner cell for row "#1042" is editable and contains a MUI Autocomplete (freeSolo) input (single instance of the canonical component on the page). The other rows show plain text owner names.
+
+    Owner suggestions include similar names ("Daisy Ray", "Daisy Rae", "Dana Ray", "Daryl Ray"). The cell is moderately narrow, so the input is smaller than a full-width form field.
+
+    Initial state: #1042 Owner is empty. Distractors: other columns (Priority, Status) are read-only text. Feedback: when the Owner value changes, the cell displays the entered/selected name.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Table-cell editing constrains target size and the suggestion list contains near-duplicate names, increasing both acquisition difficulty and choice interference.
+  success_trigger:
+    human_readable:
+    - 'The #1042 Owner cell''s Autocomplete displayed value equals "Daisy Ray" (trim whitespace).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Daisy Ray
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a near-match like "Daisy Rae".
+  - 'Leaving #1042 Owner empty.'
+  - Changing read-only text in other rows (should not be possible).
+  expected_interaction_path:
+  - 'Locate row #1042'
+  - Click into the Owner cell's Autocomplete
+  - Type Daisy and select "Daisy Ray"
+  - 'Ensure the #1042 Owner cell shows Daisy Ray'
+  notes: 'Instrumentation: expose stable row ids and per-cell data-testid (e.g., owner-1042). Checker should bind to the specific row/cell instance, not just the first matching input.'
+- id: autocomplete_freeform-mantine-T01
+  name: Type a custom fruit into Autocomplete
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete
+  implementation_component: 'Mantine: Autocomplete'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Favorite fruit field, type "Mango". The task will finish automatically when done.
+  ui_copy: |-
+    Favorite fruit: [ Autocomplete ]
+    Goal: Mango.
+  setup_description: |-
+    A small isolated card titled "Preferences" is anchored in the bottom-left of the viewport. It contains one Mantine Autocomplete labeled "Favorite fruit" with placeholder "Pick value or enter anything".
+
+    The Autocomplete has a short suggestions list (Apple, Banana, Cherry, Mango), but values are not enforced and the user can type any string.
+
+    Initial state: empty input. Distractors: none. Feedback: the input text updates immediately as the user types.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single Mantine Autocomplete with a simple text target; bottom-left placement slightly changes cursor travel but the interaction remains straightforward.
+  success_trigger:
+    human_readable:
+    - The "Favorite fruit" Autocomplete input's displayed value equals "Mango" (case-insensitive, trimmed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Mango
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any other fruit name.
+  - Leaving the field empty.
+  - Typing extra characters (e.g., "Mangoes").
+  expected_interaction_path:
+  - Click the Favorite fruit input
+  - Type Mango
+  notes: 'Instrumentation: data-testid="favorite-fruit". Checker reads the underlying input value.'
+- id: autocomplete_freeform-mantine-T02
+  name: Select a vegetable from suggestions
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete
+  implementation_component: 'Mantine: Autocomplete'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Vegetable field, open the suggestions and select "Carrots". The task will finish automatically when done.
+  ui_copy: |-
+    Vegetable: [ Autocomplete ]
+    Goal: Carrots.
+  setup_description: |-
+    A centered isolated card titled "Grocery list" contains one Mantine Autocomplete labeled "Vegetable".
+
+    Suggestions shown in the dropdown are a small list: Apples, Bananas, Broccoli, Carrots, Chocolate, Grapes. The user can type anything, but for this task they should select the exact suggestion.
+
+    Initial state: empty input, dropdown closed. Distractors: none. Feedback: selecting an option fills the input with the option label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Short suggestions list with a clearly labeled target and standard dropdown interaction.
+  success_trigger:
+    human_readable:
+    - The "Vegetable" Autocomplete input's displayed value equals "Carrots" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Carrots
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "Broccoli" or any other item.
+  - Typing only a partial string like "Car".
+  - Leaving the value empty.
+  expected_interaction_path:
+  - Click the Vegetable input
+  - Click the "Carrots" option in the dropdown
+  notes: 'Instrumentation: data-testid="vegetable". Checker reads input value.'
+- id: autocomplete_freeform-mantine-T03
+  name: Clear all tags with the clear button
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: TagsInput
+  implementation_component: 'Mantine: TagsInput'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Tags field so no tags remain selected. The task will finish automatically when done.
+  ui_copy: |-
+    Tags: [ TagsInput with a clear button ] (starts with React)
+    Goal: No tags selected.
+  setup_description: |-
+    A centered isolated card titled "Tags" contains a Mantine TagsInput component labeled "Tags".
+
+    The TagsInput is configured with clearable=true, so a clear button appears in the right section when at least one tag is present. Initial state: one tag pill "React" is already selected.
+
+    No other interactive elements are present. Feedback: when cleared, all pills disappear and the input becomes empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single component reset using an explicit clear button; the end state (empty tags) is visually obvious.
+  success_trigger:
+    human_readable:
+    - The TagsInput has zero selected tag values (empty list).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        values: []
+      tolerance:
+        type: set_equality
+        order_insensitive: true
+        case_sensitive: false
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any tag present (e.g., React).
+  - Removing only some tags while others remain (if multiple were present).
+  - Typing into the input without clearing the selected pills.
+  expected_interaction_path:
+  - Click the clear button in the TagsInput right section
+  - Verify no pills remain
+  notes: 'Instrumentation: data-testid="tags". Checker reads rendered pills or value state as an array of strings.'
+- id: autocomplete_freeform-mantine-T04
+  name: Search and select with auto-highlighted first option
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete (selectFirstOptionOnChange)
+  implementation_component: 'Mantine: Autocomplete'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Country field, search and select "United States". The task will finish automatically when done.
+  ui_copy: |-
+    Country: [ Autocomplete ] (auto-select first option on change)
+    Goal: United States.
+  setup_description: |-
+    A centered isolated card titled "Shipping" contains one Mantine Autocomplete labeled "Country".
+
+    The Autocomplete has selectFirstOptionOnChange enabled: when the user types, the first matching suggestion is automatically highlighted so pressing Enter will select it. The suggestion data includes multiple similar "United ..." options: United States, United Kingdom, United Arab Emirates, United Republic of Tanzania.
+
+    Initial state: empty input. Distractors: a non-interactive helper text "Type to search countries". Feedback: selected option appears as the input value immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Several similar options increase choice interference, and the component’s auto-highlight behavior can lead to accidental selection of the wrong 'United…' entry.
+  success_trigger:
+    human_readable:
+    - The Country Autocomplete input's displayed value equals "United States" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: United States
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different United* option (e.g., United Kingdom).
+  - Leaving the input as a partial query like "United" without final selection/value.
+  - Entering the correct value into a non-target control (none exist).
+  expected_interaction_path:
+  - Click Country
+  - Type United
+  - Click "United States" or press Enter when it is highlighted
+  notes: 'Instrumentation: data-testid="country". Checker reads input value; selection origin (click vs enter) is not required.'
+- id: autocomplete_freeform-mantine-T05
+  name: Enter a custom country when two autocompletes exist
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete
+  implementation_component: 'Mantine: Autocomplete'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: There are two fields. In the Country field (not City), type "Wakanda". The task will finish automatically when done.
+  ui_copy: |-
+    City: [ Autocomplete ]
+    Country: [ Autocomplete ]
+    Goal: Country = Wakanda.
+  setup_description: |-
+    A centered isolated card titled "Address" contains two Mantine Autocomplete inputs.
+
+    Top input: labeled "City" with suggestions like Nairobi, Oslo, Paris.
+    Bottom input: labeled "Country" with suggestions like Kenya, Norway, France, but it still allows free input.
+
+    Initial state: City is prefilled with "Oslo"; Country is empty. Both inputs look similar, so the agent must target the correct labeled instance. Feedback: the typed value appears in the Country input; suggestions may appear but are optional.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: Two similar Autocomplete instances require label-based disambiguation; the target is a custom value not necessarily present in suggestions.
+  success_trigger:
+    human_readable:
+    - The Autocomplete labeled "Country" has displayed value "Wakanda" (case-insensitive, trimmed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Wakanda
+      tolerance:
+        type: string_normalization
+        case_sensitive: false
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Country
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing Wakanda into the City field.
+  - Using a different spelling (e.g., "Wacanda").
+  - Leaving Country empty.
+  expected_interaction_path:
+  - Click the Country input (bottom)
+  - Type Wakanda
+  - Ensure the value remains in Country
+  notes: 'Instrumentation: data-testid="city" and data-testid="country". Checker must bind to Country instance.'
+- id: autocomplete_freeform-mantine-T06
+  name: Match employee name from a reference card
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete (renderOption avatars)
+  implementation_component: 'Mantine: Autocomplete'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Employee field to match the name shown on the "Reference" card. The task will finish automatically when done.
+  ui_copy: |-
+    Reference card shows: Olivia Chen
+    Employee: [ Autocomplete ]
+  setup_description: |-
+    A centered isolated card titled "Employee of the month" contains a small reference panel and a Mantine Autocomplete.
+
+    The reference panel (non-interactive) displays the target employee name "Olivia Chen" in large text. Below it, the Autocomplete labeled "Employee" offers suggestions of employee names and is configured with a custom renderOption that shows an avatar and an email under each name.
+
+    Suggestions include similar names (Olivia Chen, Olivia Cheng, Oliver Chen, Emily Johnson). Values are not enforced; the user can type anything, but the intended action is to set the exact name shown in the reference.
+
+    Initial state: Employee input is empty. Feedback: the selected/typed name appears in the input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Target value must be read from an on-page reference and chosen among similar-looking names with richer option rendering.
+  success_trigger:
+    human_readable:
+    - The Employee Autocomplete input's displayed value equals "Olivia Chen" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Olivia Chen
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "Olivia Cheng" or "Oliver Chen".
+  - Copying the email address instead of the name.
+  - Leaving the field empty.
+  expected_interaction_path:
+  - Read the name in the Reference card
+  - Click Employee and type/select Olivia Chen
+  notes: 'Instrumentation: data-testid="employee" for the Autocomplete input; reference card can have data-testid="employee-reference" for debugging.'
+- id: autocomplete_freeform-mantine-T07
+  name: Enter multiple tags using split characters (compact, small)
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: TagsInput (splitChars, acceptValueOnBlur=false)
+  implementation_component: 'Mantine: TagsInput'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Color tags field, set the tags to exactly: red, green, blue. The task will finish automatically when done.'
+  ui_copy: |-
+    Color tags: [ TagsInput ]
+    Hint: "Use comma, space, or | to separate tags"
+    Goal: red + green + blue.
+  setup_description: |-
+    A centered card titled "Color tags" contains one Mantine TagsInput labeled "Color tags". The UI is rendered in compact spacing and small size.
+
+    The TagsInput is configured with splitChars set to [',', ' ', '|'] so typing a separator splits entries into separate tags. It is also configured with acceptValueOnBlur=false, meaning that simply blurring the field does not commit the current text; tags are committed by pressing Enter or by selecting a suggestion.
+
+    Initial state: no tags selected. A helper text under the label says "Use comma, space, or | to separate tags". Suggestions include the same three colors plus a few distractors (red, green, blue, black, gray).
+
+    Feedback: committed tags appear as pills. Because of small size, pills and the input caret are tighter than default.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires producing an exact 3-item tag set with separators and explicit commit (no accept-on-blur) in a compact/small control with small targets.
+  success_trigger:
+    human_readable:
+    - The Color tags TagsInput contains exactly the tags {red, green, blue} (order-insensitive; trimmed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        values:
+        - red
+        - green
+        - blue
+      tolerance:
+        type: set_equality
+        order_insensitive: true
+        case_sensitive: false
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing one of the colors (e.g., only red and green).
+  - Any extra tags beyond the required three.
+  - Leaving uncommitted text in the input without creating pills.
+  - Using a combined tag like "red|green" that was not split correctly.
+  expected_interaction_path:
+  - Click into the Color tags field
+  - Enter red, green, blue (either as three entries with Enter, or as one string split by separators and then press Enter to commit)
+  - Remove any accidental extra tags
+  notes: 'Instrumentation: data-testid="color-tags". Checker reads pills as an array. Ensure acceptValueOnBlur is false to make Enter/click commit necessary.'
+- id: autocomplete_freeform-mantine-T08
+  name: Pick the correct reviewer in a dark settings panel
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete (autoSelectOnBlur)
+  implementation_component: 'Mantine: Autocomplete'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Default reviewer field, search and select "Olivia Chen". The task will finish automatically when done.
+  ui_copy: |-
+    Settings panel (dark)
+    Default reviewer: [ Autocomplete ]
+    Goal: Olivia Chen.
+  setup_description: |-
+    The page uses a dark theme and shows a centered isolated card titled "Review settings".
+
+    The target control is a Mantine Autocomplete labeled "Default reviewer". It is configured with autoSelectOnBlur enabled: when an option is highlighted via keyboard navigation, clicking outside can automatically select the highlighted option.
+
+    The suggestions list contains several visually similar names: "Olivia Chen", "Olivia Cheng", "Oliver Chen", "Olive Chen". The dropdown is scrollable.
+
+    Initial state: Default reviewer is empty. Distractors: none. Feedback: the selected name appears in the input.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Dark theme and several near-identical reviewer names increase selection errors; auto-select-on-blur behavior adds nontrivial feedback dynamics.
+  success_trigger:
+    human_readable:
+    - The "Default reviewer" Autocomplete input's displayed value equals "Olivia Chen" (trim whitespace).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Olivia Chen
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "Olivia Cheng" or another near-match.
+  - Leaving the field empty.
+  - Interacting with Reset/toggles without setting Default reviewer.
+  expected_interaction_path:
+  - Click Default reviewer
+  - Type Olivia to filter
+  - Carefully click the "Olivia Chen" option (or navigate to it and press Enter)
+  notes: 'Instrumentation: data-testid="default-reviewer". If autoSelectOnBlur is enabled, ensure the checker reads the final input value after blur events.'
+- id: autocomplete_freeform-mantine-T09
+  name: Enter a new participant in a modal and save
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete (in Modal)
+  implementation_component: 'Mantine: Autocomplete inside Modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Click "Add participant" to open the dialog. In the Participant field, enter "Zara Patel" and click "Save". The task will finish automatically when done.
+  ui_copy: |-
+    Button: Add participant
+    Modal: Add participant
+    Participant: [ Autocomplete ]
+    Buttons: Cancel, Save
+    Goal: Zara Patel then Save.
+  setup_description: |-
+    The main page shows a small card titled "Meeting" with one button labeled "Add participant". Clicking it opens a Mantine Modal.
+
+    Inside the modal, there is a Mantine Autocomplete labeled "Participant" with placeholder "Type a name". Suggestions include a few existing people (Ava Rodriguez, Emily Johnson, Mason Taylor), but the component allows free input.
+
+    The modal footer has two buttons: "Cancel" and a primary "Save". Initial state: Participant input is empty. Distractors: a short description text and an avatar placeholder are visible but not interactive.
+
+    Feedback: typing shows the value in the input immediately, but the selection is considered committed only after clicking "Save".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Requires interacting through a modal layer and completing an explicit Save confirmation step after entering the exact participant name.
+  success_trigger:
+    human_readable:
+    - The Participant Autocomplete input value equals "Zara Patel" (trim whitespace).
+    - The modal "Save" button has been pressed to confirm/commit.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Zara Patel
+      tolerance:
+        type: string_normalization
+        case_sensitive: true
+        trim_whitespace: true
+        collapse_internal_whitespace: true
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering "Zara Patel" but closing the modal or clicking Cancel instead of Save.
+  - Any typo (e.g., "Zara Patell").
+  - Selecting a different suggested name.
+  expected_interaction_path:
+  - Click Add participant
+  - Type Zara Patel into Participant
+  - Click Save
+  notes: Checker should treat the post-Save committed value as the canonical state. Instrument Save button with data-testid="participant-save".
+- id: autocomplete_freeform-mantine-T10
+  name: Set exact tags in the Primary labels field (two instances, maxTags)
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: TagsInput (maxTags=3)
+  implementation_component: 'Mantine: TagsInput'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'There are two labels fields. In the Primary labels field, set the tags to exactly: api, ui, agent. The task will finish automatically when done.'
+  ui_copy: |-
+    Primary labels: [ TagsInput ] (starts with api)
+    Secondary labels: [ TagsInput ] (starts with docs)
+    Goal: Primary labels = api + ui + agent.
+  setup_description: |-
+    A centered isolated card titled "Repository labels" contains two Mantine TagsInput components in a vertical stack.
+
+    Instance 1: "Primary labels" (maxTags=3) with initial tags: api.
+    Instance 2: "Secondary labels" (maxTags=3) with initial tags: docs.
+
+    Both fields have suggestion lists that include api, ui, agent, docs, infra. They look very similar, so label-based disambiguation is required. Because maxTags=3, the Primary labels field cannot have more than three tags at any time.
+
+    A small non-interactive hint text between the fields says "Primary labels are used for reporting". Feedback: tags appear as pills; extra additions are blocked once three tags are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two near-identical TagsInput instances require correct targeting, and the maxTags constraint increases recovery cost if extra tags are added.
+  success_trigger:
+    human_readable:
+    - The TagsInput labeled "Primary labels" contains exactly the tags {api, ui, agent} (order-insensitive; trim whitespace).
+    - Edits to the Secondary labels field do not count as success.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        values:
+        - api
+        - ui
+        - agent
+      tolerance:
+        type: set_equality
+        order_insensitive: true
+        case_sensitive: false
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary labels
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct tags in Secondary labels instead of Primary labels.
+  - Missing a required tag or having any extra tag beyond the three.
+  - Using different casing or whitespace that changes the canonical tag text if normalization is not applied.
+  expected_interaction_path:
+  - Click into Primary labels (not Secondary)
+  - Add ui and agent (select from suggestions or type and press Enter)
+  - Remove any accidental extra tags if present
+  notes: 'Instrumentation: data-testid="primary-labels" and "secondary-labels". Checker must read tags separately per instance.'

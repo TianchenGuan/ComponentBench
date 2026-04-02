@@ -1,0 +1,2047 @@
+- id: tree_select-antd-T01
+  name: Pick Web (basic single select)
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the "Department" tree selector, choose "Company / Engineering / Frontend / Web". The task will finish automatically when done.
+  ui_copy: 'Department: Select Company / Engineering / Frontend / Web.'
+  setup_description: |-
+    - Layout: isolated_card centered in the viewport with a short title "Team setup".
+    - Target component: one AntD TreeSelect labeled "Department" with placeholder "Please select". It is empty on load.
+    - Interaction: clicking the input opens a dropdown containing a collapsible tree. Nodes have expand/collapse carets; leaf nodes are selectable by clicking their label.
+    - Tree data (moderate size, ~3 roots, ~20 total nodes):
+      - Company
+        - Engineering → Frontend → (Web, Mobile Web), Backend → (API, Data), QA
+        - Sales → Americas → (USA, Canada), EMEA → (UK, Germany)
+        - HR → (Recruiting, People Ops)
+    - No search box is shown for this task (search disabled), and selecting a leaf closes the dropdown automatically.
+    - No other inputs/buttons are present (no clutter).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single selection in a small tree with clear labels; only a few expansions are needed and the chosen value is visible in the input after selection.
+  success_trigger:
+    human_readable:
+    - The Department TreeSelect's committed selection is exactly the leaf node with canonical path [Company, Engineering, Frontend, Web].
+    - No extra confirmation button is required (selection is committed when the value appears in the input).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Company
+        - Engineering
+        - Frontend
+        - Web
+        value: dept_company_eng_frontend_web
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any other leaf (e.g., "Company / Engineering / Frontend / Mobile Web").
+  - Selecting a non-leaf parent node (e.g., "Frontend").
+  - Leaving the selection empty.
+  - Changing a different component (there is only one TreeSelect; any unrelated clicks must not count).
+  expected_interaction_path: Click the Department input → expand Company → expand Engineering → expand Frontend → click Web leaf.
+  notes: 'Checker hint: read TreeSelect selected value(s) from the component adapter; map node values to canonical paths via the known treeData.'
+- id: tree_select-antd-T02
+  name: Search for Germany (search + select)
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the "Sales region" tree selector, search for and select "Company / Sales / EMEA / Germany". The task will finish automatically when done.
+  ui_copy: 'Sales region: Select Company / Sales / EMEA / Germany.'
+  setup_description: |-
+    - Layout: isolated_card centered with the heading "Routing rules".
+    - Target component: one AntD TreeSelect labeled "Sales region"; it starts empty.
+    - Configuration: search is enabled (a text caret appears in the input when the dropdown is open). Typing filters tree nodes by their labels and shows matching results in the dropdown.
+    - Tree data (same "Company" hierarchy as in T01). The relevant branch is Company → Sales → EMEA → Germany.
+    - Distractors: there is also an adjacent non-interactive paragraph describing the rule; no other inputs are required.
+    - Feedback: once a node is selected, the dropdown closes and the selected path label appears in the input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Search narrows the option set, so the main challenge is opening the dropdown and selecting the correct filtered node.
+  success_trigger:
+    human_readable:
+    - The Sales region TreeSelect's committed selection is exactly the leaf node with canonical path [Company, Sales, EMEA, Germany].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Company
+        - Sales
+        - EMEA
+        - Germany
+        value: region_company_sales_emea_de
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a sibling region such as "UK" or "Americas / USA".
+  - Typing in the search box but not selecting a result (leaving the value empty).
+  - Selecting only the parent "EMEA" (non-leaf) if selectable in the implementation.
+  expected_interaction_path: Click Sales region input → type "Germany" → click the Germany node in the filtered results.
+  notes: 'Instrumentation: expose a stable test id for the TreeSelect root and for the dropdown popup so the checker can verify the selected node value even after close.'
+- id: tree_select-antd-T03
+  name: Clear Manager selection
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the "Manager" tree selector so no manager is selected. The task will finish automatically when done.
+  ui_copy: 'Manager: (currently set) Clear it so the field is empty.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Approval chain".
+    - Target component: one AntD TreeSelect labeled "Manager".
+    - Initial state: pre-selected value is "Company / HR / People Ops" (shown in the input as a single selected label).
+    - Configuration: `allowClear` is enabled so a clear (×) control appears in the input when hovered/focused.
+    - Tree data (small, ~10 nodes): Company → HR → (Recruiting, People Ops); Company → Engineering → (Frontend, Backend); Company → Sales.
+    - No dropdown interaction is required for success; clearing should remove the selected value and restore the placeholder text.
+    - Clutter: none (only a descriptive sentence below the field).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The task is a single action on a standard clear control; success is obvious because the input becomes empty.
+  success_trigger:
+    human_readable:
+    - The Manager TreeSelect has no selected value (empty selection).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        value: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different manager instead of clearing.
+  - Clearing a different field (only one TreeSelect exists here).
+  - Leaving the original manager selected.
+  expected_interaction_path: Focus/hover the Manager input → click the clear (×) icon → confirm the placeholder/empty state is shown.
+  notes: Checker should treat both null and empty-string internal values as cleared, but must NOT accept any non-empty selection.
+- id: tree_select-antd-T04
+  name: Open the folder dropdown
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Folder" tree selector dropdown so the tree options are visible. Do not select any folder. The task will finish automatically when done.
+  ui_copy: 'Folder: Open the dropdown (do not select).'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Move item".
+    - Target component: one AntD TreeSelect labeled "Folder" with placeholder "Select a folder"; no value selected.
+    - Interaction: clicking the input opens a dropdown overlay anchored under the field. The overlay contains a tree with expand/collapse carets and selectable node labels.
+    - Tree data (file-system style): Root → (Documents → (Reports, Invoices), Media → (Images, Videos), Archive).
+    - No search box, no multi-select, no clear icon (field starts empty).
+    - There is a secondary "Cancel" button outside the card footer, but it is disabled and irrelevant; the task is only about opening the TreeSelect overlay.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires targeting the correct input to open its dropdown; no selection or multi-step navigation.
+  success_trigger:
+    human_readable:
+    - The Folder TreeSelect dropdown overlay is open and the tree panel is visible (popover/popup present in the DOM and not aria-hidden).
+    canonical_predicate:
+      predicate_type: overlay_open
+      target_state:
+        overlay_open: true
+        component: tree_select
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any node (which would typically close the dropdown).
+  - Leaving the dropdown closed.
+  - Opening a different overlay (none exist).
+  expected_interaction_path: Click the Folder TreeSelect input (or its dropdown arrow) → verify the tree panel is visible and remains open.
+  notes: Checker can treat visibility of AntD popup container (TreeSelect popup.root) as 'overlay open'.
+- id: tree_select-antd-T05
+  name: Select VPN policy page (deep path)
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the "Policy page" tree selector, select "Handbook / Security / Access / VPN". The task will finish automatically when done.
+  ui_copy: 'Policy page: Choose Handbook / Security / Access / VPN.'
+  setup_description: |-
+    - Layout: isolated_card anchored near the top-right of the viewport (requires attention to non-center placement).
+    - Target component: one AntD TreeSelect labeled "Policy page"; initial value empty.
+    - Tree data (documentation hierarchy, depth=4):
+      - Handbook
+        - Security
+          - Access
+            - VPN
+            - SSH keys
+          - Data handling
+        - IT
+          - Devices
+      - Templates
+        - Onboarding
+    - Configuration: search is disabled; user must expand intermediate nodes to reach the leaf. Only leaf nodes are selectable.
+    - Visual feedback: after selecting "VPN", the input shows the selected label and the dropdown closes.
+    - Clutter: none beyond a short helper text line under the field.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires navigating a deeper hierarchy with several expansions, and the component is placed away from center which increases acquisition cost.
+  success_trigger:
+    human_readable:
+    - The Policy page TreeSelect's committed selection is exactly the leaf with canonical path [Handbook, Security, Access, VPN].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Handbook
+        - Security
+        - Access
+        - VPN
+        value: kb_handbook_security_access_vpn
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a nearby leaf such as "SSH keys" or "Data handling".
+  - Stopping at an intermediate node like "Access".
+  - Leaving the field empty.
+  expected_interaction_path: Click Policy page → expand Handbook → expand Security → expand Access → click VPN.
+  notes: To keep this component-only, the page has no Save button; selection is committed immediately when the value appears.
+- id: tree_select-antd-T06
+  name: Set Backup office (2 instances)
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the "Backup office" tree selector, choose "Company / Sales / Americas / Canada". The task will finish automatically when done.
+  ui_copy: 'Backup office: Select Company / Sales / Americas / Canada.'
+  setup_description: |-
+    - Layout: form_section centered, titled "Employee profile" with multiple fields.
+    - Target components: TWO AntD TreeSelect components of the same type:
+      1) "Primary office" (pre-selected to "Company / Sales / Americas / USA")
+      2) "Backup office" (empty; placeholder "Select an office")  ← TARGET
+    - Both TreeSelects use the same location tree:
+      - Company → Sales → Americas → (USA, Canada), EMEA → (UK, Germany)
+    - Clutter (low): the form also includes two regular text inputs ("Name", "Title") and a disabled "Save" button, but these are distractors and not required.
+    - Interaction: clicking a TreeSelect opens its dropdown tree. Selecting a leaf commits immediately and closes the dropdown.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The primary difficulty is disambiguating between two identical TreeSelect instances and ensuring the correct labeled instance is modified.
+  success_trigger:
+    human_readable:
+    - The TreeSelect labeled "Backup office" has committed selection path [Company, Sales, Americas, Canada].
+    - The "Primary office" value does not affect success as long as the correct instance is set.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Company
+        - Sales
+        - Americas
+        - Canada
+        value: office_company_sales_americas_ca
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Backup office
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Canada in the "Primary office" field instead of "Backup office".
+  - Selecting USA or any EMEA location.
+  - Leaving Backup office empty.
+  expected_interaction_path: Locate the Backup office field → click to open → expand Company → Sales → Americas → click Canada leaf.
+  notes: 'Instrumentation: assign data-testid for each instance based on its label (e.g., tree-select-primary-office, tree-select-backup-office) so the checker can attribute state correctly.'
+- id: tree_select-antd-T07
+  name: Enable three apps (checkable multi-select)
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Enabled apps" tree selector, select exactly these apps: "Workspace / Gmail", "Workspace / Calendar", and "Workspace / Drive". The task will finish automatically when done.'
+  ui_copy: 'Enabled apps: Select Gmail, Calendar, and Drive under Workspace.'
+  setup_description: |-
+    - Layout: form_section centered titled "App access" with a few related settings (distractors).
+    - Target component: one AntD TreeSelect labeled "Enabled apps" configured in checkable mode:
+      - Checkboxes are shown next to nodes (`treeCheckable=true`), enabling multiple selection.
+      - Selected items appear as tags/chips inside the input.
+      - Search is enabled (typing filters nodes) to make it feasible with multiple items.
+    - Tree data (product suite):
+      - Workspace
+        - Gmail
+        - Calendar
+        - Drive
+        - Chat
+      - Developer tools
+        - GitHub
+        - Jira
+    - Initial state: nothing selected.
+    - Clutter (low): there is a separate toggle "Notify user" and a disabled "Save" button; they do not affect success.
+    - Feedback: each checkbox click updates the tag list immediately (no Apply button).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires multi-selection with checkboxes and avoiding extra selections; tags provide clear feedback but more steps are needed than single-select.
+  success_trigger:
+    human_readable:
+    - Enabled apps TreeSelect has selected set exactly {Workspace/Gmail, Workspace/Calendar, Workspace/Drive}.
+    - No additional apps are selected.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        values:
+        - app_workspace_gmail
+        - app_workspace_calendar
+        - app_workspace_drive
+        paths:
+        - - Workspace
+          - Gmail
+        - - Workspace
+          - Calendar
+        - - Workspace
+          - Drive
+        order_invariant: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any extra app (e.g., "Chat" or "Jira").
+  - Selecting only one or two of the required apps.
+  - Selecting the parent node "Workspace" if that auto-selects children (must match exact set).
+  expected_interaction_path: Open Enabled apps dropdown → expand Workspace → check Gmail, Calendar, Drive (or search each name and check) → ensure only three tags remain.
+  notes: Checker should compare selected node values as a set (order-independent) and ensure exact match.
+- id: tree_select-antd-T08
+  name: 'Strict check: select parent and leaf'
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Teams to notify" tree selector, select exactly these two entries: "Company / Engineering" and "Company / Engineering / Frontend / Web". The task will finish automatically when done.'
+  ui_copy: 'Teams to notify: Select Engineering and Engineering → Frontend → Web (exactly those two).'
+  setup_description: |-
+    - Theme/spacing: dark theme with compact spacing (tighter paddings and smaller row height inside the dropdown).
+    - Layout: isolated_card centered titled "Incident notifications".
+    - Target component: one AntD TreeSelect labeled "Teams to notify" configured for strict checkable multi-select:
+      - `treeCheckable=true` shows checkboxes.
+      - `treeCheckStrictly=true` means checking a parent does NOT automatically check/uncheck its children; parent and child selections are independent.
+      - Search is disabled to force direct navigation in the tree.
+    - Tree data (engineering org):
+      - Company
+        - Engineering
+          - Frontend → (Web, Mobile Web)
+          - Backend → (API, Data)
+        - Sales
+    - Initial state: nothing selected.
+    - Feedback: selected items appear as tags in the input; because of strict mode, both a parent tag (Engineering) and a leaf tag (Web) can coexist.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Strict checkbox semantics increase error risk (parent/child independence), compact dark UI reduces target size/contrast, and success requires an exact two-item set.
+  success_trigger:
+    human_readable:
+    - Teams to notify selection set is exactly {Company/Engineering, Company/Engineering/Frontend/Web}.
+    - No other team is selected.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        values:
+        - team_company_engineering
+        - dept_company_eng_frontend_web
+        paths:
+        - - Company
+          - Engineering
+        - - Company
+          - Engineering
+          - Frontend
+          - Web
+        order_invariant: true
+        strict_parent_child: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting only the parent Engineering (missing the Web leaf).
+  - Selecting only the Web leaf (missing the Engineering parent).
+  - Accidentally selecting Mobile Web, Backend, API, or any Sales node.
+  - Selecting the root Company.
+  expected_interaction_path: Open Teams to notify → expand Company → expand Engineering → check Engineering (parent) → expand Frontend → check Web leaf → verify exactly two tags.
+  notes: Checker should compare selected node values exactly; do not infer parent-child closure (because strict mode is enabled).
+- id: tree_select-antd-T09
+  name: Scroll to find Z-Index bug tag
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the "Issue tag" tree selector, select "Bugs / UI / Z-Index". The task will finish automatically when done.
+  ui_copy: 'Issue tag: Choose Bugs / UI / Z-Index.'
+  setup_description: |-
+    - Layout/placement: isolated_card anchored near the bottom-left of the viewport. The component is rendered in the small size tier (smaller input height and smaller dropdown rows).
+    - Target component: one AntD TreeSelect labeled "Issue tag"; initial value empty.
+    - Dropdown behavior: the popup panel has a fixed max height (about 240px) and becomes scrollable when the tree content exceeds it (virtualized list enabled).
+    - Tree data (large; designed to require scrolling):
+      - Bugs
+        - UI (≈25 leaf tags: Alignment, Button, Color, Dropdown, Focus, Hover, Layout, Modal, Popover, Scroll, Tooltip, Typography, …, Z-Index near the bottom)
+        - Backend (≈15 leaf tags)
+        - Performance (≈10 leaf tags)
+      - Feature requests
+        - UI
+        - Backend
+    - Configuration: search is disabled; user must expand and scroll inside the dropdown to reach "Z-Index" under Bugs → UI.
+    - Clutter: none besides a read-only "Issue title" line above (not editable).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires navigating a large, scrollable tree in a small-size dropdown; many similar UI bug tags increase choice interference.
+  success_trigger:
+    human_readable:
+    - Issue tag TreeSelect selection is exactly the leaf with canonical path [Bugs, UI, Z-Index].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Bugs
+        - UI
+        - Z-Index
+        value: tag_bugs_ui_zindex
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any other UI bug tag (e.g., "Dropdown" or "Modal").
+  - Selecting the parent "UI" or "Bugs" instead of the leaf tag.
+  - Failing to scroll and leaving the field empty.
+  expected_interaction_path: Click Issue tag → expand Bugs → expand UI → scroll the dropdown list until Z-Index is visible → click Z-Index leaf.
+  notes: Checker should not rely on the item being initially in the DOM due to virtualization; it should use the component's selected value state.
+- id: tree_select-antd-T10
+  name: Match the highlighted folder (visual reference)
+  canonical_type: tree_select
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: TreeSelect'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Pinned folder" tree selector, select the same folder that is highlighted in the "Reference" card. The task will finish automatically when done.
+  ui_copy: 'Pinned folder: Match the folder highlighted in the Reference card.'
+  setup_description: |-
+    - Layout: dashboard with multiple widgets (high clutter). The target widget is a small "Pinned folder" card near the center.
+    - Target component: one AntD TreeSelect labeled "Pinned folder". It is empty on load and shows a dropdown arrow.
+    - Tree data (project folders):
+      - Projects
+        - Alpha → (Design, Engineering, QA)
+        - Beta → (Design, Engineering, QA)
+      - Templates
+        - Onboarding
+        - Offboarding
+      - Archive
+    - Visual guidance: a separate "Reference" card shows a static image of an opened tree dropdown with ONE node highlighted (a blue highlight bar). The highlighted node corresponds to the canonical leaf "Templates → Onboarding".
+      - The reference image is non-interactive; it is only for matching.
+    - Interaction: clicking the TreeSelect opens the dropdown tree. Search is disabled; the user must expand/click to match the reference highlight.
+    - Clutter (high): surrounding dashboard includes a table, two filter dropdowns, and a notifications panel; none affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: High clutter and visual-only guidance increase disambiguation and observability load; the agent must interpret the reference highlight and map it to the correct tree node.
+  success_trigger:
+    human_readable:
+    - The Pinned folder TreeSelect selection matches the node highlighted in the Reference card.
+    - Canonical target is the leaf path [Templates, Onboarding].
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        selection_mode: single
+        reference_id: reference-card-highlight-1
+        path:
+        - Templates
+        - Onboarding
+        value: folder_templates_onboarding
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any other folder (e.g., "Projects / Alpha / Design").
+  - Leaving the field empty.
+  - Interacting with dashboard filters/tables without setting the TreeSelect value.
+  expected_interaction_path: Look at the Reference card to identify the highlighted node → open Pinned folder TreeSelect → navigate to Templates → click Onboarding.
+  notes: 'Implementation hint: include a data-testid on the Reference card so the task generator can bind it to a known canonical target; the checker itself should validate only the TreeSelect value, not the image.'
+- id: tree_select-mui-T01
+  name: Pick Ultrabooks (basic composite)
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the "Category" tree selector, choose "Catalog / Hardware / Laptops / Ultrabooks". The task will finish automatically when done.
+  ui_copy: 'Category: Select Catalog / Hardware / Laptops / Ultrabooks.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "New item".
+    - Implementation: composite TreeSelect built from:
+      - a MUI TextField trigger labeled "Category" (shows the current selection as text),
+      - a MUI Popover anchored to the TextField,
+      - a MUI X `SimpleTreeView` inside the Popover for hierarchical options.
+    - Initial state: Category is empty and shows placeholder "Select a category".
+    - Tree options (depth=4):
+      - Catalog
+        - Hardware → Laptops → (Ultrabooks, Gaming laptops), Monitors
+        - Software → (Productivity, Security)
+    - Behavior: selecting a leaf TreeItem commits immediately and closes the popover; the TextField displays the selected path label.
+    - No search box, no checkboxes, no extra buttons; no other inputs on the card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: 'A straightforward composite: open popover and click a single leaf in a small tree; the chosen label is echoed in the TextField.'
+  success_trigger:
+    human_readable:
+    - The Category tree selector's committed value equals the leaf path [Catalog, Hardware, Laptops, Ultrabooks].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Catalog
+        - Hardware
+        - Laptops
+        - Ultrabooks
+        value: cat_catalog_hw_laptops_ultrabooks
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "Gaming laptops" or any non-target leaf.
+  - Selecting an intermediate node like "Laptops".
+  - Leaving Category empty.
+  expected_interaction_path: Click Category TextField → expand Catalog → Hardware → Laptops → click Ultrabooks.
+  notes: Composite adapter should expose a single canonical selected value derived from the TreeView's selectedItems state, and reflect it in the TextField.
+- id: tree_select-mui-T02
+  name: Open destination popover
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Destination" tree selector so the folder tree is visible. Do not select a folder. The task will finish automatically when done.
+  ui_copy: 'Destination: Open the folder tree (no selection).'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Move message".
+    - Target component: composite TreeSelect labeled "Destination".
+      - Trigger: MUI TextField with an end-adornment chevron icon.
+      - Overlay: MUI Popover that contains a SimpleTreeView of folders.
+    - Initial state: no destination selected; placeholder text is shown.
+    - Tree data (small):
+      - Inbox
+      - Archive
+      - Projects → (Alpha, Beta)
+    - No search field and no confirm/apply button.
+    - The card also shows a static preview of the message subject; there are no other interactive controls.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires clicking the correct trigger to open the popover; no selection is needed.
+  success_trigger:
+    human_readable:
+    - The Destination tree selector popover is open (overlay visible).
+    canonical_predicate:
+      predicate_type: overlay_open
+      target_state:
+        overlay_open: true
+        component: tree_select
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the popover closed.
+  - Selecting a folder (which may close the popover).
+  expected_interaction_path: Click the Destination TextField or chevron → confirm the tree popover is visible.
+  notes: Checker can detect popover open via presence/visibility of the Popover element containing the TreeView (e.g., role='tree').
+- id: tree_select-mui-T03
+  name: Clear selected folder
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the "Folder" tree selector so it shows no selection. The task will finish automatically when done.
+  ui_copy: 'Folder: (currently set) Clear it.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Create shortcut".
+    - Target component: composite TreeSelect labeled "Folder".
+    - Initial state: Folder is already set to "Projects / Alpha" and displayed as text in the TextField.
+    - Configuration: when a value is present, a clear icon button (×) appears inside the TextField end adornment. Clicking it resets the selection to empty and restores placeholder text.
+    - The popover/tree exists but is not required for this task.
+    - No other interactive elements are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single-step clear interaction with immediate visible feedback in the TextField.
+  success_trigger:
+    human_readable:
+    - The Folder tree selector has an empty committed selection (no selected value).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        value: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different folder instead of clearing.
+  - Leaving the original selection intact.
+  expected_interaction_path: Click the clear (×) icon in the Folder TextField → verify placeholder/empty state.
+  notes: If the implementation uses an empty string instead of null for 'no selection', normalize to null in the adapter before checking.
+- id: tree_select-mui-T04
+  name: Search permissions tree for Invoices
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X RichTreeView (filtered) + TextField search'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the "Default permission" tree selector, search for and select "Permissions / Finance / Invoices". The task will finish automatically when done.
+  ui_copy: 'Default permission: Select Permissions → Finance → Invoices.'
+  setup_description: |-
+    - Layout: settings_panel (left navigation + main panel). The TreeSelect appears in the main panel under "Access defaults".
+    - Target component: composite TreeSelect labeled "Default permission".
+      - Trigger: MUI TextField.
+      - Overlay: MUI Popover containing:
+        1) a small search TextField labeled "Filter permissions",
+        2) a `RichTreeView` rendering a larger permissions tree.
+    - Behavior: typing in the filter box narrows visible tree items (non-matching branches are hidden). Clicking a leaf selects it and closes the popover.
+    - Tree data (≈40 nodes):
+      - Permissions
+        - Finance → (Invoices, Billing, Spend)
+        - Engineering → (Deploy, Logs, Incidents)
+        - HR → (Recruiting, Reviews)
+    - Initial state: empty selection.
+    - Clutter (medium): settings panel also contains toggles and buttons ("Enable SSO", "Reset defaults"), but they do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires coordinating two inputs (open popover and use filter) and then selecting within a moderately large tree embedded in a busier settings panel.
+  success_trigger:
+    human_readable:
+    - Default permission committed selection equals leaf path [Permissions, Finance, Invoices].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Permissions
+        - Finance
+        - Invoices
+        value: perm_finance_invoices
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting another Finance leaf such as "Billing".
+  - Typing in the filter but not selecting (empty value).
+  - Selecting the parent node "Finance" instead of "Invoices".
+  expected_interaction_path: Click Default permission → type "Invoices" in Filter permissions → click the Invoices leaf → verify TextField updates.
+  notes: If filter is debounced, the checker should rely on final committed selection state, not intermediate DOM visibility.
+- id: tree_select-mui-T05
+  name: Select three report sections (checkbox multi-select)
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView (checkboxSelection)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Included sections" tree selector, select exactly these sections: "Reports / Revenue", "Reports / Costs", and "Reports / Forecast". The task will finish automatically when done.'
+  ui_copy: 'Included sections: Choose Revenue, Costs, and Forecast under Reports.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Export report".
+    - Target component: composite TreeSelect labeled "Included sections".
+    - Popover contents:
+      - A `SimpleTreeView` configured with checkbox selection (checkboxes displayed next to items).
+      - Parent nodes are expandable; only leaves represent selectable sections.
+    - Tree data:
+      - Reports → (Revenue, Costs, Forecast, Retention)
+      - Logs → (Auth, Errors)
+    - Initial state: nothing selected; the TextField shows placeholder "Select sections".
+    - Feedback: each checkbox toggle immediately updates a chip list shown inside the TextField (or directly below it); no Apply/Save button.
+    - No other interactable elements on the card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Multi-select requires an exact set without extras; checkboxes make selection explicit but increase substeps and error risk.
+  success_trigger:
+    human_readable:
+    - Included sections selection set equals {Reports/Revenue, Reports/Costs, Reports/Forecast} and contains no other items.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        paths:
+        - - Reports
+          - Revenue
+        - - Reports
+          - Costs
+        - - Reports
+          - Forecast
+        values:
+        - rep_revenue
+        - rep_costs
+        - rep_forecast
+        order_invariant: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Retention or any Logs section in addition to the required three.
+  - Selecting only a subset of the required sections.
+  - Selecting the parent "Reports" instead of the leaves.
+  expected_interaction_path: Open Included sections → expand Reports → check Revenue, Costs, Forecast → verify exactly three chips/tags.
+  notes: Composite adapter should normalize selection to the set of leaf node IDs (ignore any transient focus/hover state).
+- id: tree_select-mui-T06
+  name: 'Move: choose To folder (2 instances)'
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the "To folder" tree selector, choose "Folders / Projects / Beta". The task will finish automatically when done.
+  ui_copy: 'To folder: Select Folders / Projects / Beta.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Move file".
+    - Target components: TWO composite TreeSelects stacked vertically:
+      1) "From folder" (pre-filled with "Folders / Inbox")  — not the target
+      2) "To folder" (empty)  — TARGET
+    - Both instances use the same folder tree:
+      - Folders
+        - Inbox
+        - Projects → (Alpha, Beta, Gamma)
+        - Archive
+    - Interaction: click the "To folder" TextField to open its popover, expand Projects if needed, and click Beta to commit.
+    - No other controls on the card; no confirmation button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Two identical instances increase disambiguation load; otherwise the tree is small and selection feedback is clear.
+  success_trigger:
+    human_readable:
+    - The TreeSelect labeled "To folder" is set to leaf path [Folders, Projects, Beta].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Folders
+        - Projects
+        - Beta
+        value: folder_projects_beta
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: To folder
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting "From folder" to Beta instead of "To folder".
+  - Selecting Alpha or Gamma.
+  - Leaving To folder empty.
+  expected_interaction_path: Locate To folder → open popover → expand Folders/Projects → click Beta.
+  notes: 'Instrumentation: bind instance identity to the visible label text; do not rely on DOM order alone.'
+- id: tree_select-mui-T07
+  name: Expand Projects branch (disclosure only)
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView (expansionTrigger=icon)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the "Browse" tree selector and expand "Folders" and then "Projects" so that the project folders are visible. Do not select any item. The task will finish automatically when done.
+  ui_copy: 'Browse: Expand Folders → Projects (no selection).'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Browse storage".
+    - Target component: composite TreeSelect labeled "Browse" (starts empty).
+    - Popover contents: a `SimpleTreeView` where expansion is limited to the icon container (the caret/chevron) rather than the whole row.
+      - Clicking a node label would select it (and may close the popover), so the user must aim for the small expand icons to satisfy this disclosure-only task.
+    - Tree data:
+      - Folders
+        - Projects → (Alpha, Beta, Gamma)
+        - Archive
+      - Shared
+    - Initial state: all nodes collapsed; popover closed.
+    - Feedback: expanded nodes reveal their children in-place; no selection text is required/desired.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Expansion requires clicking small chevron targets without selecting items; success depends on internal expanded state rather than a simple selected value.
+  success_trigger:
+    human_readable:
+    - The Browse tree selector popover is open.
+    - 'Expanded nodes include at least: Folders and Folders/Projects.'
+    - No selection is required (selection may remain empty).
+    canonical_predicate:
+      predicate_type: expanded_paths_include
+      target_state:
+        overlay_open: true
+        expanded_paths:
+        - - Folders
+        - - Folders
+          - Projects
+        min_visible_children:
+        - Alpha
+        - Beta
+        - Gamma
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting an item (which may close the popover and fails the 'expand only' goal).
+  - Expanding only Folders but not Projects.
+  - Leaving the popover closed.
+  expected_interaction_path: Open Browse → click the expand chevron next to Folders → click the expand chevron next to Projects → ensure Alpha/Beta/Gamma are visible.
+  notes: Checker should read TreeView expandedItems state (or infer from DOM via aria-expanded) while the popover is open.
+- id: tree_select-mui-T08
+  name: Scroll to PagerDuty integration
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X RichTreeView (scrollable list)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the "Integration" tree selector, select "Integrations / Monitoring / PagerDuty". The task will finish automatically when done.
+  ui_copy: 'Integration: Choose Integrations → Monitoring → PagerDuty.'
+  setup_description: |-
+    - Spacing/scale: compact spacing and small scale (smaller TextField height and denser rows in the popover).
+    - Layout: isolated_card centered titled "Add integration".
+    - Target component: composite TreeSelect labeled "Integration"; initial value empty.
+    - Popover contents:
+      - A scrollable container with a `RichTreeView` rendering a long list of integrations (≈120 leaves across several categories).
+      - No search/filter input is provided for this task.
+    - Tree data (excerpt):
+      - Integrations
+        - Monitoring (≈40 leaves: Datadog, New Relic, Grafana, …, PagerDuty is near the bottom)
+        - CI/CD (≈30 leaves)
+        - Chat (≈20 leaves)
+    - The popover has a fixed height; to reach lower items under Monitoring, the user must scroll within the popover before clicking the leaf.
+    - Feedback: on selection, the popover closes and the TextField shows the selected label.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: A long, scrollable tree in compact/small mode increases acquisition difficulty and choice interference; the user must scroll within a constrained popover to reach the target.
+  success_trigger:
+    human_readable:
+    - Integration committed selection equals leaf path [Integrations, Monitoring, PagerDuty].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Integrations
+        - Monitoring
+        - PagerDuty
+        value: integration_monitoring_pagerduty
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a nearby Monitoring integration such as Datadog or Grafana.
+  - Selecting the parent category Monitoring (non-leaf).
+  - Failing to scroll and leaving selection empty.
+  expected_interaction_path: Open Integration → expand Integrations → expand Monitoring → scroll within popover until PagerDuty visible → click PagerDuty.
+  notes: If virtualization is enabled, ensure the checker uses selectedItems state rather than DOM querying for the clicked row.
+- id: tree_select-mui-T09
+  name: Match highlighted data source (dark theme)
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popover + MUI X SimpleTreeView + Reference card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Data source" tree selector, select the same item that is highlighted in the "Reference" card. The task will finish automatically when done.
+  ui_copy: 'Data source: Match the highlighted item in the Reference card.'
+  setup_description: |-
+    - Theme: dark.
+    - Layout: isolated_card centered titled "Connect a data source".
+    - Target component: composite TreeSelect labeled "Data source"; empty on load.
+    - Visual guidance: a small "Reference" card shows a static screenshot-style image of the tree with one leaf highlighted. The highlighted target corresponds to "Warehouses → Snowflake".
+    - Tree data:
+      - Warehouses → (BigQuery, Snowflake, Redshift)
+      - Databases → (Postgres, MySQL)
+      - Files → (CSV, Parquet)
+    - No search box; the tree is short but includes similar warehouse options.
+    - Feedback: selecting a leaf closes the popover and writes the chosen label in the TextField.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Visual-only specification and dark theme increase interpretation and target acquisition difficulty, even though the tree itself is small.
+  success_trigger:
+    human_readable:
+    - The Data source selection matches the node highlighted in the Reference card.
+    - Canonical target is path [Warehouses, Snowflake].
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        selection_mode: single
+        reference_id: reference-card-highlight-1
+        path:
+        - Warehouses
+        - Snowflake
+        value: ds_warehouses_snowflake
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting BigQuery or Redshift instead of Snowflake.
+  - Selecting any non-warehouse category such as Postgres.
+  - Leaving selection empty.
+  expected_interaction_path: Inspect Reference card → open Data source popover → expand Warehouses if needed → click Snowflake leaf.
+  notes: Keep the reference image stable across runs (same highlight style) so visual guidance is consistent for pixel-based agents.
+- id: tree_select-mui-T10
+  name: 'Table cell: set escalation path and Apply'
+  canonical_type: tree_select
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Table cell editor (TextField) + Popover + MUI X RichTreeView + Apply button'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the "Escalation path" table cell, open the tree selector, choose "On-call / Platform / Database", and click "Apply" to commit. The task will finish automatically when done.
+  ui_copy: 'Escalation path (row 1): Set to On-call → Platform → Database (Apply required).'
+  setup_description: |-
+    - Layout: a small dashboard table (layout=table_cell). The first row is "Database latency" and has an editable cell labeled "Escalation path".
+    - Target component: the cell contains a composite TreeSelect:
+      - When the cell is focused, it shows a compact MUI TextField as the editor.
+      - Clicking the editor opens a MUI Popover with a `RichTreeView`.
+      - The bottom of the popover has two buttons: "Apply" and "Cancel". Selection is only committed to the cell when "Apply" is clicked.
+    - Tree data (on-call routing):
+      - On-call
+        - Platform → (Database, Networking, Observability)
+        - Product → (Payments, Checkout)
+      - Support
+    - Initial state: the cell currently shows "On-call / Platform / Observability".
+    - Clutter (medium): the table has 4 columns and there are other editable cells, but only this one TreeSelect determines success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Nested interaction in a table-cell editor plus an explicit Apply step increases layering and feedback dynamics; mistakes require reopening the editor to correct.
+  success_trigger:
+    human_readable:
+    - The Escalation path editor's committed value equals leaf path [On-call, Platform, Database].
+    - The popover "Apply" action has been executed (value committed, not just highlighted).
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - On-call
+        - Platform
+        - Database
+        value: route_oncall_platform_database
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Database in the tree but closing the popover without clicking Apply.
+  - Clicking Cancel.
+  - Leaving the original value (Observability) committed.
+  - Changing a different row or column's value.
+  expected_interaction_path: Click the Escalation path cell → open popover → navigate On-call → Platform → click Database → click Apply → verify cell text updates.
+  notes: 'Checker should read the committed cell value (not transient TreeView focus). Instrumentation: expose a committed-value attribute on the editor root after Apply.'
+- id: tree_select-mantine-T01
+  name: Pick src/components (basic composite)
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the "Path" tree selector, choose "repo / src / components". The task will finish automatically when done.
+  ui_copy: 'Path: Select repo → src → components.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Open file".
+    - Implementation: composite TreeSelect built from:
+      - a Mantine TextInput trigger labeled "Path",
+      - a Mantine Popover dropdown,
+      - a Mantine `Tree` component inside the popover to render hierarchical paths.
+    - Initial state: no path selected; placeholder "Select a path" is shown.
+    - Tree data (file tree):
+      - repo
+        - src → (components, hooks, pages)
+        - package.json
+        - README.md
+    - Behavior: clicking a leaf node selects it and closes the popover; the TextInput displays the selected path as text.
+    - No search input and no checkboxes; no other interactive elements.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Basic open-and-select flow in a small hierarchy; the chosen value is clearly shown in the TextInput after selection.
+  success_trigger:
+    human_readable:
+    - The Path tree selector committed selection equals leaf path [repo, src, components].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - repo
+        - src
+        - components
+        value: repo/src/components
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "hooks" or "pages" instead of "components".
+  - Selecting an intermediate node like "src".
+  - Leaving the field empty.
+  expected_interaction_path: Click Path TextInput → expand repo → expand src → click components.
+  notes: Mantine Tree uses node `value` as unique identifier; adapter should map selected node value to canonical path.
+- id: tree_select-mantine-T02
+  name: Open folder popover
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Folder" tree selector so the folder tree is visible. Do not select any folder. The task will finish automatically when done.
+  ui_copy: 'Folder: Open dropdown (no selection).'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Attach file".
+    - Target component: composite TreeSelect labeled "Folder":
+      - Trigger: Mantine TextInput with a chevron icon.
+      - Dropdown: Mantine Popover containing a Tree.
+    - Initial state: Folder is empty.
+    - Tree data:
+      - Inbox
+      - Shared → (Design, Engineering)
+      - Archive
+    - No search, no checkboxes, no Apply button.
+    - The card contains only one other element: a static hint text; no other inputs.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires opening the popover; no selection or navigation is required.
+  success_trigger:
+    human_readable:
+    - The Folder tree selector popover is open and the Tree is visible.
+    canonical_predicate:
+      predicate_type: overlay_open
+      target_state:
+        overlay_open: true
+        component: tree_select
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the popover closed.
+  - Selecting a folder (which may close the popover).
+  expected_interaction_path: Click Folder TextInput/chevron → verify the tree dropdown is visible.
+  notes: Checker can detect popover open by presence of Popover.Dropdown with role='dialog' or by visibility of the Tree root.
+- id: tree_select-mantine-T03
+  name: Clear selected path
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the "Location" tree selector so it shows no selection. The task will finish automatically when done.
+  ui_copy: 'Location: (currently set) Clear it so it is empty.'
+  setup_description: |-
+    - Layout: isolated_card centered titled "New shortcut".
+    - Target component: composite TreeSelect labeled "Location".
+    - Initial state: Location is pre-filled with "Shared / Design" (shown as text inside the TextInput).
+    - Configuration: when a value is present, a clear (×) icon button is shown in the TextInput right section. Clicking it resets the selection to empty and restores the placeholder.
+    - The Tree popover exists but is not necessary for this task.
+    - No other interactive elements are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single clear action with immediate observable state change in the TextInput.
+  success_trigger:
+    human_readable:
+    - The Location tree selector has an empty committed selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection_mode: single
+        value: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different location instead of clearing.
+  - Leaving the original selection in place.
+  expected_interaction_path: Click the clear (×) control inside the Location input → verify placeholder/empty value.
+  notes: Adapter should treat empty selection as null/None regardless of whether the internal state uses '' or undefined.
+- id: tree_select-mantine-T04
+  name: Select Laptops policy (deep path, top-left)
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the "Policy" tree selector, select "Handbook / IT / Devices / Laptops". The task will finish automatically when done.
+  ui_copy: 'Policy: Choose Handbook → IT → Devices → Laptops.'
+  setup_description: |-
+    - Layout: isolated_card anchored near the top-left of the viewport (non-center placement).
+    - Target component: composite TreeSelect labeled "Policy"; initially empty.
+    - Popover contents: Mantine Tree (no search input).
+    - Tree data (depth=4):
+      - Handbook
+        - IT
+          - Devices → (Laptops, Phones)
+          - Accounts → (SSO, Passwords)
+        - Security
+          - Access → (VPN, SSH keys)
+    - Behavior: expand nodes by clicking the chevron/caret; select the leaf "Laptops" to commit and close the popover.
+    - Clutter: none besides a helper text line under the input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Deeper hierarchical navigation plus non-central placement increases acquisition effort; otherwise the tree is moderately sized and labels are clear.
+  success_trigger:
+    human_readable:
+    - The Policy tree selector committed selection equals leaf path [Handbook, IT, Devices, Laptops].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Handbook
+        - IT
+        - Devices
+        - Laptops
+        value: kb_handbook_it_devices_laptops
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "Phones" or any other leaf.
+  - Selecting an intermediate node like "Devices".
+  - Leaving the field empty.
+  expected_interaction_path: Open Policy popover → expand Handbook → IT → Devices → click Laptops.
+  notes: Checker can map Mantine Tree node values (unique strings) back to canonical breadcrumb paths using the known data structure.
+- id: tree_select-mantine-T05
+  name: Select three sync folders (checkboxes)
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree (checked state with checkboxes)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Folders to sync" tree selector, select exactly these folders: "Sync / Photos / 2024", "Sync / Docs / Taxes", and "Sync / Music / Playlists". The task will finish automatically when done.'
+  ui_copy: 'Folders to sync: Pick Photos/2024, Docs/Taxes, Music/Playlists (exactly).'
+  setup_description: |-
+    - Layout: form_section titled "Sync settings" with a few additional controls (low clutter).
+    - Target component: composite TreeSelect labeled "Folders to sync" using a checkbox-style Tree:
+      - Each node row shows a checkbox indicator; checking a leaf adds it to the selected set.
+      - Parent nodes are expandable and can show indeterminate state if some children are checked.
+    - Tree data:
+      - Sync
+        - Photos → (2023, 2024, 2025)
+        - Docs → (Invoices, Taxes, Notes)
+        - Music → (Albums, Playlists)
+    - Initial state: nothing checked/selected.
+    - Clutter (low): the section also contains a "Sync over Wi‑Fi only" toggle and a read-only status line; they do not affect success.
+    - Feedback: selected leaves appear as pills/tags under the input; no Apply button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Exact-set multi-selection with checkboxes requires care to avoid extra leaves; indeterminate parent states can confuse partial selections.
+  success_trigger:
+    human_readable:
+    - Folders to sync selected set equals {Sync/Photos/2024, Sync/Docs/Taxes, Sync/Music/Playlists}.
+    - No other folders are checked/selected.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selection_mode: multiple
+        paths:
+        - - Sync
+          - Photos
+          - '2024'
+        - - Sync
+          - Docs
+          - Taxes
+        - - Sync
+          - Music
+          - Playlists
+        values:
+        - sync_photos_2024
+        - sync_docs_taxes
+        - sync_music_playlists
+        order_invariant: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Photos/2023 or Docs/Invoices in addition to the required three.
+  - Selecting only one or two of the required leaves.
+  - Checking the parent "Photos" (which may check multiple children) leading to extra selections.
+  expected_interaction_path: Open Folders to sync → expand Sync → expand Photos/Docs/Music as needed → check the three required leaves → verify exactly three selected pills.
+  notes: Checker should accept only leaf node values (not parent nodes) and enforce exact set equality.
+- id: tree_select-mantine-T06
+  name: Billing category from reference chip (2 instances, mixed)
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree (two instances) + reference chips'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Billing category" tree selector, select the category shown in the green reference chip labeled "FIN‑OPS" (Finance → Operations). The task will finish automatically when done.
+  ui_copy: 'Billing category: Match reference chip FIN‑OPS (Finance → Operations).'
+  setup_description: |-
+    - Layout: isolated_card centered titled "Chargeback rules".
+    - Target components: TWO composite TreeSelects with similar styling:
+      1) "Shipping category" (pre-filled with "Logistics / Shipping")
+      2) "Billing category" (empty)  ← TARGET
+    - Both TreeSelects share the same category tree:
+      - Finance → (Operations, Payroll, Taxes)
+      - Logistics → (Shipping, Warehousing)
+      - IT → (Devices, Accounts)
+    - Mixed guidance:
+      - A small "Reference" row above the fields shows two colored chips:
+        - Gray chip: "SHIP" (already matches Shipping category)
+        - Green chip: "FIN‑OPS" with a tiny folder icon and a printed breadcrumb "Finance → Operations"  ← target spec
+    - Interaction: open the Billing category popover and select the Finance/Operations leaf to commit.
+    - No other interactive elements; no Apply button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires mapping a mixed (chip + breadcrumb) reference to the correct tree leaf and disambiguating between two similar instances.
+  success_trigger:
+    human_readable:
+    - The TreeSelect labeled "Billing category" matches the reference chip FIN‑OPS.
+    - Canonical target is path [Finance, Operations].
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        selection_mode: single
+        reference_id: ref-chip-fin-ops
+        path:
+        - Finance
+        - Operations
+        value: cat_finance_operations
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing category
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Shipping category instead of Billing category.
+  - Selecting Finance/Payroll or Finance/Taxes instead of Operations.
+  - Leaving Billing category empty.
+  expected_interaction_path: Read the green FIN‑OPS chip → open Billing category → expand Finance → click Operations.
+  notes: Checker should use instance label to bind state. The reference chip itself is not checked; it only provides the target mapping used by the task generator.
+- id: tree_select-mantine-T07
+  name: 'Compact search: select Czechia'
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree + search filter input'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the "Country" tree selector, search for and select "Countries / Europe / Czechia". The task will finish automatically when done.
+  ui_copy: 'Country: Select Countries → Europe → Czechia.'
+  setup_description: |-
+    - Spacing/scale: compact spacing with small-size inputs and denser dropdown rows.
+    - Layout: isolated_card centered titled "Shipping address".
+    - Target component: composite TreeSelect labeled "Country"; starts empty.
+    - Popover contents:
+      1) a small search input labeled "Search countries",
+      2) a Mantine Tree showing regions and countries (≈60 leaves).
+    - Tree data (excerpt):
+      - Countries
+        - Europe → (Czechia, Croatia, Cyprus, …)
+        - Americas → (Canada, Chile, …)
+        - Asia → (China, Chilean Spanish is NOT present; distractor is only by similar prefix)
+    - Behavior: typing filters visible nodes; user then clicks the Czechia leaf to commit and close the popover.
+    - No Apply button; selection commits immediately.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Compact/small rendering reduces target sizes, and many similar country names increase interference even with search.
+  success_trigger:
+    human_readable:
+    - Country committed selection equals leaf path [Countries, Europe, Czechia].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Countries
+        - Europe
+        - Czechia
+        value: country_europe_cz
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Croatia, Cyprus, or any other similar 'C' country.
+  - Typing in search without selecting (leaving empty).
+  - Selecting the parent region Europe instead of the leaf.
+  expected_interaction_path: Open Country → type "Czech" in Search countries → click Czechia leaf → verify TextInput updates.
+  notes: If filtering keeps parents visible, the checker must still validate the final committed selected leaf value.
+- id: tree_select-mantine-T08
+  name: 'Dark theme: expand repo/src (no selection)'
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree (expand chevrons)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the "Repository" tree selector and expand "repo" and then "src" so that "pages" is visible. Do not select any item. The task will finish automatically when done.
+  ui_copy: 'Repository: Expand repo → src (no selection).'
+  setup_description: |-
+    - Theme: dark.
+    - Layout: isolated_card centered titled "Browse repository".
+    - Target component: composite TreeSelect labeled "Repository"; empty on load.
+    - Popover contents: Mantine Tree with explicit expand/collapse chevrons for nodes with children.
+      - Clicking the chevron expands/collapses; clicking the label selects (and would close the popover), so the task forces careful targeting of the chevrons.
+    - Tree data:
+      - repo
+        - src → (components, hooks, pages)
+        - package.json
+    - Initial state: collapsed; popover closed.
+    - Feedback: expanded nodes reveal children in the tree; selection should remain empty.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: In dark theme, small expand chevrons must be clicked precisely without selecting; success depends on expansion state rather than a final selected value.
+  success_trigger:
+    human_readable:
+    - The Repository popover is open.
+    - Expanded nodes include repo and repo/src, making the child label "pages" visible.
+    canonical_predicate:
+      predicate_type: expanded_paths_include
+      target_state:
+        overlay_open: true
+        expanded_paths:
+        - - repo
+        - - repo
+          - src
+        min_visible_children:
+        - pages
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any node (which may close the popover).
+  - Expanding only repo but not src.
+  - Leaving the popover closed.
+  expected_interaction_path: Open Repository → click chevron next to repo → click chevron next to src → confirm pages appears.
+  notes: Checker can read Mantine `useTree` expandedState or infer from DOM attributes; ensure popover stays open for evaluation.
+- id: tree_select-mantine-T09
+  name: Scroll to find ARIA topic
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree (scrollable dropdown)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the "Topic" tree selector, select "Topics / Accessibility / ARIA". The task will finish automatically when done.
+  ui_copy: 'Topic: Choose Topics → Accessibility → ARIA.'
+  setup_description: |-
+    - Layout/placement: isolated_card anchored near the bottom-right of the viewport.
+    - Target component: composite TreeSelect labeled "Topic"; empty on load.
+    - Popover contents: a scrollable dropdown container (fixed height) that wraps a Mantine Tree.
+    - Tree data (large):
+      - Topics
+        - Accessibility (≈20 leaves: ARIA, Contrast, Focus order, Keyboard nav, Screen readers, …)
+        - Performance (≈25 leaves)
+        - Styling (≈25 leaves)
+        - Networking (≈20 leaves)
+    - Search is disabled. To reach some Accessibility leaves, the user may need to scroll within the dropdown after expanding Topics and Accessibility.
+    - Feedback: clicking ARIA commits selection and closes the popover; the TextInput shows the selected label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Large option set with required scrolling inside a constrained popover increases interference and makes the target harder to acquire.
+  success_trigger:
+    human_readable:
+    - Topic committed selection equals leaf path [Topics, Accessibility, ARIA].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selection_mode: single
+        path:
+        - Topics
+        - Accessibility
+        - ARIA
+        value: topic_accessibility_aria
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a nearby Accessibility leaf such as "Keyboard nav".
+  - Selecting the parent node Accessibility or Topics.
+  - Leaving selection empty.
+  expected_interaction_path: Open Topic → expand Topics → expand Accessibility → scroll dropdown if needed → click ARIA → verify committed value.
+  notes: For scroll-heavy cases, ensure the dropdown container uses a stable selector/test id so scroll events can be scoped to it (not the page).
+- id: tree_select-mantine-T10
+  name: 'Dashboard: match alert channel (3 instances, visual)'
+  canonical_type: tree_select
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput + Popover + Tree (3 instances) + Reference card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Secondary channel" tree selector, select the same channel that is highlighted in the "Reference" card. The task will finish automatically when done.
+  ui_copy: 'Secondary channel: Match the highlighted channel in the Reference card.'
+  setup_description: |-
+    - Layout: dashboard with several widgets (high clutter): a small chart, a recent alerts table, filter chips, and a sidebar.
+    - Target components: THREE composite TreeSelect instances grouped in a "Notification channels" widget:
+      1) "Primary channel" (pre-filled with "Email / On-call list")
+      2) "Secondary channel" (empty)  ← TARGET
+      3) "Tertiary channel" (pre-filled with "Chat / #general")
+    - All three instances share the same channel tree:
+      - Chat → (#general, #incidents, #releases)
+      - Email → (On-call list, Security list)
+      - PagerDuty → (Critical, Non-critical)
+    - Visual guidance: a "Reference" card shows a static screenshot-like image of the channel tree with ONE leaf highlighted. The highlighted leaf corresponds to "Chat → #incidents".
+    - Interaction: open the Secondary channel popover and select the matching leaf to commit.
+    - No Apply button; committing closes the popover and writes the selection text into the Secondary channel input.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: High clutter plus three similar instances creates heavy disambiguation load; visual-only target specification requires interpreting the reference highlight and selecting the correct instance.
+  success_trigger:
+    human_readable:
+    - The TreeSelect labeled "Secondary channel" matches the node highlighted in the Reference card.
+    - 'Canonical target is path [Chat, #incidents].'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        selection_mode: single
+        reference_id: reference-card-highlight-1
+        path:
+        - Chat
+        - '#incidents'
+        value: channel_chat_incidents
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary channel
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Primary or Tertiary channel to the target while leaving Secondary unchanged.
+  - Selecting "#general" or "#releases" instead of "#incidents".
+  - Interacting with dashboard filters/tables without setting Secondary channel.
+  - Leaving Secondary channel empty.
+  expected_interaction_path: 'Find the Notification channels widget → inspect Reference card highlight → open Secondary channel selector → expand Chat → click #incidents.'
+  notes: 'Instrumentation: each instance should expose data-testid derived from its label. The checker should validate only Secondary channel''s committed value.'

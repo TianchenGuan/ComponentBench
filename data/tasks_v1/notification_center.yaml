@@ -1,0 +1,2018 @@
+- id: notification_center-antd-T01
+  name: Open notifications drawer
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Badge + Button (icon) + Drawer + List (notification rows)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Click the bell icon to open the Notification Center drawer. The task will finish automatically when done.
+  ui_copy: Open the Notification Center (bell).
+  setup_description: |-
+    Baseline isolated card centered in the viewport. At the top of the card is a small header row with a bell icon button labeled "Notifications".
+    The bell is wrapped in an Ant Design Badge showing the current unread count ("3"). No other badges on the page show a number.
+
+    The Notification Center itself is not visible until the bell is activated: clicking the bell opens an Ant Design Drawer that slides in from the right.
+    The drawer title is "Notification Center" and contains a scrollable list of notification rows (titles + timestamps), but the task only requires opening it.
+
+    Distractors: a non-functional "Help" link in the card footer and a "Messages" icon button (no badge) next to the bell. These do not open the drawer.
+    Feedback: the drawer opening animation is immediate; there is no confirmation button for opening/closing.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single obvious bell target with a numeric badge; success is simply the drawer-open state with no nested steps or confirmations.
+  success_trigger:
+    human_readable:
+    - The Notification Center drawer for the only instance is open (visible and interactive).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        panel_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking the 'Messages' icon or any other control without opening the Notification Center drawer.
+  - Opening some other overlay (e.g., a generic help modal) while the Notification Center drawer remains closed.
+  expected_interaction_path:
+  - Click the bell icon with the unread badge.
+  - Wait for the drawer to slide in.
+  notes: 'Composite implementation: bell+Badge opens a Drawer containing a notification List. Instrumentation suggestion: data-testid on bell button (notif-bell-primary) and drawer root (notif-drawer-primary) with an aria-label ''Notification Center''.'
+- id: notification_center-antd-T02
+  name: Show only unread notifications
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Tabs + List (notification rows) inside a Card'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Notification Center card, switch to the Unread tab so only unread notifications are shown. The task will finish automatically when done.
+  ui_copy: 'Notification Center: switch to Unread.'
+  setup_description: |-
+    Baseline isolated card centered in the viewport. The Notification Center is rendered inline (no drawer in this task): a card titled "Notification Center"
+    with Tabs along the top: "All", "Unread", and "Archived". The "All" tab is selected initially.
+
+    The list below shows 8 notifications; unread items have a blue dot indicator on the left and also contribute to the unread badge count ("3") shown in the card title.
+    Switching to the "Unread" tab filters the list to only unread items and updates the tab underline/active style.
+
+    Distractors: below the card there is an unrelated "Activity Log" table and a "Refresh" button; neither affects the notification list.
+    Feedback: tab switch is immediate and does not require an Apply/OK button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A single tab change with clear visual feedback (active tab styling and filtered list); no overlay layers or disambiguation.
+  success_trigger:
+    human_readable:
+    - The active Notification Center view/tab is set to 'Unread'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_view: Unread
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Remaining on the 'All' or 'Archived' tab.
+  - Filtering the list by other controls (e.g., search) without selecting the 'Unread' tab.
+  expected_interaction_path:
+  - Click the 'Unread' tab in the Notification Center.
+  - Verify the Unread tab becomes active.
+  notes: Checker can read active tab value via data-testid (notif-tab-unread) or aria-selected on tab roles.
+- id: notification_center-antd-T03
+  name: Mark a single notification as read
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: List + Button/Icon actions (mark read)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Notification Center, mark the notification titled 'Build completed' as read. The task will finish automatically when done.
+  ui_copy: Mark 'Build completed' as read.
+  setup_description: |-
+    Baseline isolated card centered in the viewport with an inline Notification Center (no drawer).
+    The list shows 6 notifications with left-side status dots: unread items have a blue dot, read items have no dot.
+
+    The notification titled "Build completed" appears near the top of the list and is currently unread (blue dot shown).
+    On the right side of each row is a small icon-only action button with tooltip "Mark as read" (check icon) when the row is unread;
+    when the row becomes read, the action changes to "Mark as unread".
+
+    Distractors: two other notifications have similar wording ("Build started", "Build queued") but only "Build completed" should be changed.
+    Feedback: when toggled, the blue dot disappears and the unread badge count in the card header decreases by 1.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires selecting the correct row among similar titles and using a small per-row action, but the read/unread state is strongly observable.
+  success_trigger:
+    human_readable:
+    - Notification 'build_completed' is in the read state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          build_completed:
+            read: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Marking 'Build started' or 'Build queued' as read instead of 'Build completed'.
+  - Opening the notification details without changing its read/unread state.
+  expected_interaction_path:
+  - Locate the row with title 'Build completed'.
+  - Click its 'Mark as read' action icon.
+  - Confirm the unread dot disappears.
+  notes: 'Instrumentation: each row should expose a stable id (data-notif-id=''build_completed'') and the read state (e.g., aria-checked on a toggle or data-read=''true/false'').'
+- id: notification_center-antd-T04
+  name: Reset notification filters
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Input (Search) + Select (Type filter) + Button (Reset)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Notification Center so it shows All notifications with an empty search box. The task will finish automatically when done.
+  ui_copy: 'Reset filters: All + empty search.'
+  setup_description: |-
+    Baseline isolated card centered in the viewport with an inline Notification Center.
+    Above the list is a small filter bar:
+      - a Search input labeled "Search notifications"
+      - a Type Select labeled "Type" with options All, Info, Warning, Error, Success
+      - a text button labeled "Reset filters"
+
+    Initial state is intentionally non-default:
+      - the search input contains the text "invoice"
+      - the Type Select is set to "Error"
+      - the list is filtered down to 2 items that match both constraints
+
+    Clicking "Reset filters" clears the search input back to empty and sets Type back to "All", restoring the full list.
+    Distractors: elsewhere on the page (below the card) there is an unrelated "Reset layout" button for the dashboard; it must not be used.
+    Feedback: the list count increases and the filter chips/inputs return to default immediately; no Apply button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A single visible 'Reset filters' control restores default state with immediate feedback; no multi-instance ambiguity.
+  success_trigger:
+    human_readable:
+    - Notification Center search query is empty.
+    - Notification Center type filter is set to 'All'.
+    - Active view/tab is 'All'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        search_query: ''
+        filters:
+          type: All
+        active_view: All
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clearing only the search box but leaving Type set to 'Error'.
+  - Setting Type to 'All' but leaving 'invoice' in the search box.
+  - Using the unrelated 'Reset layout' control outside the Notification Center.
+  expected_interaction_path:
+  - Click 'Reset filters' in the Notification Center filter bar.
+  - Verify search becomes empty and Type shows 'All'.
+  notes: Checker can read controlled input value for search and selected option for Type. Provide data-testid for reset button (notif-reset).
+- id: notification_center-antd-T05
+  name: Search and open a specific invoice notification
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Badge + Drawer + Input.Search + List (expandable rows)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'Open the Notification Center, search for ''Invoice #1842'', and open that notification''s details. The task will finish automatically when done.'
+  ui_copy: 'Find and open: Invoice #1842.'
+  setup_description: |-
+    Isolated card anchored near the top-right of the viewport (not centered). A bell icon with a Badge sits in the card header.
+    Clicking the bell opens a right-side Drawer titled "Notification Center".
+
+    Inside the drawer, a Search input (AntD Input.Search) is pinned at the top and the notification list is scrollable below it.
+    The list contains ~20 notifications with similar finance-related titles (e.g., "Invoice #1839", "Invoice #1840", "Invoice #1842 (overdue)").
+    Each row is expandable: clicking the row body opens an inline details panel beneath that row (showing a longer message and action buttons).
+
+    Initial state:
+      - Drawer is closed.
+      - Search box is empty.
+      - No rows are expanded.
+
+    The target notification has id 'invoice_1842' and the visible title text is exactly "Invoice #1842".
+    Distractors: "Invoice #1842 (overdue)" is a different notification id ('invoice_1842_overdue') and must NOT be opened.
+    Feedback: when a row is expanded, its details section appears and the row shows an "expanded" chevron state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires opening a drawer, using search, and disambiguating between very similar titles; expansion state is visible but list density is moderate.
+  success_trigger:
+    human_readable:
+    - Notification Center drawer is open.
+    - The notification with id 'invoice_1842' is expanded/opened in the list (details visible).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        panel_open: true
+        notification_states:
+          invoice_1842:
+            expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Expanding 'invoice_1842_overdue' instead of 'invoice_1842'.
+  - Typing in the search box but never opening/expanding the target notification.
+  - Opening the drawer but expanding a different notification.
+  expected_interaction_path:
+  - Click the bell badge to open the drawer.
+  - 'Type ''Invoice #1842'' into the search box (or scroll to it).'
+  - 'Click the ''Invoice #1842'' row to expand/open details.'
+  notes: Provide stable ids for rows (data-notif-id) and expose expanded state (aria-expanded) for checker.
+- id: notification_center-antd-T06
+  name: Bulk mark two notifications as read
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: List + Checkbox selection + Bulk action bar'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Notification Center, select 'Server maintenance' and 'Policy update' and mark them as read. The task will finish automatically when done.
+  ui_copy: Select two items and mark as read.
+  setup_description: |-
+    Compact spacing mode is enabled (tighter paddings and smaller row height) but the component is still in an isolated card at the center.
+    The Notification Center is inline (no drawer). Each notification row has:
+      - a checkbox on the left for multi-select
+      - a title and timestamp
+      - an unread dot if unread
+
+    Initial state:
+      - "Server maintenance" (id 'server_maintenance') is unread.
+      - "Policy update" (id 'policy_update') is unread.
+      - Several other unread items exist; some have similar IT/admin wording (e.g., "Server status update").
+      - No items are selected initially (checkboxes all unchecked).
+
+    When one or more items are selected, a sticky bulk action bar appears above the list with buttons:
+      - "Mark as read"
+      - "Archive"
+      - "Cancel selection"
+
+    The task requires selecting exactly those two target notifications (selection can include others temporarily, but final state must have them marked read).
+    Feedback: clicking "Mark as read" removes the unread dots for the selected items and decreases the unread badge count in the header.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Multi-select checkboxes in compact spacing increase click precision demands, and the bulk bar introduces an extra step with visible feedback.
+  success_trigger:
+    human_readable:
+    - Notification 'server_maintenance' is marked read.
+    - Notification 'policy_update' is marked read.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          server_maintenance:
+            read: true
+          policy_update:
+            read: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the two items but not clicking 'Mark as read' (they remain unread).
+  - Marking a similarly named notification (e.g., 'Server status update') as read instead of 'Server maintenance'.
+  - Marking only one of the two target notifications as read.
+  expected_interaction_path:
+  - Check the checkbox for 'Server maintenance'.
+  - Check the checkbox for 'Policy update'.
+  - Click 'Mark as read' in the bulk action bar.
+  notes: Checker should use stable ids (server_maintenance, policy_update) and read states; selection state itself should not be required for success.
+- id: notification_center-antd-T07
+  name: Filter Billing alerts to Errors
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Select (Type) + List inside two Notification Center instances'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Billing alerts Notification Center, set the Type filter to Error. The task will finish automatically when done.
+  ui_copy: 'Billing alerts: Type = Error.'
+  setup_description: |-
+    The page shows a form_section layout titled "Billing settings" with one inline Notification Center widget labeled "Billing alerts".
+    The rest of the section contains typical billing form fields (card nickname input, invoice email toggle, timezone select) that act as low clutter,
+    but none are required for success.
+
+    The Billing alerts Notification Center contains:
+      - a header with its label and an unread badge count
+      - a filter row with a Type Select (All/Info/Warning/Error/Success)
+      - a short list preview (5 items) under the filters
+
+    Initial state:
+      - Type = "All"
+      - The list contains mixed severities (some Error, some Warning).
+
+    Task intent: set the Type Select to "Error" so only error billing alerts remain visible.
+    Feedback: the selected option changes to "Error" and the list below filters immediately. No Apply/OK button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Dropdown selection inside a realistic billing form section; mild distraction from other form inputs, but only one Notification Center instance.
+  success_trigger:
+    human_readable:
+    - In the Billing alerts Notification Center, the Type filter is set to 'Error'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+          type: Error
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering by switching tabs (e.g., Unread) without setting Type to Error.
+  - Setting Type to Info/Warning/Success or leaving it on All.
+  - Changing unrelated billing form fields instead of the Type filter.
+  expected_interaction_path:
+  - Scroll to the 'Billing alerts' widget (if needed).
+  - Open the Type dropdown within 'Billing alerts'.
+  - Select 'Error'.
+  notes: 'Instrumentation: wrap each instance with data-testid notif-center-<instanceId> and label text; Type Select should be scoped to its instance subtree.'
+- id: notification_center-antd-T08
+  name: Clear all notifications with confirmation
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Badge + Drawer + Button (Clear all) + Modal.confirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Notification Center and clear all notifications. When prompted, confirm the action. The task will finish automatically when done.
+  ui_copy: Clear all notifications (confirm).
+  setup_description: |-
+    Dark theme is enabled (dark surfaces and light text). The page still uses an isolated card in the center with a bell icon + unread Badge.
+    Clicking the bell opens a right-side Notification Center Drawer.
+
+    In the drawer header, next to the title, there is a danger-styled text button labeled "Clear all".
+    Clicking "Clear all" opens a centered Ant Design confirmation modal with:
+      - title: "Clear all notifications?"
+      - body text warning that the action cannot be undone
+      - buttons: "Cancel" (default) and "Clear" (danger)
+
+    Initial state:
+      - The drawer is closed.
+      - The list contains 12 notifications (mix of read/unread).
+
+    The task requires completing the full clear flow, including pressing the modal's confirm button.
+    Feedback: after confirming, the list becomes empty and the unread badge updates to "0".
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires layered interaction (drawer + confirm modal) and a destructive-action confirmation; feedback involves list-empty state and badge update.
+  success_trigger:
+    human_readable:
+    - The Notification Center contains zero notifications after the clear operation.
+    - If a confirmation modal is shown, the confirm control is pressed (not Cancel).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        list_count: 0
+        unread_count: 0
+      tolerance: null
+      require_confirm: true
+      confirm_control: Clear
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking 'Clear all' but then clicking 'Cancel' in the confirmation modal.
+  - Closing the modal or drawer without clearing.
+  - Clearing only a filtered subset (e.g., clearing search results) while other notifications remain.
+  expected_interaction_path:
+  - Click the bell to open the drawer.
+  - Click 'Clear all' in the drawer header.
+  - Click 'Clear' in the confirmation modal.
+  notes: Checker should verify list_count/unread_count at the data model level. Confirm control can be identified by button text 'Clear' and modal role='dialog'.
+- id: notification_center-antd-T09
+  name: Match unread badge count to a reference
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Badge + List with per-row read/unread toggles'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Primary Notification Center, adjust notifications so the unread badge count matches the target shown in the reference preview (target unread count is 2). The task will finish automatically when done.
+  ui_copy: 'Primary: match the unread badge to the target preview (2).'
+  setup_description: |-
+    Two Notification Center widgets are displayed side-by-side in an isolated card layout:
+      - Left instance label: "Primary"
+      - Right instance label: "Secondary"
+
+    Each instance shows its own unread Badge in the header and a list of notifications with per-row read/unread toggle actions.
+    Above the Primary instance there is a small, non-interactive reference preview titled "Target for Primary".
+    The preview contains a static bell + badge showing the desired unread count (it shows the number 2).
+
+    Initial state:
+      - Primary unread badge shows "4" (4 unread items in its list).
+      - Secondary unread badge shows "1".
+      - Each Primary row has a "Mark as read"/"Mark as unread" icon action that toggles the row state immediately.
+
+    The goal is only to make the Primary unread badge equal the target preview number (2). The Secondary instance should be left unchanged.
+    Distractors: the two instances have similar layouts and both support read/unread toggles.
+    Feedback: toggling Primary items updates only the Primary badge number in the header immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: Exact aggregate unread-count target combined with two similar instances requires careful scoping and multiple small toggles, despite clear badge feedback.
+  success_trigger:
+    human_readable:
+    - In the Primary Notification Center instance, the unread badge count equals the reference target value (2).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        unread_count: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting the Secondary instance to 2 unread while Primary remains at a different count.
+  - Primary unread badge count ends at 1 or 3 (or any value other than 2).
+  - Interacting outside the Notification Center widgets without achieving the correct Primary unread count.
+  expected_interaction_path:
+  - Focus on the Primary widget.
+  - Compare its live badge number to the target preview.
+  - Toggle Primary notifications read/unread until the badge shows 2.
+  notes: Checker must scope unread_count to the Primary instance. Provide instance roots notif-center-primary and notif-center-secondary; compute unread_count per instance from notification model.
+- id: notification_center-antd-T10
+  name: Scroll to archive a specific security alert
+  canonical_type: notification_center
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Badge + Drawer + Virtualized List + per-row Archive action'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'Open the Notification Center and archive the notification titled ''Security alert: new login''. The task will finish automatically when done.'
+  ui_copy: 'Archive: Security alert: new login.'
+  setup_description: |-
+    The Notification Center launcher is anchored in the bottom-right corner of the viewport (not centered) and rendered at small scale (smaller icon and tighter hit targets).
+    A bell icon with a numeric Badge opens the Notification Center Drawer from the right.
+
+    Inside the drawer, the notification list is long (~50 items) and requires scrolling; virtualization may be enabled so only a subset of rows is in the DOM at once.
+    Each row has an icon-only "Archive" action (box/arrow icon) aligned to the far right.
+
+    The target row:
+      - visible title text: "Security alert: new login"
+      - canonical id: 'security_new_login'
+      - initially unread
+
+    Distractors:
+      - "Security alert: new device" (id 'security_new_device') appears near the top and should NOT be archived.
+      - Several other "Security alert: ..." rows exist.
+
+    Feedback: when the archive action is triggered, the target row is removed from the current list and the Archived tab count increases by 1.
+    No confirmation dialog is shown for single-item archive.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Small targets plus scrolling/virtualization and highly similar notification titles make locating the correct row and clicking the archive icon interaction-heavy.
+  success_trigger:
+    human_readable:
+    - Notification 'security_new_login' is archived (removed from active list and present in Archived).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          security_new_login:
+            archived: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Archiving 'security_new_device' instead of 'security_new_login'.
+  - Marking the target as read/unread but not archiving it.
+  - Scrolling the list but never triggering the archive action.
+  expected_interaction_path:
+  - Click the bottom-right bell icon to open the drawer.
+  - 'Scroll the list until ''Security alert: new login'' is visible.'
+  - Click the row's Archive action.
+  notes: For virtualization, checker should rely on underlying data model state rather than DOM presence. Provide action buttons with accessible names like 'Archive notification'.
+- id: notification_center-mui-T01
+  name: Open notification center drawer
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Badge + IconButton + Drawer + List (persistent notification inbox)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Click the bell icon to open the Notification Center drawer. The task will finish automatically when done.
+  ui_copy: Open the Notification Center.
+  setup_description: |-
+    Baseline isolated card centered in the viewport. In the header is a Material UI IconButton with a bell icon.
+    The bell is wrapped in an MUI Badge showing an unread count of 5.
+
+    Clicking the bell opens a right-anchored MUI Drawer titled "Notification Center".
+    The drawer contains a persistent inbox list that mirrors recent Snackbar/Alert messages (each row is styled like an Alert with an icon and severity color),
+    but for this task the only required action is to open the drawer.
+
+    Distractors: a second IconButton with a chat bubble icon (no badge) sits next to the bell and opens a dummy "Chat" drawer.
+    Feedback: drawer open state is immediately visible and does not require confirmation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single target IconButton with a numeric badge; success is purely the drawer-open state with clear feedback.
+  success_trigger:
+    human_readable:
+    - The Notification Center drawer for the only instance is open.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        panel_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the Chat drawer instead of the Notification Center drawer.
+  - Interacting with the page without opening any drawer.
+  expected_interaction_path:
+  - Click the bell IconButton with the badge.
+  notes: 'Composite implementation: persistent list of recent snackbar/alert notifications inside a Drawer. Use aria-label=''Notification Center'' on the bell button for reliable acquisition.'
+- id: notification_center-mui-T02
+  name: Mute pop-up snackbars
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Drawer + Switch (mute) + List'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Notification Center drawer, turn on 'Mute pop-up snackbars'. The task will finish automatically when done.
+  ui_copy: 'Turn on: Mute pop-up snackbars.'
+  setup_description: |-
+    Baseline isolated card centered in the viewport with the Notification Center Drawer already open on page load.
+    The drawer header shows the title "Notification Center".
+
+    Directly under the title is a settings row containing an MUI Switch labeled "Mute pop-up snackbars".
+    Initial state: the switch is OFF.
+
+    Below the setting is the notification inbox list (Alert-styled rows), but list items are irrelevant to this task.
+    Distractors: there is another switch labeled "Email me daily summaries" further down in the drawer; it must not be changed.
+    Feedback: toggling the switch updates its thumb position and shows helper text "Pop-ups are muted" under the setting.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: One labeled switch with immediate state feedback; minimal interference aside from a secondary unrelated switch.
+  success_trigger:
+    human_readable:
+    - Notification Center setting 'mute_popups' is enabled.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        settings:
+          mute_popups: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling 'Email me daily summaries' instead of 'Mute pop-up snackbars'.
+  - Leaving 'Mute pop-up snackbars' switched off.
+  expected_interaction_path:
+  - Locate the 'Mute pop-up snackbars' switch in the drawer header.
+  - Click the switch to turn it on.
+  notes: Checker can read switch state via input.checked or aria-checked on the switch role.
+- id: notification_center-mui-T03
+  name: Filter to Unread
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: ToggleButtonGroup or Chips for view filter'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Notification Center, set the view to Unread so only unread notifications are shown. The task will finish automatically when done.
+  ui_copy: 'View: Unread.'
+  setup_description: |-
+    Baseline isolated card centered in the viewport with the Notification Center rendered inline (no drawer).
+    At the top of the widget is a segmented control implemented with MUI ToggleButtonGroup (or selectable Chips) with three options:
+    "All", "Unread", "Archived". Initial selection is "All".
+
+    The list below contains a mix of read and unread notifications. Unread items show a filled dot indicator and contribute to the unread badge count.
+    Switching to "Unread" updates the selected styling of the segmented control and filters the list.
+
+    Distractors: a "Sort by" dropdown exists to the right of the segmented control, but it does not change the active view (All/Unread/Archived).
+    Feedback: the number of visible list items changes immediately, and the active selection highlight moves to "Unread".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single view selection with strong visual selection feedback; no overlays or confirmations.
+  success_trigger:
+    human_readable:
+    - The Notification Center active view is set to 'Unread'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_view: Unread
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting 'Archived' or leaving the view on 'All'.
+  - Changing sort order without setting view to 'Unread'.
+  expected_interaction_path:
+  - Click the 'Unread' option in the view selector.
+  notes: Expose active_view via data attribute or derived from aria-pressed/aria-selected on the toggle buttons.
+- id: notification_center-mui-T04
+  name: Search for a password reset alert and mark it read
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField (search) + List (Alert rows) + IconButton (mark read)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Notification Center, search for 'Password reset' and mark that notification as read. The task will finish automatically when done.
+  ui_copy: Search 'Password reset' and mark it read.
+  setup_description: |-
+    Compact spacing mode is enabled (smaller paddings and denser list). The Notification Center is an inline widget in an isolated card.
+    A search TextField labeled "Search notifications" sits above the list.
+
+    The list contains ~25 security-related notifications (styled like MUI Alerts). Several entries are similar:
+      - "Password reset requested" (id 'password_reset')  <-- target
+      - "Password changed" (id 'password_changed')
+      - "Password reset link expired" (id 'password_reset_expired')
+
+    Each row has a trailing icon-only action (a check icon) with accessible name "Mark as read" when the row is unread.
+    Initial state: 'password_reset' is unread.
+
+    Distractors: there is also a global page search box in the top nav (outside the component) that must not be used.
+    Feedback: when the target is marked read, its unread indicator disappears and the unread badge count decreases by 1.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Search helps narrow a dense list of similarly named security notifications; compact layout makes the per-row action harder to click precisely.
+  success_trigger:
+    human_readable:
+    - Notification 'password_reset' is marked read.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          password_reset:
+            read: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Marking 'password_changed' or 'password_reset_expired' as read instead of 'password_reset'.
+  - Typing the search query but not changing the read/unread state.
+  - Using the global page search instead of the Notification Center search field.
+  expected_interaction_path:
+  - Click into the Notification Center search field and type 'Password reset'.
+  - Locate the 'Password reset requested' row.
+  - Click its 'Mark as read' icon.
+  notes: Ensure search field has a component-scoped testid (notif-search) to distinguish from global search.
+- id: notification_center-mui-T05
+  name: Archive three selected notifications
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + Checkbox selection + Toolbar bulk actions'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: Select 'Trial expiring', 'Storage limit reached', and 'Weekly report ready' in the Notification Center and archive them. The task will finish automatically when done.
+  ui_copy: Select 3 notifications and archive.
+  setup_description: |-
+    Baseline isolated card with an inline Notification Center.
+    Each notification row has a left-side checkbox for multi-selection and an Alert-style body (icon + title).
+
+    Target notifications and ids:
+      - "Trial expiring" (id 'trial_expiring')
+      - "Storage limit reached" (id 'storage_limit')
+      - "Weekly report ready" (id 'weekly_report_ready')
+
+    Initial state:
+      - All three targets are in the All view (not archived).
+      - No items are selected.
+
+    When one or more checkboxes are selected, a sticky bulk action toolbar appears above the list with buttons:
+      - "Archive selected"
+      - "Mark as read"
+      - "Cancel"
+
+    Distractors: there is also a per-row overflow menu (⋮) offering "Archive" and "Delete" for single items; it is not required but could be used.
+    Feedback: archiving removes the selected items from the All list and increases the Archived count indicator.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Multi-item selection plus a bulk action step; targets are clearly titled but the checkbox + toolbar interaction adds complexity.
+  success_trigger:
+    human_readable:
+    - Notifications 'trial_expiring', 'storage_limit', and 'weekly_report_ready' are archived.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          trial_expiring:
+            archived: true
+          storage_limit:
+            archived: true
+          weekly_report_ready:
+            archived: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Archiving only one or two of the three target notifications.
+  - Selecting the three targets but not executing an archive action (they remain unarchived).
+  - Archiving a similarly named notification (e.g., 'Weekly report delayed') instead of 'Weekly report ready'.
+  expected_interaction_path:
+  - Check the boxes next to the three target rows.
+  - Click 'Archive selected' in the bulk toolbar.
+  notes: Archive state should be represented in the underlying model and exposed for checker, not inferred from DOM visibility alone.
+- id: notification_center-mui-T06
+  name: Expand details for a weekly report notification
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Accordion-style List items (expand/collapse)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Notification Center, open the details for the notification titled 'Weekly report ready'. The task will finish automatically when done.
+  ui_copy: 'Open details: Weekly report ready.'
+  setup_description: |-
+    Isolated Notification Center card anchored near the top-left of the viewport (not centered).
+    The list uses accordion behavior: each notification row can be expanded to reveal additional details (a longer message and two buttons).
+
+    Mixed guidance: on the right side of the page there is a small, non-interactive preview card titled "Target".
+    It visually shows the exact notification row to open (same icon + title text).
+
+    Target row:
+      - Title text: "Weekly report ready"
+      - Id: 'weekly_report_ready'
+      - Collapsed initially (details hidden)
+
+    There are other rows with similar wording such as "Weekly report scheduled" and "Weekly report failed".
+    The expansion affordance is either clicking the row header area or clicking a small chevron icon on the right.
+
+    Distractors: a separate "Reports" section in the page sidebar contains links like "Weekly report", but those links are outside the Notification Center.
+    Feedback: when expanded, the row shows its details region and the chevron rotates; the row has aria-expanded=true.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires triggering a small expansion affordance and matching the correct row among similar titles; a visual preview helps but adds an extra reference to compare.
+  success_trigger:
+    human_readable:
+    - Notification 'weekly_report_ready' is expanded (details visible).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          weekly_report_ready:
+            expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Expanding 'weekly_report_scheduled' or 'weekly_report_failed' instead of 'weekly_report_ready'.
+  - Opening links in the sidebar rather than expanding the notification row.
+  expected_interaction_path:
+  - Locate 'Weekly report ready' in the list.
+  - Click its row header or chevron to expand.
+  - Confirm details are visible.
+  notes: Checker can use aria-expanded on the row's accordion button or a dedicated expanded flag in component state.
+- id: notification_center-mui-T07
+  name: Set Do Not Disturb duration
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Select (duration) within Notification Center settings header'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In Notification Center settings, set Do Not Disturb to 30 minutes. The task will finish automatically when done.
+  ui_copy: 'Do Not Disturb: 30 minutes.'
+  setup_description: |-
+    The Notification Center appears inside a settings_panel layout titled "Alerts & Notifications".
+    The panel contains other settings (email alerts, mobile push toggles), but only the Notification Center subsection is relevant.
+
+    In the Notification Center header, there is a labeled Select control:
+      - Label: "Do Not Disturb"
+      - Options: Off, 15 minutes, 30 minutes, 1 hour, 2 hours
+      - Initial value: Off
+
+    Selecting a duration updates a helper chip that reads "Pop-ups paused for: <duration>".
+    Distractors: an unrelated Select in the same settings panel labeled "Digest frequency" (Daily/Weekly) is nearby.
+    Feedback: Do Not Disturb value changes immediately; there is no Save or Apply button for this setting in this task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: A straightforward scalar choice in a settings panel; mild interference from nearby similar controls but the target is clearly labeled.
+  success_trigger:
+    human_readable:
+    - Notification Center Do Not Disturb duration is set to 30 minutes.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        settings:
+          dnd_minutes: 30
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Do Not Disturb to 15 minutes, 1 hour, or leaving it Off.
+  - Changing 'Digest frequency' instead of Do Not Disturb.
+  - Selecting 30 minutes but then changing it back before finishing.
+  expected_interaction_path:
+  - Open the Do Not Disturb dropdown.
+  - Select '30 minutes'.
+  notes: Represent duration in canonical minutes for checker (0=Off, 15, 30, 60, 120).
+- id: notification_center-mui-T08
+  name: Clear all notifications in dark mode
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Drawer + Button (Clear all) + Dialog confirmation'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Clear all notifications in the Notification Center and confirm the dialog. The task will finish automatically when done.
+  ui_copy: Clear all notifications (confirm).
+  setup_description: |-
+    Dark theme is enabled (dark drawer surface). The Notification Center is accessed via a bell icon and opens as a right-anchored Drawer.
+
+    Inside the drawer header, there is a button labeled "Clear all".
+    Clicking it opens an MUI Dialog with:
+      - Title: "Clear notifications?"
+      - Buttons: "Cancel" and "Clear"
+
+    Initial state:
+      - Drawer is closed.
+      - The inbox contains 18 notifications.
+
+    The task requires completing the clear-all flow and confirming in the dialog (not canceling).
+    Feedback: after confirmation, the list becomes empty, unread badge becomes 0, and an informational Snackbar "Notifications cleared" briefly appears.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Layered overlay interactions (drawer + dialog) in dark mode plus destructive confirmation; feedback includes transient snackbar and persistent list-empty state.
+  success_trigger:
+    human_readable:
+    - Notification Center list count is 0 after clearing.
+    - The confirmation dialog's 'Clear' action is confirmed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        list_count: 0
+        unread_count: 0
+      tolerance: null
+      require_confirm: true
+      confirm_control: Clear
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking 'Clear all' but then clicking 'Cancel'.
+  - Clearing only the current filtered view while other notifications remain.
+  - Closing the drawer without clearing.
+  expected_interaction_path:
+  - Open the Notification Center drawer.
+  - Click 'Clear all'.
+  - In the dialog, click 'Clear'.
+  notes: Checker should ignore the transient snackbar; only the canonical list_count/unread_count matters.
+- id: notification_center-mui-T09
+  name: Match Team unread count to reference
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Two Notification Center instances (Personal/Team) with Badge counts'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Team Notification Center, adjust notifications so the unread badge count matches the target shown in the reference preview (target is 1 unread). The task will finish automatically when done.
+  ui_copy: 'Team: match target unread badge (1).'
+  setup_description: |-
+    Two Notification Center widgets are shown side-by-side in an isolated layout:
+      - Left: "Personal" Notification Center (instance label: Personal)
+      - Right: "Team" Notification Center (instance label: Team)  <-- target
+
+    Each instance has its own bell IconButton + Badge and its own inline list of notifications.
+    A small non-interactive "Target" preview sits above the Team instance, showing a badge with the number 1.
+
+    Initial state:
+      - Personal unread badge: 2
+      - Team unread badge: 3
+
+    Each notification row in the Team list has a trailing icon button to toggle read/unread.
+    The goal is ONLY to make the Team unread badge equal the target preview value (1). The Personal instance should be left unchanged.
+    Feedback: toggling Team items updates only the Team badge count immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: High disambiguation load from two similar instances plus an exact aggregate-count target; multiple action sequences are possible and require careful instance scoping.
+  success_trigger:
+    human_readable:
+    - In the Team Notification Center instance, the unread badge count equals 1.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        unread_count: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Team
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting the Personal instance to 1 unread while Team remains at a different count.
+  - Team unread badge ends at 0 or 2 (or any value other than 1).
+  - Opening drawers or dialogs without achieving the correct Team unread count.
+  expected_interaction_path:
+  - Focus on the Team widget (right).
+  - Toggle read/unread on Team notifications until its badge shows 1.
+  notes: Checker must scope unread_count to the Team instance. Provide instance root ids like notif-center-team and notif-center-personal.
+- id: notification_center-mui-T10
+  name: Archive the security alert identified by icon
+  canonical_type: notification_center
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Badge + Popover/Drawer + Scrollable List + Archive action'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the dashboard, open the Notification Center and archive the notification titled 'Security policy violation'. The task will finish automatically when done.
+  ui_copy: 'Archive: Security policy violation.'
+  setup_description: |-
+    The page is a dashboard with multiple cards (KPIs, charts, recent activity) creating medium clutter.
+    The Notification Center is presented as a dashboard card in the center column titled "Notifications" with a bell IconButton + Badge.
+
+    Clicking the bell opens an overlay titled "Notification Center" (Popover or temporary Drawer).
+    Inside is a long scrollable list (~40) of Alert-style notifications.
+
+    The target notification:
+      - id: 'security_policy_violation'
+      - visible title text includes exactly: "Security policy violation"
+      - located near the bottom of the list (requires scrolling)
+
+    Each row has an overflow menu (⋮) or an Archive icon button; archiving moves the item into the Archived view.
+    Distractors: multiple security-related rows exist, including "Security scan completed" and "Security policy review scheduled".
+    Feedback: after archiving, the target row disappears from the active list and appears under the Archived view; no confirm dialog.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Dashboard clutter plus a long scrolling list and small archive affordances make locating and acting on the correct security row interaction-heavy.
+  success_trigger:
+    human_readable:
+    - Notification 'security_policy_violation' is archived.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          security_policy_violation:
+            archived: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Archiving a different security-related notification instead of 'Security policy violation'.
+  - Marking the target as read/unread without archiving it.
+  - Opening the Notification Center but not performing any archive action.
+  expected_interaction_path:
+  - Locate the Notifications card in the dashboard and click its bell icon.
+  - Scroll the list until 'Security policy violation' is visible.
+  - Use Archive (or overflow menu → Archive) on that item.
+  notes: Keep the target id stable ('security_policy_violation') regardless of list virtualization; checker should read archive state from model.
+- id: notification_center-mantine-T01
+  name: Open notification center drawer
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Indicator + ActionIcon + Drawer + ScrollArea + Notification rows'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Click the bell icon to open the Notification Center drawer. The task will finish automatically when done.
+  ui_copy: Open the Notification Center.
+  setup_description: |-
+    Baseline isolated card centered in the viewport. The Notification Center launcher is a Mantine ActionIcon with a bell glyph.
+    The bell is wrapped in a Mantine Indicator showing an unread count of 4.
+
+    Clicking the bell opens a right-side Mantine Drawer titled "Notification Center".
+    Inside the drawer is a ScrollArea with Notification-styled rows (title, message preview, timestamp).
+    For this task, only opening the drawer is required.
+
+    Distractors: a second ActionIcon (gear) opens a settings drawer unrelated to notifications.
+    Feedback: drawer open state is immediate; no additional confirmation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single obvious bell control with unread indicator; success depends only on drawer-open state.
+  success_trigger:
+    human_readable:
+    - The Notification Center drawer for the only instance is open.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        panel_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the settings drawer instead of the Notification Center drawer.
+  - Interacting with list items while the Notification Center remains closed.
+  expected_interaction_path:
+  - Click the bell ActionIcon with the Indicator.
+  notes: Mantine notifications system is typically rendered once; here it's composed into a persistent list in a Drawer for benchmarking. Use data-testid notif-drawer-primary.
+- id: notification_center-mantine-T02
+  name: Switch to Unread tab
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Tabs + ScrollArea list'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Notification Center, switch to the Unread tab. The task will finish automatically when done.
+  ui_copy: 'Notification Center: Unread tab.'
+  setup_description: |-
+    Baseline isolated card centered in the viewport with an inline Notification Center (no drawer).
+    At the top are Mantine Tabs with labels: "All", "Unread", "Archived". Initial tab is "All".
+
+    The list below updates based on the active tab. Unread notifications have a dot indicator and bold title.
+    Switching to "Unread" should show only unread notifications.
+
+    Distractors: the card header also contains a "Refresh" button that reloads the list but does not change the active tab.
+    Feedback: the active tab indicator moves to "Unread" and list contents change instantly.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A simple tab selection with clear active styling and immediate filtering feedback.
+  success_trigger:
+    human_readable:
+    - The active Notification Center tab/view is 'Unread'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_view: Unread
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Staying on 'All' or switching to 'Archived'.
+  - Clicking 'Refresh' without changing the active tab.
+  expected_interaction_path:
+  - Click the 'Unread' tab.
+  notes: Checker can read Mantine Tabs value or aria-selected on the active tab.
+- id: notification_center-mantine-T03
+  name: Mark all notifications as read
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Button (Mark all as read) + Notification list'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Notification Center, click 'Mark all as read' so there are no unread notifications. The task will finish automatically when done.
+  ui_copy: Mark all as read.
+  setup_description: |-
+    Baseline isolated card centered in the viewport with an inline Notification Center.
+    The header shows an unread count indicator (3) and includes a button labeled "Mark all as read".
+
+    Initial state:
+      - 3 notifications are unread (dot indicator + bold title).
+      - Remaining notifications are already read.
+
+    Clicking "Mark all as read" updates all unread items to read in one action.
+    Distractors: a nearby "Mark visible as read" button exists but is disabled in this task; do not use it.
+    Feedback: unread dots disappear, titles stop being bold, and the unread indicator becomes 0.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single bulk action button with immediate, highly visible aggregate feedback (unread count goes to 0).
+  success_trigger:
+    human_readable:
+    - Unread count in the Notification Center is 0.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        unread_count: 0
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Marking only one notification as read while others remain unread.
+  - Clicking a disabled or unrelated control that does not change unread count.
+  expected_interaction_path:
+  - Click 'Mark all as read' in the Notification Center header.
+  notes: Checker should compute unread_count from model; optionally verify all notifications have read=true.
+- id: notification_center-mantine-T04
+  name: Search and open a project invite notification
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput (search) + Notification list with expandable details'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Notification Center, search for ''Invite to project: Nimbus'' and open that notification''s details. The task will finish automatically when done.'
+  ui_copy: 'Open details for Invite to project: Nimbus.'
+  setup_description: |-
+    The Notification Center card is anchored in the bottom-left of the viewport (not centered).
+    It includes a search TextInput labeled "Search notifications" above a scrollable list.
+
+    The list contains ~20 collaboration-related notifications with similar phrasing:
+      - "Invite to project: Nimbus" (id 'project_invite_nimbus')  <-- target
+      - "Invite to project: Atlas" (id 'project_invite_atlas')
+      - "Added you to project: Nimbus" (id 'project_added_nimbus')
+
+    Clicking a row expands it inline to show the full message and two buttons ("Accept" and "Decline").
+    Initial state: search is empty and no rows are expanded.
+
+    Distractors: the page footer contains an unrelated newsletter signup input; it should be ignored.
+    Feedback: when the target row is expanded, its details block becomes visible and aria-expanded becomes true.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires using search to disambiguate between similar invite-related notifications and opening the correct row's expandable details.
+  success_trigger:
+    human_readable:
+    - Notification 'project_invite_nimbus' is expanded/opened (details visible).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          project_invite_nimbus:
+            expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening 'project_invite_atlas' instead of 'project_invite_nimbus'.
+  - Typing into search but not expanding/opening the target notification.
+  - Clicking 'Accept'/'Decline' without opening the details (if buttons are not visible, details are not open).
+  expected_interaction_path:
+  - 'Type ''Invite to project: Nimbus'' into the Notification Center search field.'
+  - Click the matching row to expand details.
+  notes: To keep checking simple, treat 'expanded' as the success state; do not require clicking Accept/Decline for this task.
+- id: notification_center-mantine-T05
+  name: Hide read notifications
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Switch (Show read) + Notification list'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Notification Center, turn off 'Show read notifications' so read items are hidden. The task will finish automatically when done.
+  ui_copy: 'Turn off: Show read notifications.'
+  setup_description: |-
+    Compact spacing mode is enabled (dense controls and list).
+    The Notification Center is an inline card with a small settings strip at the top.
+
+    In the settings strip there is a switch labeled "Show read notifications".
+    Initial state: switch is ON, so both read and unread notifications are visible in the list.
+
+    The task is to turn the switch OFF.
+    Distractors: another switch labeled "Play sound" is next to it; it must not be changed.
+    Feedback: after turning off, read notifications disappear from the list; the switch visibly changes to the off position immediately.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A single labeled switch in a compact control row; moderate interference from a second switch but state feedback is immediate.
+  success_trigger:
+    human_readable:
+    - Notification Center setting 'show_read' is disabled.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        settings:
+          show_read: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling 'Play sound' instead of 'Show read notifications'.
+  - Leaving 'Show read notifications' on.
+  expected_interaction_path:
+  - Locate the 'Show read notifications' switch.
+  - Click it to turn it off.
+  notes: 'Checker reads switch checked state; optional: verify that visible list excludes read items, but primary is settings.show_read=false.'
+- id: notification_center-mantine-T06
+  name: Archive two selected items in Project notifications
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Two instances + Checkbox selection + Bulk ''Archive selected'' button'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Project Notification Center, select 'Comment mentioned you' and 'Merge request approved' and archive them. The task will finish automatically when done.
+  ui_copy: 'Project notifications: select 2 and archive.'
+  setup_description: |-
+    Two Notification Center instances are shown side-by-side in an isolated layout:
+      - Left instance label: "System"
+      - Right instance label: "Project"  <-- target
+
+    Each instance contains a short filter bar and a list where each row has a left-side checkbox.
+    When one or more items are selected, a bulk action row appears with a button labeled "Archive selected".
+
+    Target items are in the Project instance:
+      - "Comment mentioned you" (id 'comment_mention')
+      - "Merge request approved" (id 'mr_approved')
+
+    Initial state:
+      - Neither target is archived.
+      - No checkboxes selected.
+
+    Distractors: the System instance includes similarly titled items ("Comment reply", "Merge request opened"), and archiving in System must not affect success.
+    Feedback: archiving removes the selected items from the Project list and increments the Project Archived count.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two-instance disambiguation plus multi-select and a bulk action; titles are clear but the agent must operate in the correct instance.
+  success_trigger:
+    human_readable:
+    - In the 'Project' instance, notifications 'comment_mention' and 'mr_approved' are archived.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        notification_states:
+          comment_mention:
+            archived: true
+          mr_approved:
+            archived: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Project
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Archiving items in the System instance instead of Project.
+  - Archiving only one of the two target notifications.
+  - Selecting the two targets but not running the archive action.
+  expected_interaction_path:
+  - In the Project widget, check the boxes for the two target rows.
+  - Click 'Archive selected'.
+  notes: 'Instance scoping is critical: ensure each instance has a unique root id and the checker can query state per instance.'
+- id: notification_center-mantine-T07
+  name: Clear the archived notifications (confirm)
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Tabs (Archived) + Button (Clear archive) + Modal confirmation'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Notification Center, switch to Archived, and clear the archive. Confirm when prompted. The task will finish automatically when done.
+  ui_copy: 'Archived: clear archive (confirm).'
+  setup_description: "The Notification Center is embedded in a settings_panel titled \"Notifications\".\nThe widget includes Tabs: All / Unread / Archived.\n\nInitial state:\n  - Active tab is All.\n  - There are 6 archived notifications (archived_count = 6).\n\nIn the Archived tab header area there is a danger-styled button labeled \"Clear archive\".\nClicking it opens a centered Mantine Modal with:\n  - title: \"Clear archived notifications?\"\n  - buttons: \"Cancel\" and \"Clear archive\"\n\nThe task requires switching to the Archived tab, triggering the clear action, and confirming in the modal.\nFeedback: after confirming, the archived list becomes empty and an inline status text appears: \"No archived notifications.\" "
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires a multi-step flow (tab switch + destructive clear + modal confirm) with layered UI and recovery cost if canceled.
+  success_trigger:
+    human_readable:
+    - Archived count is 0 after clearing.
+    - If a confirmation modal appears, the confirm button ('Clear archive') is pressed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        archived_count: 0
+      tolerance: null
+      require_confirm: true
+      confirm_control: Clear archive
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking 'Clear archive' but then clicking 'Cancel'.
+  - Clearing only part of the archive (some archived items remain).
+  - Staying on All/Unread tabs and never performing the archive clear.
+  expected_interaction_path:
+  - Click the 'Archived' tab.
+  - Click 'Clear archive'.
+  - In the modal, click 'Clear archive'.
+  notes: Checker should evaluate archived_count from the model. Modal confirmation can be detected via role='dialog' and button label.
+- id: notification_center-mantine-T08
+  name: Pin notifications to match the reference
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Notification list + Pin (star) toggle + Pinned section'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Notification Center, pin notifications so the Pinned section matches the reference list shown in the preview. The task will finish automatically when done.
+  ui_copy: Match pinned notifications to the reference.
+  setup_description: |-
+    Baseline isolated card centered in the viewport with an inline Notification Center.
+    At the very top of the list is a "Pinned" section that shows pinned notifications (if any), followed by the main list.
+
+    Each notification row has a small star icon button that toggles its pinned state:
+      - empty star = not pinned
+      - filled star = pinned
+
+    On the right side of the page there is a non-interactive reference preview titled "Pinned target".
+    It shows the two notification titles that should be pinned (order does not matter):
+      - "Incident #321 acknowledged" (id 'incident_321')
+      - "SLA breach warning" (id 'sla_breach')
+
+    Initial state:
+      - One incorrect notification is pinned ('incident_320'), and 'incident_321' is not pinned yet.
+      - 'sla_breach' is present in the list but not pinned.
+
+    The goal is to make the pinned set exactly match the reference (pin the two target notifications and ensure any other pins are removed).
+    Feedback: toggling pin updates the star icon and moves the item into/out of the Pinned section immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires matching a reference set via multiple small pin toggles and ensuring extra pinned items are removed; feedback is visible but requires careful checking.
+  success_trigger:
+    human_readable:
+    - The pinned notification id set equals {'incident_321', 'sla_breach'} (no additional pinned items).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        pinned_ids:
+        - incident_321
+        - sla_breach
+      tolerance:
+        order_sensitive: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Pinning the correct two notifications but leaving an extra notification pinned.
+  - Pinning 'incident_320' instead of 'incident_321'.
+  - Only pinning one of the two reference notifications.
+  expected_interaction_path:
+  - Inspect the reference preview list of pinned targets.
+  - Find each target notification in the list and click its star icon to pin.
+  - Unpin any non-reference pinned notification (e.g., 'incident_320').
+  notes: Checker should compare pinned_ids as a set. Provide stable ids for pin toggles (notif-pin-<id>) and pinned state in the model.
+- id: notification_center-mantine-T09
+  name: Set Work notifications sort to Oldest first
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: 3 instances + Select (Sort order) control'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Work Notification Center, set the sort order to 'Oldest first'. The task will finish automatically when done.
+  ui_copy: 'Work notifications: sort = Oldest first.'
+  setup_description: |-
+    Three Notification Center instances are displayed in a row in the center of the page, each rendered at small scale:
+      - "Personal" (left)
+      - "Work" (middle)  <-- target
+      - "System" (right)
+
+    Each instance includes a compact header with:
+      - its label
+      - an unread count indicator
+      - a small Select control labeled "Sort" with options "Newest first" and "Oldest first"
+
+    Initial state:
+      - All three instances have Sort = "Newest first".
+
+    The task is to change ONLY the Work instance so its Sort becomes "Oldest first".
+    Distractors: each instance also has a "Filter" icon button that opens a small popover; it is not needed.
+    Feedback: the Work Sort control visibly shows "Oldest first" after selection, and the list order reverses within that instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Small-scale controls increase acquisition difficulty and there are three near-identical instances; the agent must scope the sort change to the Work widget only.
+  success_trigger:
+    human_readable:
+    - In the 'Work' Notification Center instance, sort_order is set to 'oldest'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_order: oldest
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Work
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing sort order in Personal or System instead of Work.
+  - Setting Work to 'Newest first' (no change) or leaving it unchanged.
+  - Opening the Filter popover without changing the Sort value.
+  expected_interaction_path:
+  - Locate the middle 'Work' widget.
+  - Open its Sort dropdown/select.
+  - Choose 'Oldest first'.
+  notes: Expose per-instance sort_order in canonical state. The checker should query sort_order within the Work instance root.
+- id: notification_center-mantine-T10
+  name: Set Do Not Disturb to 1 hour and apply
+  canonical_type: notification_center
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Select (DND duration) + Apply button within Notification Center settings'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Notification Center, set Do Not Disturb to 1 hour and click Apply. The task will finish automatically when done.
+  ui_copy: 'Do Not Disturb: 1 hour (Apply).'
+  setup_description: |-
+    Dark theme is enabled. The Notification Center is shown inline in an isolated card in the center.
+    At the top of the widget is a settings area titled "Quiet mode".
+
+    Controls in the settings area:
+      - A Select labeled "Do Not Disturb" with options: Off, 30 minutes, 1 hour, 2 hours
+      - Buttons at the bottom-right: "Apply" and "Cancel"
+
+    Initial state:
+      - Do Not Disturb is Off (applied value).
+
+    Interaction nuance:
+      - Changing the Select updates a "Pending changes" indicator, but does NOT affect the applied setting until "Apply" is pressed.
+
+    The task requires choosing "1 hour" and then clicking "Apply" to commit.
+    Distractors: the "Cancel" button clears the pending change and should not be used.
+    Feedback: after Apply, the pending indicator disappears and a small inline status text appears: "Quiet mode: 1 hour".
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires setting a scalar value and committing via Apply (feedback dynamics), with dark theme slightly reducing visual clarity of the pending/applied distinction.
+  success_trigger:
+    human_readable:
+    - Applied Do Not Disturb duration equals 60 minutes.
+    - If an Apply/Cancel footer is present, Apply is pressed to commit the change.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        settings:
+          dnd_minutes: 60
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting '1 hour' but not clicking Apply (pending change only).
+  - Clicking Cancel after selecting 1 hour (reverts to Off).
+  - Setting a different duration such as 30 minutes or 2 hours.
+  expected_interaction_path:
+  - Open the Do Not Disturb select.
+  - Choose '1 hour'.
+  - Click 'Apply'.
+  notes: Checker should read the applied value (settings.dnd_minutes) rather than the dropdown's current UI text if pending changes are supported.

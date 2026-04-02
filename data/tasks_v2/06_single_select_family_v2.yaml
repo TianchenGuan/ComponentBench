@@ -1,0 +1,3434 @@
+- id: select_custom_single-antd-v2-T01
+  name: 'Drawer state rule: set Shipping state to Wyoming and save'
+  canonical_type: select_custom_single
+  implementation_source: antd
+  implementation_variant: non_searchable_virtualized_in_drawer
+  implementation_component: 'AntD: Select'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Fulfillment settings". In the drawer, set the "Shipping state" dropdown to "Wyoming", do not change "Billing state", then click "Save state rules". The task will finish automatically when done.
+  ui_copy: Open "Fulfillment settings". In the drawer, set the "Shipping state" dropdown to "Wyoming", do not change "Billing state", then click "Save state rules". The task will finish automatically when done.
+  setup_description: 'The page uses a cluttered fulfillment dashboard with charts, KPI cards, and a search bar in the background. Clicking "Fulfillment settings" opens a right-side Ant Design Drawer. Inside the drawer are two compact Ant Design Select components of the same type: "Billing state" and "Shipping state". Both are non-searchable and render long 50-state lists with flag-style option decorations; the dropdown list has a fixed height and uses internal scrolling. "Billing state" starts at Colorado and must stay unchanged. "Shipping state" starts at Utah. The drawer footer contains "Cancel" and "Save state rules", and the committed state only updates after the save button is pressed.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The task couples two almost identical selects inside a drawer with an internal-scrolling dropdown and a drawer-local save, so the pressure comes from wrong-instance selection, listbox-level scrolling, and commit verification rather than wording tricks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The target option is off-screen inside a compact dropdown, the wrong select sits directly above it, and the change is not committed until the drawer save fires.
+  success_trigger:
+    human_readable:
+    - The Ant Design Select labeled "Shipping state" has committed selected value "Wyoming".
+    - '"Billing state" remains "Colorado".'
+    - The drawer-local "Save state rules" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Wyoming
+        target_instance: Shipping state
+        non_target_instances_must_remain:
+          Billing state: Colorado
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save state rules
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping state
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "Wyoming" in "Billing state" instead of "Shipping state".
+  - Scrolling the page or drawer body but never scrolling the dropdown list itself.
+  - Choosing a nearby late-alphabet state such as "Wisconsin" or leaving "Utah" selected.
+  - Changing the correct select but not clicking "Save state rules".
+  expected_interaction_path:
+  - Open the Fulfillment settings drawer.
+  - Open the Shipping state select and scroll inside its dropdown.
+  - Choose "Wyoming" while leaving Billing state unchanged.
+  - Click "Save state rules".
+  notes: Instrument drawer draft value and committed value separately.
+- id: select_custom_single-antd-v2-T02
+  name: Clear only the Project filter and apply
+  canonical_type: select_custom_single
+  implementation_source: antd
+  implementation_variant: allowClear_compact_filter_strip
+  implementation_component: 'AntD: Select'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the compact filter strip, clear only the "Project" select so it shows no value, leave "Team" and "Severity" unchanged, then click "Apply filters". The task will finish automatically when done.
+  ui_copy: In the compact filter strip, clear only the "Project" select so it shows no value, leave "Team" and "Severity" unchanged, then click "Apply filters". The task will finish automatically when done.
+  setup_description: 'A dense analytics header sits at the top-right of a dashboard with charts, pills, and inline buttons. The header contains three compact Ant Design Select components on one row: "Project", "Team", and "Severity". "Project" currently shows "Apollo" and has allowClear enabled; the clear affordance appears in the right section only when the field is hovered/focused. "Team" is set to "Platform" and "Severity" is set to "Critical"; both must remain unchanged. The strip also contains an "Apply filters" button and a "Reset all" button. Only Apply commits the new filter state.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: The clear affordance is a small secondary target embedded in a dense multi-select strip, and the user must preserve the sibling selects before committing the strip with Apply.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This task is hard because the true action is a small clear affordance inside one of three nearly identical compact selects, followed by an explicit apply step.
+  success_trigger:
+    human_readable:
+    - The committed value of "Project" is null / empty.
+    - '"Team" remains "Platform" and "Severity" remains "Critical".'
+    - The "Apply filters" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Project
+        non_target_instances_must_remain:
+          Team: Platform
+          Severity: Critical
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Project
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the Project dropdown and choosing another project instead of clearing it.
+  - Changing Team or Severity along with Project.
+  - Clicking "Reset all" instead of "Apply filters".
+  - Clearing Project visually but not committing with Apply.
+  expected_interaction_path:
+  - Locate the Project select in the compact strip.
+  - Reveal and click the clear affordance for Project.
+  - Verify Team and Severity are unchanged.
+  - Click "Apply filters".
+  notes: Expose clear-state and committed filter strip state separately.
+- id: select_custom_single-antd-v2-T03
+  name: Search the Reviewer select for Ava Stone and apply
+  canonical_type: select_custom_single
+  implementation_source: antd
+  implementation_variant: searchable_pair_in_dashboard_panel
+  implementation_component: 'AntD: Select'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the review settings panel, search for and select "Ava Stone" in the "Reviewer" dropdown, do not change "Assignee", then click "Apply review settings". The task will finish automatically when done.
+  ui_copy: In the review settings panel, search for and select "Ava Stone" in the "Reviewer" dropdown, do not change "Assignee", then click "Apply review settings". The task will finish automatically when done.
+  setup_description: 'The page is a crowded review dashboard. A right-side settings panel contains two stacked Ant Design Select components with showSearch enabled: "Assignee" and "Reviewer". Both open to person lists with avatars and similar full-name formatting. "Assignee" is currently "Mina Patel" and must remain unchanged. "Reviewer" is currently empty. Typing filters the option list, but the user must still click an option row to select it. A panel footer contains "Apply review settings" and "Discard". The commit happens only after Apply.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: 'The task presses on the exact stage where custom searchable selects often fail: after opening the right combobox, the agent must bind typed search to the correct list, pick the right row, and verify the commit.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two searchable selects with similar person lists make wrong-field edits easy, and the card-local Apply means draft success is not enough.
+  success_trigger:
+    human_readable:
+    - The committed value of "Reviewer" is "Ava Stone".
+    - '"Assignee" remains "Mina Patel".'
+    - The "Apply review settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Ava Stone
+        target_instance: Reviewer
+        non_target_instances_must_remain:
+          Assignee: Mina Patel
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply review settings
+      require_correct_instance: true
+      target_instance_label_or_id: Reviewer
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing "Ava" into the wrong select.
+  - Filtering the list but failing to click the Ava Stone option row.
+  - Selecting a near-match such as "Ava Sloan".
+  - Choosing Ava Stone in Reviewer but not clicking "Apply review settings".
+  expected_interaction_path:
+  - Focus the Reviewer select, not Assignee.
+  - Type to filter the list to Ava Stone.
+  - Click the Ava Stone option row.
+  - Click "Apply review settings".
+  notes: Use stable option values for people names; preserve non-target field state.
+- id: select_custom_single-antd-v2-T04
+  name: 'Table row status: set Order A-204 to Delayed'
+  canonical_type: select_custom_single
+  implementation_source: antd
+  implementation_variant: table_cell_small_select_with_row_save
+  implementation_component: 'AntD: Select'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Orders table, set the "Status" dropdown for row "Order A-204" to "Delayed", then click "Save" in that same row. The task will finish automatically when done.
+  ui_copy: In the Orders table, set the "Status" dropdown for row "Order A-204" to "Delayed", then click "Save" in that same row. The task will finish automatically when done.
+  setup_description: 'A compact dark table is anchored near the bottom-right of the viewport. Four visible rows share the same small Ant Design Select control in the "Status" column: Order A-203, Order A-204, Order A-205, and Order A-206. Each status menu renders icon-decorated options: Pending, Shipped, Delayed, Cancelled. Order A-204 currently shows "Shipped". Each row also has its own small "Save" button; row saves are independent. The table header has sortable columns, a quick search box, and a non-functional "Export" button that add clutter but do not affect success.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: The component remains the row-local select, but embedding it in a dense table with repeated identical controls and row-local saves forces careful row disambiguation and precise target acquisition.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Small repeated controls inside a dark table create strong wrong-row and wrong-save pressure even though the option list itself is short.
+  success_trigger:
+    human_readable:
+    - The committed value of the "Status" select in row "Order A-204" is "Delayed".
+    - The row-local "Save" control for Order A-204 has been clicked.
+    - Other rows may remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Delayed
+        target_instance: Order A-204 / Status
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row A-204
+      require_correct_instance: true
+      target_instance_label_or_id: Order A-204 / Status
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the status in any row other than Order A-204.
+  - Choosing "Cancelled" or leaving "Shipped" in the target row.
+  - Selecting Delayed in the right row but clicking Save in a different row.
+  - Opening the menu and dismissing it without a committed row save.
+  expected_interaction_path:
+  - Find row Order A-204.
+  - Open its Status select and choose Delayed.
+  - Click Save in the same row.
+  notes: Instrument each row save control distinctly.
+- id: select_custom_single-antd-v2-T05
+  name: 'Modal visual match: set Backup priority by badge and apply'
+  canonical_type: select_custom_single
+  implementation_source: antd
+  implementation_variant: optionRender_badges_inside_modal
+  implementation_component: 'AntD: Select'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Escalation policy". In the modal, set the "Backup priority" dropdown to the option that matches the amber reference badge, leave "Primary priority" unchanged, then click "Apply policy". The task will finish automatically when done.
+  ui_copy: Open "Escalation policy". In the modal, set the "Backup priority" dropdown to the option that matches the amber reference badge, leave "Primary priority" unchanged, then click "Apply policy". The task will finish automatically when done.
+  setup_description: 'A settings page contains an "Escalation policy" button. Clicking it opens a centered modal with two Ant Design Select components using custom badge-rendered options. "Primary priority" is already set to High and must stay unchanged. "Backup priority" starts at Low. Both dropdowns show the same three options with colored dots and text labels: Low (blue), Medium (amber), High (red). The modal also contains a small reference chip showing only the amber dot and a footer with "Cancel" and "Apply policy". The policy only commits after Apply.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The task uses visual guidance to remove the easy text shortcut, but the real pressure comes from nested overlay interaction and preserving the non-target select before a modal-level commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The correct option is a visual match inside a modal-within-dropdown flow, and the sibling select makes wrong-field edits easy.
+  success_trigger:
+    human_readable:
+    - The committed value of "Backup priority" is "Medium".
+    - '"Primary priority" remains "High".'
+    - The modal "Apply policy" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: amber_priority_badge
+        selected_value: Medium
+        non_target_instances_must_remain:
+          Primary priority: High
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply policy
+      require_correct_instance: true
+      target_instance_label_or_id: Backup priority
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary priority instead of Backup priority.
+  - Selecting the red or blue badge option instead of the amber one.
+  - Matching the amber badge in the draft but clicking "Cancel" or closing the modal.
+  - Applying while Backup priority is still Low.
+  expected_interaction_path:
+  - Open the Escalation policy modal.
+  - Open Backup priority, match the amber badge, and select Medium.
+  - Leave Primary priority unchanged.
+  - Click "Apply policy".
+  notes: Reference chip should have a stable semantic identifier in presentation mode but no answer-bearing text in benchmark mode.
+- id: select_custom_single-antd-v2-T06
+  name: 'Archive folder: non-searchable long menu in nested panel'
+  canonical_type: select_custom_single
+  implementation_source: antd
+  implementation_variant: non_searchable_long_menu_nested_scroll
+  implementation_component: 'AntD: Select'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Storage rules" panel, set the "Archive folder" dropdown to "Legacy contracts", do not change "Current folder", then click "Save storage rules". The task will finish automatically when done.
+  ui_copy: In the "Storage rules" panel, set the "Archive folder" dropdown to "Legacy contracts", do not change "Current folder", then click "Save storage rules". The task will finish automatically when done.
+  setup_description: 'The page uses a vertically scrollable settings shell; inside the lower section there is a compact panel titled "Storage rules". The panel contains two Ant Design Select components of the same type: "Current folder" and "Archive folder". Both are non-searchable and open long custom menus with ~60 folder names. The target option "Legacy contracts" appears late in the Archive folder list and is not visible on first open. "Current folder" starts at "Active cases" and must stay unchanged. The panel footer includes "Discard" and "Save storage rules". The list itself scrolls independently from the outer settings shell.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - instances
+    factor_rationale: The outer shell and the dropdown both scroll, which makes it a good probe of whether the agent can identify the correct scroll region, target the correct select, and then commit only that change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The task recreates the non-searchable long-menu boundary that causes failures after the dropdown is correctly opened, and then adds sibling-instance preservation and explicit save.
+  success_trigger:
+    human_readable:
+    - The committed value of "Archive folder" is "Legacy contracts".
+    - '"Current folder" remains "Active cases".'
+    - The "Save storage rules" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Legacy contracts
+        target_instance: Archive folder
+        non_target_instances_must_remain:
+          Current folder: Active cases
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save storage rules
+      require_correct_instance: true
+      target_instance_label_or_id: Archive folder
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the outer settings shell instead of the dropdown list.
+  - Changing Current folder instead of Archive folder.
+  - Choosing a nearby late-list folder such as "Legacy invoices".
+  - Selecting the right folder but failing to click "Save storage rules".
+  expected_interaction_path:
+  - Locate the Storage rules panel and open Archive folder.
+  - Scroll inside the dropdown until Legacy contracts is visible.
+  - Select it while leaving Current folder unchanged.
+  - Click "Save storage rules".
+  notes: Use a fixed dropdown height so the target is genuinely off-screen at open.
+- id: select_custom_single-mui-v2-T07
+  name: 'Dark dashboard filters: set Quarter to Q4 and apply'
+  canonical_type: select_custom_single
+  implementation_source: mui
+  implementation_variant: dashboard_filter_bar
+  implementation_component: 'MUI: Select'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: On the dark analytics dashboard, set the "Quarter" dropdown to "Q4", do not change "Region" or "Product line", then click "Apply filters". The task will finish automatically when done.
+  ui_copy: On the dark analytics dashboard, set the "Quarter" dropdown to "Q4", do not change "Region" or "Product line", then click "Apply filters". The task will finish automatically when done.
+  setup_description: 'A dark analytics dashboard shows charts, KPI cards, and export buttons. The filter bar near the top contains three adjacent MUI Select controls: "Region" (EMEA), "Product line" (Core), and "Quarter" (Q3). Quarter options are Q1–Q4. The bar also contains an "Apply filters" button and a "Clear charts" button. Filter changes are staged and only become committed after Apply. Region and Product line must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Three same-family controls inside a dense dark filter bar create strong wrong-instance pressure, and the explicit Apply step forces the agent to verify the intended field rather than stopping after the menu closes.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: This is a hard, realistic dashboard-filter task because the target select is not isolated and the change is not complete until filters are applied.
+  success_trigger:
+    human_readable:
+    - The committed value of "Quarter" is "Q4".
+    - '"Region" remains "EMEA" and "Product line" remains "Core".'
+    - The "Apply filters" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Q4
+        target_instance: Quarter
+        non_target_instances_must_remain:
+          Region: EMEA
+          Product line: Core
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Quarter
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Region or Product line instead of Quarter.
+  - Selecting Q4 but not clicking "Apply filters".
+  - Using "Clear charts" or dismissing the menu while Quarter remains Q3.
+  - Applying while Quarter is Q1–Q3.
+  expected_interaction_path:
+  - Locate the Quarter select in the dashboard filter bar.
+  - Open the menu and choose Q4.
+  - Leave the other two filters unchanged.
+  - Click "Apply filters".
+- id: select_custom_single-mui-v2-T08
+  name: 'Invoice A-039 payment terms: set Net 45 and save row'
+  canonical_type: select_custom_single
+  implementation_source: mui
+  implementation_variant: small_table_cell_select
+  implementation_component: 'MUI: Select'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Invoices table, set the "Payment terms" dropdown for "Invoice A-039" to "Net 45", then click "Save" in that same row. The task will finish automatically when done.
+  ui_copy: In the Invoices table, set the "Payment terms" dropdown for "Invoice A-039" to "Net 45", then click "Save" in that same row. The task will finish automatically when done.
+  setup_description: A compact invoices table is embedded in a billing dashboard. Four visible rows each contain the same small MUI Select in the "Payment terms" column and a row-local Save control. Invoice A-039 currently shows "Net 30". Other rows show mixed values and are distractors. The select menu offers Due on receipt, Net 15, Net 30, and Net 45. Above the table are pagination controls, a quick-search field, and a "Download CSV" button that add clutter without affecting success.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: The task is hard because the select is embedded in a dense table with repeated row-local saves; success depends on targeting the correct row and matching the save control to the row that was changed.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Row-level disambiguation and tiny repeated controls dominate this table-cell task even though the option set is short.
+  success_trigger:
+    human_readable:
+    - The committed value of the "Payment terms" select in row "Invoice A-039" is "Net 45".
+    - The row-local Save control for Invoice A-039 has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Net 45
+        target_instance: Invoice A-039 / Payment terms
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row A-039
+      require_correct_instance: true
+      target_instance_label_or_id: Invoice A-039 / Payment terms
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the payment terms in any other invoice row.
+  - Selecting "Net 15" or leaving the target row at "Net 30".
+  - Changing A-039 correctly but clicking Save in another row.
+  - Opening the menu but never committing the row save.
+  expected_interaction_path:
+  - Find row Invoice A-039.
+  - Open its Payment terms select and choose Net 45.
+  - Click Save in the same row.
+- id: select_custom_single-mui-v2-T09
+  name: 'Advanced filters dialog: set Record status to Archived and apply'
+  canonical_type: select_custom_single
+  implementation_source: mui
+  implementation_variant: dialog_select_pair
+  implementation_component: 'MUI: Select inside Dialog'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Advanced filters". In the dialog, set the "Record status" dropdown to "Archived", leave "Source" unchanged, then click "Apply filters". The task will finish automatically when done.
+  ui_copy: Open "Advanced filters". In the dialog, set the "Record status" dropdown to "Archived", leave "Source" unchanged, then click "Apply filters". The task will finish automatically when done.
+  setup_description: 'A data-management page includes a button labeled "Advanced filters". Clicking it opens a dialog with two MUI Select controls: "Record status" and "Source". Record status starts at "Active". Source starts at "API" and must remain unchanged. The dialog footer contains "Cancel" and "Apply filters". Several read-only chips and helper texts inside the dialog add medium clutter. Changes are not committed until Apply filters is pressed.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: Putting the select inside a dialog creates a true two-layer interaction, and the second select prevents this from collapsing into a single obvious click.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The dialog overlay, paired selects, and explicit Apply step all create a meaningful open-select-commit micro-flow.
+  success_trigger:
+    human_readable:
+    - The committed value of "Record status" is "Archived".
+    - '"Source" remains "API".'
+    - The dialog "Apply filters" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Archived
+        target_instance: Record status
+        non_target_instances_must_remain:
+          Source: API
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Record status
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Source instead of Record status.
+  - Choosing "Archived" and then closing or cancelling the dialog.
+  - Applying while Record status is still "Active" or another non-target value.
+  - Selecting the right value but not clicking "Apply filters".
+  expected_interaction_path:
+  - Open the Advanced filters dialog.
+  - Change Record status to Archived while leaving Source unchanged.
+  - Click "Apply filters".
+- id: select_custom_single-mui-v2-T10
+  name: 'Reference-dot priority: set Priority to the amber option and save'
+  canonical_type: select_custom_single
+  implementation_source: mui
+  implementation_variant: list_item_icon_reference_match
+  implementation_component: 'MUI: Select'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the task settings card, set the "Priority" dropdown to the option that matches the amber reference dot, do not change "Escalation channel", then click "Save task settings". The task will finish automatically when done.
+  ui_copy: In the task settings card, set the "Priority" dropdown to the option that matches the amber reference dot, do not change "Escalation channel", then click "Save task settings". The task will finish automatically when done.
+  setup_description: 'A compact card is anchored near the top-right of a busier task board. It contains two MUI Select controls: "Priority" and "Escalation channel". Priority uses MenuItems with colored dots: Low (blue), Medium (amber), High (red). Escalation channel uses text-only options and must remain unchanged at "Slack". A small badge above the card shows only an amber dot. The card footer contains "Save task settings". The selected values are not committed until Save is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: The task removes the direct text shortcut by specifying the target visually, then compounds that with a sibling select and an explicit save inside a cluttered board surface.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The visual cue is easy for a human but still requires mapping and preserving the non-target field before committing.
+  success_trigger:
+    human_readable:
+    - The committed value of "Priority" is "Medium".
+    - '"Escalation channel" remains "Slack".'
+    - The "Save task settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: amber_priority_dot
+        selected_value: Medium
+        non_target_instances_must_remain:
+          Escalation channel: Slack
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save task settings
+      require_correct_instance: true
+      target_instance_label_or_id: Priority
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Low or High instead of the amber-coded option.
+  - Changing Escalation channel while changing Priority.
+  - Matching the right dot in the draft but not clicking "Save task settings".
+  - Saving while Priority still shows the initial value.
+  expected_interaction_path:
+  - Inspect the amber reference dot.
+  - Open Priority and select the amber-coded option.
+  - Leave Escalation channel unchanged.
+  - Click "Save task settings".
+- id: select_custom_single-mui-v2-T11
+  name: Reset only Alert level to None and save preferences
+  canonical_type: select_custom_single
+  implementation_source: mui
+  implementation_variant: explicit_none_in_compact_panel
+  implementation_component: 'MUI: Select'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the notification preferences panel, reset only the "Alert level" dropdown to "None", leave "Digest cadence" and "Channel" unchanged, then click "Save preferences". The task will finish automatically when done.
+  ui_copy: In the notification preferences panel, reset only the "Alert level" dropdown to "None", leave "Digest cadence" and "Channel" unchanged, then click "Save preferences". The task will finish automatically when done.
+  setup_description: 'A compact settings panel is embedded in a crowded admin page. It contains three MUI Select controls on two rows: "Alert level" (currently High), "Digest cadence" (currently Daily), and "Channel" (currently Email). The Alert level menu contains None, Low, Medium, High, where None is the explicit cleared state. The panel footer contains "Save preferences" and "Cancel". Changes are staged until Save is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - confirmation_model
+    factor_rationale: The task is harder than a simple reset because the reset value is a legitimate menu item inside a three-select panel, and the user must preserve the sibling fields before an explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three compact selects and a non-empty reset state make this a real state-tracking task instead of a toy clear-click.
+  success_trigger:
+    human_readable:
+    - The committed value of "Alert level" is "None".
+    - '"Digest cadence" remains "Daily" and "Channel" remains "Email".'
+    - The "Save preferences" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: None
+        target_instance: Alert level
+        non_target_instances_must_remain:
+          Digest cadence: Daily
+          Channel: Email
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save preferences
+      require_correct_instance: true
+      target_instance_label_or_id: Alert level
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Digest cadence or Channel along with Alert level.
+  - Selecting Low or Medium instead of None.
+  - Resetting Alert level correctly but clicking Cancel or leaving without saving.
+  - Saving while Alert level is still High.
+  expected_interaction_path:
+  - Open the Alert level select.
+  - Choose None.
+  - Verify the other two selects are unchanged.
+  - Click "Save preferences".
+- id: select_custom_single-mui-v2-T12
+  name: 'Grouped category drawer: choose Refund and apply'
+  canonical_type: select_custom_single
+  implementation_source: mui
+  implementation_variant: grouped_menu_in_drawer
+  implementation_component: 'MUI: Select inside Drawer'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Notification rules". In the drawer, set the "Category" dropdown to "Refund", do not change "Delivery channel", then click "Apply rule". The task will finish automatically when done.
+  ui_copy: Open "Notification rules". In the drawer, set the "Category" dropdown to "Refund", do not change "Delivery channel", then click "Apply rule". The task will finish automatically when done.
+  setup_description: 'The main page is a rule dashboard. Clicking "Notification rules" opens a left-side drawer containing two MUI Select components: "Category" and "Delivery channel". Category opens a long grouped menu with ListSubheader sections such as Billing, Shipping, and Support. The target option "Refund" sits in the Billing group below the initial viewport of the menu. Delivery channel starts at Email and must remain unchanged. A drawer footer contains "Apply rule" and "Close without saving". The selected values are committed only on Apply.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - instances
+    factor_rationale: The grouped long menu forces dropdown-in-drawer scrolling and makes it easy to confuse visual grouping with actual selection, while the second select and Apply step preserve component-centric disambiguation pressure.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: This task layers a long grouped custom menu inside a drawer and adds sibling-field preservation plus an explicit commit.
+  success_trigger:
+    human_readable:
+    - The committed value of "Category" is "Refund".
+    - '"Delivery channel" remains "Email".'
+    - The drawer-local "Apply rule" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Refund
+        target_instance: Category
+        non_target_instances_must_remain:
+          Delivery channel: Email
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply rule
+      require_correct_instance: true
+      target_instance_label_or_id: Category
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the drawer body but not the Category menu.
+  - Changing Delivery channel instead of Category.
+  - Choosing a nearby billing option such as "Chargeback" instead of Refund.
+  - Selecting Refund in draft but never clicking "Apply rule".
+  expected_interaction_path:
+  - Open the Notification rules drawer.
+  - Open Category and scroll within the grouped menu.
+  - Select Refund while leaving Delivery channel unchanged.
+  - Click "Apply rule".
+- id: select_custom_single-mantine-v2-T13
+  name: 'Drawer airport pair: set Backup airport to São Paulo and save'
+  canonical_type: select_custom_single
+  implementation_source: mantine
+  implementation_variant: searchable_drawer_pair
+  implementation_component: 'Mantine: Select'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Flight preferences". In the drawer, search for and select "São Paulo (GRU)" in the "Backup airport" dropdown, do not change "Primary airport", then click "Save flight preferences". The task will finish automatically when done.
+  ui_copy: Open "Flight preferences". In the drawer, search for and select "São Paulo (GRU)" in the "Backup airport" dropdown, do not change "Primary airport", then click "Save flight preferences". The task will finish automatically when done.
+  setup_description: 'A travel dashboard contains a button labeled "Flight preferences". Clicking it opens a Mantine Drawer with two searchable Mantine Select components: "Primary airport" and "Backup airport". Both lists contain ~30 airports in City (CODE) format and support typed filtering. Primary airport starts at "New York (JFK)" and must remain unchanged. Backup airport is empty. A footer with "Save flight preferences" and "Cancel" commits or discards the drawer state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: Search narrows the option set, but the task remains hard because the two searchable selects look identical inside a cluttered drawer and only the drawer save commits the result.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This task probes post-open grounding in searchable Mantine selects while adding repeated-instance and save-step pressure.
+  success_trigger:
+    human_readable:
+    - The committed value of "Backup airport" is "São Paulo (GRU)".
+    - '"Primary airport" remains "New York (JFK)".'
+    - The "Save flight preferences" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: São Paulo (GRU)
+        target_instance: Backup airport
+        non_target_instances_must_remain:
+          Primary airport: New York (JFK)
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save flight preferences
+      require_correct_instance: true
+      target_instance_label_or_id: Backup airport
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Searching in the Primary airport select instead of Backup airport.
+  - Typing GRU but failing to click the São Paulo option row.
+  - Choosing another GR* / S* airport such as San Jose (SJC).
+  - Selecting the right airport without clicking "Save flight preferences".
+  expected_interaction_path:
+  - Open the Flight preferences drawer.
+  - Focus Backup airport and search for GRU or São Paulo.
+  - Select São Paulo (GRU) while leaving Primary airport unchanged.
+  - Click "Save flight preferences".
+- id: select_custom_single-mantine-v2-T14
+  name: 'Ingredient filter: scroll to Zucchini and apply'
+  canonical_type: select_custom_single
+  implementation_source: mantine
+  implementation_variant: non_searchable_scrollarea_pair
+  implementation_component: 'Mantine: Select'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the filter panel, set the "Ingredient" dropdown to "Zucchini", do not change "Cuisine", then click "Apply filters". The task will finish automatically when done.
+  ui_copy: In the filter panel, set the "Ingredient" dropdown to "Zucchini", do not change "Cuisine", then click "Apply filters". The task will finish automatically when done.
+  setup_description: 'A compact top-left filter panel overlays a recipe dashboard. It contains two Mantine Select components: "Ingredient" and "Cuisine". Ingredient is non-searchable and opens a long alphabetized dropdown wrapped in Mantine''s default scroll area. The target option "Zucchini" is near the end and not initially visible. Cuisine starts at "Any" and must remain unchanged. The panel also includes a secondary "Reset filters" button and a primary "Apply filters" button; only Apply commits the current selection.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - scale
+    - confirmation_model
+    factor_rationale: This takes Mantine's default scroll-area dropdown and places it in a compact high-clutter filter strip so that menu scrolling, not page scrolling, becomes the operative challenge before the explicit Apply step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The target is deep in a compact scrollable dropdown, and the small high-clutter filter strip makes it easy to misfocus or click the wrong control.
+  success_trigger:
+    human_readable:
+    - The committed value of "Ingredient" is "Zucchini".
+    - '"Cuisine" remains "Any".'
+    - The "Apply filters" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Zucchini
+        target_instance: Ingredient
+        non_target_instances_must_remain:
+          Cuisine: Any
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Ingredient
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Ingredient dropdown.
+  - Changing Cuisine instead of Ingredient.
+  - Selecting a nearby late-list ingredient such as "Zucchini noodles" or "Yam".
+  - Choosing Zucchini but not clicking "Apply filters".
+  expected_interaction_path:
+  - Open the Ingredient dropdown.
+  - Scroll inside the dropdown until Zucchini is visible.
+  - Select it while leaving Cuisine unchanged.
+  - Click "Apply filters".
+- id: select_custom_single-mantine-v2-T15
+  name: 'Language settings: set Backup language to Japanese and save'
+  canonical_type: select_custom_single
+  implementation_source: mantine
+  implementation_variant: dark_multi_instance_settings
+  implementation_component: 'Mantine: Select'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In Language settings, set the "Backup language" dropdown to "Japanese", do not change "Primary language" or "UI language", then click "Save language settings". The task will finish automatically when done.
+  ui_copy: In Language settings, set the "Backup language" dropdown to "Japanese", do not change "Primary language" or "UI language", then click "Save language settings". The task will finish automatically when done.
+  setup_description: 'A dark settings panel contains three Mantine Select components with identical styling: "Primary language" (English), "Backup language" (Spanish), and "UI language" (English). The options include English, Spanish, Japanese, and German. The panel is surrounded by unrelated toggles, segmented controls, and help links. A footer button "Save language settings" commits the panel state; without it, the selections remain staged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Three same-style controls in a dark panel raise the chance of wrong-field edits, and the explicit save makes this a state-verification task rather than a one-menu click.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The option choice is easy for a human, but the repeated-instance panel and save semantics create consistent disambiguation pressure.
+  success_trigger:
+    human_readable:
+    - The committed value of "Backup language" is "Japanese".
+    - '"Primary language" remains "English" and "UI language" remains "English".'
+    - The "Save language settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Japanese
+        target_instance: Backup language
+        non_target_instances_must_remain:
+          Primary language: English
+          UI language: English
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save language settings
+      require_correct_instance: true
+      target_instance_label_or_id: Backup language
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary language or UI language instead of Backup language.
+  - Selecting German or leaving Backup language on Spanish.
+  - Making the correct draft change but not clicking "Save language settings".
+  - Saving after multiple fields changed.
+  expected_interaction_path:
+  - Find the Backup language select in the dark settings panel.
+  - Choose Japanese.
+  - Verify the other two language selects are unchanged.
+  - Click "Save language settings".
+- id: select_custom_single-mantine-v2-T16
+  name: 'Reference badge: set Plan to the star option and save'
+  canonical_type: select_custom_single
+  implementation_source: mantine
+  implementation_variant: visual_badge_with_sibling_select
+  implementation_component: 'Mantine: Select'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the subscription panel, set the "Plan" dropdown to the option that matches the star badge, leave "Billing cycle" unchanged, then click "Save subscription". The task will finish automatically when done.
+  ui_copy: In the subscription panel, set the "Plan" dropdown to the option that matches the star badge, leave "Billing cycle" unchanged, then click "Save subscription". The task will finish automatically when done.
+  setup_description: 'A subscription panel is embedded in a cluttered account dashboard. It contains two Mantine Select components: "Plan" and "Billing cycle". Plan options are custom-rendered with badge icons: Starter (circle), Pro (star), Enterprise (diamond). A nearby reference card shows only the star badge. Billing cycle starts at Monthly and must stay unchanged. The panel footer has "Save subscription" and "Discard changes". The plan change is not committed until Save is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: Visual guidance removes the obvious text shortcut while the sibling select and explicit Save keep the task centered on grounded interaction rather than cheap DOM reading.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The badge match itself is straightforward, but preserving the non-target select and completing the save makes the task meaningfully harder than the v1 isolated-card version.
+  success_trigger:
+    human_readable:
+    - The committed value of "Plan" is "Pro".
+    - '"Billing cycle" remains "Monthly".'
+    - The "Save subscription" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: subscription_star_badge
+        selected_value: Pro
+        non_target_instances_must_remain:
+          Billing cycle: Monthly
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save subscription
+      require_correct_instance: true
+      target_instance_label_or_id: Plan
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Billing cycle instead of Plan.
+  - Selecting Starter or Enterprise instead of the star-badge option.
+  - Matching the badge in draft but discarding or closing the panel.
+  - Saving while Plan still shows Starter.
+  expected_interaction_path:
+  - Inspect the star reference badge.
+  - Open the Plan select and choose Pro.
+  - Leave Billing cycle unchanged.
+  - Click "Save subscription".
+- id: select_custom_single-mantine-v2-T17
+  name: 'Drawer approver search: choose Mina Patel and save'
+  canonical_type: select_custom_single
+  implementation_source: mantine
+  implementation_variant: searchable_inside_drawer
+  implementation_component: 'Mantine: Select'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Approval settings". In the drawer, search for and select "Mina Patel" in the "Approver" dropdown, do not change "Owner", then click "Save approval settings". The task will finish automatically when done.
+  ui_copy: Open "Approval settings". In the drawer, search for and select "Mina Patel" in the "Approver" dropdown, do not change "Owner", then click "Save approval settings". The task will finish automatically when done.
+  setup_description: A document workflow page contains a button labeled "Approval settings". Clicking it opens a drawer with two searchable Mantine Select components, "Owner" and "Approver". Owner currently shows "Ava Stone" and must stay unchanged. Approver is empty. Both dropdowns present long employee lists with avatar initials and similar name formatting. The drawer footer contains "Save approval settings" and "Cancel". The selection is committed only after Save.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: This task targets Mantine's post-open searchable-select boundary inside a drawer, where the hard part is binding search, option selection, and save to the correct field.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two identical searchable selects inside a drawer create strong wrong-field risk, and the save step adds recovery and verification pressure.
+  success_trigger:
+    human_readable:
+    - The committed value of "Approver" is "Mina Patel".
+    - '"Owner" remains "Ava Stone".'
+    - The "Save approval settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Mina Patel
+        target_instance: Approver
+        non_target_instances_must_remain:
+          Owner: Ava Stone
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save approval settings
+      require_correct_instance: true
+      target_instance_label_or_id: Approver
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Searching in Owner instead of Approver.
+  - Typing a search term but not selecting the Mina Patel option row.
+  - Selecting a near-match such as "Mina Patil".
+  - Selecting the right person but not clicking "Save approval settings".
+  expected_interaction_path:
+  - Open the Approval settings drawer.
+  - Focus Approver and search for Mina Patel.
+  - Select Mina Patel while leaving Owner unchanged.
+  - Click "Save approval settings".
+- id: select_custom_single-mantine-v2-T18
+  name: Clear only Office in the workspace strip and apply
+  canonical_type: select_custom_single
+  implementation_source: mantine
+  implementation_variant: clearable_compact_triplet
+  implementation_component: 'Mantine: Select'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the compact workspace strip, clear only the "Office" select so it has no value, leave "Region" and "Desk type" unchanged, then click "Apply workspace filters". The task will finish automatically when done.
+  ui_copy: In the compact workspace strip, clear only the "Office" select so it has no value, leave "Region" and "Desk type" unchanged, then click "Apply workspace filters". The task will finish automatically when done.
+  setup_description: 'A compact workspace filter strip is embedded in a crowded office dashboard. It contains three Mantine Select components: "Office" (currently New York, clearable), "Region" (North America), and "Desk type" (Standing). The Office field shows its clear button in the right section because it currently has a value. The strip also includes "Apply workspace filters" and "Reset all". Only Apply commits the current strip state. The other two selects must remain unchanged.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - confirmation_model
+    factor_rationale: Like the AntD clear task, this keeps the clear affordance component-centric by embedding it among other same-family controls and making the strip state explicit only after Apply.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The clear action itself is simple, but it sits inside a dense triplet where preserving the other controls and committing via Apply matters.
+  success_trigger:
+    human_readable:
+    - The committed value of "Office" is null / empty.
+    - '"Region" remains "North America" and "Desk type" remains "Standing".'
+    - The "Apply workspace filters" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Office
+        non_target_instances_must_remain:
+          Region: North America
+          Desk type: Standing
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply workspace filters
+      require_correct_instance: true
+      target_instance_label_or_id: Office
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different office instead of clearing the field.
+  - Changing Region or Desk type as well.
+  - Clicking "Reset all" instead of "Apply workspace filters".
+  - Clearing Office but leaving the strip uncommitted.
+  expected_interaction_path:
+  - Locate the Office select in the workspace strip.
+  - Use its clear affordance so the value becomes empty.
+  - Verify the other two selects are unchanged.
+  - Click "Apply workspace filters".
+- id: select_native-mui-v2-T19
+  name: 'Billing dashboard: set Default currency to Euro and apply'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: native_dashboard_pair
+  implementation_component: 'MUI: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the billing dashboard, set the "Default currency" native dropdown to "Euro (EUR)", do not change "Settlement currency", then click "Apply changes". The task will finish automatically when done.
+  ui_copy: In the billing dashboard, set the "Default currency" native dropdown to "Euro (EUR)", do not change "Settlement currency", then click "Apply changes". The task will finish automatically when done.
+  setup_description: 'A billing dashboard panel contains two native dropdowns built with MUI NativeSelect: "Default currency" and "Settlement currency". Default currency starts at US Dollar (USD). Settlement currency starts at British Pound (GBP) and must remain unchanged. The panel is surrounded by unrelated billing tiles, invoice counters, and links. Under the two dropdowns are "Apply changes" and "Revert". The visible preview text updates immediately when a new option is chosen, but the committed state changes only after Apply.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: Native selects are semantically simple, so the difficulty is pushed into repeated-instance selection inside a busy dashboard tile and explicit commit verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: 'The benchmark value here is in last-mile native-select behavior: pick the correct field, map to the exact label, and verify the applied state rather than the preview.'
+  success_trigger:
+    human_readable:
+    - The committed value of "Default currency" is "EUR" / "Euro (EUR)".
+    - '"Settlement currency" remains "GBP" / "British Pound (GBP)".'
+    - The "Apply changes" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: EUR
+        selected_label: Euro (EUR)
+        target_instance: Default currency
+        non_target_instances_must_remain:
+          Settlement currency: GBP
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: true
+      target_instance_label_or_id: Default currency
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Settlement currency instead of Default currency.
+  - Choosing EUR but clicking "Revert" or leaving without applying.
+  - Applying while Default currency still shows USD or another non-target value.
+  - Treating the preview text change as success without clicking "Apply changes".
+  expected_interaction_path:
+  - Open the Default currency native dropdown.
+  - Choose Euro (EUR).
+  - Leave Settlement currency unchanged.
+  - Click "Apply changes".
+- id: select_native-mui-v2-T20
+  name: 'Drawer locale settings: set Fallback locale to Japanese and save'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: native_drawer_pair
+  implementation_component: 'MUI: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open "Locale settings". In the drawer, set the "Fallback locale" native dropdown to "Japanese", do not change "Display language", then click "Save locale settings". The task will finish automatically when done.
+  ui_copy: Open "Locale settings". In the drawer, set the "Fallback locale" native dropdown to "Japanese", do not change "Display language", then click "Save locale settings". The task will finish automatically when done.
+  setup_description: 'A preferences page contains a button labeled "Locale settings". Clicking it opens a right-side drawer with two MUI NativeSelect controls: "Display language" and "Fallback locale". Display language starts at English and must remain unchanged. Fallback locale starts at Spanish. The drawer contains helper text and a couple of unrelated checkboxes for number/date formatting. The footer buttons are "Save locale settings" and "Discard". The visible dropdown labels update immediately, but the committed state updates only after Save.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: The native-control semantics remain simple, but the drawer context, sibling select, and explicit save create a real multi-step commit flow with wrong-field pressure.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The correct option is visible and human-solvable, but the task still probes whether the agent can commit the right native-select change inside a drawer.
+  success_trigger:
+    human_readable:
+    - The committed value of "Fallback locale" is "Japanese".
+    - '"Display language" remains "English".'
+    - The drawer-local "Save locale settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Japanese
+        target_instance: Fallback locale
+        non_target_instances_must_remain:
+          Display language: English
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save locale settings
+      require_correct_instance: true
+      target_instance_label_or_id: Fallback locale
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Display language instead of Fallback locale.
+  - Choosing Japanese but closing or discarding the drawer.
+  - Saving while Fallback locale is still Spanish or another wrong option.
+  - Relying on the visible draft value without clicking Save.
+  expected_interaction_path:
+  - Open the Locale settings drawer.
+  - Change the Fallback locale native select to Japanese.
+  - Leave Display language unchanged.
+  - Click "Save locale settings".
+- id: select_native-mui-v2-T21
+  name: 'Invoices table: set INV-1042 status to Paid and save row'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: native_table_row_save
+  implementation_component: 'MUI: NativeSelect'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the invoices table, set the "Status" native dropdown for "INV-1042" to "Paid", then click "Save" in that same row. The task will finish automatically when done.
+  ui_copy: In the invoices table, set the "Status" native dropdown for "INV-1042" to "Paid", then click "Save" in that same row. The task will finish automatically when done.
+  setup_description: A dense invoices table sits inside a dashboard panel. Four visible rows each contain a compact MUI NativeSelect in the "Status" column and a row-local Save button. INV-1042 starts at Draft. Other rows show Sent, Paid, and Void. The page also contains a search field, sort icons, pagination, and an "Export" action. The row's committed status updates only when the matching row Save button is pressed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: 'The benchmark value here is row-local disambiguation under a coordinate-like action regime: the agent has to change the right native select and then bind the correct row save to it.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Native selects are easy to reason about, but small repeated row controls plus row-level save make this a hard and realistic table operation.
+  success_trigger:
+    human_readable:
+    - The committed status for row "INV-1042" is "Paid".
+    - The row-local Save control for INV-1042 has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: paid
+        selected_label: Paid
+        target_instance: INV-1042 / Status
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row INV-1042
+      require_correct_instance: true
+      target_instance_label_or_id: INV-1042 / Status
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the status in any row other than INV-1042.
+  - Choosing Sent, Draft, or Void instead of Paid.
+  - Selecting Paid in the target row but clicking Save in another row.
+  - Leaving the target row uncommitted after opening the native dropdown.
+  expected_interaction_path:
+  - Locate row INV-1042.
+  - Open its Status native select and choose Paid.
+  - Click Save in the same row.
+- id: select_native-mui-v2-T22
+  name: 'Scaffolding drawer: choose Django from grouped native options and apply'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: native_optgroup_in_drawer
+  implementation_component: 'MUI: NativeSelect'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Service scaffolding". In the drawer, set the "Framework" native dropdown to "Django", then click "Apply scaffold". The task will finish automatically when done.
+  ui_copy: Open "Service scaffolding". In the drawer, set the "Framework" native dropdown to "Django", then click "Apply scaffold". The task will finish automatically when done.
+  setup_description: A service configuration page includes a "Service scaffolding" button. Clicking it opens a drawer with one MUI NativeSelect labeled "Framework". The options are grouped with native <optgroup> sections such as Frontend, Backend, and Data. The current value is React under Frontend. Django appears under Backend below the first visible options. A helper card and two read-only fields add medium clutter, and "Apply scaffold" commits the drawer state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - clutter
+    factor_rationale: Grouping makes the semantic choice surface denser without becoming adversarial, and placing the native select inside a drawer with explicit Apply turns a simple label mapping into a real commit path.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The grouped menu itself is human-easy, but the drawer context and commit semantics keep this above the trivial native-select baseline.
+  success_trigger:
+    human_readable:
+    - The committed value of "Framework" is "django" / "Django".
+    - The drawer-local "Apply scaffold" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: django
+        selected_label: Django
+        target_instance: Framework
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply scaffold
+      require_correct_instance: true
+      target_instance_label_or_id: Framework
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting another backend option such as Rails instead of Django.
+  - Selecting Django but not clicking "Apply scaffold".
+  - Leaving the value at React.
+  - Confusing the group heading with a selectable option.
+  expected_interaction_path:
+  - Open the Service scaffolding drawer.
+  - Open the Framework native dropdown and choose Django from the Backend group.
+  - Click "Apply scaffold".
+- id: select_native-mui-v2-T23
+  name: 'Notification dashboard: set Product updates to Weekly and save'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: compact_triplet_native
+  implementation_component: 'MUI: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the compact notification dashboard, set the "Product updates" native dropdown to "Weekly", do not change "Marketing emails" or "Security alerts", then click "Save notification settings". The task will finish automatically when done.
+  ui_copy: In the compact notification dashboard, set the "Product updates" native dropdown to "Weekly", do not change "Marketing emails" or "Security alerts", then click "Save notification settings". The task will finish automatically when done.
+  setup_description: 'A small dark dashboard card is anchored near the bottom-left of the viewport. It contains three very similar MUI NativeSelect controls: "Marketing emails", "Product updates", and "Security alerts". Product updates starts at Daily. Marketing emails starts at Monthly; Security alerts starts at Never. Under the selects are "Save notification settings" and "Reset all". The selected labels update immediately, but only the save button commits the card state.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - scale
+    factor_rationale: The controls are semantically easy, but the compact bottom-left card with three repeated instances reproduces the exact grounded last-mile failure mode that native selects expose in weak action spaces.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: This is a pressure test for correct-field targeting and explicit commit, not raw semantic comprehension.
+  success_trigger:
+    human_readable:
+    - The committed value of "Product updates" is "weekly" / "Weekly".
+    - '"Marketing emails" remains "monthly" and "Security alerts" remains "never".'
+    - The "Save notification settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: weekly
+        selected_label: Weekly
+        target_instance: Product updates
+        non_target_instances_must_remain:
+          Marketing emails: monthly
+          Security alerts: never
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save notification settings
+      require_correct_instance: true
+      target_instance_label_or_id: Product updates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Marketing emails or Security alerts to Weekly instead of Product updates.
+  - Selecting Weekly in the correct field but clicking "Reset all".
+  - Saving while Product updates is still Daily or another wrong value.
+  - Stopping after the visible label changes without saving.
+  expected_interaction_path:
+  - Locate the Product updates native select.
+  - Choose Weekly.
+  - Leave the other two selects unchanged.
+  - Click "Save notification settings".
+- id: select_native-mui-v2-T24
+  name: 'Reference flag: set Shipping region to Japan and apply'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: visual_reference_pair
+  implementation_component: 'MUI: NativeSelect'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the region settings card, set the "Shipping region" native dropdown to the option that matches the reference flag, do not change "Content locale", then click "Apply region settings". The task will finish automatically when done.
+  ui_copy: In the region settings card, set the "Shipping region" native dropdown to the option that matches the reference flag, do not change "Content locale", then click "Apply region settings". The task will finish automatically when done.
+  setup_description: 'A settings card contains two MUI NativeSelect controls: "Shipping region" and "Content locale". Shipping region starts at Singapore; Content locale starts at English (US) and must remain unchanged. A nearby reference chip shows the flag of Japan without the country name. The card is surrounded by other controls and helper text. "Apply region settings" commits the current dropdown values and "Cancel" discards them.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: Visual guidance and a sibling native select make the task rely on grounded option mapping and state preservation rather than just reading a label, while Apply ensures the change is verified.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The flag cue is easy for a human but still forces the agent to choose the correct select and exact option before committing.
+  success_trigger:
+    human_readable:
+    - The committed value of "Shipping region" is "JP" / "Japan".
+    - '"Content locale" remains "en-US" / "English (US)".'
+    - The "Apply region settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: flag-japan
+        selected_value: JP
+        selected_label: Japan
+        non_target_instances_must_remain:
+          Content locale: en-US
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply region settings
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping region
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Content locale instead of Shipping region.
+  - Selecting another country flag such as Singapore or Korea.
+  - Choosing Japan but not clicking "Apply region settings".
+  - Leaving Shipping region on the initial value.
+  expected_interaction_path:
+  - Inspect the reference flag.
+  - Open the Shipping region native select and choose Japan.
+  - Leave Content locale unchanged.
+  - Click "Apply region settings".
+- id: select_native-mui-v2-T25
+  name: Scroll to Report format, set CSV, and save exports
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: internal_scroll_panel_native
+  implementation_component: 'MUI: NativeSelect'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Scroll to the "Report format" setting in the Exports panel, set its native dropdown to "CSV", then click "Save export settings". The task will finish automatically when done.
+  ui_copy: Scroll to the "Report format" setting in the Exports panel, set its native dropdown to "CSV", then click "Save export settings". The task will finish automatically when done.
+  setup_description: A settings panel taller than the viewport is rendered as an internal scroll region. Above the target section are multiple toggles, text fields, and buttons. Near the bottom, the "Exports" section contains a MUI NativeSelect labeled "Report format" with options PDF, CSV, and JSON. It starts at PDF. A section-local button "Save export settings" commits the section values. Scrolling the main page does not reveal the target; the panel itself must be scrolled.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The select itself is native and simple, so the difficulty comes from locating it inside the correct scroll region and then verifying the section-local commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: 'This is the native-select version of an inner-scroll settings task: finding the right panel region matters as much as the option choice.'
+  success_trigger:
+    human_readable:
+    - The committed value of "Report format" is "csv" / "CSV".
+    - The "Save export settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: csv
+        selected_label: CSV
+        target_instance: Report format
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save export settings
+      require_correct_instance: true
+      target_instance_label_or_id: Report format
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the panel, leaving the target section unreachable.
+  - Selecting PDF or JSON instead of CSV.
+  - Changing the format but not clicking "Save export settings".
+  - Saving before the select value changes from PDF.
+  expected_interaction_path:
+  - Scroll inside the Exports panel until Report format is visible.
+  - Open the native dropdown and choose CSV.
+  - Click "Save export settings".
+- id: select_native-mui-v2-T26
+  name: 'Preferences modal: set Time format to 24-hour and save'
+  canonical_type: select_native
+  implementation_source: mui
+  implementation_variant: native_modal_pair
+  implementation_component: 'MUI: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open "Preferences". In the modal, set the "Time format" native dropdown to "24-hour", do not change "Date separator", then click "Save". The task will finish automatically when done.
+  ui_copy: Open "Preferences". In the modal, set the "Time format" native dropdown to "24-hour", do not change "Date separator", then click "Save". The task will finish automatically when done.
+  setup_description: 'A settings page contains a "Preferences" button that opens a centered modal. The modal contains two MUI NativeSelect controls: "Time format" and "Date separator". Time format starts at 12-hour; Date separator starts at Slash and must remain unchanged. A small checkbox "Show seconds" sits above the footer. The modal footer contains "Cancel" and "Save". The committed state changes only when Save is pressed.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: The modal keeps the native control simple but introduces real commit semantics and a sibling-field preservation requirement.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: This task is hard mainly because changing a native dropdown in a modal is not enough; the agent must preserve the second select and complete the explicit save step.
+  success_trigger:
+    human_readable:
+    - The committed value of "Time format" is "24h" / "24-hour".
+    - '"Date separator" remains "Slash".'
+    - The modal "Save" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: 24h
+        selected_label: 24-hour
+        target_instance: Time format
+        non_target_instances_must_remain:
+          Date separator: Slash
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Time format
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Date separator instead of Time format.
+  - Selecting 24-hour but cancelling or closing the modal.
+  - Saving while Time format remains 12-hour.
+  - Treating the draft visible label as success without saving.
+  expected_interaction_path:
+  - Open the Preferences modal.
+  - Change Time format to 24-hour.
+  - Leave Date separator unchanged.
+  - Click Save.
+- id: select_native-mantine-v2-T27
+  name: 'Retention dashboard: set Analytics retention to 180 days and apply'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: retention_triplet_with_apply
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the retention dashboard, set the "Analytics retention" native dropdown to "180 days", do not change "Logs retention" or "Backups retention", then click "Apply retention settings". The task will finish automatically when done.
+  ui_copy: In the retention dashboard, set the "Analytics retention" native dropdown to "180 days", do not change "Logs retention" or "Backups retention", then click "Apply retention settings". The task will finish automatically when done.
+  setup_description: 'A retention dashboard panel contains three Mantine NativeSelect controls with identical options: "Logs retention", "Backups retention", and "Analytics retention". Analytics retention starts at 30 days. Logs retention starts at 30 days and Backups retention starts at 90 days; both must remain unchanged. The card contains surrounding metrics and a retention policy note. "Apply retention settings" commits the card state while "Cancel changes" discards it.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: 'This is the repeated-native-select pattern that stayed diagnostic in v1: the action is easy to understand, but the challenge is to bind the change to the correct field and verify the explicit apply.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The target option is clear, but three repeated native controls and a card-level Apply keep the task genuinely hard.
+  success_trigger:
+    human_readable:
+    - The committed value of "Analytics retention" is "180" / "180 days".
+    - '"Logs retention" remains "30" and "Backups retention" remains "90".'
+    - The "Apply retention settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: '180'
+        selected_label: 180 days
+        target_instance: Analytics retention
+        non_target_instances_must_remain:
+          Logs retention: '30'
+          Backups retention: '90'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply retention settings
+      require_correct_instance: true
+      target_instance_label_or_id: Analytics retention
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Logs retention or Backups retention to 180 days instead of Analytics retention.
+  - Selecting the correct value but clicking "Cancel changes".
+  - Applying while Analytics retention remains at 30 or another wrong value.
+  - Stopping after the visible label changes without clicking Apply.
+  expected_interaction_path:
+  - Locate the Analytics retention native select.
+  - Choose 180 days.
+  - Leave the other retention fields unchanged.
+  - Click "Apply retention settings".
+- id: select_native-mantine-v2-T28
+  name: 'Locale modal: set Time zone to Tokyo and save'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: native_modal_pair
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open "Regional preferences". In the modal, set the "Time zone" native dropdown to "Tokyo (UTC+09:00)", do not change "Region locale", then click "Save preferences". The task will finish automatically when done.
+  ui_copy: Open "Regional preferences". In the modal, set the "Time zone" native dropdown to "Tokyo (UTC+09:00)", do not change "Region locale", then click "Save preferences". The task will finish automatically when done.
+  setup_description: 'A profile page contains a "Regional preferences" button. Clicking it opens a Mantine Modal with two NativeSelect controls: "Time zone" and "Region locale". Time zone starts at Chicago (UTC-06:00). Region locale starts at English (US) and must remain unchanged. The modal contains a checkbox and helper text, plus footer buttons "Cancel" and "Save preferences". The chosen value is not committed until Save is pressed.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: The task uses a realistic modal settings flow to test native-select commit verification while keeping a second similar control in play.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The difficulty is in selecting the correct labeled time zone and completing the save without touching the sibling field.
+  success_trigger:
+    human_readable:
+    - The committed value of "Time zone" is "Asia/Tokyo" / "Tokyo (UTC+09:00)".
+    - '"Region locale" remains "en-US".'
+    - The modal "Save preferences" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: Asia/Tokyo
+        selected_label: Tokyo (UTC+09:00)
+        target_instance: Time zone
+        non_target_instances_must_remain:
+          Region locale: en-US
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save preferences
+      require_correct_instance: true
+      target_instance_label_or_id: Time zone
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Region locale instead of Time zone.
+  - Choosing Tokyo but cancelling or closing the modal.
+  - Saving while Time zone remains Chicago or another wrong value.
+  - Treating the visible draft value as success without saving.
+  expected_interaction_path:
+  - Open the Regional preferences modal.
+  - Change Time zone to Tokyo (UTC+09:00).
+  - Leave Region locale unchanged.
+  - Click "Save preferences".
+- id: select_native-mantine-v2-T29
+  name: 'Diagnostics panel: scroll to Log level, set Warn, and apply'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: internal_scroll_native
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Scroll to the "Log level" setting in the diagnostics panel, set its native dropdown to "Warn", then click "Apply diagnostics". The task will finish automatically when done.
+  ui_copy: Scroll to the "Log level" setting in the diagnostics panel, set its native dropdown to "Warn", then click "Apply diagnostics". The task will finish automatically when done.
+  setup_description: A tall diagnostics panel is rendered as its own internal scroll region. The visible top sections contain multiple toggles and read-only fields. Near the bottom, the "Diagnostics" section contains a Mantine NativeSelect labeled "Log level" with options Trace, Debug, Info, Warn, and Error. It starts at Info. The section footer contains a button "Apply diagnostics" that commits the current dropdown value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The user has to reveal the target by scrolling the correct panel region, not the page, and then verify that the native-select change is committed locally.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The challenge is not semantic ambiguity but nested scrolling plus explicit section-local commit.
+  success_trigger:
+    human_readable:
+    - The committed value of "Log level" is "warn" / "Warn".
+    - The "Apply diagnostics" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: warn
+        selected_label: Warn
+        target_instance: Log level
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply diagnostics
+      require_correct_instance: true
+      target_instance_label_or_id: Log level
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the diagnostics panel.
+  - Selecting Trace, Debug, Info, or Error instead of Warn.
+  - Changing the value but not clicking "Apply diagnostics".
+  - Applying while Log level is still Info.
+  expected_interaction_path:
+  - Scroll inside the diagnostics panel until Log level is visible.
+  - Open the native dropdown and choose Warn.
+  - Click "Apply diagnostics".
+- id: select_native-mantine-v2-T30
+  name: 'Team table: change Alice role to Editor and save row'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: small_table_row_native
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Team table, set the "Role" native dropdown for "Alice" to "Editor", then click "Save" in Alice's row. The task will finish automatically when done.
+  ui_copy: In the Team table, set the "Role" native dropdown for "Alice" to "Editor", then click "Save" in Alice's row. The task will finish automatically when done.
+  setup_description: A small three-row team table is centered on a busy admin page. Each row contains a Mantine NativeSelect in the "Role" column and a row-local Save button. Alice starts at Viewer. Bob and Cara have other role values and act as distractors. The table is compact, with adjacent action buttons and sortable headers above it. Only the row-local save commits the selected role.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: The hard part is not understanding the role labels; it is changing the right small native control in a dense table and pairing it with the correct row save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The repeated row pattern and tiny controls make this a strong native-select table stress test for grounded action spaces.
+  success_trigger:
+    human_readable:
+    - The committed role for row "Alice" is "Editor".
+    - The row-local Save control for Alice has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: editor
+        selected_label: Editor
+        target_instance: Alice / Role
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row Alice
+      require_correct_instance: true
+      target_instance_label_or_id: Alice / Role
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Bob or Cara instead of Alice.
+  - Selecting Admin or Viewer instead of Editor in Alice's row.
+  - Changing Alice correctly but clicking Save in another row.
+  - Opening the native dropdown without committing the row save.
+  expected_interaction_path:
+  - Locate Alice's row.
+  - Open the Role native select and choose Editor.
+  - Click Save in Alice's row.
+- id: select_native-mantine-v2-T31
+  name: 'Reference rocket: set Shipping speed to Express and apply'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: visual_reference_pair_native
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the shipping preferences card, set the "Shipping speed" native dropdown to the option that matches the rocket reference, do not change "Gift wrap", then click "Apply shipping preferences". The task will finish automatically when done.
+  ui_copy: In the shipping preferences card, set the "Shipping speed" native dropdown to the option that matches the rocket reference, do not change "Gift wrap", then click "Apply shipping preferences". The task will finish automatically when done.
+  setup_description: 'A shipping-preferences card contains two Mantine NativeSelect controls: "Shipping speed" and "Gift wrap". Shipping speed starts at Standard. Gift wrap starts at No and must remain unchanged. A small reference chip shows a rocket icon corresponding to Express shipping. The card also includes static shipping notes, an order summary blurb, and a button "Apply shipping preferences". The choice is committed only when Apply is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: The visual reference removes a direct text shortcut, and the sibling select plus Apply step make the task about grounded option mapping and commit verification rather than just native semantics.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The visual cue is simple for a human, but the task still pressures the exact field-value-commit chain that native selects expose.
+  success_trigger:
+    human_readable:
+    - The committed value of "Shipping speed" is "express" / "Express (1–2 days)".
+    - '"Gift wrap" remains "no" / "No".'
+    - The "Apply shipping preferences" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: rocket-express
+        selected_value: express
+        selected_label: Express (1–2 days)
+        non_target_instances_must_remain:
+          Gift wrap: 'no'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply shipping preferences
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping speed
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Gift wrap instead of Shipping speed.
+  - Selecting Standard or Overnight instead of the rocket-matched option.
+  - Choosing Express without clicking "Apply shipping preferences".
+  - Applying while Shipping speed remains Standard.
+  expected_interaction_path:
+  - Inspect the rocket reference chip.
+  - Open Shipping speed and choose the matching option.
+  - Leave Gift wrap unchanged.
+  - Click "Apply shipping preferences".
+- id: select_native-mantine-v2-T32
+  name: 'Country group drawer: choose Jordan and save'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: grouped_native_in_drawer
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Regional shipping rules". In the drawer, set the "Destination country" native dropdown to "Jordan", then click "Save regional rules". The task will finish automatically when done.
+  ui_copy: Open "Regional shipping rules". In the drawer, set the "Destination country" native dropdown to "Jordan", then click "Save regional rules". The task will finish automatically when done.
+  setup_description: A logistics page includes a "Regional shipping rules" button. Clicking it opens a drawer containing one Mantine NativeSelect labeled "Destination country". The options are grouped by region and rendered with native group labels. The current value is Germany. Jordan appears in a later group, not among the first few visible options. The drawer also contains a read-only rate table and the buttons "Save regional rules" and "Cancel". The new value is committed only on save.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - clutter
+    factor_rationale: Grouped native options keep the task realistic while increasing choice interference, and the drawer-local save prevents it from collapsing into a single transient change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The challenge is mapping a grouped native option inside a drawer and then verifying the committed state through save semantics.
+  success_trigger:
+    human_readable:
+    - The committed value of "Destination country" is "JO" / "Jordan".
+    - The drawer-local "Save regional rules" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: JO
+        selected_label: Jordan
+        target_instance: Destination country
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save regional rules
+      require_correct_instance: true
+      target_instance_label_or_id: Destination country
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing another Middle East country instead of Jordan.
+  - Selecting Jordan but clicking Cancel or closing the drawer.
+  - Leaving the field at Germany.
+  - Saving before the dropdown value changes.
+  expected_interaction_path:
+  - Open the Regional shipping rules drawer.
+  - Open Destination country and choose Jordan.
+  - Click "Save regional rules".
+- id: select_native-mantine-v2-T33
+  name: 'Dark privacy card: set Crash reports retention to 30 days and apply'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: compact_triplet_dark_native
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: On the dark privacy card, set the "Crash reports retention" native dropdown to "30 days", do not change "Session logs" or "Audit trails", then click "Apply privacy settings". The task will finish automatically when done.
+  ui_copy: On the dark privacy card, set the "Crash reports retention" native dropdown to "30 days", do not change "Session logs" or "Audit trails", then click "Apply privacy settings". The task will finish automatically when done.
+  setup_description: 'A compact dark privacy card is anchored near the bottom-right of a settings dashboard. It contains three small Mantine NativeSelect controls: "Session logs", "Crash reports retention", and "Audit trails". Crash reports retention starts at 7 days. Session logs starts at 14 days and Audit trails starts at 365 days. The card footer includes "Apply privacy settings" and "Reset all". The selections are only committed when Apply is clicked.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - scale
+    factor_rationale: A small dark card in the viewport corner stresses grounded acquisition, while three repeated native controls and an explicit apply preserve the diagnostic last-mile commit behavior.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: 'This is hard for the same reason many native-select tasks are: the semantics are easy, but the grounded field-value-apply sequence is not.'
+  success_trigger:
+    human_readable:
+    - The committed value of "Crash reports retention" is "30" / "30 days".
+    - '"Session logs" remains "14" and "Audit trails" remains "365".'
+    - The "Apply privacy settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: '30'
+        selected_label: 30 days
+        target_instance: Crash reports retention
+        non_target_instances_must_remain:
+          Session logs: '14'
+          Audit trails: '365'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply privacy settings
+      require_correct_instance: true
+      target_instance_label_or_id: Crash reports retention
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Session logs or Audit trails instead of Crash reports retention.
+  - Choosing 14 or 90 days instead of 30 days.
+  - Changing the correct field but clicking "Reset all".
+  - Leaving the card uncommitted without Apply.
+  expected_interaction_path:
+  - Locate the Crash reports retention native select in the dark privacy card.
+  - Choose 30 days.
+  - Leave the other two fields unchanged.
+  - Click "Apply privacy settings".
+- id: select_native-mantine-v2-T34
+  name: 'Billing interval modal: choose Quarterly and save'
+  canonical_type: select_native
+  implementation_source: mantine
+  implementation_variant: modal_interval_pair_native
+  implementation_component: 'Mantine: NativeSelect'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open "Plan settings". In the modal, set the "Billing interval" native dropdown to "Quarterly", do not change "Invoice locale", then click "Save plan settings". The task will finish automatically when done.
+  ui_copy: Open "Plan settings". In the modal, set the "Billing interval" native dropdown to "Quarterly", do not change "Invoice locale", then click "Save plan settings". The task will finish automatically when done.
+  setup_description: 'A subscription page contains a "Plan settings" button that opens a Mantine Modal. Inside are two Mantine NativeSelect controls: "Billing interval" and "Invoice locale". Billing interval starts at Monthly. Invoice locale starts at English (US) and must remain unchanged. The modal contains a short renewal note and footer buttons "Save plan settings" and "Discard". The interval only commits after Save.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: not_applicable
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: This keeps native interaction realistic and human-solvable while still requiring the agent to manage a modal, preserve a sibling field, and verify commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The hard part is not understanding Quarterly; it is performing the right change in the right modal field and committing it.
+  success_trigger:
+    human_readable:
+    - The committed value of "Billing interval" is "quarterly" / "Quarterly".
+    - '"Invoice locale" remains "en-US".'
+    - The "Save plan settings" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_value: quarterly
+        selected_label: Quarterly
+        target_instance: Billing interval
+        non_target_instances_must_remain:
+          Invoice locale: en-US
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save plan settings
+      require_correct_instance: true
+      target_instance_label_or_id: Billing interval
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Invoice locale instead of Billing interval.
+  - Choosing Monthly or Yearly instead of Quarterly.
+  - Selecting Quarterly but discarding or closing the modal.
+  - Failing to click "Save plan settings".
+  expected_interaction_path:
+  - Open the Plan settings modal.
+  - Change Billing interval to Quarterly.
+  - Leave Invoice locale unchanged.
+  - Click "Save plan settings".
+- id: listbox_single-antd-v2-T35
+  name: 'Drawer city list: scroll to São Paulo and save route'
+  canonical_type: listbox_single
+  implementation_source: antd
+  implementation_variant: menu_inline_scroll_in_drawer
+  implementation_component: 'AntD: Menu (single-select listbox)'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Route defaults". In the drawer, scroll the "Destination city" list until "São Paulo" is visible, select it, then click "Save route defaults". The task will finish automatically when done.
+  ui_copy: Open "Route defaults". In the drawer, scroll the "Destination city" list until "São Paulo" is visible, select it, then click "Save route defaults". The task will finish automatically when done.
+  setup_description: A logistics dashboard contains a button labeled "Route defaults". Clicking it opens an Ant Design Drawer with one vertically scrollable Menu acting as a single-select listbox labeled "Destination city". The list is grouped by region and constrained to a small fixed-height container, so only a few items are visible at once. São Paulo sits below the initial viewport under the Americas group. The drawer footer contains "Cancel" and "Save route defaults", and the selected city is committed only after Save.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: Listboxes only stay diagnostic when the target is off-screen or weakly grounded, so this uses a compact drawer with an internal-scrolling list and an explicit save rather than a visible one-click choice.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The listbox itself is semantically clear, but the target is off-screen in a small drawer list and must be committed explicitly.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Destination city" is "sao_paulo".
+    - The drawer-local "Save route defaults" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: sao_paulo
+        target_instance: Destination city
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save route defaults
+      require_correct_instance: true
+      target_instance_label_or_id: Destination city
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the drawer body instead of the city list container.
+  - Selecting a nearby city such as Buenos Aires or Bogotá instead of São Paulo.
+  - Selecting São Paulo but not clicking "Save route defaults".
+  - Clicking a non-selectable group heading and treating it as success.
+  expected_interaction_path:
+  - Open the Route defaults drawer.
+  - Scroll inside the Destination city listbox until São Paulo is visible.
+  - Select São Paulo.
+  - Click "Save route defaults".
+- id: listbox_single-antd-v2-T36
+  name: 'Visual cue listbox: set Backup action by icon and apply'
+  canonical_type: listbox_single
+  implementation_source: antd
+  implementation_variant: menu_inline_icon_match_pair
+  implementation_component: 'AntD: Menu (single-select listbox)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Action routing" panel, set the "Backup action" list to the item that matches the reference invoice icon, do not change "Primary action", then click "Apply routing". The task will finish automatically when done.
+  ui_copy: In the "Action routing" panel, set the "Backup action" list to the item that matches the reference invoice icon, do not change "Primary action", then click "Apply routing". The task will finish automatically when done.
+  setup_description: 'A dark settings panel contains two compact Ant Design Menu-based listboxes: "Primary action" and "Backup action". Each row combines an icon with text labels such as Upload, Invoice, Export, and Archive. Primary action starts at Export and must remain unchanged. Backup action starts at Upload. A small reference chip above the panel shows only the invoice icon. The panel footer contains "Apply routing" and "Reset routing". The selected row is not committed until Apply is pressed.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: 'This is the cue-to-row listbox boundary that stayed diagnostic in v1: a small visual cue, two sibling listboxes, and an explicit commit keep the task grounded without making it adversarial.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The icon mapping is easy for a human, but the small dark panel and repeated listboxes make correct row and correct instance selection hard for weaker modes.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Backup action" is "invoice".
+    - '"Primary action" remains "export".'
+    - The "Apply routing" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: invoice-reference-chip
+        selected_value: invoice
+        non_target_instances_must_remain:
+          Primary action: export
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply routing
+      require_correct_instance: true
+      target_instance_label_or_id: Backup action
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary action instead of Backup action.
+  - Selecting the wrong icon row, such as Export or Archive.
+  - Selecting Invoice in Backup action but clicking "Reset routing" or not applying.
+  - Applying while Backup action is still Upload.
+  expected_interaction_path:
+  - Inspect the reference invoice icon.
+  - Select the matching row in the Backup action listbox.
+  - Leave Primary action unchanged.
+  - Click "Apply routing".
+- id: listbox_single-antd-v2-T37
+  name: 'Modal labels: set Secondary label to Legal and finish'
+  canonical_type: listbox_single
+  implementation_source: antd
+  implementation_variant: modal_dual_menu_inline
+  implementation_component: 'AntD: Menu (single-select listbox) inside Modal'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Label settings". In the modal, set the "Secondary label" list to "Legal", do not change "Primary label", then click "Done". The task will finish automatically when done.
+  ui_copy: Open "Label settings". In the modal, set the "Secondary label" list to "Legal", do not change "Primary label", then click "Done". The task will finish automatically when done.
+  setup_description: 'A document-management page contains a button labeled "Label settings". Clicking it opens a modal with two Ant Design Menu-based listboxes, "Primary label" and "Secondary label". Both lists contain the same options: Finance, Legal, Marketing, Sales. Primary label starts at Finance and must remain unchanged. Secondary label starts at Marketing. The modal footer contains "Cancel" and "Done". The committed label chip on the base page changes only after Done.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: This takes an otherwise simple listbox and hardens it through sibling-instance disambiguation and modal commit semantics.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The options are short and visible, but the wrong-instance risk and modal Done step keep the task from collapsing to a trivial click.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Secondary label" is "legal".
+    - '"Primary label" remains "finance".'
+    - The modal "Done" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: legal
+        target_instance: Secondary label
+        non_target_instances_must_remain:
+          Primary label: finance
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary label
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Legal in Primary label instead of Secondary label.
+  - Leaving Secondary label at Marketing.
+  - Changing both listboxes.
+  - Selecting the right row but closing or cancelling the modal without clicking Done.
+  expected_interaction_path:
+  - Open the Label settings modal.
+  - Select Legal in the Secondary label listbox.
+  - Leave Primary label unchanged.
+  - Click Done.
+- id: listbox_single-antd-v2-T38
+  name: 'Service row visibility: set Gateway to Private and save row'
+  canonical_type: listbox_single
+  implementation_source: antd
+  implementation_variant: row_scoped_menu_listbox
+  implementation_component: 'AntD: Menu (single-select listbox) in table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the services table, set the "Visibility" list for row "Gateway" to "Private", then click "Save" in the Gateway row. The task will finish automatically when done.
+  ui_copy: In the services table, set the "Visibility" list for row "Gateway" to "Private", then click "Save" in the Gateway row. The task will finish automatically when done.
+  setup_description: A compact services table contains four visible rows. In each row, the "Visibility" column is rendered as a tiny Ant Design Menu-based single-select listbox with options Public, Team-only, and Private. The Gateway row starts at Team-only. Each row also has a row-local Save button. The table includes headers, badges, and a filter input that increase clutter but do not affect success.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Listboxes in tables are only interesting when row-local targeting matters, so this task uses a dense repeated-row layout with row-scoped save instead of an isolated visible list.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The rows are easy to read, but the tiny repeated listboxes and row-local Save controls make the grounded interaction hard.
+  success_trigger:
+    human_readable:
+    - The committed selection in the Gateway row listbox is "private".
+    - The row-local Save control for Gateway has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: private
+        target_instance: Gateway / Visibility
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row Gateway
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway / Visibility
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing any row other than Gateway.
+  - Selecting Public or Team-only instead of Private.
+  - Changing the correct row but clicking Save in another row.
+  - Selecting Private without a committed row save.
+  expected_interaction_path:
+  - Find the Gateway row.
+  - Select Private in its Visibility listbox.
+  - Click Save in the same row.
+- id: listbox_single-antd-v2-T39
+  name: 'Billing sections list: scroll to Exceptions and continue'
+  canonical_type: listbox_single
+  implementation_source: antd
+  implementation_variant: nested_scroll_side_menu
+  implementation_component: 'AntD: Menu (single-select listbox)'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Billing sections" list, scroll until "Exceptions" is visible, select it, then click "Continue". The task will finish automatically when done.
+  ui_copy: In the "Billing sections" list, scroll until "Exceptions" is visible, select it, then click "Continue". The task will finish automatically when done.
+  setup_description: A right-side nested panel contains a compact Ant Design Menu labeled "Billing sections". The list is taller than its viewport and must be scrolled internally. The visible top items are Summary, Rates, Invoices, and Credits; the target "Exceptions" is farther down and not visible at load. The panel also contains helper text and a footer button "Continue". The current section is only committed after Continue is pressed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - scale
+    factor_rationale: 'This task isolates the inner-scroll listbox boundary that survived v1: the list is semantically simple, but the target is off-screen and the commit happens only after a secondary button.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The component remains easy conceptually, but off-screen selection inside a compact nested panel plus explicit continue makes it a real multi-step task.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Billing sections" is "exceptions".
+    - The "Continue" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: exceptions
+        target_instance: Billing sections
+      tolerance: null
+      require_confirm: true
+      confirm_control: Continue
+      require_correct_instance: true
+      target_instance_label_or_id: Billing sections
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the list container.
+  - Selecting a nearby section such as Credits or Adjustments.
+  - Selecting Exceptions but not clicking Continue.
+  - Clicking Continue while the list remains on the previous section.
+  expected_interaction_path:
+  - Scroll inside the Billing sections listbox until Exceptions is visible.
+  - Select Exceptions.
+  - Click Continue.
+- id: listbox_single-mui-v2-T40
+  name: 'Modal animal list: scroll to Zebra and apply'
+  canonical_type: listbox_single
+  implementation_source: mui
+  implementation_variant: scrollable_list_in_modal
+  implementation_component: 'MUI: List + ListItemButton'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Favorite animal". In the modal list, scroll to "Zebra", select it, then click "Apply choice". The task will finish automatically when done.
+  ui_copy: Open "Favorite animal". In the modal list, scroll to "Zebra", select it, then click "Apply choice". The task will finish automatically when done.
+  setup_description: A preferences card contains a button labeled "Favorite animal". Clicking it opens a modal with a fixed-height MUI List acting as a listbox. The list is alphabetized from Aardvark through Zebra and must be scrolled internally to reach the target. The initial selected item is Cat. The modal footer has "Cancel" and "Apply choice". The committed choice only updates when Apply is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: 'This is the clean inner-scroll listbox probe: the target is not visible, the scroll region is local, and the modal Apply step prevents a shallow success criterion.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Zebra is easy for a human to identify, but reaching it requires the correct list scroll and an explicit commit.
+  success_trigger:
+    human_readable:
+    - The committed selection in the modal listbox is "zebra".
+    - The modal "Apply choice" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: zebra
+        target_instance: Favorite animal
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply choice
+      require_correct_instance: true
+      target_instance_label_or_id: Favorite animal
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page or modal shell instead of the listbox itself.
+  - Selecting Yak or another nearby late-list item instead of Zebra.
+  - Selecting Zebra but cancelling or not applying.
+  - Leaving the initial selection on Cat.
+  expected_interaction_path:
+  - Open the Favorite animal modal.
+  - Scroll inside the listbox until Zebra is visible.
+  - Select Zebra.
+  - Click Apply choice.
+- id: listbox_single-mui-v2-T41
+  name: 'Plan listboxes: match the star cue in Target plan and apply'
+  canonical_type: listbox_single
+  implementation_source: mui
+  implementation_variant: dual_listbox_visual_match
+  implementation_component: 'MUI: List + ListItemButton'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the subscription panel, set the "Target plan" list to the item that matches the star cue, do not change "Current plan", then click "Apply plan". The task will finish automatically when done.
+  ui_copy: In the subscription panel, set the "Target plan" list to the item that matches the star cue, do not change "Current plan", then click "Apply plan". The task will finish automatically when done.
+  setup_description: 'A subscription panel contains two small MUI List-based listboxes: "Current plan" and "Target plan". Each row includes an icon and text: Starter (circle), Pro (star), Enterprise (diamond). Current plan is Pro and must remain unchanged. Target plan is Starter. A small reference badge above the card shows only the star icon. The footer button "Apply plan" commits the panel state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: This reproduces the cue-to-row boundary but removes the easy single-instance shortcut by adding a second, semantically similar listbox and an explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The star cue is human-solvable, but the repeated listboxes and compact card make correct-instance selection the main challenge.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Target plan" is "pro".
+    - '"Current plan" remains "pro".'
+    - The "Apply plan" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: star-plan-cue
+        selected_value: pro
+        non_target_instances_must_remain:
+          Current plan: pro
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply plan
+      require_correct_instance: true
+      target_instance_label_or_id: Target plan
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Current plan instead of Target plan.
+  - Selecting Enterprise or Starter instead of the star-coded row.
+  - Selecting Pro in draft but failing to click Apply plan.
+  - Changing both listboxes.
+  expected_interaction_path:
+  - Inspect the star cue.
+  - Select the matching row in Target plan.
+  - Leave Current plan unchanged.
+  - Click Apply plan.
+- id: listbox_single-mui-v2-T42
+  name: 'Priority listbox: choose High and apply without resetting'
+  canonical_type: listbox_single
+  implementation_source: mui
+  implementation_variant: settings_panel_with_apply_reset
+  implementation_component: 'MUI: List + ListItemButton'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the settings panel, set the "Priority" list to "High", do not change "Escalation channel", then click "Apply". The task will finish automatically when done.
+  ui_copy: In the settings panel, set the "Priority" list to "High", do not change "Escalation channel", then click "Apply". The task will finish automatically when done.
+  setup_description: A compact off-center settings panel contains two MUI listboxes. The first is "Priority" with rows Low, Medium, High. The second is "Escalation channel" with rows Email, Slack, Pager. Priority starts at Medium; Escalation channel starts at Slack and must remain unchanged. The panel footer contains "Apply" and "Reset". The selected row highlight changes immediately, but the committed state only updates when Apply is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: This uses explicit Apply/Reset dynamics and a second nearby listbox to make a short visible list still diagnostically meaningful.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Even visible options can be hard when the panel is compact, the wrong listbox is adjacent, and Reset offers an attractive failure mode.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Priority" is "high".
+    - '"Escalation channel" remains "slack".'
+    - The "Apply" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: high
+        target_instance: Priority
+        non_target_instances_must_remain:
+          Escalation channel: slack
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Priority
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Escalation channel instead of Priority.
+  - Selecting High but clicking Reset or leaving without applying.
+  - Applying while Priority remains Medium or Low.
+  - Changing both listboxes.
+  expected_interaction_path:
+  - Select High in the Priority listbox.
+  - Verify Escalation channel is unchanged.
+  - Click Apply.
+- id: listbox_single-mui-v2-T43
+  name: 'Grouped export defaults: scroll to CSV exports and save'
+  canonical_type: listbox_single
+  implementation_source: mui
+  implementation_variant: grouped_scroll_listbox
+  implementation_component: 'MUI: List + ListItemButton'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Export defaults" list, scroll until "CSV exports" is visible, select it, then click "Save defaults". The task will finish automatically when done.
+  ui_copy: In the "Export defaults" list, scroll until "CSV exports" is visible, select it, then click "Save defaults". The task will finish automatically when done.
+  setup_description: A nested panel in the lower half of the page contains a fixed-height MUI List with non-selectable section headers such as Reports, Exports, and Logs. The list acts as a single-select listbox; only the item rows are selectable. The target row "CSV exports" sits below the initially visible area under the Exports section. A button "Save defaults" sits under the list and commits the choice. The page itself is also scrollable, but the listbox has its own scrollbar.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - guidance
+    - confirmation_model
+    factor_rationale: This uses grouped list content and dual scroll regions to create the specific inner-scroll listbox failure pattern without relying on hidden affordances or wording tricks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The list remains human-readable, but the off-screen target and non-selectable group headings still create strong interaction-knowledge pressure.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Export defaults" is "csv_exports".
+    - The "Save defaults" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: csv_exports
+        target_instance: Export defaults
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save defaults
+      require_correct_instance: true
+      target_instance_label_or_id: Export defaults
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking a section header such as Exports instead of a selectable row.
+  - Selecting another export row such as PDF exports.
+  - Scrolling the page rather than the listbox.
+  - Selecting CSV exports but not clicking Save defaults.
+  expected_interaction_path:
+  - Scroll inside the Export defaults listbox until CSV exports is visible.
+  - Select CSV exports.
+  - Click Save defaults.
+- id: listbox_single-mui-v2-T44
+  name: 'Permissions table: set Alice to Editor and save row'
+  canonical_type: listbox_single
+  implementation_source: mui
+  implementation_variant: row_scoped_listbox_table
+  implementation_component: 'MUI: List + ListItemButton'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the permissions table, set the "Role" list for "Alice" to "Editor", then click "Save" in Alice's row. The task will finish automatically when done.
+  ui_copy: In the permissions table, set the "Role" list for "Alice" to "Editor", then click "Save" in Alice's row. The task will finish automatically when done.
+  setup_description: A permissions table with four visible rows is embedded in a dashboard. Each row includes a small MUI List acting as a single-select listbox in the "Role" column, with options Viewer, Editor, and Admin. Alice starts at Viewer. Every row also has a row-local Save button. A toolbar above the table contains sorting controls, a role filter, and an export button. The committed role changes only when the matching row save is pressed.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Like the native table tasks, the listbox stays primary but becomes hard through repeated row structure and row-local save coupling under a compact dark layout.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The tiny repeated role listboxes and row-local saves create high grounded disambiguation pressure even though the roles are obvious.
+  success_trigger:
+    human_readable:
+    - The committed role selection in row "Alice" is "editor".
+    - The row-local Save control for Alice has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: editor
+        target_instance: Alice / Role
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row Alice
+      require_correct_instance: true
+      target_instance_label_or_id: Alice / Role
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing any row other than Alice.
+  - Selecting Viewer or Admin instead of Editor in Alice's row.
+  - Changing Alice correctly but clicking Save in another row.
+  - Leaving the row uncommitted after changing the visible highlight.
+  expected_interaction_path:
+  - Locate Alice's row.
+  - Select Editor in her Role listbox.
+  - Click Save in Alice's row.
+- id: listbox_single-mantine-v2-T45
+  name: 'ScrollArea city list: select São Paulo and apply'
+  canonical_type: listbox_single
+  implementation_source: mantine
+  implementation_variant: scrollarea_grouped_navlinks
+  implementation_component: 'Mantine composite: NavLink listbox'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Preferred city" list, scroll until "São Paulo" is visible, select it, then click "Apply city". The task will finish automatically when done.
+  ui_copy: In the "Preferred city" list, scroll until "São Paulo" is visible, select it, then click "Apply city". The task will finish automatically when done.
+  setup_description: A settings panel contains a Mantine ScrollArea with a NavLink stack instrumented as a single-select listbox labeled "Preferred city". Group headings divide the cities by region and are not selectable. The list viewport is small, so São Paulo is not visible on load. A button "Apply city" under the list commits the selected value. The rest of the panel includes helper text and unrelated action buttons.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - scale
+    factor_rationale: Mantine listboxes were only meaningfully hard at the inner-scroll boundary, so this task keeps the surface simple but forces list-level scrolling and explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target is semantically obvious but physically hidden in a compact scrollable listbox.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Preferred city" is "sao_paulo".
+    - The "Apply city" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: sao_paulo
+        target_instance: Preferred city
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply city
+      require_correct_instance: true
+      target_instance_label_or_id: Preferred city
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the ScrollArea listbox.
+  - Selecting another city in the same region instead of São Paulo.
+  - Clicking a region heading instead of a city row.
+  - Selecting São Paulo but not clicking Apply city.
+  expected_interaction_path:
+  - Scroll inside the Preferred city listbox until São Paulo is visible.
+  - Select São Paulo.
+  - Click Apply city.
+- id: listbox_single-mantine-v2-T46
+  name: 'Dark card: set Visibility to Private and save'
+  canonical_type: listbox_single
+  implementation_source: mantine
+  implementation_variant: dual_navlink_listboxes
+  implementation_component: 'Mantine composite: NavLink listbox'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: On the dark settings card, set the "Visibility" list to "Private", do not change "Audience", then click "Save changes". The task will finish automatically when done.
+  ui_copy: On the dark settings card, set the "Visibility" list to "Private", do not change "Audience", then click "Save changes". The task will finish automatically when done.
+  setup_description: 'A dark settings card sits near the bottom-left of the viewport. It contains two compact NavLink-based listboxes: "Audience" and "Visibility". Audience starts at Team and must remain unchanged. Visibility starts at Team-only. The visibility options are Public, Team-only, and Private. The footer contains "Save changes" and "Cancel". The selected value is only committed after Save.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - confirmation_model
+    factor_rationale: The card remains human-solvable, but placing two compact listboxes in a dark corner card with save semantics creates meaningful disambiguation and grounded acquisition pressure.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: This is a stronger version of the old single-card visibility task because the user must preserve a sibling listbox and commit the state.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Visibility" is "private".
+    - '"Audience" remains "team".'
+    - The "Save changes" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: private
+        target_instance: Visibility
+        non_target_instances_must_remain:
+          Audience: team
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Visibility
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Audience instead of Visibility.
+  - Leaving Visibility at Team-only or choosing Public.
+  - Selecting Private but cancelling or not saving.
+  - Changing both listboxes.
+  expected_interaction_path:
+  - Select Private in the Visibility listbox.
+  - Leave Audience unchanged.
+  - Click Save changes.
+- id: listbox_single-mantine-v2-T47
+  name: 'Modal label picker: set Secondary label to Legal and finish'
+  canonical_type: listbox_single
+  implementation_source: mantine
+  implementation_variant: modal_dual_navlink_listboxes
+  implementation_component: 'Mantine composite: NavLink listbox inside Modal'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Pick labels". In the modal, set the "Secondary label" list to "Legal", do not change "Primary label", then click "Done". The task will finish automatically when done.
+  ui_copy: Open "Pick labels". In the modal, set the "Secondary label" list to "Legal", do not change "Primary label", then click "Done". The task will finish automatically when done.
+  setup_description: A document card contains a button labeled "Pick labels". Clicking it opens a modal with two NavLink-based single-select listboxes, "Primary label" and "Secondary label". Both contain Finance, Legal, Marketing, and Sales. Primary label starts at Finance and must remain unchanged. Secondary label starts at Marketing. The modal footer has "Cancel" and "Done". The selected chips on the base page change only after Done.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: The Mantine composite remains a straightforward listbox, so the challenge comes from sibling-instance targeting inside a modal and the explicit Done step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The options are visible, but choosing the correct instance and committing it through the modal is still a meaningful hard case.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Secondary label" is "legal".
+    - '"Primary label" remains "finance".'
+    - The modal "Done" control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option:
+          value: legal
+        target_instance: Secondary label
+        non_target_instances_must_remain:
+          Primary label: finance
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary label
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary label instead of Secondary label.
+  - Leaving Secondary label at Marketing.
+  - Selecting Legal in draft but clicking Cancel.
+  - Changing both label lists.
+  expected_interaction_path:
+  - Open the Pick labels modal.
+  - Select Legal in Secondary label.
+  - Leave Primary label unchanged.
+  - Click Done.
+- id: listbox_single-mantine-v2-T48
+  name: 'Reference swatch: set Backup accent to Violet and apply theme'
+  canonical_type: listbox_single
+  implementation_source: mantine
+  implementation_variant: visual_match_dual_listboxes
+  implementation_component: 'Mantine composite: NavLink listbox'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the theme panel, set the "Backup accent" list to the item that matches the violet reference swatch, do not change "Primary accent", then click "Apply theme". The task will finish automatically when done.
+  ui_copy: In the theme panel, set the "Backup accent" list to the item that matches the violet reference swatch, do not change "Primary accent", then click "Apply theme". The task will finish automatically when done.
+  setup_description: 'A theme panel embedded in a busy dashboard contains two NavLink-based listboxes: "Primary accent" and "Backup accent". Each row shows a color swatch and label: Red, Green, Blue, Violet. Primary accent starts at Blue and must remain unchanged. Backup accent starts at Green. A reference chip above the panel shows a violet swatch with no text. The footer contains "Apply theme" and "Discard". The new accent is committed only after Apply theme.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: 'This is the Mantine version of the cue-to-row listbox task: the cue is visual, the instances are duplicated, and the commit semantics prevent a shallow single-click success path.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The swatch cue is simple for humans, but the repeated listboxes and dashboard clutter still produce diagnostic grounding pressure.
+  success_trigger:
+    human_readable:
+    - The committed selection in "Backup accent" is "violet".
+    - '"Primary accent" remains "blue".'
+    - The "Apply theme" control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: violet-accent-swatch
+        selected_value: violet
+        non_target_instances_must_remain:
+          Primary accent: blue
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply theme
+      require_correct_instance: true
+      target_instance_label_or_id: Backup accent
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary accent instead of Backup accent.
+  - Selecting Blue or Green instead of Violet.
+  - Selecting Violet but discarding or not applying the theme.
+  - Changing both listboxes.
+  expected_interaction_path:
+  - Inspect the violet reference swatch.
+  - Select Violet in the Backup accent listbox.
+  - Leave Primary accent unchanged.
+  - Click Apply theme.

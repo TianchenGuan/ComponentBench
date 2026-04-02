@@ -1,0 +1,2082 @@
+- id: alert_dialog_confirm-antd-T01
+  name: Confirm deleting a draft (basic modal confirm)
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Modal.confirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Delete the draft named “Q1 Budget Draft”: click the “Delete draft” button and then click “Confirm” in
+    the confirmation dialog. The task will finish automatically when done.'
+  ui_copy: 'Delete the draft named “Q1 Budget Draft”: click the “Delete draft” button and then click “Confirm” in the confirmation
+    dialog.'
+  setup_description: |-
+    Baseline isolated-card layout centered in the viewport. A single card titled “Drafts” contains one row labeled “Q1 Budget Draft” with a primary action button labeled “Delete draft”.
+
+    When “Delete draft” is clicked, an Ant Design static confirmation modal (Modal.confirm) appears centered with:
+    - Title: “Delete this draft?”
+    - Body text: “This cannot be undone.”
+    - Footer buttons: “Cancel” (left) and “Confirm” (right, danger-styled).
+    - Standard close (×) icon in the top-right of the modal.
+
+    No other dialogs are present. There are no other destructive actions on the page and no other overlays. The modal closes immediately after a button is pressed, and a small non-blocking toast appears (“Action recorded”) purely as feedback (toast is NOT used for success).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single instance with clearly labeled Confirm/Cancel buttons; the only challenge is opening the modal and
+      clicking the obvious primary action.
+  success_trigger:
+    human_readable:
+    - The “Delete this draft?” confirmation modal was opened from the “Delete draft” trigger for “Q1 Budget Draft”.
+    - The user explicitly clicked the modal footer button labeled “Confirm”.
+    - The confirmation modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_draft_q1_budget_draft
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Cancel” instead of “Confirm”.
+  - Closing the modal via the × close icon, pressing Escape, or clicking the mask/backdrop (counts as dismiss, not confirm).
+  - Confirming any other dialog (if a different dialog is opened by mistake).
+  - “Confirm” clicked but the dialog remains open (e.g., due to a blocked close); success requires the dialog to be closed.
+  expected_interaction_path:
+  - Click “Delete draft” in the Drafts card.
+  - In the modal, click “Confirm”.
+  notes: 'Instrumentation: attach data-testid to the trigger (cb-open-delete-draft) and to modal buttons (cb-confirm, cb-cancel).
+    Checker can read {open, lastAction, instanceId} from a window.__cbDialogState object.'
+- id: alert_dialog_confirm-antd-T02
+  name: Cancel removing a payment method (dark theme)
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Modal.confirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Do not remove the card ending in 4242: click “Remove card” and then click “Cancel” in the confirmation
+    dialog. The task will finish automatically when done.'
+  ui_copy: 'Do not remove the card ending in 4242: click “Remove card” and then click “Cancel” in the confirmation dialog.'
+  setup_description: |-
+    Same simple single-card page as baseline, but using a dark theme.
+
+    A card titled “Payment methods” shows one item: “Visa •••• 4242” with a button labeled “Remove card”. Clicking it opens an Ant Design Modal.confirm dialog centered on screen:
+    - Title: “Remove this payment method?”
+    - Body: “You can add it again later.”
+    - Buttons: “Cancel” (left) and “Remove” (right, danger-styled).
+    - A × close icon is present.
+
+    For consistency in the UI copy, the right button is labeled “Remove”, but the task requires pressing “Cancel” and closing the dialog without confirming removal.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Still a single straightforward confirm dialog; dark theme slightly reduces contrast but controls remain
+      large and clearly labeled.
+  success_trigger:
+    human_readable:
+    - The “Remove this payment method?” confirmation modal was opened from the “Remove card” trigger for “Visa •••• 4242”.
+    - The user explicitly clicked the footer button labeled “Cancel”.
+    - The modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: cancel
+        dialog_instance: remove_payment_visa_4242
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking the danger action (e.g., “Remove”) instead of “Cancel”.
+  - Dismissing the dialog via × / Escape / mask click (dismiss ≠ cancel for this task).
+  - Opening a different confirmation dialog (not applicable on this page, but included for robustness).
+  expected_interaction_path:
+  - Click “Remove card”.
+  - Click “Cancel” in the dialog.
+  notes: Checker should distinguish explicit Cancel button click vs generic dismiss (×/Escape/mask).
+- id: alert_dialog_confirm-antd-T03
+  name: Open a reset confirmation dialog and leave it open
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Modal.confirm'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Reset filters” confirmation dialog and leave it open. The task will finish automatically when
+    done.
+  ui_copy: Open the “Reset filters” confirmation dialog and leave it open.
+  setup_description: |-
+    Baseline isolated-card layout centered in the viewport. A single card titled “Search filters” contains a summary of filters (read-only chips) and one button labeled “Reset filters”.
+
+    Clicking “Reset filters” opens an Ant Design Modal.confirm dialog:
+    - Title: “Reset filters?”
+    - Body: “This will clear all filter chips.”
+    - Buttons: “Cancel” and “Reset”.
+
+    The task is ONLY to open the confirmation dialog; do not press Cancel/Reset. The modal should remain visible on screen.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Only requires locating a single trigger and opening one modal; no decision between actions is required.
+  success_trigger:
+    human_readable:
+    - The “Reset filters?” confirmation modal is currently open.
+    - The open modal corresponds to the “Reset filters” trigger (the only instance).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: true
+        active_instance: reset_filters
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - The dialog was never opened.
+  - The dialog was opened and then closed (by Cancel/Reset/×/Escape/mask click).
+  - A different confirmation dialog is open (not applicable here, but included for robustness).
+  expected_interaction_path:
+  - Click “Reset filters”.
+  - Stop once the confirmation dialog is visible.
+  notes: For open_overlay tasks, checker should only verify open-state and active instance id; last_action should remain null/undefined.
+- id: alert_dialog_confirm-antd-T04
+  name: Confirm removing a tag via Popconfirm in a form
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Popconfirm
+  implementation_component: 'AntD: Popconfirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Remove the “urgent” tag: click the small remove (×) on the “urgent” tag and then click “OK” in the confirmation
+    bubble. The task will finish automatically when done.'
+  ui_copy: 'Remove the “urgent” tag: click the small remove (×) on the “urgent” tag and then click “OK” in the confirmation
+    bubble.'
+  setup_description: |-
+    Form section layout centered in the viewport with a short “Edit task” form:
+    - Text input labeled “Title” (pre-filled, not required)
+    - Select labeled “Owner” (pre-selected, not required)
+    - Tag list labeled “Tags” containing two tags: “urgent” and “backend”
+
+    Each tag has a tiny remove (×) affordance. Clicking the remove (×) on a tag opens an Ant Design Popconfirm bubble anchored to that tag.
+
+    For the “urgent” tag, the Popconfirm shows:
+    - Title: “Remove tag?”
+    - Description: “This will unassign the tag.”
+    - Buttons: “Cancel” and “OK” (default okText) inside the bubble.
+
+    There is only one Popconfirm on screen at a time; it closes immediately after OK/Cancel.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The remove (×) target is small and the Popconfirm action buttons are compact, but there is only one relevant
+      tag and a clear OK button.
+  success_trigger:
+    human_readable:
+    - The Popconfirm associated with the “urgent” tag was opened.
+    - The user clicked the Popconfirm button labeled “OK”.
+    - The Popconfirm is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: remove_tag_urgent
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Cancel” in the Popconfirm bubble.
+  - Closing the Popconfirm by clicking elsewhere without choosing OK (dismiss).
+  - Confirming removal for the “backend” tag instead of “urgent”.
+  expected_interaction_path:
+  - Click the × on the “urgent” tag.
+  - Click “OK” in the Popconfirm bubble.
+  notes: AntD Popconfirm supports okText/cancelText and exposes onConfirm/onCancel callbacks; checker can map these to last_action.
+    (See AntD Popconfirm API docs.)
+- id: alert_dialog_confirm-antd-T05
+  name: Confirm the correct danger action among two (settings panel)
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Modal.confirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'In the Danger Zone panel, revoke the API token (not delete the workspace): click “Revoke token” and then
+    click “Confirm” in the confirmation dialog. The task will finish automatically when done.'
+  ui_copy: 'In the Danger Zone panel, revoke the API token (not delete the workspace): click “Revoke token” and then click
+    “Confirm” in the confirmation dialog.'
+  setup_description: |-
+    Settings panel layout centered in the viewport with a left navigation rail (non-interactive for this task) and a main “Security” panel.
+
+    The “Security” panel contains a “Danger Zone” section with TWO destructive action rows (two instances of the same canonical confirm-dialog pattern):
+    1) “Revoke API token” with a button labeled “Revoke token”
+    2) “Delete workspace” with a button labeled “Delete workspace”
+
+    Clicking either button opens an Ant Design Modal.confirm dialog with matching title/body and a red confirm button.
+    - Revoke token dialog title: “Revoke API token?”
+    - Delete workspace dialog title: “Delete this workspace?”
+
+    Both dialogs have footer buttons “Cancel” and “Confirm”, plus an × close icon. Only one dialog can be open at a time.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar destructive actions require selecting the correct trigger and then confirming the correct dialog;
+      labels are clear but disambiguation matters.
+  success_trigger:
+    human_readable:
+    - The confirmation dialog opened must be the one for “Revoke API token?”.
+    - The user clicked the footer button labeled “Confirm”.
+    - The dialog is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: revoke_api_token
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Revoke API token
+      terminal_condition: true
+  negative_cases:
+  - Confirming the “Delete workspace” dialog instead of the “Revoke API token” dialog.
+  - Clicking “Cancel” or dismissing the dialog (×/Escape/mask).
+  - Opening the correct dialog but not pressing “Confirm”.
+  expected_interaction_path:
+  - In Danger Zone, click “Revoke token”.
+  - In the dialog titled “Revoke API token?”, click “Confirm”.
+  notes: If using Modal.confirm, ensure instance id is recorded on open (e.g., window.__cbDialogState.instanceId = 'revoke_api_token').
+- id: alert_dialog_confirm-antd-T06
+  name: Delete the correct table row (Popconfirm in table)
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Popconfirm
+  implementation_component: 'AntD: Table + Popconfirm'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Projects table, delete the row for “Gamma” by clicking its “Delete” action and then clicking “OK”
+    in the confirmation bubble. The task will finish automatically when done.
+  ui_copy: In the Projects table, delete the row for “Gamma” by clicking its “Delete” action and then clicking “OK” in the
+    confirmation bubble.
+  setup_description: |-
+    Table-cell layout: the page is a simple “Projects” table shown in a centered container (no scrolling needed). The table has three rows: “Alpha”, “Beta”, and “Gamma”.
+
+    Each row has an “Actions” column with two buttons:
+    - “Edit” (does nothing for this benchmark)
+    - “Delete” (trash icon + text)
+
+    Clicking a row’s “Delete” opens an Ant Design Popconfirm bubble anchored to that row’s delete button. The Popconfirm title includes the project name, e.g., “Delete Gamma?” and the description reads “This cannot be undone.”
+
+    The Popconfirm has compact buttons “Cancel” and “OK”. Only one Popconfirm can be open at a time.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Multiple similar table-row delete actions create disambiguation pressure, and Popconfirm buttons are small
+      within a dense table context.
+  success_trigger:
+    human_readable:
+    - The Popconfirm opened must be the one whose title references “Gamma”.
+    - The user clicked the Popconfirm button labeled “OK”.
+    - The Popconfirm is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_project_gamma
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Gamma
+      terminal_condition: true
+  negative_cases:
+  - Deleting (confirming) “Alpha” or “Beta” instead of “Gamma”.
+  - Clicking “Cancel” or clicking outside the Popconfirm to dismiss it.
+  - Clicking the row’s “Edit” button (no dialog action recorded).
+  - The row disappears but the confirm action was not recorded on the Popconfirm instance (checker relies on Popconfirm semantics,
+    not table data).
+  expected_interaction_path:
+  - Find row “Gamma” in the table.
+  - Click its “Delete” action.
+  - Click “OK” in the Popconfirm bubble.
+  notes: Ensure each row delete action has a stable instance id (e.g., data-cb-instance='Gamma') so the checker can enforce
+    correct-instance confirmation.
+- id: alert_dialog_confirm-antd-T07
+  name: Match a dialog to a visual preview and confirm
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Modal.confirm'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Use the preview card to choose the correct confirmation dialog, then click “Confirm” in that dialog. The
+    task will finish automatically when done.
+  ui_copy: Use the preview card to choose the correct confirmation dialog, then click “Confirm” in that dialog.
+  setup_description: |-
+    Isolated-card layout centered in the viewport. Two side-by-side action cards are shown:
+    - Left card: “Deactivate user” with a button “Deactivate…”
+    - Right card: “Remove from team” with a button “Remove…”
+
+    Each button opens an Ant Design Modal.confirm with similar structure (title, short warning text, Cancel/Confirm).
+    The titles differ:
+    - “Deactivate this user?”
+    - “Remove this user from the team?”
+
+    On the right side of the page (same viewport), there is a “Preview” card that shows a small static image of the *target* confirmation dialog (a screenshot-like thumbnail). The preview is intentionally visual: it shows the dialog title and the confirm button style, but the browsergym instruction does NOT name which action to pick.
+
+    The agent must visually match the preview to the dialog it opens, then click “Confirm”. Only one dialog can be open at a time.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The goal is specified visually, so the agent must match dialog content/title from pixels; two similar actions
+      increase confusion even though buttons are large.
+  success_trigger:
+    human_readable:
+    - The opened dialog matches the preview card (by instance id bound to the preview).
+    - The user clicked the “Confirm” footer button in that dialog.
+    - The dialog is closed after confirmation.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: preview_target
+      tolerance: exact_match_by_instance_id
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Preview target
+      terminal_condition: true
+  negative_cases:
+  - Confirming the non-matching dialog (does not correspond to the preview).
+  - Opening the correct dialog but clicking “Cancel” or dismissing it.
+  - Confirming after switching dialogs (preview must match the confirmed dialog instance).
+  expected_interaction_path:
+  - Look at the Preview card thumbnail to identify the target dialog title/style.
+  - Click the button that opens the matching confirmation dialog.
+  - Click “Confirm”.
+  notes: 'Implementation tip: bind the preview to a specific instance id (e.g., data-cb-preview-target=''remove_from_team'')
+    so checker does not need OCR; it only validates that the confirmed instance matches preview-target id.'
+- id: alert_dialog_confirm-antd-T08
+  name: Confirm the correct Popconfirm near the viewport edge (compact + small)
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Popconfirm
+  implementation_component: 'AntD: Popconfirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Clear server logs (not cache): click the “Clear logs” icon and then click “OK” in the confirmation bubble.
+    The task will finish automatically when done.'
+  ui_copy: 'Clear server logs (not cache): click the “Clear logs” icon and then click “OK” in the confirmation bubble.'
+  setup_description: |-
+    Isolated-card layout anchored to the bottom-right of the viewport (non-centered placement). Spacing is set to compact and the card uses the small size tier.
+
+    The card is titled “Maintenance” and contains two very small icon-only danger actions displayed inline:
+    - “Clear cache” (trash icon)
+    - “Clear logs” (trash icon, same style)
+
+    Each icon triggers an Ant Design Popconfirm bubble with identical button labels “Cancel” and “OK”. The only reliable textual difference is the Popconfirm title:
+    - “Clear cache?”
+    - “Clear logs?”
+
+    Because the card is near the bottom-right edge, the Popconfirm may auto-shift placement and the bubble can appear slightly above/left of the trigger.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Small icon triggers and compact Popconfirm controls near a viewport edge increase misclick risk; two near-identical
+      actions raise confusion.
+  success_trigger:
+    human_readable:
+    - The Popconfirm instance opened must have the title “Clear logs?”.
+    - The user clicked “OK” in that Popconfirm.
+    - The Popconfirm is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: clear_logs
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Clear logs
+      terminal_condition: true
+  negative_cases:
+  - Confirming “Clear cache” instead of “Clear logs”.
+  - Clicking “Cancel” or dismissing the Popconfirm.
+  - Opening the correct Popconfirm but not clicking “OK”.
+  expected_interaction_path:
+  - Click the “Clear logs” icon.
+  - Click “OK” in the Popconfirm bubble.
+  notes: AntD Popconfirm supports automatic placement adjustment near edges; checker should rely on instance id/title, not
+    popup coordinates.
+- id: alert_dialog_confirm-antd-T09
+  name: Confirm a factory reset from inside a drawer flow
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Drawer + Modal.confirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the “Advanced settings” drawer, then factory reset the app by clicking “Factory reset…” and confirming
+    the dialog. The task will finish automatically when done.
+  ui_copy: Open the “Advanced settings” drawer, then factory reset the app by clicking “Factory reset…” and confirming the
+    dialog.
+  setup_description: |-
+    Drawer-flow layout. The main page shows a header and a single button labeled “Advanced settings”.
+
+    Clicking “Advanced settings” opens an Ant Design Drawer from the right. Inside the drawer:
+    - There are several non-functional toggles and dropdowns (distractors) above.
+    - At the bottom, a “Danger Zone” subsection contains one button labeled “Factory reset…”.
+
+    Clicking “Factory reset…” opens an Ant Design Modal.confirm (over the drawer) with:
+    - Title: “Factory reset?”
+    - Body: “This will reset all local settings.”
+    - Buttons: “Cancel” and “Confirm” (danger-styled).
+
+    The task requires confirming the factory reset. The outer drawer remaining open/closed is irrelevant; success depends only on the confirm dialog action.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires navigating a drawer overlay before opening the confirm modal, adding layering and focus-management
+      complexity even though the final buttons are clear.
+  success_trigger:
+    human_readable:
+    - The confirmation modal titled “Factory reset?” was opened from the drawer’s “Factory reset…” button.
+    - The user clicked “Confirm” in the modal footer.
+    - The modal is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: factory_reset
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Opening the drawer but never opening the factory reset confirmation dialog.
+  - Clicking “Cancel” or dismissing the modal.
+  - Interacting only with drawer controls (toggles/dropdowns) without confirming the modal.
+  expected_interaction_path:
+  - Click “Advanced settings” to open the drawer.
+  - Click “Factory reset…” inside the drawer.
+  - Click “Confirm” in the modal.
+  notes: To keep single-component scoring, do not validate that settings were reset—only validate the confirmation dialog
+    action.
+- id: alert_dialog_confirm-antd-T10
+  name: Reset notification settings among similar reset actions (high clutter)
+  canonical_type: alert_dialog_confirm
+  implementation_source: antd
+  implementation_variant: Modal.confirm
+  implementation_component: 'AntD: Modal.confirm'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: 'Reset only the notification settings: click “Reset notifications” and then click “Confirm” in the confirmation
+    dialog. The task will finish automatically when done.'
+  ui_copy: 'Reset only the notification settings: click “Reset notifications” and then click “Confirm” in the confirmation
+    dialog.'
+  setup_description: |-
+    Settings panel layout with high clutter: a realistic “Preferences” page shows multiple sections (Appearance, Shortcuts, Notifications, Privacy) each with several toggles and dropdowns (all distractors).
+
+    In a “Reset” subsection near the bottom, there are TWO similarly styled reset buttons (two instances):
+    - “Reset notifications”
+    - “Reset appearance”
+
+    Both buttons open an Ant Design Modal.confirm with nearly identical structure and the same footer labels “Cancel” and “Confirm”. The modal title differs based on which reset was triggered:
+    - “Reset notifications?”
+    - “Reset appearance?”
+
+    The task is to reset notifications only (not appearance) by confirming the correct dialog.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: High clutter plus two near-identical reset actions makes it easy to open/confirm the wrong dialog; the
+      correct outcome depends on choosing the correct instance.
+  success_trigger:
+    human_readable:
+    - The confirmation modal opened must have the title “Reset notifications?”.
+    - The user clicked the footer button labeled “Confirm”.
+    - The modal is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: reset_notifications
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Reset notifications
+      terminal_condition: true
+  negative_cases:
+  - Confirming “Reset appearance” instead of “Reset notifications”.
+  - Opening the correct dialog but clicking “Cancel” or dismissing it.
+  - Scrolling/interacting with other settings controls without confirming the dialog.
+  expected_interaction_path:
+  - Locate the “Reset notifications” button in the Reset subsection.
+  - Click it to open the confirmation modal.
+  - Click “Confirm”.
+  notes: If the page is scrollable, ensure the Reset subsection is still reachable without excessive scrolling; clutter should
+    be realistic but not adversarial.
+- id: alert_dialog_confirm-mui-T01
+  name: Confirm deleting a draft (MUI Dialog)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog (confirmation pattern)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Delete the draft named “Release Notes (draft)”: click “Delete draft” and then click “Delete” in the dialog.
+    The task will finish automatically when done.'
+  ui_copy: 'Delete the draft named “Release Notes (draft)”: click “Delete draft” and then click “Delete” in the dialog.'
+  setup_description: |-
+    Baseline isolated-card layout centered in the viewport. A card titled “Drafts” shows one item “Release Notes (draft)” and a button labeled “Delete draft”.
+
+    Clicking “Delete draft” opens a Material UI Dialog with:
+    - DialogTitle: “Delete this draft?”
+    - DialogContent: short warning text
+    - DialogActions: two buttons: “Cancel” and “Delete” (Delete is the primary/danger action)
+
+    The dialog closes immediately when either action is clicked.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single dialog with clear Cancel/Delete actions; the agent only needs to open it and choose the obvious
+      danger button.
+  success_trigger:
+    human_readable:
+    - The dialog titled “Delete this draft?” was opened from the “Delete draft” trigger for “Release Notes (draft)”.
+    - The user clicked the DialogActions button labeled “Delete”.
+    - The dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_draft_release_notes
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Cancel” instead of “Delete”.
+  - Closing the dialog by pressing Escape or clicking the backdrop (dismiss).
+  - The dialog remains open after clicking “Delete”.
+  expected_interaction_path:
+  - Click “Delete draft”.
+  - Click “Delete” in the dialog actions.
+  notes: Use role=dialog and aria-labelledby for accessibility; checker can validate by instance id stored on open and last_action
+    stored on button click.
+- id: alert_dialog_confirm-mui-T02
+  name: Cancel signing out (MUI Dialog)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog (confirmation pattern)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Do not sign out: click “Sign out” and then click “Cancel” in the dialog. The task will finish automatically
+    when done.'
+  ui_copy: 'Do not sign out: click “Sign out” and then click “Cancel” in the dialog.'
+  setup_description: |-
+    Baseline isolated-card layout. A small account card shows user info and a “Sign out” button.
+
+    Clicking “Sign out” opens a Material UI Dialog:
+    - Title: “Sign out?”
+    - Content: “You will need to sign in again to continue.”
+    - Actions: “Cancel” and “Sign out”
+
+    Task requires explicitly pressing “Cancel” (not dismissing via backdrop/Escape).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single dialog with clear Cancel button; minimal clutter and no instance ambiguity.
+  success_trigger:
+    human_readable:
+    - The dialog titled “Sign out?” was opened from the “Sign out” trigger.
+    - The user clicked the DialogActions button labeled “Cancel”.
+    - The dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: cancel
+        dialog_instance: sign_out
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Sign out” in the dialog instead of “Cancel”.
+  - Dismissing the dialog via Escape/backdrop instead of pressing “Cancel”.
+  expected_interaction_path:
+  - Click “Sign out”.
+  - Click “Cancel” in the dialog.
+  notes: If backdrop click is enabled, instrument onClose(reason) to record dismiss separately from Cancel.
+- id: alert_dialog_confirm-mui-T03
+  name: Open a discard-changes dialog and leave it open
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Discard changes?” dialog and leave it open. The task will finish automatically when done.
+  ui_copy: Open the “Discard changes?” dialog and leave it open.
+  setup_description: |-
+    Baseline isolated-card layout. A card titled “Editor” shows a read-only text preview and a button labeled “Close editor”.
+
+    Clicking “Close editor” opens a Material UI Dialog:
+    - Title: “Discard changes?”
+    - Content: short explanation
+    - Actions: “Keep editing” and “Discard”
+
+    The task is to open the dialog and keep it open (do not click any action).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Only requires opening a single dialog; no need to choose between actions.
+  success_trigger:
+    human_readable:
+    - The dialog titled “Discard changes?” is open and visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: true
+        active_instance: discard_changes
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - The dialog is not open.
+  - The dialog was opened and then closed (by any action or dismiss).
+  expected_interaction_path:
+  - Click “Close editor”.
+  - Stop once the “Discard changes?” dialog is open.
+  notes: For open_overlay tasks, ensure checker ignores any toasts and only checks open-state for the instance.
+- id: alert_dialog_confirm-mui-T04
+  name: Confirm deleting a specific invoice row (table operation)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Table + Dialog'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: 'In the Invoices table, delete “Invoice #1042” by using its delete action and then clicking “Delete” in
+    the confirmation dialog. The task will finish automatically when done.'
+  ui_copy: 'In the Invoices table, delete “Invoice #1042” by using its delete action and then clicking “Delete” in the confirmation
+    dialog.'
+  setup_description: |-
+    Table-cell layout. A compact “Invoices” table is displayed with multiple rows. Two rows are visible without scrolling: “Invoice #1041” and “Invoice #1042”.
+
+    Each row has an icon-only delete button in the rightmost column. Clicking a row’s delete button opens a Material UI Dialog:
+    - Title: “Delete Invoice #1042?” (or the corresponding invoice number)
+    - Content: “This action cannot be undone.”
+    - Actions: “Cancel” and “Delete”
+
+    Only one dialog can be open at a time. The task specifically targets Invoice #1042.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Icon-only row actions and multiple similar invoices require careful row targeting before confirming the
+      dialog.
+  success_trigger:
+    human_readable:
+    - 'The opened dialog title references “Invoice #1042”.'
+    - The user clicked “Delete” in the dialog actions.
+    - The dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_invoice_1042
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: true
+      target_instance_label_or_id: 'Invoice #1042'
+      terminal_condition: true
+  negative_cases:
+  - 'Deleting “Invoice #1041” instead of “Invoice #1042”.'
+  - Clicking “Cancel” or dismissing the dialog.
+  - Opening the correct dialog but not clicking “Delete”.
+  expected_interaction_path:
+  - 'Find the row labeled “Invoice #1042”.'
+  - Click its delete icon button.
+  - Click “Delete” in the dialog.
+  notes: Bind invoice id to the dialog instance for unambiguous checking (e.g., instanceId='delete_invoice_1042').
+- id: alert_dialog_confirm-mui-T05
+  name: Scroll to a danger action and cancel the dialog
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Find the “Clear search history” action, open its confirmation dialog, and click “Cancel”. The task will
+    finish automatically when done.
+  ui_copy: Find the “Clear search history” action, open its confirmation dialog, and click “Cancel”.
+  setup_description: |-
+    Settings panel layout with a scrollable main content area (the panel itself scrolls). The top contains several harmless sections (Profile, Appearance, Notifications) with toggles and selects.
+
+    Near the bottom (requires scrolling), there is a “Privacy” section containing a single danger button labeled “Clear search history”.
+
+    Clicking “Clear search history” opens a Material UI Dialog:
+    - Title: “Clear search history?”
+    - Content: “This removes past searches from this device.”
+    - Actions: “Cancel” and “Clear”
+
+    The task requires pressing “Cancel” (explicit cancel) after opening the dialog.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling to locate the trigger before performing a straightforward Cancel in the dialog.
+  success_trigger:
+    human_readable:
+    - The dialog titled “Clear search history?” was opened.
+    - The user clicked the dialog action labeled “Cancel”.
+    - The dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: cancel
+        dialog_instance: clear_search_history
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Clear” instead of “Cancel”.
+  - Dismissing the dialog via backdrop/Escape instead of pressing Cancel.
+  - Never opening the dialog (e.g., scrolling but not activating the danger action).
+  expected_interaction_path:
+  - Scroll down to the Privacy section.
+  - Click “Clear search history”.
+  - Click “Cancel” in the dialog.
+  notes: To isolate the component, do not score whether history was cleared; only score the dialog cancel action.
+- id: alert_dialog_confirm-mui-T06
+  name: Match a dialog to a visual preview (two options)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Use the Preview panel to pick the correct confirmation dialog, then click “OK” in that dialog. The task
+    will finish automatically when done.
+  ui_copy: Use the Preview panel to pick the correct confirmation dialog, then click “OK” in that dialog.
+  setup_description: |-
+    Isolated-card layout centered in the viewport. Two buttons are shown side-by-side:
+    - “Unlink calendar”
+    - “Remove device”
+
+    Each button opens a Material UI Dialog with similar layout (title, one-paragraph content, actions). Both dialogs use action buttons labeled “Cancel” and “OK”.
+    The dialog titles differ and are visible in the header.
+
+    A separate “Preview” panel on the right displays a static thumbnail image of the *target* dialog (showing its title line and the OK button label). The instruction does not mention which of the two actions is correct—only the preview determines the target.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires visual matching of dialog title/content against a preview, with two similar choices; text-only
+      observability via AX tree may be reduced depending on how the preview is implemented.
+  success_trigger:
+    human_readable:
+    - The dialog instance bound to the Preview panel is the one confirmed.
+    - The user clicked “OK” in that dialog.
+    - The dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: preview_target
+      tolerance: exact_match_by_instance_id
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Preview target
+      terminal_condition: true
+  negative_cases:
+  - Confirming the dialog that does not match the Preview panel.
+  - Clicking “Cancel” or dismissing the dialog.
+  - Opening both dialogs but confirming the wrong one.
+  expected_interaction_path:
+  - Inspect the Preview thumbnail to infer the target dialog title.
+  - Click the button that opens the matching dialog.
+  - Click “OK”.
+  notes: Bind preview to instance id to avoid OCR in checker; store previewTargetId in window.__cbPreviewTarget.
+- id: alert_dialog_confirm-mui-T07
+  name: Confirm removing a device (dark theme)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Remove the device named “Pixel Tablet”: click “Remove device” and then click “Remove” in the dialog. The
+    task will finish automatically when done.'
+  ui_copy: 'Remove the device named “Pixel Tablet”: click “Remove device” and then click “Remove” in the dialog.'
+  setup_description: |-
+    Isolated-card layout with a dark theme applied to the page and components.
+
+    A card titled “Trusted devices” lists one device: “Pixel Tablet” with a button labeled “Remove device”.
+
+    Clicking the button opens a Material UI Dialog:
+    - Title: “Remove Pixel Tablet?”
+    - Content: “You may need to sign in again on this device.”
+    - Actions: “Cancel” and “Remove” (Remove is styled as the primary/danger action)
+
+    Dialog closes immediately on action.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Dark theme can reduce contrast and slightly complicate target acquisition, but there is only one dialog
+      instance and the Remove action is clear.
+  success_trigger:
+    human_readable:
+    - The dialog titled “Remove Pixel Tablet?” was opened.
+    - The user clicked “Remove” in dialog actions.
+    - The dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: remove_device_pixel_tablet
+      tolerance: null
+      require_confirm: true
+      confirm_control: Remove
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Cancel” or dismissing the dialog.
+  - Confirming a different device (not present in this task).
+  expected_interaction_path:
+  - Click “Remove device”.
+  - Click “Remove” in the dialog.
+  notes: This task primarily tests theme contrast effects on dialog controls.
+- id: alert_dialog_confirm-mui-T08
+  name: Confirm in a compact, small-scale responsive full-screen dialog
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: responsive_full_screen
+  implementation_component: 'MUI: Dialog (responsive fullScreen)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Permanently delete the “Local cache” item: click “Delete cache” and then confirm by clicking “Delete”
+    in the full-screen dialog. The task will finish automatically when done.'
+  ui_copy: 'Permanently delete the “Local cache” item: click “Delete cache” and then confirm by clicking “Delete” in the full-screen
+    dialog.'
+  setup_description: |-
+    Isolated-card layout anchored to the bottom-left of the viewport (non-centered placement). Spacing is compact and the overall UI is rendered at the small scale tier to simulate a dense mobile layout.
+
+    The card titled “Storage” shows one item “Local cache” with a danger button “Delete cache”.
+
+    Clicking “Delete cache” opens a Material UI Dialog configured as responsive full-screen (covers most/all of the viewport):
+    - AppBar-style header with title “Delete Local cache?”
+    - Content text below
+    - Actions are placed at the bottom: “Cancel” and “Delete”
+
+    Because the dialog is full-screen, the confirm action is farther from the trigger and may require the agent to manage focus/scroll if the content area is tall.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small-scale compact layout plus a full-screen dialog changes spatial expectations and increases the cost
+      of misclicks compared to a standard centered dialog.
+  success_trigger:
+    human_readable:
+    - The full-screen dialog for “Delete Local cache?” was opened.
+    - The user clicked the action button labeled “Delete”.
+    - The dialog is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_local_cache
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Cancel” or dismissing the dialog.
+  - Confirming a different dialog instance.
+  - Dialog remains open after “Delete” is clicked.
+  expected_interaction_path:
+  - Click “Delete cache”.
+  - In the full-screen dialog, click “Delete”.
+  notes: MUI supports responsive full-screen dialogs (e.g., using useMediaQuery). Checker should not assume fixed dialog size/position.
+- id: alert_dialog_confirm-mui-T09
+  name: Choose the correct danger card by mixed guidance and confirm
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Use the hint panel to identify the correct danger action, then confirm it in the dialog. The task will
+    finish automatically when done.
+  ui_copy: Use the hint panel to identify the correct danger action, then confirm it in the dialog.
+  setup_description: |-
+    Dashboard layout with high clutter: a grid of cards shows system status, charts, and recent activity (all non-interactive or irrelevant).
+
+    In a “Danger actions” row, there are THREE small cards (three instances) with similar styling and icon-only primary buttons:
+    - “Purge cache”
+    - “Disable sync”
+    - “Delete logs”
+
+    Each card’s icon button opens a Material UI Dialog with title matching the card (e.g., “Delete logs?”) and actions “Cancel” and “Confirm”.
+
+    A “Hint” panel on the right provides mixed guidance:
+    - A short text instruction like “Target action: Delete logs”
+    - A small icon preview that matches the card’s icon style
+
+    The agent must select the correct card using the hint panel, open its dialog, and click “Confirm”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Icon-only triggers in a cluttered dashboard plus three similar danger actions create high disambiguation
+      and target-acquisition difficulty; mixed guidance requires integrating hint text and visuals.
+  success_trigger:
+    human_readable:
+    - The dialog confirmed must correspond to the hint panel’s target action.
+    - The user clicked the dialog action labeled “Confirm”.
+    - The dialog is closed after confirmation.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: hint_target
+      tolerance: exact_match_by_instance_id
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Hint target
+      terminal_condition: true
+  negative_cases:
+  - Confirming the wrong danger action (any instance other than the hint target).
+  - Clicking “Cancel” or dismissing the dialog.
+  - Interacting with dashboard clutter elements without confirming the correct dialog.
+  expected_interaction_path:
+  - Read the Hint panel to identify the target action card.
+  - Click the icon-only button on that card.
+  - Click “Confirm” in the dialog.
+  notes: As with preview tasks, bind the hint panel to a specific instance id; checker validates instance match, not semantic
+    parsing of the hint.
+- id: alert_dialog_confirm-mui-T10
+  name: Confirm delete account from inside a modal flow (nested overlays)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Dialog within a parent Modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Account details modal, delete the account by clicking “Delete account” and then clicking “Delete”
+    in the confirmation dialog. The task will finish automatically when done.
+  ui_copy: In the Account details modal, delete the account by clicking “Delete account” and then clicking “Delete” in the
+    confirmation dialog.
+  setup_description: |-
+    Modal-flow layout. When the page loads, a parent “Account details” modal is already open (this outer modal is NOT the target component; it is a container).
+
+    Inside the Account details modal:
+    - Several read-only fields and buttons (distractors)
+    - A “Danger Zone” section with a button labeled “Delete account”
+
+    Clicking “Delete account” opens a second overlay: a Material UI Dialog (confirm dialog) above the parent modal with:
+    - Title: “Delete account?”
+    - Content: warning text
+    - Actions: “Cancel” and “Delete”
+
+    The task is to confirm deletion by clicking “Delete” in the confirmation dialog. Success depends only on the confirmation dialog action/state, not on the outer modal.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Nested overlays (a dialog on top of another modal) increases depth layering and focus-trap complexity;
+      the agent must interact with the topmost dialog actions.
+  success_trigger:
+    human_readable:
+    - The confirmation dialog titled “Delete account?” was opened from the “Delete account” button inside the parent modal.
+    - The user clicked “Delete” in the confirmation dialog actions.
+    - The confirmation dialog is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_account
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Interacting with the parent modal only (never opening the confirmation dialog).
+  - Clicking “Cancel” or dismissing the confirmation dialog.
+  - Clicking a “Delete account” control but confirming a different dialog instance (if multiple exist).
+  expected_interaction_path:
+  - Within the Account details modal, click “Delete account”.
+  - In the confirmation dialog, click “Delete”.
+  notes: For checker robustness, ensure confirmation dialog has higher z-index and distinct testids; validate that the action
+    occurred on the confirm dialog instance, not the parent modal.
+- id: alert_dialog_confirm-mantine-T01
+  name: Confirm deleting a note (Mantine confirm modal)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Delete the note titled “Q1 plan”: click “Delete note” and then click “Confirm” in the confirmation modal.
+    The task will finish automatically when done.'
+  ui_copy: 'Delete the note titled “Q1 plan”: click “Delete note” and then click “Confirm” in the confirmation modal.'
+  setup_description: |-
+    Baseline isolated-card layout centered in the viewport. A card titled “Notes” shows one note “Q1 plan” and a danger button labeled “Delete note”.
+
+    Clicking “Delete note” opens a Mantine confirm modal via @mantine/modals (openConfirmModal):
+    - Title: “Delete note?”
+    - Children/body: short warning text
+    - Buttons: “Cancel” and “Confirm” (confirm button is styled red via confirmProps)
+
+    The modal closes on confirm/cancel.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single confirm modal with clear Confirm/Cancel actions and no competing instances.
+  success_trigger:
+    human_readable:
+    - The Mantine confirm modal titled “Delete note?” was opened from the “Delete note” button.
+    - The user clicked the button labeled “Confirm”.
+    - The modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_note_q1_plan
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Cancel” instead of “Confirm”.
+  - Closing the modal via escape or close control if present (dismiss).
+  - Confirm action recorded but modal remains open (requires closed).
+  expected_interaction_path:
+  - Click “Delete note”.
+  - Click “Confirm” in the modal.
+  notes: Mantine openConfirmModal supports labels and confirmProps/cancelProps; instrument onConfirm/onCancel to update a
+    shared dialog state object for checking.
+- id: alert_dialog_confirm-mantine-T02
+  name: Cancel removing a collaborator (Mantine confirm modal)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Do not remove Alex from the workspace: click “Remove member” and then click “Cancel” in the confirmation
+    modal. The task will finish automatically when done.'
+  ui_copy: 'Do not remove Alex from the workspace: click “Remove member” and then click “Cancel” in the confirmation modal.'
+  setup_description: |-
+    Baseline isolated-card layout. A card titled “Members” lists one member “Alex” with a button “Remove member”.
+
+    Clicking “Remove member” opens a Mantine confirm modal:
+    - Title: “Remove Alex?”
+    - Body: short explanation
+    - Buttons: “Cancel” and “Remove”
+
+    Task requires pressing “Cancel” explicitly (not generic dismiss).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Simple single-instance cancel action with large buttons and clear labeling.
+  success_trigger:
+    human_readable:
+    - The confirm modal for “Remove Alex?” was opened.
+    - The user clicked “Cancel”.
+    - The modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: cancel
+        dialog_instance: remove_member_alex
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Remove” instead of “Cancel”.
+  - Dismissing the modal without clicking Cancel (if close-on-escape is enabled).
+  expected_interaction_path:
+  - Click “Remove member”.
+  - Click “Cancel” in the modal.
+  notes: If closeOnCancel is true (default), Cancel should close; record explicit Cancel vs dismiss separately.
+- id: alert_dialog_confirm-mantine-T03
+  name: Open a leave-page confirmation modal and keep it open
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Leave this page?” confirmation modal and leave it open. The task will finish automatically when
+    done.
+  ui_copy: Open the “Leave this page?” confirmation modal and leave it open.
+  setup_description: |-
+    Baseline isolated-card layout. A card titled “Unsaved changes” has one button labeled “Back to list”.
+
+    Clicking “Back to list” opens a Mantine confirm modal:
+    - Title: “Leave this page?”
+    - Body: “You have unsaved changes.”
+    - Buttons: “Stay” and “Leave”
+
+    The task is to open the modal and leave it visible (do not choose Stay/Leave).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Only requires opening a single modal; no further action is needed.
+  success_trigger:
+    human_readable:
+    - The confirmation modal titled “Leave this page?” is open.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: true
+        active_instance: leave_page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Modal not open.
+  - Modal opened and then closed by any action.
+  expected_interaction_path:
+  - Click “Back to list”.
+  - Stop once the modal is visible.
+  notes: Mantine openConfirmModal supports closeOnConfirm/closeOnCancel; for open_overlay task, ensure no action is taken.
+- id: alert_dialog_confirm-mantine-T04
+  name: Confirm the correct action among two confirm modals (settings panel)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'In the Danger Zone section, delete the workspace (not reset the API token): click “Delete workspace” and
+    then click “Confirm” in the confirmation modal. The task will finish automatically when done.'
+  ui_copy: 'In the Danger Zone section, delete the workspace (not reset the API token): click “Delete workspace” and then
+    click “Confirm” in the confirmation modal.'
+  setup_description: |-
+    Settings panel layout with a main content column and a small sidebar (sidebar links are distractors).
+
+    In the main column, a “Danger Zone” section contains TWO buttons (two instances):
+    - “Reset API token”
+    - “Delete workspace”
+
+    Each button opens a Mantine confirm modal with:
+    - A title reflecting the action (“Reset API token?” vs “Delete workspace?”)
+    - Body warning text
+    - Buttons: “Cancel” and “Confirm” (Confirm is styled red for delete workspace; neutral for reset)
+
+    The task targets the “Delete workspace” instance specifically.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar danger actions require selecting the correct instance; otherwise the confirm modal interaction
+      itself is straightforward.
+  success_trigger:
+    human_readable:
+    - The confirmed modal instance corresponds to “Delete workspace?”.
+    - The user clicked “Confirm”.
+    - The modal is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_workspace
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Delete workspace
+      terminal_condition: true
+  negative_cases:
+  - Confirming “Reset API token” instead of “Delete workspace”.
+  - Clicking “Cancel” or dismissing the modal.
+  - Opening the correct modal but not clicking “Confirm”.
+  expected_interaction_path:
+  - Click “Delete workspace”.
+  - Click “Confirm” in the modal.
+  notes: 'Mantine confirm modal supports labels via labels: {confirm, cancel}; ensure labels are set consistently for the
+    benchmark.'
+- id: alert_dialog_confirm-mantine-T05
+  name: Cancel deletion for the correct backup row (table operation)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: Table + @mantine/modals confirm modal'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Backups table, click delete for “Backup 2026-01-15” and then click “Cancel” in the confirmation
+    modal. The task will finish automatically when done.
+  ui_copy: In the Backups table, click delete for “Backup 2026-01-15” and then click “Cancel” in the confirmation modal.
+  setup_description: |-
+    Table-cell layout with a “Backups” table in a centered container. Three backups are listed as rows:
+    - “Backup 2026-01-10”
+    - “Backup 2026-01-15”
+    - “Backup 2026-01-20”
+
+    Each row has an icon-only delete button in the last column. Clicking it opens a Mantine confirm modal whose title includes the backup name (e.g., “Delete Backup 2026-01-15?”). Buttons are “Cancel” and “Delete”.
+
+    The task is to open the delete confirmation for the 2026-01-15 backup and then explicitly press “Cancel” (do not delete).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Multiple similar rows and icon-only triggers require careful targeting; the modal interaction is easy but
+      instance disambiguation is moderate/high.
+  success_trigger:
+    human_readable:
+    - The opened confirm modal title references “Backup 2026-01-15”.
+    - The user clicked the “Cancel” button in the modal.
+    - The modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: cancel
+        dialog_instance: delete_backup_2026_01_15
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: Backup 2026-01-15
+      terminal_condition: true
+  negative_cases:
+  - Canceling a different backup’s delete modal (wrong row instance).
+  - Clicking “Delete” instead of “Cancel”.
+  - Dismissing the modal without pressing Cancel.
+  expected_interaction_path:
+  - Find row “Backup 2026-01-15”.
+  - Click its delete icon.
+  - Click “Cancel” in the modal.
+  notes: Record instance id when opening modal (modalId) to tie it to the row; do not rely on visible row deletion for scoring.
+- id: alert_dialog_confirm-mantine-T06
+  name: Match the correct confirm modal to a preview thumbnail
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Use the Preview thumbnail to open the matching confirmation modal, then click “Confirm”. The task will
+    finish automatically when done.
+  ui_copy: Use the Preview thumbnail to open the matching confirmation modal, then click “Confirm”.
+  setup_description: |-
+    Isolated-card layout. Two action buttons are displayed:
+    - “Disconnect integration”
+    - “Remove webhook”
+
+    Each opens a Mantine confirm modal with Cancel/Confirm buttons and a distinct title.
+
+    A “Preview” thumbnail card shows a small screenshot-like image of the target modal (title + part of the body). The instruction is visual and does not specify which action name is the target.
+
+    The agent must open the matching modal and confirm it by clicking “Confirm”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Visual reference requires matching pixels; two similar options increase the chance of opening the wrong
+      modal before confirming.
+  success_trigger:
+    human_readable:
+    - The confirmed modal instance matches the Preview thumbnail’s bound target instance.
+    - The user clicked “Confirm”.
+    - The modal is closed after confirmation.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: preview_target
+      tolerance: exact_match_by_instance_id
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Preview target
+      terminal_condition: true
+  negative_cases:
+  - Confirming the non-preview modal.
+  - Canceling or dismissing the modal.
+  - Opening the correct modal but not pressing Confirm.
+  expected_interaction_path:
+  - Inspect the Preview thumbnail to identify the target modal’s title/body.
+  - Click the button that opens the matching modal.
+  - Click “Confirm”.
+  notes: As with other preview tasks, avoid OCR in checker by binding preview to an instance id (window.__cbPreviewTargetId).
+- id: alert_dialog_confirm-mantine-T07
+  name: Confirm the correct icon-only danger action (dark + compact + small)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Permanently delete the workspace logs: click the logs delete icon and then click “Confirm” in the confirmation
+    modal. The task will finish automatically when done.'
+  ui_copy: 'Permanently delete the workspace logs: click the logs delete icon and then click “Confirm” in the confirmation
+    modal.'
+  setup_description: |-
+    The page uses a dark theme, compact spacing, and small scale tier.
+
+    Three small “Danger actions” tiles are shown in a row (three instances). Each tile has:
+    - A short label (e.g., “Delete logs”, “Delete cache”, “Disable sync”)
+    - An icon-only action button (trash/ban icons; same size and styling)
+
+    Clicking an icon button opens a Mantine confirm modal. All modals share the same button labels “Cancel” and “Confirm”, but the title differs per tile.
+
+    The task requires deleting logs specifically, which corresponds to the tile labeled “Delete logs”. Confirm must be clicked in the modal.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard
+    placement: center
+    scale: small
+    instances: 3
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small icon-only triggers under compact spacing plus three similar instances in a dashboard create high
+      misclick and disambiguation risk; dark theme further reduces contrast.
+  success_trigger:
+    human_readable:
+    - The confirmation modal instance confirmed must correspond to the “Delete logs” tile.
+    - The user clicked “Confirm”.
+    - The modal is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: delete_logs
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Delete logs
+      terminal_condition: true
+  negative_cases:
+  - Confirming “Delete cache” or “Disable sync” instead of “Delete logs”.
+  - Clicking “Cancel” or dismissing the modal.
+  - Opening the correct modal but not clicking Confirm.
+  expected_interaction_path:
+  - Click the icon-only button on the “Delete logs” tile.
+  - Click “Confirm” in the modal.
+  notes: If tiles are visually similar, ensure each tile label is still present for a fair baseline; the hard part should
+    be small targets and clutter, not hidden text.
+- id: alert_dialog_confirm-mantine-T08
+  name: Confirm a destructive action from inside a drawer flow (non-center placement)
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: Drawer + @mantine/modals confirm modal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the “Advanced” drawer and confirm “Reset all preferences” in the confirmation modal. The task will
+    finish automatically when done.
+  ui_copy: Open the “Advanced” drawer and confirm “Reset all preferences” in the confirmation modal.
+  setup_description: |-
+    Drawer-flow layout with the main trigger anchored near the bottom-right of the viewport.
+
+    The main page shows one button “Advanced”. Clicking it opens a Mantine Drawer from the right edge.
+
+    Inside the drawer, several non-critical controls (toggles/selects) appear first. At the bottom of the drawer there is a danger button “Reset all preferences”.
+
+    Clicking “Reset all preferences” opens a Mantine confirm modal above the drawer:
+    - Title: “Reset all preferences?”
+    - Body: brief warning text
+    - Buttons: “Cancel” and “Confirm”
+
+    The task requires clicking “Confirm”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires interacting through a drawer overlay before confirming the modal, increasing layering complexity
+      and making the confirm action less direct.
+  success_trigger:
+    human_readable:
+    - The confirm modal titled “Reset all preferences?” was opened from within the Advanced drawer.
+    - The user clicked “Confirm”.
+    - The modal is closed after confirmation.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: reset_all_preferences
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Opening the drawer but never opening the confirmation modal.
+  - Clicking “Cancel” or dismissing the modal.
+  - Interacting with drawer toggles only.
+  expected_interaction_path:
+  - Click “Advanced” to open drawer.
+  - Click “Reset all preferences”.
+  - Click “Confirm” in the modal.
+  notes: Keep drawer interactions as distractors only; do not require changing drawer controls for success.
+- id: alert_dialog_confirm-mantine-T09
+  name: Cancel the correct confirm modal in a cluttered dashboard
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'In the dashboard, start the “Delete account” flow but then cancel it: open its confirmation modal and
+    click “Cancel”. The task will finish automatically when done.'
+  ui_copy: 'In the dashboard, start the “Delete account” flow but then cancel it: open its confirmation modal and click “Cancel”.'
+  setup_description: |-
+    Dashboard layout anchored toward the top-right of the viewport. The page contains several cards (activity feed, usage chart, recent logins) as clutter.
+
+    In a “Danger Zone” card, there are TWO similar buttons (two instances):
+    - “Delete account”
+    - “Delete workspace”
+
+    Each opens a Mantine confirm modal with title reflecting the action and buttons “Cancel” and “Delete”.
+
+    The task is to open the “Delete account” confirmation modal and then click “Cancel” (explicit cancel), ensuring the account is NOT deleted.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: High clutter and two similar destructive actions increase the chance of opening the wrong modal; the task
+      requires the explicit Cancel button rather than dismiss.
+  success_trigger:
+    human_readable:
+    - The opened modal title references “Delete account”.
+    - The user clicked “Cancel”.
+    - The modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: cancel
+        dialog_instance: delete_account
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: Delete account
+      terminal_condition: true
+  negative_cases:
+  - Canceling the “Delete workspace” modal instead of “Delete account”.
+  - Clicking “Delete” instead of “Cancel”.
+  - Dismissing the modal without pressing Cancel.
+  expected_interaction_path:
+  - In Danger Zone, click “Delete account”.
+  - In the modal, click “Cancel”.
+  notes: If both actions share similar button labels, ensure dialog title clearly reflects the action; checker should use
+    instance id rather than parsing title text.
+- id: alert_dialog_confirm-mantine-T10
+  name: Click a nonstandard confirm label in an already-open modal
+  canonical_type: alert_dialog_confirm
+  implementation_source: mantine
+  implementation_variant: openConfirmModal
+  implementation_component: 'Mantine: @mantine/modals openConfirmModal'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: In the open confirmation modal, click the confirm button labeled “Yes, remove”. The task will finish automatically
+    when done.
+  ui_copy: In the open confirmation modal, click the confirm button labeled “Yes, remove”.
+  setup_description: |-
+    Isolated-card layout. On page load, a Mantine confirm modal is already open (no trigger click required).
+
+    The modal title is “Remove integration?” and the body explains that the integration will stop syncing.
+
+    The footer has two buttons with customized labels (via labels property):
+    - Cancel button: “Keep it”
+    - Confirm button: “Yes, remove” (styled as danger via confirmProps)
+
+    There is also a small × close icon in the top-right of the modal header. The task requires clicking the confirm button with the exact label “Yes, remove”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Nonstandard button labels and the presence of a close icon increase the chance of choosing the wrong control;
+      modal starts open so the task isolates in-dialog action selection.
+  success_trigger:
+    human_readable:
+    - The currently open confirm modal instance is “Remove integration?”.
+    - The user clicked the confirm button labeled “Yes, remove”.
+    - The modal is closed after the click.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        dialog_open: false
+        last_action: confirm
+        dialog_instance: remove_integration
+      tolerance: null
+      require_confirm: true
+      confirm_control: Yes, remove
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Clicking “Keep it” instead of “Yes, remove”.
+  - Closing the modal via × / Escape instead of confirming.
+  - Leaving the modal open without action.
+  expected_interaction_path:
+  - Observe the open modal footer labels.
+  - Click “Yes, remove”.
+  notes: 'Mantine openConfirmModal allows custom labels via labels: { confirm, cancel }. Ensure the confirm label exactly
+    matches UI text for deterministic checking.'

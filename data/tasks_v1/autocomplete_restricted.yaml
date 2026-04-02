@@ -1,0 +1,2095 @@
+- id: autocomplete_restricted-antd-T01
+  name: Country select (basic)
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (single, options-only)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Set the Country field to Canada. The task will finish automatically when done.
+  ui_copy: Set the Country field to Canada. The task will finish automatically when done.
+  setup_description: |-
+    You are on a simple “Travel Preferences” card placed in the center of the page (no surrounding navigation).
+
+    The card contains a single Ant Design Select component labeled **Country** with placeholder text “Select a country”.
+    - Theme: light; spacing: comfortable; size: default.
+    - The select is closed initially. Clicking the field opens a dropdown popover.
+    - The dropdown contains a short list of 8 countries: United States, Canada, Mexico, Brazil, United Kingdom, France, Germany, Japan.
+    - This is a restricted selector: you may type to filter, but the final value must be chosen from the list (free text is not accepted as the stored value).
+    - There is no “Save/Apply” button; selection commits immediately and the chosen country appears as the field value.
+
+    There are no other inputs or buttons on the page (clutter = none).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Short option list with a single, clearly labeled instance. Requires only opening the dropdown and selecting one item.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Canada" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Canada
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any country other than Canada is selected.
+  - The user types “Canada” but does not commit it as a selected option from the list.
+  - Canada is only highlighted/hovered in the dropdown but not selected.
+  expected_interaction_path:
+  - Click the Country Select field to open the dropdown.
+  - Click “Canada” (or type to filter, then click “Canada”).
+  - Verify the field now displays “Canada”.
+  notes: 'Instrumentation: expose data-testid for the Country Select root and its current selected value; expose an options list container for open/close detection.'
+- id: autocomplete_restricted-antd-T02
+  name: Clear a preselected status
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (allowClear=true)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Status field so it is blank (no selection). The task will finish automatically when done.
+  ui_copy: Clear the Status field so it is blank (no selection). The task will finish automatically when done.
+  setup_description: |-
+    The page shows a centered “Account” card.
+
+    Inside the card is one Ant Design Select labeled **Status**. It is configured as an options-only selector with `allowClear`.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: **Active** is already selected and displayed in the field.
+    - When the field is hovered/focused, a small clear “×” icon appears on the right side (in addition to the dropdown arrow).
+    - Clicking the clear icon removes the selection and restores the placeholder “Choose status”.
+
+    Options in the dropdown are: Active, Paused, Archived.
+    No other fields are present (clutter = none).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Clearing requires hitting a smaller clear control, but there is only one instance and three simple options.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has no selected value (empty/cleared).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Status remains set to Active/Paused/Archived.
+  - A different option is selected instead of clearing.
+  - The dropdown is opened and closed but the value is not cleared.
+  expected_interaction_path:
+  - Focus or hover the Status field to reveal the clear icon.
+  - Click the clear (×) icon.
+  - Verify the field shows the placeholder and no selected value.
+  notes: Checker should treat empty as selected_option=null. On AntD, clear icon may only appear on hover/focus; ensure it is reachable via keyboard (Backspace/Escape) as well.
+- id: autocomplete_restricted-antd-T03
+  name: Open the assignee dropdown
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (single)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the Assignee dropdown so the list of names is visible. Do not select anything. The task will finish automatically when done.
+  ui_copy: Open the Assignee dropdown so the list of names is visible. Do not select anything. The task will finish automatically when done.
+  setup_description: |-
+    The page contains a single isolated card titled “New ticket”.
+
+    There is one Ant Design Select labeled **Assignee** with placeholder “Pick a teammate”.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: no selection (placeholder visible).
+    - Clicking the field or the dropdown arrow opens a popover list of 6 names: Alex Kim, Brianna Lee, Chen Wei, Daniela Rossi, Omar Haddad, Priya Singh.
+    - The component is restricted to the provided options (no free text value).
+
+    There are no other form fields. This task is only about opening (disclosing) the options list and leaving it open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires only opening the dropdown overlay for a single, clearly labeled Select with few options.
+  success_trigger:
+    human_readable:
+    - The target autocomplete's options popup/listbox is open and visible.
+    - The only autocomplete instance on the page is open.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: is_open
+      target_state:
+        is_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any assignee is selected (the dropdown closes after selection).
+  - The dropdown was opened briefly but is closed at the time of checking.
+  - A different overlay (if any) is opened instead of the Assignee options list.
+  expected_interaction_path:
+  - Click inside the Assignee field (or the dropdown arrow).
+  - Ensure the options list is visible and remains open.
+  notes: 'Checker: use aria-expanded / popup visibility to detect open state for the Assignee Select.'
+- id: autocomplete_restricted-antd-T04
+  name: Match language to the profile card
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (single, showSearch)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Preferred language field to match the language shown on the sample profile card. The task will finish automatically when done.
+  ui_copy: Set the Preferred language field to match the language shown on the sample profile card. The task will finish automatically when done.
+  setup_description: |-
+    The page shows an isolated “Profile settings” card centered on the screen.
+
+    Two elements are visible inside the card:
+    1) A small **sample profile card** (read-only) showing:
+       - Name: “Taylor”
+       - A highlighted pill labeled **Language: Spanish** (this pill is the reference)
+    2) An Ant Design Select labeled **Preferred language** with placeholder “Select language”.
+
+    Component details:
+    - Theme: light; spacing: comfortable; size: default.
+    - Options-only selection (restricted): English, Spanish, French, German.
+    - `showSearch` is enabled, but the list is short.
+    - Selecting an option immediately updates the field; no Save button.
+
+    This task uses mixed/visual guidance: the target language must be inferred from the profile card pill rather than being spelled out in the instruction.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: The correct choice is clearly shown by a nearby reference pill and the option set is very small.
+  success_trigger:
+    human_readable:
+    - The target autocomplete selection matches the reference value shown in "profile-card.language-pill".
+    - Expected match value is "Spanish" (derived from the reference element).
+    - The value is committed as the component's current selection.
+    - Only the single instance on the page must match the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      state_key: selected_option
+      target_state:
+        reference_element_id: profile-card.language-pill
+        expected_selected_option: Spanish
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Preferred language is set to a different option (e.g., English).
+  - The dropdown is opened and Spanish is highlighted but not selected.
+  - Typed text does not result in a committed option selection.
+  expected_interaction_path:
+  - Read the sample profile card pill to determine the target language.
+  - Open the Preferred language Select and choose the matching option.
+  - Verify the field displays the chosen language.
+  notes: Checker can compute expected value from the reference element text, but should still verify the Select’s committed value equals that reference.
+- id: autocomplete_restricted-antd-T05
+  name: Search and select a city
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (showSearch, options-only)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the City field, search and select San Diego. The task will finish automatically when done.
+  ui_copy: In the City field, search and select San Diego. The task will finish automatically when done.
+  setup_description: |-
+    The page shows a **form section** titled “Shipping address” (centered), containing several fields as realistic clutter:
+    - Full name (text input)
+    - Street address (text input)
+    - ZIP code (text input)
+    - **City** (Ant Design Select with search)
+
+    The task target is the **City** Select only.
+    - Theme: light; spacing: comfortable; size: default.
+    - The City Select is empty initially (placeholder “Start typing to search”).
+    - The dropdown list contains ~20 US cities including: San Diego, San Jose, San Francisco, Santa Ana, Santa Fe, Sacramento, Seattle, etc.
+    - `showSearch` is enabled. Typing filters the list; you must commit by selecting an option from the dropdown.
+    - There is no submit button required; selection immediately updates the City field.
+
+    Other form fields are present but do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Requires using search in a longer, confusable city list within a small form section with other nearby inputs.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "San Diego" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: San Diego
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different city with a similar prefix is selected (e.g., San Jose or San Francisco).
+  - The user types 'San Diego' but does not click/commit the option from the list.
+  - The City field remains empty.
+  expected_interaction_path:
+  - Click the City Select field to focus it.
+  - Type 'San' (or 'San D') to filter options.
+  - Click the 'San Diego' option.
+  - Verify 'San Diego' appears as the selected value.
+  notes: Ensure options include multiple 'San*' items to create realistic density/confusability; checker must match exact committed option.
+- id: autocomplete_restricted-antd-T06
+  name: Choose shipping carrier among two selects
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the Shipping carrier field to DHL Express. The task will finish automatically when done.
+  ui_copy: Set the Shipping carrier field to DHL Express. The task will finish automatically when done.
+  setup_description: |-
+    The page is a centered “Delivery options” card with **two** Ant Design Select components of the same type:
+    1) **Billing carrier** (Select)
+    2) **Shipping carrier** (Select)  ← target
+
+    Both are options-only selects (restricted), default size, comfortable spacing, light theme.
+    - Initial state: Billing carrier is set to “UPS Ground”; Shipping carrier is empty (placeholder “Choose a carrier”).
+    - Each Select opens a dropdown with overlapping carrier names: UPS Ground, UPS Next Day, FedEx, FedEx Express Saver, DHL Express, USPS.
+    - No Save/Apply button; selection commits immediately.
+
+    The two selects are stacked vertically with similar styling, so the agent must disambiguate by label and modify **Shipping carrier** only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 4
+    justification: Two near-identical Select instances require correct label-based disambiguation before choosing the target option.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "DHL Express" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - If multiple instances exist, the correct labeled instance is the one that matches the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: DHL Express
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping carrier
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Billing carrier is changed instead of Shipping carrier.
+  - Shipping carrier is set to a different option (e.g., DHL is not selected).
+  - Shipping carrier contains typed text that is not a committed option.
+  expected_interaction_path:
+  - Locate the Select labeled Shipping carrier.
+  - Open its dropdown and click 'DHL Express'.
+  - Confirm Shipping carrier shows 'DHL Express' and Billing carrier remains unchanged.
+  notes: Checker should pin instance by an explicit data-testid or by associating the label text 'Shipping carrier' to the correct control.
+- id: autocomplete_restricted-antd-T07
+  name: Select time zone inside a modal
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (in Modal)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Edit profile dialog and set the Time zone field to UTC−05:00 (New York). The task will finish automatically when done.
+  ui_copy: Open the Edit profile dialog and set the Time zone field to UTC−05:00 (New York). The task will finish automatically when done.
+  setup_description: |-
+    The page shows a small profile summary card with a primary button **Edit profile**.
+
+    Clicking **Edit profile** opens an Ant Design **Modal** (dialog) centered on the page (modal_flow layout).
+    Inside the modal is one target component: an Ant Design Select labeled **Time zone**.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: Time zone is set to “UTC+00:00 (London)”.
+    - The dropdown list contains common time zones with UTC offsets, including:
+      - UTC−08:00 (Los Angeles)
+      - UTC−05:00 (New York)  ← target
+      - UTC+00:00 (London)
+      - UTC+01:00 (Berlin)
+      - UTC+09:00 (Tokyo)
+    - The select is restricted to these options; selecting an item updates the field immediately.
+
+    The modal also contains Cancel/Close controls, but they are not required for success. Success depends only on the Time zone Select value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Adds one layer of UI (open a modal) and uses slightly denser options with similar UTC formatting, but still a single instance.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "UTC−05:00 (New York)" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: UTC−05:00 (New York)
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The modal is opened but the Time zone remains unchanged.
+  - A different time zone is selected (e.g., Los Angeles).
+  - The selection is made in a different field (if any) instead of Time zone.
+  expected_interaction_path:
+  - Click 'Edit profile' to open the modal.
+  - Open the Time zone dropdown.
+  - Select 'UTC−05:00 (New York)'.
+  - Verify the Select displays the target value.
+  notes: Checker should be able to locate the modal-contained Select even if the background page remains visible.
+- id: autocomplete_restricted-antd-T08
+  name: Scroll the list to pick a state
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (long list, non-searchable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the State field, scroll the options list and select Wyoming. The task will finish automatically when done.
+  ui_copy: In the State field, scroll the options list and select Wyoming. The task will finish automatically when done.
+  setup_description: |-
+    The page contains a compact “Address” card anchored near the **top-right** of the viewport.
+
+    There is one Ant Design Select labeled **State**.
+    - Theme: light.
+    - Spacing: **compact** (reduced padding) and the Select is rendered in a slightly tighter container, making the click targets smaller.
+    - Initial state: empty, placeholder “Select a state”.
+    - The dropdown contains a long list of all US states (50 options) in alphabetical order.
+    - Search is **disabled** for this instance (the dropdown opens directly to the scrollable list).
+    - You must scroll within the dropdown to find and select **Wyoming** (near the bottom).
+
+    No other controls are present; the challenge is scrolling and precise targeting in a dense, long options list.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Long, dense option list requires scrolling within the popover and accurate clicking in compact spacing.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Wyoming" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Wyoming
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A nearby state is selected by mistake (e.g., Wisconsin or West Virginia).
+  - The dropdown is scrolled but Wyoming is only visible/hovered, not selected.
+  - The State field remains empty.
+  expected_interaction_path:
+  - Open the State dropdown.
+  - Scroll the dropdown list down to the 'W' section.
+  - Click 'Wyoming'.
+  - Verify 'Wyoming' appears as the selected value.
+  notes: For determinism, ensure the dropdown list is a fixed-height scroll container with virtualization disabled or stable enough for a checker to read option text.
+- id: autocomplete_restricted-antd-T09
+  name: Match plan tier from a badge (dark theme)
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (two instances, dark theme)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Subscription plan field to match the plan tier shown on the membership badge. The task will finish automatically when done.
+  ui_copy: Set the Subscription plan field to match the plan tier shown on the membership badge. The task will finish automatically when done.
+  setup_description: |-
+    The UI is a dark-themed “Billing” card (dark background with light text) centered on the page.
+
+    The card shows:
+    - A read-only **membership badge** on the right with a prominent pill that reads **GOLD** (this is the reference).
+    - Two Ant Design Select components (same canonical type) on the left:
+      1) **Notification tier** (Select) — already set to “Silver”
+      2) **Subscription plan** (Select) — currently empty (placeholder “Choose plan”)  ← target
+
+    Component details:
+    - Theme: **dark**; spacing: comfortable; size: default.
+    - Each Select is options-only (restricted).
+    - Options include similar tier labels: Bronze, Silver, Gold, Platinum.
+    - Selecting an option immediately updates the field; no Save button.
+
+    The agent must (a) read the badge to infer the target tier and (b) apply it to the correct Select instance (Subscription plan).
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Requires visual grounding in dark theme plus disambiguation between two similar Selects, then selecting the matching tier.
+  success_trigger:
+    human_readable:
+    - The target autocomplete selection matches the reference value shown in "membership-badge.plan-pill".
+    - Expected match value is "Gold" (derived from the reference element).
+    - The value is committed as the component's current selection.
+    - If multiple instances exist, the correct labeled instance is the one that matches the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      state_key: selected_option
+      target_state:
+        reference_element_id: membership-badge.plan-pill
+        expected_selected_option: Gold
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Subscription plan
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The wrong Select is changed (e.g., Notification tier set to Gold).
+  - Subscription plan is set to a different tier (e.g., Platinum).
+  - The badge is matched incorrectly due to case/format (must match the tier meaning, not just styling).
+  expected_interaction_path:
+  - Read the membership badge to identify the tier (Gold).
+  - Open the Subscription plan Select and choose 'Gold'.
+  - Verify Subscription plan shows 'Gold' and Notification tier remains 'Silver'.
+  notes: 'Checker: parse reference badge text to canonical value ''Gold'' (case-insensitive), then compare against committed Select value.'
+- id: autocomplete_restricted-antd-T10
+  name: Edit priority in a table row
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select
+  implementation_component: 'AntD: Select (editable table cell)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: 'In the tickets table, set the Priority for ticket #1042 to High. The task will finish automatically when done.'
+  ui_copy: 'In the tickets table, set the Priority for ticket #1042 to High. The task will finish automatically when done.'
+  setup_description: |-
+    The page is a simple **table view** titled “Tickets” (table_cell layout), centered with minimal chrome.
+
+    A small table shows 3 rows (tickets #1040, #1041, #1042) and columns:
+    - Ticket #
+    - Title
+    - **Priority** (editable)
+
+    Each row’s Priority cell uses an Ant Design Select (restricted options) that is shown when the cell is clicked.
+    - Theme: light; spacing: comfortable; size: default.
+    - Options: Low, Medium, High.
+    - Initial state:
+      - #1040: Medium
+      - #1041: Low
+      - #1042: Medium  ← target row to change to High
+    - To edit, click the Priority cell in the target row, then select a new priority.
+
+    There are **three instances** of the same canonical component (one per row). No other UI controls are needed for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 5
+    justification: Multiple same-type instances embedded in similar table rows create high disambiguation load; the editable cell target can be smaller than a standalone field.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "High" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - If multiple instances exist, the correct labeled instance is the one that matches the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: High
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: tickets[#1042].priority
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - 'Priority is changed on the wrong ticket row (e.g., #1041).'
+  - 'Ticket #1042 priority remains Medium or is set to Low.'
+  - The dropdown is opened in the correct cell but the value is not committed.
+  expected_interaction_path:
+  - 'Find row for ticket #1042.'
+  - Click its Priority cell to reveal/open the Select.
+  - Choose 'High' from the dropdown.
+  - 'Verify only ticket #1042 shows Priority ''High''.'
+  notes: 'Instrumentation: each row should expose a stable ticket id; instance label can be derived as tickets[<id>].priority for the checker.'
+- id: autocomplete_restricted-mui-T01
+  name: Fruit autocomplete (basic)
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (freeSolo=false)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Set the Favorite fruit field to Mango. The task will finish automatically when done.
+  ui_copy: Set the Favorite fruit field to Mango. The task will finish automatically when done.
+  setup_description: |-
+    The page shows a centered isolated card titled “Quick survey”.
+
+    There is one Material UI Autocomplete labeled **Favorite fruit** with placeholder “Choose one”.
+    - Theme: light; spacing: comfortable; size: default.
+    - This is the restricted mode (freeSolo is false): the stored value must come from the provided options.
+    - Initial state: empty (no selection).
+    - Options list (8 items): Apple, Banana, Cherry, Grape, Mango, Orange, Peach, Strawberry.
+    - The Autocomplete has the standard popup indicator (dropdown arrow) and will also open when the input is focused.
+    - Selecting an option immediately fills the input; no separate Save button.
+
+    No other controls are on the page (clutter = none).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single Autocomplete with a short, distinct list; standard open-and-click interaction.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Mango" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Mango
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any fruit other than Mango is selected.
+  - The text 'Mango' is typed but not committed as an option selection.
+  - The listbox is open with Mango highlighted but not selected.
+  expected_interaction_path:
+  - Click the Favorite fruit input (or dropdown icon) to open the listbox.
+  - Click 'Mango'.
+  - Verify 'Mango' is shown as the selected value.
+  notes: Checker can read the input value / selected option state from the Autocomplete controlled value.
+- id: autocomplete_restricted-mui-T02
+  name: Open the role list
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (restricted)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the Role dropdown list so the options are visible. Do not select anything. The task will finish automatically when done.
+  ui_copy: Open the Role dropdown list so the options are visible. Do not select anything. The task will finish automatically when done.
+  setup_description: |-
+    A single “Team access” card is centered on the screen.
+
+    The card contains one Material UI Autocomplete labeled **Role** with placeholder “Select role”.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: empty.
+    - Options: Viewer, Commenter, Editor, Admin.
+    - The Autocomplete is restricted: typing filters, but the stored value must be one of the options.
+
+    This task is only about opening the options listbox and leaving it visible; do not make a selection.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires opening the listbox overlay for a single clearly labeled Autocomplete.
+  success_trigger:
+    human_readable:
+    - The target autocomplete's options popup/listbox is open and visible.
+    - The only autocomplete instance on the page is open.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: is_open
+      target_state:
+        is_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any role is selected (listbox closes after selection).
+  - The listbox is not visible at the time of checking.
+  - A different popup/menu is opened instead of the Role options list.
+  expected_interaction_path:
+  - Click the Role input or its popup indicator.
+  - Confirm the options listbox is open and visible.
+  notes: 'Checker: detect listbox open state via aria-expanded / listbox visibility.'
+- id: autocomplete_restricted-mui-T03
+  name: Clear a selected shipping speed
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (with clear icon)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Shipping speed field so it has no selection. The task will finish automatically when done.
+  ui_copy: Clear the Shipping speed field so it has no selection. The task will finish automatically when done.
+  setup_description: |-
+    The UI is an isolated card titled “Checkout”.
+
+    It contains one Material UI Autocomplete labeled **Shipping speed**.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: the value **Standard (3–5 days)** is selected.
+    - The component shows the standard clear (X) icon when it has a value, plus a popup indicator.
+    - Options in the listbox: Standard (3–5 days), Expedited (2 days), Overnight (1 day).
+    - Restricted mode: the value must be one of these options.
+
+    There is no submit button; success is only when the selection is cleared (empty).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Clearing uses a smaller icon but the component is the only interactive target with a simple state.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has no selected value (empty/cleared).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Shipping speed remains selected.
+  - A different option is selected instead of clearing.
+  - The input text is edited but the selection is still committed to an option.
+  expected_interaction_path:
+  - Click the clear (X) icon in the Shipping speed field (or use keyboard clear).
+  - Verify the field shows no selected value.
+  notes: Checker should treat cleared as selected_option=null; ensure the component is configured to allow clearing (disableClearable=false).
+- id: autocomplete_restricted-mui-T04
+  name: Search and select a country (form section)
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (restricted, many options)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Country field, search and select United Kingdom. The task will finish automatically when done.
+  ui_copy: In the Country field, search and select United Kingdom. The task will finish automatically when done.
+  setup_description: |-
+    The page shows a “Billing details” **form section** with several fields (realistic clutter):
+    - Name (text input)
+    - Email (text input)
+    - **Country** (Material UI Autocomplete)  ← target
+    - VAT ID (text input)
+
+    Country Autocomplete details:
+    - Theme: light; spacing: comfortable; size: default.
+    - Restricted (freeSolo=false).
+    - Initial state: empty; placeholder “Start typing…”.
+    - Options: ~30 countries, including United States, United Arab Emirates, United Kingdom, Uruguay, Uganda, etc.
+    - Because of similar prefixes (“United …”), selecting the correct one requires paying attention.
+    - Selection commits immediately; no Save required.
+
+    Other inputs are distractors and do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Requires filtering and choosing among multiple similar country names within a modestly cluttered form section.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "United Kingdom" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: United Kingdom
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - United States or United Arab Emirates is selected instead of United Kingdom.
+  - The user types but does not commit a list option.
+  - Country remains unset.
+  expected_interaction_path:
+  - Focus the Country Autocomplete.
+  - Type 'United' (or 'King') to narrow options.
+  - Click 'United Kingdom' in the listbox.
+  - Verify the value displays 'United Kingdom'.
+  notes: Consider rendering options with full country names; checker should compare committed option label, not free text.
+- id: autocomplete_restricted-mui-T05
+  name: Set destination airport (two fields)
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the To airport field to JFK — New York. The task will finish automatically when done.
+  ui_copy: Set the To airport field to JFK — New York. The task will finish automatically when done.
+  setup_description: |-
+    A centered “Flight search” card contains **two** Material UI Autocomplete fields:
+    1) **From airport** (preselected: SFO — San Francisco)
+    2) **To airport** (empty)  ← target
+
+    Both are restricted autocompletes with the same option list of common airports:
+    - JFK — New York
+    - LGA — New York
+    - EWR — Newark
+    - LAX — Los Angeles
+    - SEA — Seattle
+    - ORD — Chicago
+    ... (about 12 total)
+
+    Interaction:
+    - Theme: light; spacing: comfortable; size: default.
+    - Focusing an input opens the listbox; typing filters.
+    - Selection immediately updates the chosen field; no Search button is required for success.
+
+    The key difficulty is choosing the correct instance (To airport) and the correct New York airport code.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 4
+    justification: Two similar instances require disambiguation, and multiple New York airports create moderate option confusability.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "JFK — New York" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - If multiple instances exist, the correct labeled instance is the one that matches the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: JFK — New York
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: To airport
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - From airport is changed instead of To airport.
+  - A different New York-area airport is selected (LGA or EWR).
+  - The To airport field remains empty or contains uncommitted text.
+  expected_interaction_path:
+  - Click the To airport field.
+  - Type 'JFK' or 'New' to filter.
+  - Select 'JFK — New York'.
+  - Confirm From airport remains 'SFO — San Francisco'.
+  notes: Checker should bind instance by label text or data-testid; selection should match the committed option label exactly.
+- id: autocomplete_restricted-mui-T06
+  name: Match seat class to the itinerary card
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (restricted)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Seat class field to match the class shown on the itinerary card. The task will finish automatically when done.
+  ui_copy: Set the Seat class field to match the class shown on the itinerary card. The task will finish automatically when done.
+  setup_description: |-
+    The page is an isolated “Trip details” card.
+
+    On the right side of the card is a read-only itinerary summary that includes a highlighted line:
+    - **Seat class: Business** (this is the reference)
+
+    On the left side is one Material UI Autocomplete labeled **Seat class** (target component).
+    - Theme: light; spacing: comfortable; size: default.
+    - Restricted (freeSolo=false).
+    - Initial state: Economy is selected by default.
+    - Options: Economy, Premium Economy, Business, First.
+    - Selection commits immediately.
+
+    The instruction does not say “Business” directly; the agent must read it from the itinerary summary and match it in the Autocomplete.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires mapping a nearby reference text to an option in a small set; slightly higher observability demand than explicit targets.
+  success_trigger:
+    human_readable:
+    - The target autocomplete selection matches the reference value shown in "itinerary-summary.seat-class".
+    - Expected match value is "Business" (derived from the reference element).
+    - The value is committed as the component's current selection.
+    - Only the single instance on the page must match the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      state_key: selected_option
+      target_state:
+        reference_element_id: itinerary-summary.seat-class
+        expected_selected_option: Business
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Seat class remains Economy or is set to a different option.
+  - The agent types text but does not commit an option selection.
+  - The reference is misread (e.g., picks First instead of Business).
+  expected_interaction_path:
+  - Read the seat class shown in the itinerary summary.
+  - Open the Seat class Autocomplete and select the matching option.
+  - Verify the field displays that option.
+  notes: 'Checker: reference element provides expected value; still validate the committed selection equals it.'
+- id: autocomplete_restricted-mui-T07
+  name: Dark theme notification sound selection
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (restricted, in settings panel)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In Settings, set the Notification sound field to Chime. The task will finish automatically when done.
+  ui_copy: In Settings, set the Notification sound field to Chime. The task will finish automatically when done.
+  setup_description: |-
+    The page is styled as a **settings panel** with a dark theme (dark background, light text), centered in the viewport.
+
+    The panel contains several controls as realistic clutter:
+    - Toggle: Enable notifications (on)
+    - Slider: Volume (60%)
+    - **Notification sound** (Material UI Autocomplete)  ← target
+    - Button: Test sound
+
+    Notification sound Autocomplete details:
+    - Theme: **dark**; spacing: comfortable; size: default.
+    - Restricted (freeSolo=false), options: Beep, Chime, Ding, Pop, Silent.
+    - Initial state: Beep selected.
+    - The popup indicator is visible; selecting an option commits immediately.
+
+    No “Save changes” action is required for success; only the Autocomplete value matters.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Dark theme and surrounding controls increase acquisition and clutter slightly, but the target option list is short and distinct.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Chime" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Chime
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Notification sound remains Beep or is set to a different option.
+  - Another control (toggle/slider) is changed without updating the Autocomplete value.
+  - Typed text is not committed as a selected option.
+  expected_interaction_path:
+  - Locate the Notification sound Autocomplete in the settings panel.
+  - Open it and select 'Chime'.
+  - Verify the field displays 'Chime'.
+  notes: Checker should ignore other controls; only validate the Autocomplete’s committed value.
+- id: autocomplete_restricted-mui-T08
+  name: Scroll-heavy time zone selection
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (long list, small)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Time zone field, scroll the options list and select UTC+05:30 (India Standard Time). The task will finish automatically when done.
+  ui_copy: In the Time zone field, scroll the options list and select UTC+05:30 (India Standard Time). The task will finish automatically when done.
+  setup_description: |-
+    The UI is an isolated card anchored near the **bottom-right** of the viewport.
+
+    It contains a single Material UI Autocomplete labeled **Time zone** rendered in a **small** size variant.
+    - Theme: light; spacing: comfortable; scale: **small** (reduced height and icon size).
+    - Initial state: empty.
+    - The options list is long (~80 time zones) sorted by UTC offset, each formatted like “UTC+05:30 (India Standard Time)”.
+    - The task expects you to scroll within the listbox to reach the +05:30 section and pick the India Standard Time entry.
+    - Restricted mode: the selection must be one of the list items.
+    - Selecting an item commits immediately.
+
+    No other inputs are present; the difficulty is the small click targets plus deep scrolling inside the listbox.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Small-scale control combined with a long, similarly formatted list requires careful scrolling and accurate option selection.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "UTC+05:30 (India Standard Time)" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: UTC+05:30 (India Standard Time)
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different UTC+05:30 entry is selected (if multiple exist).
+  - The option is visible but not selected (only scrolled to).
+  - The field remains empty or contains uncommitted text.
+  expected_interaction_path:
+  - Open the Time zone Autocomplete listbox.
+  - Scroll down to the UTC+05:30 region.
+  - Click 'UTC+05:30 (India Standard Time)'.
+  - Verify the field shows the selected time zone.
+  notes: If virtualization is used, checker should read the committed value from the input rather than relying on option DOM presence.
+- id: autocomplete_restricted-mui-T09
+  name: 'Dashboard filter: set region for the Sales chart'
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (dashboard filters, multiple instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the dashboard filters, set the Sales region filter to APAC. The task will finish automatically when done.
+  ui_copy: In the dashboard filters, set the Sales region filter to APAC. The task will finish automatically when done.
+  setup_description: |-
+    The page is a lightweight **dashboard** with three small charts stacked vertically:
+    - “Sales” chart
+    - “Support tickets” chart
+    - “Website traffic” chart
+
+    Above each chart is a small filter row containing a Material UI Autocomplete of the same canonical type:
+    1) Sales **Region** (Autocomplete)  ← target
+    2) Support tickets Region (Autocomplete)
+    3) Website traffic Region (Autocomplete)
+
+    All three share the same options: AMER, EMEA, APAC.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: all three are set to AMER.
+    - Selecting an option updates only that chart’s filter; no Apply button.
+
+    The agent must choose the correct instance (the Region filter associated with the Sales chart) and set it to APAC.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Three visually similar instances appear in a dense dashboard context; success requires correct association with the Sales chart.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "APAC" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - If multiple instances exist, the correct labeled instance is the one that matches the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: APAC
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: filters.sales.region
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - APAC is selected for the wrong chart’s Region filter.
+  - Sales region remains AMER or is set to EMEA.
+  - A different control is changed but the Sales region filter is unchanged.
+  expected_interaction_path:
+  - Locate the Sales chart and its Region filter directly above it.
+  - Open that Region Autocomplete and select 'APAC'.
+  - Verify only the Sales Region filter shows 'APAC'.
+  notes: 'Instrumentation: associate each filter instance with a chart id (sales/support/traffic) so the checker can enforce correct-instance matching.'
+- id: autocomplete_restricted-mui-T10
+  name: Match warehouse code from a label in a drawer
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete
+  implementation_component: 'MUI: Autocomplete (in Drawer, restricted)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the Edit order drawer and set the Fulfillment warehouse field to match the warehouse code shown on the order label. The task will finish automatically when done.
+  ui_copy: Open the Edit order drawer and set the Fulfillment warehouse field to match the warehouse code shown on the order label. The task will finish automatically when done.
+  setup_description: |-
+    The main page shows an “Order #A-1835” summary with a button **Edit order**.
+
+    Clicking **Edit order** opens a right-side **drawer** (drawer_flow).
+    Inside the drawer:
+    - At the top is a read-only “order label” graphic that includes a bold code **WH-02** (this is the reference).
+    - Below it is one Material UI Autocomplete field labeled **Fulfillment warehouse** (target component).
+
+    Component behavior:
+    - Theme: light; spacing: comfortable; size: default.
+    - Restricted: options are WH-01, WH-02, WH-03, WH-04.
+    - Initial state: Fulfillment warehouse is empty.
+    - Selecting an option commits immediately; no additional Save action is required.
+
+    The agent must open the drawer, read the reference code on the label, and select the matching warehouse option.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires opening a drawer and extracting a short visual code before selecting the exact matching option; fewer instances reduce disambiguation but the visual+overlay demands remain high.
+  success_trigger:
+    human_readable:
+    - The target autocomplete selection matches the reference value shown in "order-label.warehouse-code".
+    - Expected match value is "WH-02" (derived from the reference element).
+    - The value is committed as the component's current selection.
+    - Only the single instance on the page must match the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      state_key: selected_option
+      target_state:
+        reference_element_id: order-label.warehouse-code
+        expected_selected_option: WH-02
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Fulfillment warehouse is set to a different code (WH-01/03/04).
+  - The code is typed but not selected as a committed option.
+  - The drawer is opened but the selection is not made/committed.
+  expected_interaction_path:
+  - Click 'Edit order' to open the drawer.
+  - Read the warehouse code on the label (WH-02).
+  - Open the Fulfillment warehouse Autocomplete and select WH-02.
+  - Verify the field shows WH-02.
+  notes: Checker should bind drawer state separately; reference element should have stable test id 'order-label.warehouse-code'.
+- id: autocomplete_restricted-mantine-T01
+  name: Theme preset select (basic)
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (options only)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Set the Theme preset field to Ocean. The task will finish automatically when done.
+  ui_copy: Set the Theme preset field to Ocean. The task will finish automatically when done.
+  setup_description: |-
+    A centered isolated card titled “Appearance” contains one Mantine **Select** labeled **Theme preset**.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: empty, placeholder “Pick one”.
+    - Options (6): Default, Ocean, Forest, Sunset, Lavender, Mono.
+    - This is a restricted select: the stored value must be one of the listed options.
+    - Clicking the input or chevron opens a dropdown; clicking an option commits it and closes the dropdown.
+
+    No other controls are shown (clutter = none).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single Mantine Select with a short option list and no distractors.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Ocean" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Ocean
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any option other than Ocean is selected.
+  - Text is entered in search mode (if present) without committing an option.
+  - Ocean is only highlighted in the dropdown but not selected.
+  expected_interaction_path:
+  - Open the Theme preset dropdown.
+  - Select 'Ocean'.
+  - Verify 'Ocean' appears in the field.
+  notes: Checker should read the Select’s committed value (Mantine typically stores a string value).
+- id: autocomplete_restricted-mantine-T02
+  name: Clear selected language (clearable)
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (clearable=true)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Language field so it has no selection. The task will finish automatically when done.
+  ui_copy: Clear the Language field so it has no selection. The task will finish automatically when done.
+  setup_description: |-
+    The page shows a centered “Localization” card.
+
+    It contains one Mantine **Select** labeled **Language** configured with a visible clear button (clearable).
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: **English** is selected.
+    - A small clear “×” control appears in the right section when a value is present.
+    - Options: English, Spanish, French.
+    - No save/apply workflow; clearing immediately sets the value to empty.
+
+    No other fields are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Straightforward clear action on a single Select; minor difficulty due to small clear control.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has no selected value (empty/cleared).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Language remains English (or is switched to Spanish/French instead of clearing).
+  - The dropdown is opened/closed without clearing.
+  - The field contains typed text but still has a committed selection.
+  expected_interaction_path:
+  - Click the clear (×) button in the Language field.
+  - Verify the field is empty and shows its placeholder.
+  notes: Mantine Select clear behavior can be influenced by allowDeselect/clearable; ensure clearable is enabled.
+- id: autocomplete_restricted-mantine-T03
+  name: Open category dropdown
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the Category dropdown so the options are visible. Do not select anything. The task will finish automatically when done.
+  ui_copy: Open the Category dropdown so the options are visible. Do not select anything. The task will finish automatically when done.
+  setup_description: |-
+    The page contains one isolated card titled “New expense”.
+
+    It has a Mantine Select labeled **Category** with placeholder “Choose category”.
+    - Theme: light; spacing: comfortable; size: default.
+    - Initial state: empty.
+    - Options: Travel, Meals, Office supplies, Software, Other.
+    - Restricted selection (options only).
+
+    This task only requires opening the dropdown list and leaving it open; do not choose an item.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only the open/closed state matters for a single Select with a short option list.
+  success_trigger:
+    human_readable:
+    - The target autocomplete's options popup/listbox is open and visible.
+    - The only autocomplete instance on the page is open.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: is_open
+      target_state:
+        is_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any category is selected (dropdown closes).
+  - Dropdown is not open/visible at the time of checking.
+  - A different popup is opened instead of the Category options list.
+  expected_interaction_path:
+  - Click the Category Select input or the chevron.
+  - Confirm the options menu is open and visible.
+  notes: 'Checker: can detect open state via combobox dropdown visibility/aria attributes.'
+- id: autocomplete_restricted-mantine-T04
+  name: Searchable tech stack selection
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (searchable=true)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Primary language field, search and select Kotlin. The task will finish automatically when done.
+  ui_copy: In the Primary language field, search and select Kotlin. The task will finish automatically when done.
+  setup_description: |-
+    The page shows a “Developer profile” **form section** with several fields:
+    - Display name (text input)
+    - GitHub username (text input)
+    - **Primary language** (Mantine Select, searchable)  ← target
+    - Bio (textarea)
+
+    Primary language Select details:
+    - Theme: light; spacing: comfortable; size: default.
+    - `searchable` is enabled, so typing filters the dropdown options.
+    - Options include ~25 programming languages, e.g., Java, JavaScript, Kotlin, Python, Ruby, Rust, Swift, TypeScript, etc.
+    - Restricted: only listed options can be selected as the final value.
+    - Selection commits immediately; no Save required.
+
+    Other inputs are present as clutter but do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Requires using search filtering among many similar options while ignoring adjacent form inputs.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Kotlin" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Kotlin
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different language is selected (e.g., Java).
+  - Kotlin is typed but not selected as a committed option.
+  - The field remains empty.
+  expected_interaction_path:
+  - Focus the Primary language Select.
+  - Type 'Kot' to filter.
+  - Select 'Kotlin' from the dropdown.
+  - Verify the field shows Kotlin.
+  notes: Checker should verify committed selected option, not raw search text.
+- id: autocomplete_restricted-mantine-T05
+  name: Set shipping country among two selects
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the Shipping country field to Japan. The task will finish automatically when done.
+  ui_copy: Set the Shipping country field to Japan. The task will finish automatically when done.
+  setup_description: |-
+    The UI is a centered “Order details” card with two Mantine Select components:
+    1) **Billing country** (preselected: United States)
+    2) **Shipping country** (empty)  ← target
+
+    Both are restricted selects with the same option list of 10 countries (including Japan).
+    - Theme: light; spacing: comfortable; size: default.
+    - Dropdown opens via click on the input/chevron; selecting commits immediately.
+
+    The agent must change only the Shipping country field to Japan.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 4
+    justification: Two similar instances increase disambiguation load; otherwise the options are straightforward.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Japan" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - If multiple instances exist, the correct labeled instance is the one that matches the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Japan
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping country
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Billing country is changed instead of Shipping country.
+  - Shipping country is set to a different country (e.g., China).
+  - The field contains typed text but not a committed selection.
+  expected_interaction_path:
+  - Locate the Select labeled Shipping country.
+  - Open it and choose Japan.
+  - Confirm Billing country remains United States.
+  notes: Checker should map label to control; ensure both fields are same canonical_type for instance counting.
+- id: autocomplete_restricted-mantine-T06
+  name: Match team from profile badge
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Team field to match the team shown on the sample badge. The task will finish automatically when done.
+  ui_copy: Set the Team field to match the team shown on the sample badge. The task will finish automatically when done.
+  setup_description: |-
+    The page shows an isolated “Onboarding” card.
+
+    At the top is a small sample badge that reads:
+    - **TEAM: Alpha** (reference)
+
+    Below it is one Mantine Select labeled **Team** with placeholder “Pick a team”.
+    - Theme: light; spacing: comfortable; size: default.
+    - Options: Alpha, Beta, Gamma, Delta.
+    - Restricted options-only selection; no Save button.
+
+    The instruction refers to the badge rather than naming the target option directly.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires reading a nearby reference badge, but the option set is small and the field is unambiguous.
+  success_trigger:
+    human_readable:
+    - The target autocomplete selection matches the reference value shown in "sample-badge.team".
+    - Expected match value is "Alpha" (derived from the reference element).
+    - The value is committed as the component's current selection.
+    - Only the single instance on the page must match the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      state_key: selected_option
+      target_state:
+        reference_element_id: sample-badge.team
+        expected_selected_option: Alpha
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Team is set to Beta/Gamma/Delta instead of the badge’s team.
+  - Dropdown is opened but no option is selected.
+  - Typed text is not committed as an option.
+  expected_interaction_path:
+  - Read the team name shown on the badge.
+  - Open the Team Select and choose the matching option.
+  - Verify the Team field displays the chosen value.
+  notes: 'Checker: derive expected team from badge text and compare to committed Select value.'
+- id: autocomplete_restricted-mantine-T07
+  name: Scroll to select a project code
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (long list)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Project code field, scroll the options list and select PRJ-048. The task will finish automatically when done.
+  ui_copy: In the Project code field, scroll the options list and select PRJ-048. The task will finish automatically when done.
+  setup_description: |-
+    A centered isolated card titled “Link timesheet” contains one Mantine Select labeled **Project code**.
+
+    Component configuration:
+    - Theme: light; spacing: comfortable; size: default.
+    - Search is **disabled** for this Select (dropdown opens directly to the list).
+    - The dropdown contains a long list of 60 project codes from PRJ-001 to PRJ-060.
+    - Initial state: empty.
+    - The options are rendered in a scrollable dropdown; PRJ-048 is not visible initially.
+
+    The task requires scrolling within the dropdown list to find and select PRJ-048.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Long, uniform-looking code list requires sustained scrolling and careful reading to avoid off-by-one selection mistakes.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "PRJ-048" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: PRJ-048
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A neighboring code is selected (e.g., PRJ-047 or PRJ-049).
+  - The list is scrolled but PRJ-048 is not selected/committed.
+  - Project code remains empty.
+  expected_interaction_path:
+  - Open the Project code dropdown.
+  - Scroll down until PRJ-048 is visible.
+  - Click PRJ-048.
+  - Verify the field shows PRJ-048.
+  notes: Checker should read committed value from the input; dropdown may virtualize options depending on implementation.
+- id: autocomplete_restricted-mantine-T08
+  name: 'Dark + compact: choose the correct UTC offset'
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (searchable, dark/compact)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Time zone field, search and select UTC+09:00 (Tokyo). The task will finish automatically when done.
+  ui_copy: In the Time zone field, search and select UTC+09:00 (Tokyo). The task will finish automatically when done.
+  setup_description: |-
+    The page is a “Regional settings” card rendered in **dark theme** with **compact** spacing.
+
+    It contains one Mantine Select labeled **Time zone** configured as searchable.
+    - Theme: dark; spacing: compact; size: default.
+    - Initial state: empty.
+    - Options: ~35 time zones formatted with offsets and city names, including:
+      - UTC+08:00 (Beijing)
+      - UTC+09:00 (Tokyo)  ← target
+      - UTC+09:30 (Adelaide)
+      - UTC+10:00 (Sydney)
+    - Because offsets are similar, selecting the correct one requires careful reading.
+    - Selecting an option commits immediately.
+
+    No other inputs are present; the hardness comes from compact dark styling and similar option labels.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Compact dark styling reduces target salience while similar UTC offsets increase choice interference during search-and-select.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "UTC+09:00 (Tokyo)" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - Only the single instance on the page must match the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: UTC+09:00 (Tokyo)
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - UTC+08:00 (Beijing) or UTC+10:00 (Sydney) is selected instead of Tokyo.
+  - The user types but does not select a committed option.
+  - Time zone remains empty.
+  expected_interaction_path:
+  - Focus the Time zone Select and type 'Tokyo' or '+09'.
+  - Select the 'UTC+09:00 (Tokyo)' option from results.
+  - Verify the field displays that exact value.
+  notes: Checker should match the full committed label (including UTC offset) to avoid partial matches.
+- id: autocomplete_restricted-mantine-T09
+  name: 'Three contacts: set the emergency contact relationship'
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (three instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the Emergency contact relationship field to Spouse. The task will finish automatically when done.
+  ui_copy: Set the Emergency contact relationship field to Spouse. The task will finish automatically when done.
+  setup_description: |-
+    A small “Contacts” card is positioned near the **top-left** of the viewport.
+
+    It contains three Mantine Select fields of the same canonical type:
+    1) Primary contact relationship (preselected: Parent)
+    2) Secondary contact relationship (preselected: Sibling)
+    3) **Emergency contact relationship** (empty)  ← target
+
+    All three share the same options: Parent, Sibling, Spouse, Partner, Friend, Other.
+    - Theme: light; spacing: comfortable; size: default.
+    - Each Select is restricted to the options.
+    - Selecting commits immediately.
+
+    The agent must correctly identify the Emergency contact relationship field and set it to Spouse without altering the other two.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 5
+    justification: Three same-type fields with similar labels create high disambiguation load, compounded by non-central placement.
+  success_trigger:
+    human_readable:
+    - The target autocomplete has selected value "Spouse" (must be an option from the list).
+    - The value is committed as the component's current selection (not just typed text).
+    - If multiple instances exist, the correct labeled instance is the one that matches the target state.
+    canonical_predicate:
+      predicate_type: equals
+      state_key: selected_option
+      target_state:
+        selected_option: Spouse
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Emergency contact relationship
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Spouse is selected for Primary or Secondary instead of Emergency.
+  - Emergency contact relationship remains empty or is set to a different option.
+  - More than one field is modified.
+  expected_interaction_path:
+  - Locate the Emergency contact relationship Select (third field).
+  - Open it and select 'Spouse'.
+  - Verify the first two fields remain Parent and Sibling.
+  notes: Checker should identify instances by their labels; placement top_left may affect viewport scanning.
+- id: autocomplete_restricted-mantine-T10
+  name: 'Modal: match discount tier from the banner'
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select
+  implementation_component: 'Mantine: Select (in Modal, two instances)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the Apply discount dialog and set the Discount tier field to match the tier shown on the promo banner. The task will finish automatically when done.
+  ui_copy: Open the Apply discount dialog and set the Discount tier field to match the tier shown on the promo banner. The task will finish automatically when done.
+  setup_description: |-
+    The main page shows a “Cart” card with a button **Apply discount**.
+
+    Clicking **Apply discount** opens a centered modal dialog (modal_flow).
+    In the modal:
+    - A colorful promo banner at the top contains a bold tier label **TIER 2** (reference).
+    - Below it is one Mantine Select labeled **Discount tier** (target component).
+
+    Options: Tier 1, Tier 2, Tier 3.
+    - Theme: light; spacing: comfortable; size: default.
+    - Restricted options-only behavior; selecting commits immediately.
+    - Closing or submitting the modal is NOT required for success.
+
+    The agent must read the tier from the promo banner and apply it in the Discount tier field.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Combines opening a modal overlay with extracting a visual reference tier and selecting the matching option; fewer instances reduce disambiguation.
+  success_trigger:
+    human_readable:
+    - The target autocomplete selection matches the reference value shown in "promo-banner.discount-tier".
+    - Expected match value is "Tier 2" (derived from the reference element).
+    - The value is committed as the component's current selection.
+    - Only the single instance on the page must match the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      state_key: selected_option
+      target_state:
+        reference_element_id: promo-banner.discount-tier
+        expected_selected_option: Tier 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Discount tier is set to Tier 1 or Tier 3.
+  - The modal is opened but the selection is not made/committed.
+  - The reference tier is misread and the wrong option is chosen.
+  expected_interaction_path:
+  - Click 'Apply discount' to open the modal.
+  - Read the tier shown on the promo banner (Tier 2).
+  - Open the Discount tier Select and choose Tier 2.
+  - Verify the field shows Tier 2.
+  notes: 'Checker: normalize reference ''TIER 2'' to canonical value ''Tier 2'' before comparison.'

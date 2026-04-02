@@ -1,0 +1,2028 @@
+- id: meter-antd-T01
+  name: Set Fuel Level meter to 50%
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line
+  implementation_component: 'AntD: Progress (type=''line'') (meter approximation)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Fuel Level meter to 50%. The task will finish automatically when done.
+  ui_copy: 'Fuel Level: set to 50%'
+  setup_description: |-
+    A single centered isolated card shows a labeled meter titled “Fuel Level”.
+    - Layout: isolated_card, placed in the center of the viewport.
+    - Component: AntD Progress (type='line') used as a meter approximation with a clickable track.
+    - Spacing/scale: comfortable spacing, default size.
+    - Instances: 1 meter instance.
+    - Sub-controls: the progress track is interactive; clicking on the track sets the meter value to the nearest whole percent based on click position. The percent text is shown to the right (showInfo=true).
+    - Initial state: 20%.
+    - Distractors: none (only a non-interactive label and helper text “Range 0–100”).
+    - Feedback: value updates immediately after click; no Apply/Save button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single large target with visible numeric feedback and immediate updates; no disambiguation or overlays.
+  success_trigger:
+    human_readable:
+    - The Fuel Level meter value is 50% (±3 percentage points).
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 50
+        mode: determinate
+      tolerance:
+        value_percent: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Meter ends at 49% or 54% (outside tolerance).
+  - Any other component is changed (there are no other meter instances, but clicking unrelated text should not count).
+  expected_interaction_path:
+  - Click on the Fuel Level meter track around the halfway point until the label reads 50%.
+  notes: 'Instrumentation: expose meter root with data-testid=''meter-fuel'' and aria-valuenow=percent. Checker can read committed
+    value from aria-valuenow or a data-meter-value attribute.'
+- id: meter-antd-T02
+  name: Reset Battery Health meter to 0%
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-with-reset
+  implementation_component: 'AntD: Progress (type=''line'') + inline reset affordance (meter harness)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Battery Health meter to 0%. The task will finish automatically when done.
+  ui_copy: 'Battery Health: reset to 0%'
+  setup_description: |-
+    A centered isolated card shows a single meter titled “Battery Health”.
+    - Layout: isolated_card at center.
+    - Component: AntD Progress (type='line') used as a meter approximation.
+    - Spacing/scale: comfortable, default.
+    - Instances: 1.
+    - Sub-controls: an inline “Reset” control appears next to the meter label (treated as part of the meter widget). Clicking it immediately sets the meter value to 0%.
+    - Initial state: 65%.
+    - Distractors: a disabled “Reset all” button appears below the card (disabled and should not be needed).
+    - Feedback: value text updates immediately; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single obvious reset affordance with immediate feedback and no overlays or competing instances.
+  success_trigger:
+    human_readable:
+    - The Battery Health meter value is exactly 0%.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 0
+        mode: determinate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Battery Health is reduced but not fully reset to 0%.
+  - Clicking the disabled “Reset all” button (no state change) must not count as success.
+  - Reset is performed on any non-target meter (there is only one meter here, but future harnesses may include others).
+  expected_interaction_path:
+  - Click the “Reset” control next to the Battery Health label.
+  - Verify the meter reads 0%.
+  notes: 'Instrumentation: data-testid=''meter-battery'' for the meter, data-testid=''meter-battery-reset'' for the reset
+    control. Checker reads aria-valuenow from the meter root.'
+- id: meter-antd-T03
+  name: Enable Auto mode on Network Load meter
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-indeterminate-toggle
+  implementation_component: 'AntD: Progress (type=''line'') with indeterminate/active mode (meter harness)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on Auto mode for the Network Load meter. The task will finish automatically when done.
+  ui_copy: 'Network Load: Auto mode'
+  setup_description: |-
+    A single meter card is centered on a dark-themed page.
+    - Layout: isolated_card, placement center.
+    - Theme: dark (text and controls are high-contrast on a dark background).
+    - Component: AntD Progress (type='line') used as a meter approximation.
+    - Spacing/scale: comfortable spacing, default size.
+    - Instances: 1 labeled “Network Load”.
+    - Sub-controls: inside the meter header row, an “Auto” pill toggle (part of the meter widget) switches the meter between determinate (fixed percent) and indeterminate (animated) mode.
+    - Initial state: determinate at 40% (shows “40%”).
+    - Desired state: Auto ON → indeterminate animation; the numeric percent label is replaced by “Auto”.
+    - Distractors: a read-only status line below shows “Last updated: just now”.
+    - Feedback: toggle updates immediately; no Apply/Save.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only one toggle within a single meter; slightly harder because the target state is an animation/text change
+      in dark theme.
+  success_trigger:
+    human_readable:
+    - The Network Load meter is in indeterminate (Auto) mode.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: indeterminate
+        details_open: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Meter remains determinate (shows a fixed percent).
+  - Auto is toggled on and then turned off again (final state must be Auto on).
+  - Any unrelated UI changes (theme toggle, if present in header) must not count as success.
+  expected_interaction_path:
+  - Click the “Auto” pill toggle in the Network Load meter header.
+  - Confirm the meter enters animated/indeterminate mode (shows “Auto”).
+  notes: Checker should read meter mode from a data attribute, e.g., data-meter-mode='determinate|indeterminate'. For AntD,
+    percent may be undefined in indeterminate mode; do not require aria-valuenow when mode=indeterminate.
+- id: meter-antd-T04
+  name: Match Water Tank meter to reference
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-reference-pair
+  implementation_component: 'AntD: Progress (type=''line'') (two instances; one read-only reference)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Water Tank (Target) meter match the Water Tank (Reference) meter. The task will finish automatically
+    when done.
+  ui_copy: 'Water Tank: match target to reference'
+  setup_description: |-
+    A centered isolated card contains two horizontal meters aligned in a simple two-row stack.
+    - Layout: isolated_card, placement center.
+    - Component: two AntD Progress (type='line') meters.
+    - Spacing/scale: comfortable spacing, default size.
+    - Instances: 2 meters of the same type labeled:
+      * “Water Tank (Target)” – interactive (click-to-set on the bar).
+      * “Water Tank (Reference)” – read-only (not clickable), used only as a visual reference.
+    - Guidance: visual (the reference meter has no numeric label; it only shows the filled bar length).
+    - Initial state: Target at 10%; Reference at ~65% (visually two-thirds full).
+    - Distractors: none.
+    - Feedback: Target meter updates immediately as you click; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires choosing the correct instance and matching a visual reference without a printed number, but still
+      in a simple layout.
+  success_trigger:
+    human_readable:
+    - The Water Tank (Target) meter matches the Water Tank (Reference) meter (±3 percentage points).
+    - The Reference meter must remain unchanged.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        target_instance: Water Tank (Target)
+        reference_instance: Water Tank (Reference)
+      tolerance:
+        value_percent: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Water Tank (Target)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The Target meter is close but does not visually match within tolerance.
+  - The Reference meter is modified (should be non-interactive; any accidental changes must not count).
+  - The wrong meter instance is adjusted (e.g., interacting with the reference row if it becomes focusable).
+  expected_interaction_path:
+  - Click along the Water Tank (Target) meter bar until its fill length matches the reference bar.
+  notes: 'Checker: read both meters'' committed value_percent and compare absolute difference <= tolerance. Instrumentation:
+    data-testid=''meter-water-target'' and ''meter-water-ref''; ensure ref meter is not interactive.'
+- id: meter-antd-T05
+  name: Set CPU Budget meter in System Limits form
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-form-section
+  implementation_component: 'AntD: Progress (type=''line'') embedded in a form section (meter harness)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the System Limits section, set the CPU Budget meter to 70%. The task will finish automatically when
+    done.
+  ui_copy: 'System Limits: CPU Budget 70%'
+  setup_description: |-
+    A form_section layout shows a “System Limits” panel with several standard form fields and two meters.
+    - Layout: form_section anchored in the center with a left-aligned form title.
+    - Clutter: low (a few text inputs and toggles are present but not required for success).
+    - Component: AntD Progress (type='line') meters.
+    - Spacing/scale: comfortable spacing, default size.
+    - Instances: 2 meters stacked with labels:
+      * “CPU Budget” (interactive)
+      * “Memory Budget” (interactive)
+    - Initial state: CPU Budget = 45%, Memory Budget = 60%.
+    - Interaction: clicking on a meter’s bar sets that meter’s value; each shows a numeric percent at the right.
+    - Feedback: immediate update; no Apply/Save.
+    - Distractors: a “Reset limits” button exists at the bottom of the panel (does nothing in this task and should not be used).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Requires disambiguating between two similar meters inside a form with mild clutter, but value feedback
+      is explicit.
+  success_trigger:
+    human_readable:
+    - The CPU Budget meter value is 70% (±2 percentage points).
+    - The Memory Budget meter value is irrelevant, but changing the wrong instance must not count.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 70
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: CPU Budget
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Memory Budget is set to 70% instead of CPU Budget.
+  - CPU Budget ends outside tolerance.
+  - Clicking “Reset limits” changes values (should be disabled/no-op in this task); any such change must not be considered
+    success.
+  expected_interaction_path:
+  - Locate the CPU Budget meter in the System Limits form.
+  - Click on its bar until it reads 70%.
+  notes: 'Instrumentation: each meter wrapper should include data-instance-label (''CPU Budget'', ''Memory Budget'') and data-testid
+    (''meter-cpu'', ''meter-mem'') to support correct-instance checks.'
+- id: meter-antd-T06
+  name: Set Quota Usage meter and Apply in modal
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-modal-apply
+  implementation_component: 'AntD: Modal + Progress (type=''line'') (meter harness)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Edit quota dialog, set the Quota Usage meter to 85%, and click Apply. The task will finish automatically
+    when done.
+  ui_copy: 'Edit quota: Quota Usage 85% (Apply)'
+  setup_description: |-
+    A modal_flow scene starts with a single button on an isolated card: “Edit quota”.
+    - Layout: modal_flow; the meter is inside a modal dialog.
+    - Placement: center (modal overlays the page).
+    - Component: AntD Modal containing one AntD Progress meter (type='line').
+    - Spacing/scale: default size; comfortable spacing inside modal.
+    - Instances: 1 meter labeled “Quota Usage”.
+    - Interaction:
+      * Click “Edit quota” to open the modal.
+      * Inside the modal, click on the meter bar to set the value.
+      * The meter updates immediately but is considered “pending” until you click “Apply”.
+    - Initial state: pending value starts at 50%; committed value (shown in small text under the bar) is also 50%.
+    - Feedback: after clicking Apply, the modal closes and a small toast “Quota updated” appears; committed value updates to the chosen value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Adds modal layering and an explicit Apply step; value is still visible but there is a pending vs committed
+      state.
+  success_trigger:
+    human_readable:
+    - The Quota Usage meter committed value is 85% (±2 percentage points).
+    - Apply has been clicked to commit the change.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 85
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The pending value shows 85% but Apply was not clicked (committed value unchanged).
+  - Modal is closed with Cancel/close icon after setting value (no commit).
+  - Value is outside tolerance after applying.
+  expected_interaction_path:
+  - Click “Edit quota” to open the modal.
+  - Click the Quota Usage meter bar near 85%.
+  - Click “Apply” in the modal footer.
+  notes: Checker should distinguish pending vs committed meter state; e.g., commit on Apply sets data-meter-committed='true'.
+    Confirm control data-testid='quota-apply'.
+- id: meter-antd-T07
+  name: Open Latency Meter details popover
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-details-popover
+  implementation_component: 'AntD: Progress (type=''line'') + Popover details (meter harness)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the details popover for the Latency Meter. The task will finish automatically when done.
+  ui_copy: 'Latency Meter: open details'
+  setup_description: |-
+    An isolated card is anchored near the top-left of the viewport (not centered).
+    - Layout: isolated_card; placement top_left.
+    - Component: AntD Progress (type='line') used as a meter approximation.
+    - Spacing/scale: comfortable spacing, default size.
+    - Instances: 1 labeled “Latency Meter”.
+    - Sub-controls: a small “Details” info icon (ⓘ) at the right end of the meter row opens a Popover.
+    - Initial state: details popover closed; meter shows 42%.
+    - Overlay behavior: clicking the info icon opens a popover anchored to the meter; popover contains read-only text lines like “Current: 42%” and “Range: 0–100”.
+    - Distractors: the card also contains a non-interactive sparkline image under the meter (should not be clicked).
+    - Feedback: popover appears instantly and stays open until clicking outside.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires acquiring a small info icon target and managing a popover overlay, but no value setting is needed.
+  success_trigger:
+    human_readable:
+    - The Latency Meter details popover is open for the correct meter instance.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        details_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Popover is not open (even if the meter value is visible elsewhere).
+  - A different tooltip/popover on the page is opened (if any future distractor is added).
+  - Popover is opened and immediately closed (final state must be open).
+  expected_interaction_path:
+  - Click the ⓘ info icon next to the Latency Meter.
+  - Verify the popover is visible.
+  notes: 'Instrumentation: data-testid=''meter-latency-details'' for the icon; popover root data-testid=''meter-latency-popover''.
+    Checker: assert popover visible and anchored to the latency meter.'
+- id: meter-antd-T08
+  name: Set small Signal Strength meter to 67%
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-small-no-label
+  implementation_component: 'AntD: Progress (type=''line'', size=''small'') (meter harness; showInfo=false)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Signal Strength meter to 67%. The task will finish automatically when done.
+  ui_copy: 'Signal Strength: set to 67%'
+  setup_description: |-
+    A compact meter card is positioned in the bottom-right corner of the viewport.
+    - Layout: isolated_card; placement bottom_right.
+    - Spacing/scale: compact spacing and small scale; the bar is short and thin.
+    - Component: AntD Progress (type='line') styled small; showInfo=false (no printed percent).
+    - Instances: 1 labeled “Signal Strength”.
+    - Interaction: clicking on the bar sets the value based on click position. Fine adjustment is available via keyboard: when focused, Left/Right arrow changes by 1%.
+    - Observability: value is not printed; hovering the bar shows a small tooltip with the exact percent.
+    - Initial state: 50%.
+    - Distractors: a tiny “Help” link under the bar (opens a non-blocking tooltip) which is not required.
+    - Feedback: the fill updates immediately; tooltip reflects the current value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small, corner-placed target with no printed numeric value; requires precise setting and often a tooltip/keyboard
+      for verification.
+  success_trigger:
+    human_readable:
+    - Signal Strength meter value is 67% (±1 percentage point).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 67
+        mode: determinate
+      tolerance:
+        value_percent: 1
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Value is 65% or 69% (outside tolerance).
+  - Only the hover tooltip is opened but the underlying meter value is not set correctly.
+  - A different UI element is focused/changed without updating the meter.
+  expected_interaction_path:
+  - Click the small bar near the 67% position.
+  - Use hover tooltip (or arrow keys after focusing) to fine-tune to 67%.
+  notes: Checker should read the underlying numeric state (aria-valuenow/data-meter-value), not the tooltip text. Ensure the
+    meter root is focusable for keyboard nudging.
+- id: meter-antd-T09
+  name: Match Primary Storage Used meter to reference and Save
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-dashboard-multi
+  implementation_component: 'AntD: Progress (type=''line'') in dashboard cards (meter harness)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Storage card, make the Storage Used (Primary) meter match the reference bar and click Save changes.
+    The task will finish automatically when done.
+  ui_copy: 'Dashboard → Storage: match Primary to reference (Save changes)'
+  setup_description: |-
+    A dashboard layout shows several cards with charts and KPIs; one card is titled “Storage”.
+    - Layout: dashboard; placement center.
+    - Clutter: medium (other cards contain buttons, dropdowns, and non-target charts).
+    - Component: within the Storage card there are three AntD Progress (type='line') meters labeled:
+      * “Storage Used (Primary)” (interactive)
+      * “Storage Used (Secondary)” (interactive)
+      * “Storage Used (Archive)” (interactive)
+    - Guidance: mixed. Inside the Storage card, a small green reference bar swatch appears with label “Reference level”. It has no number, but its length is the visual target.
+    - Initial state: Primary=20%, Secondary=55%, Archive=80%. The reference bar corresponds to ~72%.
+    - Interaction: clicking on each meter bar sets its value. Numeric percent labels are hidden on all three meters; you can hover to see a tooltip with exact percent.
+    - Confirmation: a footer button “Save changes” commits the current Primary value (pending vs committed). Until saved, a small “Unsaved” badge remains.
+    - Feedback: after Save changes, a toast “Storage settings saved” appears and the Unsaved badge disappears.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Multiple similar meters in a cluttered dashboard, visual matching without printed numbers, plus an explicit
+      Save step and pending/committed state.
+  success_trigger:
+    human_readable:
+    - Storage Used (Primary) meter matches the reference bar (±2 percentage points).
+    - Save changes has been clicked (committed state updated).
+    - Correct instance must be Primary (not Secondary/Archive).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        target_instance: Storage Used (Primary)
+        reference_component_label_or_id: Reference level swatch
+      tolerance:
+        value_percent: 2
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Storage Used (Primary)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Primary meter visually matches but Save changes was not clicked (Unsaved badge still present).
+  - Secondary or Archive is matched instead of Primary.
+  - Primary is close to reference but outside tolerance after saving.
+  - Any other dashboard control is used to navigate away without saving.
+  expected_interaction_path:
+  - Locate the Storage card and identify the Primary meter.
+  - Adjust Primary bar until it matches the reference swatch length.
+  - Click “Save changes” in the Storage card footer.
+  notes: 'Checker: compare Primary value_percent to reference_percent (known to harness) OR compare to reference meter value.
+    Also require a committed flag set on save (data-meter-committed=''true'').'
+- id: meter-antd-T10
+  name: Drag to set Server B Utilization meter in table
+  canonical_type: meter
+  implementation_source: antd
+  implementation_variant: progress-line-draggable-table-cell
+  implementation_component: 'AntD: Table + Progress (type=''line'') as draggable meter (meter harness)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Servers table, drag the Utilization meter in the Server B row to 40%. The task will finish automatically
+    when done.
+  ui_copy: 'Servers table: Server B Utilization 40%'
+  setup_description: |-
+    A table_cell scene shows a small “Servers” table with multiple rows; each row includes a utilization meter.
+    - Layout: table_cell (meter is inside a table column).
+    - Placement: center.
+    - Spacing: compact (tight row height) and default scale.
+    - Clutter: high (table has sortable headers, row action icons, and a search box above).
+    - Component: AntD Progress (type='line') embedded in each row, used as a meter approximation.
+    - Instances: 3 meter instances, one per row:
+      * Server A → Utilization meter (read-only)
+      * Server B → Utilization meter (interactive target)
+      * Server C → Utilization meter (interactive but distractor)
+    - Interaction: the target meter supports click-and-drag on the bar to set value continuously; releasing the mouse commits the new value.
+    - Observability: percent text is shown inside the cell as a small number (e.g., “38%”).
+    - Initial state: Server B = 15%.
+    - Feedback: on mouse up, the number updates and briefly highlights (200ms transition); no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Requires selecting the correct row’s meter in a dense table and performing a drag interaction with fairly
+      tight tolerance.
+  success_trigger:
+    human_readable:
+    - The Utilization meter in the Server B row is 40% (±2 percentage points).
+    - Other rows’ meter values do not matter, but changing the wrong row must not count.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 40
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Server B / Utilization
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Server A or Server C utilization is set to 40% instead of Server B.
+  - Server B utilization ends outside tolerance.
+  - Dragging starts on the wrong element (e.g., table row action icons) and does not change the meter.
+  expected_interaction_path:
+  - Locate the Server B row in the Servers table.
+  - Click and drag along the Utilization meter bar until it reads about 40%.
+  - Release to commit.
+  notes: 'Instrumentation: include row key in meter testid, e.g., data-testid=''meter-util-server-b''. If multiple meters
+    share DOM structure, ensure aria-label includes the row name.'
+- id: meter-mui-T01
+  name: Set Fuel Level meter to 50% (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-determinate
+  implementation_component: 'MUI: LinearProgress (variant=''determinate'') used as meter approximation'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Fuel Level meter to 50%. The task will finish automatically when done.
+  ui_copy: 'Fuel Level: set to 50%'
+  setup_description: |-
+    A single centered isolated card shows a meter titled “Fuel Level”.
+    - Layout: isolated_card, placement center.
+    - Component: MUI LinearProgress rendered in determinate mode (value 0–100).
+    - Spacing/scale: comfortable spacing, default size.
+    - Instances: 1.
+    - Sub-controls: the progress track is clickable; clicking sets the meter value to the nearest whole percent. A small text label above the bar shows the current percent (e.g., “Fuel Level: 20%”).
+    - Initial state: 20%.
+    - Distractors: none.
+    - Feedback: immediate; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single large target and explicit text feedback; no competing instances or overlays.
+  success_trigger:
+    human_readable:
+    - Fuel Level meter value is 50% (±3 percentage points).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 50
+        mode: determinate
+      tolerance:
+        value_percent: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Value ends outside tolerance.
+  - Only the label text is selected/highlighted without changing the meter value.
+  expected_interaction_path:
+  - Click on the Fuel Level bar around the midpoint until it reads 50%.
+  notes: 'MUI LinearProgress supports determinate values 0–100 via the value prop. Instrumentation: meter root data-testid=''mui-meter-fuel''
+    and aria-valuenow=percent.'
+- id: meter-mui-T02
+  name: Match Water Tank target meter to reference (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-reference-pair
+  implementation_component: 'MUI: LinearProgress (two instances; one read-only reference)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Water Tank (Target) meter match the Water Tank (Reference) meter. The task will finish automatically
+    when done.
+  ui_copy: 'Water Tank: match target to reference'
+  setup_description: |-
+    A centered card shows two MUI LinearProgress meters stacked vertically.
+    - Layout: isolated_card, placement center.
+    - Spacing/scale: comfortable, default size.
+    - Instances: 2 meters labeled “Water Tank (Target)” and “Water Tank (Reference)”.
+    - Guidance: visual. The reference meter has no numeric label; it is a visual fill length target.
+    - Interaction: the Target bar is clickable to set value; the Reference bar is read-only.
+    - Initial state: Target=10%. Reference corresponds to ~65%.
+    - Distractors: none.
+    - Feedback: Target updates immediately; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires matching a visual reference and choosing the correct instance, but the layout is simple and uncluttered.
+  success_trigger:
+    human_readable:
+    - Water Tank (Target) matches Water Tank (Reference) (±3 percentage points).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        target_instance: Water Tank (Target)
+        reference_instance: Water Tank (Reference)
+      tolerance:
+        value_percent: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Water Tank (Target)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Target does not match reference within tolerance.
+  - Reference meter changes (should be non-interactive).
+  - Wrong instance is adjusted.
+  expected_interaction_path:
+  - Click along the Target bar until its fill matches the Reference bar.
+  notes: 'Checker: compare target and reference percent values. Ensure reference meter is rendered without click handlers.'
+- id: meter-mui-T03
+  name: Enable Auto (indeterminate) mode on Network Load meter (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-indeterminate-toggle
+  implementation_component: 'MUI: LinearProgress (variant switch determinate↔indeterminate) (meter harness)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on Auto mode for the Network Load meter. The task will finish automatically when done.
+  ui_copy: 'Network Load: Auto mode'
+  setup_description: |-
+    A centered isolated card contains one meter labeled “Network Load”.
+    - Layout: isolated_card, placement center.
+    - Component: MUI LinearProgress with a harness-controlled variant.
+    - Spacing/scale: comfortable, default size.
+    - Instances: 1.
+    - Sub-controls: an “Auto” pill inside the meter header toggles the meter from determinate (shows a fixed percent) to indeterminate (animated) by switching the LinearProgress variant.
+    - Initial state: determinate at 40%.
+    - Target state: Auto ON → indeterminate mode, and the header shows “Auto”.
+    - Distractors: none.
+    - Feedback: immediate, no Apply.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple toggle within a single component; slightly harder than L0 because the success condition is a mode
+      change rather than a number.
+  success_trigger:
+    human_readable:
+    - Network Load meter is in indeterminate (Auto) mode.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: indeterminate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Meter remains determinate with a fixed value.
+  - Auto toggled on then off again.
+  expected_interaction_path:
+  - Click the “Auto” pill/toggle in the Network Load meter header.
+  - Confirm the bar becomes animated/indeterminate.
+  notes: MUI LinearProgress supports variant='indeterminate' when there is no progress value. Expose mode via data-meter-mode
+    for reliable checking.
+- id: meter-mui-T04
+  name: Set Memory Headroom meter in form (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-form-section
+  implementation_component: 'MUI: LinearProgress (determinate) embedded in form section (meter harness)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Capacity Settings section, set the Memory Headroom meter to 30%. The task will finish automatically
+    when done.
+  ui_copy: 'Capacity Settings: Memory Headroom 30%'
+  setup_description: |-
+    A form_section labeled “Capacity Settings” contains several inputs and two headroom meters.
+    - Layout: form_section (left-aligned labels, grouped fields).
+    - Clutter: low (a couple of text fields and dropdowns are visible but irrelevant).
+    - Component: two MUI LinearProgress meters in determinate mode.
+    - Spacing/scale: comfortable, default.
+    - Instances: 2 meters labeled “CPU Headroom” and “Memory Headroom”.
+    - Initial state: CPU Headroom=55%, Memory Headroom=70%.
+    - Interaction: click on the meter bar to set value; a small percent label appears to the right of each bar.
+    - Feedback: immediate; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar meters in a form require selecting the correct target; otherwise straightforward with visible
+      numeric feedback.
+  success_trigger:
+    human_readable:
+    - Memory Headroom meter value is 30% (±2 percentage points).
+    - Correct instance must be Memory Headroom.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 30
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Memory Headroom
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - CPU Headroom is set to 30% instead of Memory Headroom.
+  - Memory Headroom ends outside tolerance.
+  expected_interaction_path:
+  - Find the Memory Headroom meter in the Capacity Settings section.
+  - Click on its bar around 30% until it reads 30%.
+  notes: 'Instrumentation: data-instance-label on each meter; checker must verify only the labeled instance meets the predicate.'
+- id: meter-mui-T05
+  name: Set Quota Usage meter in drawer and Apply (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-drawer-apply
+  implementation_component: 'MUI: Drawer + LinearProgress (meter harness)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Quota drawer, set the Quota Usage meter to 85%, and click Apply. The task will finish automatically
+    when done.
+  ui_copy: 'Quota drawer: Quota Usage 85% (Apply)'
+  setup_description: |-
+    A drawer_flow scene begins on a settings page with a button “Open quota settings”.
+    - Layout: drawer_flow; the meter is inside a right-side drawer.
+    - Placement: drawer slides in from the right edge.
+    - Component: MUI Drawer containing one MUI LinearProgress meter.
+    - Spacing/scale: comfortable spacing inside drawer; default meter size.
+    - Instances: 1 meter labeled “Quota Usage”.
+    - Interaction:
+      * Click “Open quota settings” to open the drawer.
+      * Click on the meter bar to set a pending value.
+      * Click “Apply” in the drawer footer to commit.
+    - Initial state: pending and committed value are both 50%.
+    - Feedback: after Apply, a small inline message “Saved” appears and the Apply button becomes disabled for 1 second.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening a drawer and committing via Apply; otherwise a single meter with readable state.
+  success_trigger:
+    human_readable:
+    - Quota Usage committed value is 85% (±2 percentage points).
+    - Apply has been clicked to commit.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 85
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Pending value is changed but Apply not clicked.
+  - Drawer is closed without applying.
+  - Value is outside tolerance after applying.
+  expected_interaction_path:
+  - Click “Open quota settings” to open the drawer.
+  - Adjust the Quota Usage meter to ~85%.
+  - Click “Apply”.
+  notes: Checker should read committed value, not pending. Expose data-testid for drawer open button, meter, and apply button.
+- id: meter-mui-T06
+  name: Open Latency meter tooltip (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-tooltip
+  implementation_component: 'MUI: LinearProgress + Tooltip (meter harness)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Show the tooltip for the Latency meter. The task will finish automatically when done.
+  ui_copy: 'Latency meter: show tooltip'
+  setup_description: |-
+    An isolated card is anchored near the top-right of the viewport.
+    - Layout: isolated_card; placement top_right.
+    - Component: MUI LinearProgress determinate meter with an attached tooltip.
+    - Spacing/scale: comfortable, default.
+    - Instances: 1 labeled “Latency”.
+    - Sub-controls: hovering the meter bar (or focusing it) shows a tooltip that contains the exact numeric value, e.g., “Latency: 42%”.
+    - Initial state: tooltip closed; meter at 42%.
+    - Distractors: a static “Info” caption under the bar that is not interactive.
+    - Feedback: tooltip appears on hover/focus and stays visible while the pointer is over the bar.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Opening a hover tooltip can be tricky for agents and requires precise pointer placement, but there is only
+      one meter and no value setting.
+  success_trigger:
+    human_readable:
+    - The Latency meter tooltip is visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        tooltip_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Tooltip is not visible (even if the meter value is correct).
+  - A different tooltip on the page is shown (if any).
+  - Tooltip flashes briefly and disappears; final state must be visible.
+  expected_interaction_path:
+  - Move the pointer over the Latency meter bar (or focus it) until the tooltip appears.
+  notes: 'Instrumentation: data-testid=''meter-latency'' for the bar and data-testid=''meter-latency-tooltip'' for the tooltip
+    popper. Checker should assert tooltip element is present and visible.'
+- id: meter-mui-T07
+  name: Scroll to Daily Usage meter and set to 60% (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-settings-panel-scroll
+  implementation_component: 'MUI: LinearProgress in a long settings panel (meter harness)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the Daily Usage meter and set it to 60%. The task will finish automatically when done.
+  ui_copy: 'Settings: Daily Usage 60%'
+  setup_description: |-
+    A settings_panel layout shows a vertically scrollable page with multiple sections (General, Notifications, Usage).
+    - Layout: settings_panel; the page content exceeds the viewport height.
+    - Placement: center (standard page flow).
+    - Clutter: medium (many toggles and text fields across sections).
+    - Component: one MUI LinearProgress meter labeled “Daily Usage” located in the “Usage” section near the bottom.
+    - Spacing/scale: comfortable, default.
+    - Instances: 1 meter on the page.
+    - Initial state: 35%.
+    - Interaction: click on the meter bar to set the value; the percent label is shown to the right.
+    - Feedback: immediate; no Apply. A small inline helper text “Daily target: 60%” appears near the meter label (this is guidance text, not a control).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Requires scrolling to find the correct section amid moderate clutter; once found, setting the value is
+      straightforward with visible feedback.
+  success_trigger:
+    human_readable:
+    - Daily Usage meter value is 60% (±2 percentage points).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 60
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different meter (if any future section adds one) is adjusted instead of Daily Usage.
+  - Value ends outside tolerance.
+  - Page is scrolled but the meter is never changed.
+  expected_interaction_path:
+  - Scroll down until the Usage section is visible.
+  - Find the Daily Usage meter.
+  - Click on its bar to set it to 60%.
+  notes: 'Checker should read Daily Usage meter value. Instrumentation: data-testid=''meter-daily-usage'' to avoid ambiguity
+    if future meters are added.'
+- id: meter-mui-T08
+  name: Set small Signal Strength meter to 67% (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-small-no-label
+  implementation_component: 'MUI: LinearProgress (determinate) styled small; no printed label (meter harness)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Signal Strength meter to 67%. The task will finish automatically when done.
+  ui_copy: 'Signal Strength: set to 67%'
+  setup_description: |-
+    A small compact meter card is placed near the bottom-left corner of the viewport.
+    - Layout: isolated_card; placement bottom_left.
+    - Spacing/scale: compact spacing; scale small.
+    - Component: MUI LinearProgress determinate meter.
+    - Instances: 1 labeled “Signal Strength”.
+    - Observability: no numeric label is printed; only the filled bar is visible.
+    - Interaction: clicking on the bar sets value; when the bar is focused, Left/Right arrow keys nudge the value by 1%.
+    - Verification: hovering the bar shows a tooltip with the exact percent.
+    - Initial state: 50%.
+    - Distractors: none.
+    - Feedback: immediate fill update and tooltip reflects the current value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small target with hidden numeric state; requires precise setting and likely use of hover/keyboard to confirm
+      the exact percent.
+  success_trigger:
+    human_readable:
+    - Signal Strength meter value is 67% (±1 percentage point).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 67
+        mode: determinate
+      tolerance:
+        value_percent: 1
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Value is outside tolerance.
+  - Tooltip is shown but value not set correctly.
+  - Any other element is adjusted instead of the meter.
+  expected_interaction_path:
+  - Click the small Signal Strength bar near 67%.
+  - Use tooltip and/or arrow keys to fine-tune to 67%.
+  notes: Expose aria-valuenow for checker; ensure bar is focusable for keyboard nudges.
+- id: meter-mui-T09
+  name: Drag to set Server B Load meter in table (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-draggable-table-cell
+  implementation_component: 'MUI: Table + LinearProgress as draggable meter (meter harness)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Servers table, drag the Load meter in the Server B row to 42%. The task will finish automatically
+    when done.
+  ui_copy: 'Servers table: Server B Load 42%'
+  setup_description: |-
+    A dense table lists three servers with a “Load” column containing meters.
+    - Layout: table_cell; placement center.
+    - Spacing: compact (tight rows).
+    - Clutter: high (sortable headers, filter chips above, and row action icon buttons).
+    - Component: MUI LinearProgress used as a meter approximation inside each row.
+    - Instances: 3 meters, one per row (Server A, Server B, Server C). All look identical.
+    - Interaction: meters support click-and-drag on the bar to set value continuously. Releasing mouse commits the value.
+    - Observability: a small numeric percent is shown in the same cell (e.g., “15%”).
+    - Initial state: Server B is 15%.
+    - Feedback: value highlights briefly after commit; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Dense table environment with multiple identical meters and a drag interaction; high disambiguation and
+      target acquisition load.
+  success_trigger:
+    human_readable:
+    - Server B Load meter value is 42% (±1 percentage point).
+    - Correct instance must be the Server B row.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 42
+        mode: determinate
+      tolerance:
+        value_percent: 1
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Server B / Load
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Server A or Server C is set to 42% instead of Server B.
+  - Server B ends outside tolerance.
+  - Dragging on the wrong element (row actions) does not count.
+  expected_interaction_path:
+  - Locate the Server B row.
+  - Drag on the Load meter bar until the cell reads 42%.
+  - Release to commit.
+  notes: 'Instrumentation: meter data-testid includes row key, e.g., ''meter-load-server-b''. Ensure aria-label includes ''Server
+    B Load'' to support AX-tree agents.'
+- id: meter-mui-T10
+  name: Match Primary Storage meter to reference in dark dashboard and Save (MUI)
+  canonical_type: meter
+  implementation_source: mui
+  implementation_variant: linearprogress-dashboard-dark-reference
+  implementation_component: 'MUI: LinearProgress in dashboard cards + Save (meter harness)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Storage dashboard card, make the Storage Used (Primary) meter match the reference bar and click
+    Save. The task will finish automatically when done.
+  ui_copy: 'Dark dashboard → Storage: match Primary to reference (Save)'
+  setup_description: |-
+    A dark-themed dashboard shows multiple cards; one card titled “Storage” contains several meters.
+    - Theme: dark.
+    - Layout: dashboard; placement center.
+    - Clutter: high (navigation rail, card menus, and other cards with buttons and charts).
+    - Component: within the Storage card there are three MUI LinearProgress meters labeled:
+      * “Storage Used (Primary)” (interactive target)
+      * “Storage Used (Secondary)” (interactive distractor)
+      * “Storage Used (Archive)” (interactive distractor)
+    - Guidance: mixed. A reference bar swatch labeled “Reference level” is shown above the meters, and the Primary row has a subtle outline highlight.
+    - Observability: numeric labels are hidden; only bar fill is visible unless you hover for a tooltip.
+    - Confirmation: a “Save” button in the card header commits the Primary value.
+    - Initial state: Primary=20%, Secondary=55%, Archive=80%; reference corresponds to ~72%.
+    - Feedback: after Save, a toast “Saved” appears and the highlight outline disappears.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Dark theme, heavy dashboard clutter, multiple similar meters, visual matching without numbers, and an explicit
+      Save step increase error risk.
+  success_trigger:
+    human_readable:
+    - Storage Used (Primary) matches the reference bar (±1 percentage point).
+    - Save has been clicked to commit.
+    - Correct instance must be Primary.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        target_instance: Storage Used (Primary)
+        reference_component_label_or_id: Reference level swatch
+      tolerance:
+        value_percent: 1
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Storage Used (Primary)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Primary matches reference but Save not clicked.
+  - Secondary/Archive is matched instead of Primary.
+  - Primary is within tolerance before save but drifts outside tolerance after save due to rounding (checker should use committed
+    value).
+  expected_interaction_path:
+  - Find the Storage card on the dashboard.
+  - Adjust the Primary meter to match the reference swatch length.
+  - Click “Save” in the Storage card.
+  notes: 'Checker: require committed=true after Save. Instrumentation: expose reference_percent in harness for deterministic
+    comparison.'
+- id: meter-mantine-T01
+  name: Set Fuel Level meter to 50% (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-default
+  implementation_component: 'Mantine: Progress (value=...) used as meter approximation'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Fuel Level meter to 50%. The task will finish automatically when done.
+  ui_copy: 'Fuel Level: set to 50%'
+  setup_description: |-
+    A centered isolated card shows one Mantine Progress bar used as a meter.
+    - Layout: isolated_card, placement center.
+    - Component: Mantine Progress with a single filled section (scalar value 0–100).
+    - Spacing/scale: comfortable, default.
+    - Instances: 1 labeled “Fuel Level”.
+    - Interaction: clicking on the progress bar sets the meter value to the nearest whole percent (harness behavior).
+    - Initial state: 20%.
+    - Feedback: a text label next to the meter shows the exact percent; updates immediately.
+    - Distractors: none.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single meter with explicit numeric feedback and immediate updates.
+  success_trigger:
+    human_readable:
+    - Fuel Level meter value is 50% (±3 percentage points).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 50
+        mode: determinate
+      tolerance:
+        value_percent: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Value ends outside tolerance.
+  - Any non-meter UI interaction without changing the meter.
+  expected_interaction_path:
+  - Click the Fuel Level bar around the midpoint until it reads 50%.
+  notes: Mantine Progress uses a value prop representing filled width in percent. Ensure aria-valuenow reflects the value
+    for accessibility-based checking.
+- id: meter-mantine-T02
+  name: Match Water Tank target meter to reference (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-reference-pair
+  implementation_component: 'Mantine: Progress (two instances; one read-only reference)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Water Tank (Target) meter match the Water Tank (Reference) meter. The task will finish automatically
+    when done.
+  ui_copy: 'Water Tank: match target to reference'
+  setup_description: |-
+    A centered card shows two Mantine Progress meters stacked vertically.
+    - Layout: isolated_card, placement center.
+    - Spacing/scale: comfortable, default.
+    - Instances: 2 meters labeled “Water Tank (Target)” and “Water Tank (Reference)”.
+    - Guidance: visual. The reference bar has no number; it is purely a visual fill target.
+    - Interaction: Target is clickable to set value; Reference is read-only.
+    - Initial state: Target=10%; Reference≈65%.
+    - Feedback: Target fill updates immediately.
+    - Distractors: none.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires matching a visual reference and selecting the correct meter instance, but in a simple uncluttered
+      scene.
+  success_trigger:
+    human_readable:
+    - Water Tank (Target) matches Water Tank (Reference) (±3 percentage points).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        target_instance: Water Tank (Target)
+        reference_instance: Water Tank (Reference)
+      tolerance:
+        value_percent: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Water Tank (Target)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Target does not match reference within tolerance.
+  - Reference changes (should be read-only).
+  - Wrong instance adjusted.
+  expected_interaction_path:
+  - Click along the Target bar until it visually matches the Reference bar.
+  notes: 'Checker: compare target and reference values. Keep reference meter non-interactive.'
+- id: meter-mantine-T03
+  name: Reset Battery Health meter to 0% (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-with-reset
+  implementation_component: 'Mantine: Progress + inline reset affordance (meter harness)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Battery Health meter to 0%. The task will finish automatically when done.
+  ui_copy: 'Battery Health: reset to 0%'
+  setup_description: |-
+    A centered isolated card shows one meter titled “Battery Health”.
+    - Layout: isolated_card, placement center.
+    - Component: Mantine Progress (scalar percent) used as a meter.
+    - Spacing/scale: comfortable, default.
+    - Instances: 1.
+    - Sub-controls: a small “Reset” action icon appears next to the label (part of the meter widget). Clicking it sets value to 0%.
+    - Initial state: 65%.
+    - Distractors: below the card is a disabled “Reset all” button (disabled).
+    - Feedback: value text updates immediately; no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single meter with an explicit reset action and immediate feedback.
+  success_trigger:
+    human_readable:
+    - Battery Health meter value is exactly 0%.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 0
+        mode: determinate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Value is reduced but not fully reset to 0%.
+  - Disabled “Reset all” is clicked (no state change) and must not count.
+  expected_interaction_path:
+  - Click the Reset action near the Battery Health label.
+  - Confirm the meter reads 0%.
+  notes: 'Instrumentation: data-testid=''meter-battery'' and ''meter-battery-reset''.'
+- id: meter-mantine-T04
+  name: Set CPU Budget meter in form (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-form-section
+  implementation_component: 'Mantine: Progress embedded in form section (meter harness)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the System Limits section, set the CPU Budget meter to 70%. The task will finish automatically when
+    done.
+  ui_copy: 'System Limits: CPU Budget 70%'
+  setup_description: |-
+    A form_section titled “System Limits” contains standard fields and two meters.
+    - Layout: form_section, placement center.
+    - Clutter: low (text inputs and toggles are present but not required).
+    - Component: Mantine Progress meters (scalar percent).
+    - Spacing/scale: comfortable, default.
+    - Instances: 2 meters labeled “CPU Budget” and “Memory Budget”.
+    - Initial state: CPU Budget=45%, Memory Budget=60%.
+    - Interaction: click on a meter bar to set its value.
+    - Feedback: each meter shows a small numeric percent label; updates immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar meters within a form create moderate disambiguation; otherwise direct and observable.
+  success_trigger:
+    human_readable:
+    - CPU Budget meter value is 70% (±2 percentage points).
+    - Correct instance must be CPU Budget.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 70
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: CPU Budget
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Memory Budget is set to 70% instead of CPU Budget.
+  - CPU Budget ends outside tolerance.
+  expected_interaction_path:
+  - Find the CPU Budget meter in the System Limits section.
+  - Click on its bar until it reads 70%.
+  notes: 'Instrumentation: data-instance-label for each meter to ensure correct-instance enforcement.'
+- id: meter-mantine-T05
+  name: Show tooltip for Latency meter (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-with-tooltip
+  implementation_component: 'Mantine: Progress + Tooltip (meter harness)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Show the tooltip for the Latency meter. The task will finish automatically when done.
+  ui_copy: 'Latency meter: show tooltip'
+  setup_description: |-
+    An isolated card is placed near the top-left of the viewport.
+    - Layout: isolated_card; placement top_left.
+    - Component: Mantine Progress (scalar percent) wrapped with a tooltip on hover/focus.
+    - Spacing/scale: comfortable, default.
+    - Instances: 1 labeled “Latency”.
+    - Interaction: hovering over the meter bar (or focusing it) opens a tooltip that shows exact value (e.g., “Latency: 42%”).
+    - Initial state: tooltip closed; meter value is 42%.
+    - Distractors: a static help paragraph below the bar.
+    - Feedback: tooltip remains visible while pointer is over the bar.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires reliably triggering and keeping a hover/focus tooltip open; no value changes are needed.
+  success_trigger:
+    human_readable:
+    - Latency meter tooltip is visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        tooltip_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Tooltip is not visible.
+  - A different tooltip is opened (if present).
+  - Tooltip opens and closes; final state must be visible.
+  expected_interaction_path:
+  - Hover the pointer over the Latency bar (or focus it) until the tooltip appears.
+  notes: 'Instrumentation: data-testid=''meter-latency'' and ''meter-latency-tooltip''. Checker: assert tooltip popper visible.'
+- id: meter-mantine-T06
+  name: Set Quota Usage meter and Apply in modal (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-modal-apply
+  implementation_component: 'Mantine: Modal + Progress (meter harness)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Edit quota dialog, set the Quota Usage meter to 85%, and click Apply. The task will finish automatically
+    when done.
+  ui_copy: 'Edit quota: Quota Usage 85% (Apply)'
+  setup_description: |-
+    A modal_flow scene starts with a single “Edit quota” button in an isolated card.
+    - Layout: modal_flow; meter lives inside a modal dialog.
+    - Placement: center.
+    - Component: modal contains one Mantine Progress meter used as a scalar meter.
+    - Spacing/scale: comfortable; default.
+    - Instances: 1 labeled “Quota Usage”.
+    - Interaction: open modal → click meter bar to set a pending value → click “Apply” to commit.
+    - Initial state: pending=50%, committed=50% (committed shown in small gray text below).
+    - Feedback: Apply closes modal and shows a toast “Quota updated”; committed value becomes the chosen value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Modal layering plus an Apply step introduces depth and feedback dynamics; otherwise a single clearly labeled
+      meter.
+  success_trigger:
+    human_readable:
+    - Quota Usage committed value is 85% (±2 percentage points).
+    - Apply has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 85
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Pending shows 85% but Apply not clicked.
+  - Modal is dismissed (Cancel/close) after changing pending value.
+  - Committed value after Apply is outside tolerance.
+  expected_interaction_path:
+  - Click “Edit quota” to open the modal.
+  - Adjust the Quota Usage meter to ~85%.
+  - Click “Apply”.
+  notes: Expose committed value separately (data-meter-committed-value) to make checking unambiguous.
+- id: meter-mantine-T07
+  name: Set vertical Temperature meter to 75% (Mantine, dark)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-vertical
+  implementation_component: 'Mantine: Progress (orientation=''vertical'') used as meter approximation'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Temperature meter to 75%. The task will finish automatically when done.
+  ui_copy: 'Temperature: set to 75%'
+  setup_description: |-
+    A dark-themed page shows a small card near the bottom-left containing a vertical meter labeled “Temperature”.
+    - Theme: dark.
+    - Layout: isolated_card; placement bottom_left.
+    - Spacing/scale: comfortable spacing, default scale; the meter is vertical and about 200px tall.
+    - Component: Mantine Progress in vertical orientation (scalar percent).
+    - Instances: 1.
+    - Interaction: clicking on the vertical bar sets the value based on click height (bottom=0%, top=100%).
+    - Observability: a small numeric label under the bar shows the current value (e.g., “62%”).
+    - Initial state: 30%.
+    - Distractors: none.
+    - Feedback: immediate fill change.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Vertical mapping (y-position to value) and corner placement in dark theme increase acquisition and control
+      difficulty.
+  success_trigger:
+    human_readable:
+    - Temperature meter value is 75% (±2 percentage points).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 75
+        mode: determinate
+      tolerance:
+        value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Value ends outside tolerance.
+  - Clicking outside the bar (card background) must not count.
+  expected_interaction_path:
+  - Click near the upper part of the vertical Temperature bar until it reads 75%.
+  notes: Ensure the vertical bar exposes aria-valuenow and data-orientation='vertical' for debugging. Checker still only cares
+    about value_percent.
+- id: meter-mantine-T08
+  name: Match Primary Storage meter to reference in dashboard and Save (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-dashboard-reference
+  implementation_component: 'Mantine: Progress meters in dashboard card + Save (meter harness)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Storage card, make the Storage Used (Primary) meter match the reference bar and click Save changes.
+    The task will finish automatically when done.
+  ui_copy: 'Dashboard → Storage: match Primary to reference (Save changes)'
+  setup_description: |-
+    A dashboard layout shows multiple cards; the “Storage” card contains three meters and a reference bar.
+    - Layout: dashboard; placement center.
+    - Clutter: high (navigation, card menus, other cards with buttons and charts).
+    - Component: Mantine Progress meters (scalar percent) used as meters.
+    - Instances: 3 meters in the Storage card:
+      * “Storage Used (Primary)” (interactive target)
+      * “Storage Used (Secondary)” (interactive distractor)
+      * “Storage Used (Archive)” (interactive distractor)
+    - Guidance: mixed.
+      * A thin “Reference level” bar swatch is shown above the list.
+      * The Primary row has a subtle “Primary” badge, but all bars look similar.
+    - Observability: numeric labels are hidden; hovering a bar shows a tooltip with the exact percent.
+    - Initial state: Primary=20%, Secondary=55%, Archive=80%; reference corresponds to ~72%.
+    - Confirmation: “Save changes” button in the card footer commits the Primary value.
+    - Feedback: after Save, a toast appears and an “Unsaved changes” badge disappears.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: High clutter with three similar meters, visual matching without numbers, reliance on tooltips for exactness,
+      and a required Save step.
+  success_trigger:
+    human_readable:
+    - Storage Used (Primary) matches the reference bar (±1 percentage point).
+    - Save changes has been clicked to commit.
+    - Correct instance must be Primary.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        target_instance: Storage Used (Primary)
+        reference_component_label_or_id: Reference level swatch
+      tolerance:
+        value_percent: 1
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Storage Used (Primary)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Primary matches reference but not saved (still unsaved).
+  - Secondary/Archive is matched instead of Primary.
+  - Committed value after saving is outside tolerance.
+  expected_interaction_path:
+  - Locate the Storage card on the dashboard.
+  - Adjust the Primary meter to match the reference swatch.
+  - Click “Save changes”.
+  notes: Expose reference_percent in harness to avoid comparing pixel widths. Checker should verify committed flag is set
+    after Save.
+- id: meter-mantine-T09
+  name: Enable striped animated style on Download Speed meter (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-striped-animated-toggle
+  implementation_component: 'Mantine: Progress (striped + animated) (meter harness)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on the striped animated style for the Download Speed meter. The task will finish automatically when
+    done.
+  ui_copy: 'Download Speed: striped animated'
+  setup_description: |-
+    An isolated card is positioned near the top-right of the viewport and contains one meter labeled “Download Speed”.
+    - Layout: isolated_card; placement top_right.
+    - Component: Mantine Progress used as a meter.
+    - Spacing/scale: comfortable, default.
+    - Instances: 1.
+    - Sub-controls: a small style selector inside the meter header offers two options:
+      * “Solid” (default)
+      * “Striped (animated)” (target)
+      Selecting the target option enables stripes and animation on the progress fill.
+    - Initial state: Solid style, value 60%.
+    - Feedback: visual pattern/animation appears immediately on selection; value does not need to change.
+    - Distractors: none.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Success depends on a visual style mode (striped + animated) and selecting a small control, which can be
+      less obvious to verify than numeric value.
+  success_trigger:
+    human_readable:
+    - Download Speed meter style mode is set to “Striped (animated)”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        style_mode: striped_animated
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Meter remains in Solid style.
+  - Only the value changes but style does not.
+  expected_interaction_path:
+  - Find the Download Speed meter header style selector.
+  - Select “Striped (animated)”.
+  notes: Checker can read style_mode from a data attribute (data-meter-style='solid|striped_animated') rather than pixel inspection.
+- id: meter-mantine-T10
+  name: Drag small Upload Limit meter in drawer to 55% and Apply (Mantine)
+  canonical_type: meter
+  implementation_source: mantine
+  implementation_variant: progress-drawer-small-draggable
+  implementation_component: 'Mantine: Drawer + Progress (draggable harness)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the Limits drawer, drag the Upload Limit meter to 55%, and click Apply. The task will finish automatically
+    when done.
+  ui_copy: 'Limits drawer: Upload Limit 55% (Apply)'
+  setup_description: |-
+    A drawer_flow scene begins with a “Open limits” button in a settings panel.
+    - Layout: drawer_flow; a right-side drawer contains the meters.
+    - Spacing/scale: compact spacing and small scale inside the drawer (short, thin bars).
+    - Clutter: low (drawer includes a couple of informational labels and an Apply/Cancel footer).
+    - Component: Mantine Progress meters used as meters.
+    - Instances: 2 meters inside the drawer:
+      * “Upload Limit” (interactive target)
+      * “Download Limit” (interactive distractor)
+    - Interaction:
+      * Open the drawer.
+      * Drag along the Upload Limit bar to adjust value continuously.
+      * Release to set the pending value.
+      * Click “Apply” to commit.
+    - Observability: numeric labels are small and appear only while dragging (they fade after 1s). Hovering shows the value again.
+    - Initial state: Upload Limit=20%, Download Limit=80%.
+    - Feedback: after Apply, the drawer closes and a toast “Limits saved” appears.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Small compact targets inside a drawer, drag-based adjustment, two similar instances, and a required Apply
+      step make this a high-difficulty interaction.
+  success_trigger:
+    human_readable:
+    - Upload Limit committed value is 55% (±1 percentage point).
+    - Apply has been clicked to commit.
+    - Correct instance must be Upload Limit.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 55
+        mode: determinate
+      tolerance:
+        value_percent: 1
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Upload Limit
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Download Limit is set to 55% instead of Upload Limit.
+  - Upload Limit pending value is 55% but Apply not clicked (not committed).
+  - Committed value after Apply is outside tolerance.
+  expected_interaction_path:
+  - Click “Open limits” to open the drawer.
+  - Drag on the Upload Limit bar until it is ~55%.
+  - Click “Apply”.
+  notes: 'Instrumentation: data-testid=''open-limits'', ''meter-upload'', ''meter-download'', and ''limits-apply''. Expose
+    committed vs pending state for reliable checking.'

@@ -1,0 +1,2449 @@
+- id: markdown_editor-external-T01
+  name: Set a welcome sentence
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Project note”, replace the content with: Welcome to ComponentBench! The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Project note”, replace the content with: Welcome to ComponentBench! The task will finish automatically when done.'
+  setup_description: |
+    Layout: isolated_card centered in the viewport.
+    Component: a single Markdown editor labeled “Project note”.
+    Configuration:
+      - Standard toolbar (Bold, Italic, Link, Quote, Code, List, Preview toggle, Clear).
+      - Live typing updates the editor value immediately (no Save/Apply button in this task).
+      - A small rendered preview area is visible below the editor (read-only) but is not required.
+    Initial state: the editor is empty and focused only when clicked.
+    Distractors: none (only a title and the editor card).
+    Feedback: character counter updates as you type; no toasts.
+  scene_context: &id001
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single editor, no overlays, and the target text is short and fully visible as plain text.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: Welcome to ComponentBench!
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Leaving the editor blank or partially filled.
+  - Extra characters (including extra punctuation) beyond the target sentence.
+  - Correct text entered into a non-target element (there are no other editors in this task).
+  expected_interaction_path: Click into the editor → type the sentence (or paste it) → stop when the content matches.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T02
+  name: Write a simple release note
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Release note”, enter a heading and a sentence so the content becomes exactly:
+
+    # Release notes
+
+    Version 1.0 ships today.
+
+    The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Release note”, enter a heading and a sentence so the content becomes exactly:
+
+    # Release notes
+
+    Version 1.0 ships today.
+
+    The task will finish automatically when done.'
+  setup_description: |
+    Layout: isolated_card anchored near the top-left of the viewport (not centered).
+    Component: one Markdown editor labeled “Release note”.
+    Configuration:
+      - Standard toolbar is present but not required (typing markdown is sufficient).
+      - Editor height is medium; no internal scrolling is needed for this short content.
+      - Preview is shown below the editor and updates as you type.
+    Initial state: editor contains a placeholder hint (“Write a release note…”), but the value is empty.
+    Distractors: none.
+    Feedback: preview updates immediately; no Save/Apply.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: You only need to type a short, visible markdown snippet; the main challenge is including the newline between heading and paragraph.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # Release notes
+        Version 1.0 ships today.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - 'Missing the leading # in the heading.'
+  - Putting everything on one line (no line break).
+  - Extra blank lines or extra text beyond the two lines.
+  expected_interaction_path: Click editor → type the two-line markdown → verify preview shows a heading and a paragraph.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T03
+  name: Create a shopping list
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Groceries”, enter this markdown exactly:
+
+    ## Shopping list
+
+    - Apples
+
+    - Bread
+
+    - Milk
+
+    The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Groceries”, enter this markdown exactly:
+
+    ## Shopping list
+
+    - Apples
+
+    - Bread
+
+    - Milk
+
+    The task will finish automatically when done.'
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Groceries”.
+    Configuration:
+      - Scale is set to small (smaller toolbar icons and tighter padding inside the card).
+      - Standard toolbar is visible above the textarea.
+      - Preview is shown below the editor.
+    Initial state: editor is empty.
+    Distractors: none.
+    Feedback: live preview; no Save/Apply.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Small scale reduces target sizes slightly, but the content is short and follows a common markdown pattern.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        ## Shopping list
+        - Apples
+        - Bread
+        - Milk
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - 'Using a different heading level (e.g., one # instead of ##).'
+  - Using numbered list formatting instead of bullets.
+  - Typos in any item names.
+  expected_interaction_path: Click editor → type heading → type three bullet lines → confirm preview shows a list.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T04
+  name: Clear a prefilled draft
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Markdown editor labeled “Draft” so it becomes completely empty. The task will finish automatically when done.
+  ui_copy: Clear the Markdown editor labeled “Draft” so it becomes completely empty. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Draft”.
+    Configuration:
+      - Standard toolbar includes a clearly labeled “Clear” control (trash icon + text).
+      - Clearing immediately sets the editor value to empty (no confirmation dialog).
+      - Preview panel remains visible below (and becomes blank when cleared).
+    Initial state: editor starts with a short draft:
+      - “This is a temporary draft.”
+      - “Delete it before publishing.”
+    Distractors: none.
+    Feedback: the preview clears immediately; no toast.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: The only required action is to use the editor’s clear/reset affordance; the target state is an empty value that’s easy to observe.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: ''
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+      empty_after_full_strip: true
+  negative_cases:
+  - Leaving any text behind (including only one of the original lines).
+  - Leaving only whitespace characters (spaces/newlines) in the editor.
+  - Clearing a non-existent other editor (there is only one).
+  expected_interaction_path: Click the editor toolbar “Clear” → confirm the textarea is empty and preview shows nothing.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T05
+  name: Switch to edit mode in dark theme
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Switch the Markdown editor labeled “Policy” to Edit mode (so you can type in it). The task will finish automatically when done.
+  ui_copy: Switch the Markdown editor labeled “Policy” to Edit mode (so you can type in it). The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Theme: dark mode (dark background, light text).
+    Component: one Markdown editor labeled “Policy”.
+    Configuration:
+      - The editor supports three view modes: Edit, Live (split), and Preview.
+      - A mode toggle group is shown in the editor header/toolbar with accessible labels (“Edit”, “Live”, “Preview”).
+    Initial state: the editor opens in Preview mode (textarea is read-only/disabled; preview is shown).
+    Content: a short markdown paragraph is already present.
+    Distractors: none.
+    Feedback: switching modes changes whether the textarea is editable and whether the split preview is shown.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The task is only to change a mode toggle; dark theme slightly reduces contrast and icon salience but the target label is explicit.
+  success_trigger:
+    human_readable:
+    - Markdown editor view mode equals 'edit' (e.g., edit / live-split / preview).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: edit
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: component_mode
+  negative_cases:
+  - Leaving the editor in Preview mode.
+  - Switching to Live mode instead of Edit mode.
+  - Toggling fullscreen or other toolbar controls without changing the mode.
+  expected_interaction_path: Find the mode toggle → click “Edit” → verify the textarea becomes editable.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T06
+  name: Show preview-only mode
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Switch the Markdown editor labeled “Meeting minutes” to Preview mode (preview-only). The task will finish automatically when done.
+  ui_copy: Switch the Markdown editor labeled “Meeting minutes” to Preview mode (preview-only). The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Meeting minutes”.
+    Configuration:
+      - Mode toggle group (Edit / Live / Preview) is shown in the editor header.
+      - In Live mode, the editor is split: textarea on the left and preview on the right.
+      - In Preview mode, only the rendered preview is shown and typing is disabled.
+    Initial state: the editor starts in Live (split) mode with a short markdown note already entered.
+    Distractors: none.
+    Feedback: switching to Preview collapses the textarea and leaves only the rendered preview visible.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: It’s a single explicit mode switch with immediate visual feedback and no competing instances.
+  success_trigger:
+    human_readable:
+    - Markdown editor view mode equals 'preview' (e.g., edit / live-split / preview).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: preview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: component_mode
+  negative_cases:
+  - Leaving the editor in Live mode (split view).
+  - Switching to Edit mode instead of Preview mode.
+  - Scrolling or typing without changing the mode.
+  expected_interaction_path: Use the mode toggle → click “Preview” → confirm the textarea disappears and preview remains.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T07
+  name: Fill a description inside a form
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Description”, enter: Short description: batteries included. The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Description”, enter: Short description: batteries included. The task will finish automatically when done.'
+  setup_description: |
+    Layout: form_section centered — a realistic “Create item” form with multiple fields.
+    Fields shown (distractors):
+      - Text input: “Title”
+      - Dropdown: “Category”
+      - Toggle: “Featured”
+    Target component: one Markdown editor labeled “Description”.
+    Configuration:
+      - Standard toolbar is visible.
+      - No Save/Apply; the form has a separate “Submit” button, but it is NOT required for this task.
+    Initial state: Description editor contains a placeholder but is empty.
+    Feedback: preview updates live; inline helper text shows “Markdown supported”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: There is some form clutter, but only one markdown editor and the target text is simple.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: 'Short description: batteries included.'
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Typing the text into the Title field or any other non-editor control.
+  - Adding extra lines or extra punctuation beyond the target sentence.
+  - Leaving the Description editor unchanged.
+  expected_interaction_path: Locate the Description editor in the form → click into it → type the sentence.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T08
+  name: Match a simple reference preview
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the rendered preview of the Markdown editor labeled “Answer” match the Reference preview card. The task will finish automatically when done.
+  ui_copy: Make the rendered preview of the Markdown editor labeled “Answer” match the Reference preview card. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, split into two columns.
+    Left column: a single Markdown editor labeled “Answer”.
+    Right column: a read-only “Reference preview” card that renders the target markdown visually (no source text is shown).
+    Configuration:
+      - Editor is in Live (split) mode so you can see your own preview while editing.
+      - Toolbar is present but optional; you can type markdown directly.
+    Initial state: the editor starts empty.
+    Distractors: none besides the reference preview card.
+    Feedback: your preview updates immediately; the reference preview is static.
+
+    Reference preview content (for implementers/checker): it renders the phrase “Hello, world!” with the word “world” in bold.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 1
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The goal is visually specified, but the target formatting is simple and can be achieved by typing a short markdown string.
+  success_trigger:
+    human_readable:
+    - Rendered preview for the target editor instance is semantically equivalent to the reference panel 'ref-hello-bold' (ignoring trivial whitespace differences).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-hello-bold
+        reference_surface: rendered_preview_panel
+        match_basis: rendered_markdown_equivalence
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+        render_equivalence: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Preview looks similar but differs (e.g., missing bold or different punctuation).
+  - Matching only part of the reference (partial text).
+  - Editing some other field (there is only one editor).
+  expected_interaction_path: Observe the reference preview → type markdown in the editor until your preview visually matches it.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T09
+  name: Write a one-line blockquote in compact mode
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Reminder”, enter a single-line blockquote that reads: Note: Bring ID. The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Reminder”, enter a single-line blockquote that reads: Note: Bring ID. The task will finish automatically when done.'
+  setup_description: |
+    Layout: isolated_card centered.
+    Spacing: compact (tighter padding and smaller line-height).
+    Component: one Markdown editor labeled “Reminder”.
+    Configuration:
+      - Standard toolbar present but not required.
+      - Live preview is shown below.
+    Initial state: editor is empty.
+    Distractors: none.
+    Feedback: preview updates immediately.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Compact spacing slightly increases targeting difficulty, but it’s still a single, short markdown line with immediate feedback.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: '> Note: Bring ID.'
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Missing the leading > blockquote marker.
+  - Adding extra lines or extra text beyond the required quote.
+  - Typing the sentence without blockquote formatting.
+  expected_interaction_path: 'Click into editor → type `> Note: Bring ID.` → verify preview shows a blockquote.'
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T10
+  name: Open the markdown cheatsheet popover
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Markdown cheatsheet” help popover for the Markdown editor labeled “Notes”. Leave it open. The task will finish automatically when done.
+  ui_copy: Open the “Markdown cheatsheet” help popover for the Markdown editor labeled “Notes”. Leave it open. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card anchored near the top-right of the viewport.
+    Component: one Markdown editor labeled “Notes”.
+    Configuration:
+      - A “Help” icon/button (question mark) is part of the editor header.
+      - Clicking Help opens a popover overlay titled “Markdown cheatsheet” with example syntax.
+      - The popover stays open until dismissed (click outside or press Escape).
+    Initial state: cheatsheet popover is closed; editor contains a short note but it does not matter.
+    Distractors: none.
+    Feedback: opening the popover adds an overlay layer above the editor.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The task is an overlay-open action with explicit labeling; the main challenge is locating a small header control.
+  success_trigger:
+    human_readable:
+    - The editor's overlay 'markdown_cheatsheet' is open.
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay: markdown_cheatsheet
+        open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: component_overlay_state
+  negative_cases:
+  - Opening a different overlay (e.g., fullscreen) but not the cheatsheet.
+  - Closing the cheatsheet after opening it.
+  - Scrolling or editing text without opening the cheatsheet.
+  expected_interaction_path: Locate the Help (?) control in the editor header → click it → verify the cheatsheet popover is visible.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T11
+  name: Bold a single word
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the Markdown editor labeled “Instruction line”, make only the word “instructions” bold, keeping the rest of the sentence the same. The task will finish automatically when done.
+  ui_copy: In the Markdown editor labeled “Instruction line”, make only the word “instructions” bold, keeping the rest of the sentence the same. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Instruction line”.
+    Configuration:
+      - Standard toolbar includes Bold and Italic buttons.
+      - Editor is in Edit mode (no split preview), but a small preview panel is visible below.
+    Initial state: the editor is prefilled with plain text (no markdown):
+      - “Please read the instructions carefully.”
+    Distractors: none.
+    Feedback: preview updates to show bold formatting once applied.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires selecting or precisely editing a substring and producing correct markdown bold syntax; otherwise the scene is simple.
+  success_trigger:
+    human_readable:
+    - Editor markdown value, after normalization, matches one of the acceptable target strings.
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+      - Please read the **instructions** carefully.
+      - Please read the __instructions__ carefully.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Bolding the wrong word (e.g., “read” or “carefully”).
+  - Making the entire sentence bold instead of only the target word.
+  - Leaving the sentence unchanged.
+  expected_interaction_path: Select the word ‘instructions’ → click Bold (or type ** around it) → verify preview shows only that word bold.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T12
+  name: Turn three lines into a bullet list (two instances)
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the Markdown editor labeled “Long answer”, convert the three lines (Alpha, Beta, Gamma) into an unordered bullet list, keeping the same words and order. The task will finish automatically when done.
+  ui_copy: In the Markdown editor labeled “Long answer”, convert the three lines (Alpha, Beta, Gamma) into an unordered bullet list, keeping the same words and order. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered with two stacked editors.
+    Components (instances): two Markdown editors of the same type:
+      - “Short answer” (top)
+      - “Long answer” (bottom)  ← TARGET
+    Configuration:
+      - Both editors have identical toolbars (List buttons, Bold/Italic, Preview toggle).
+      - Each editor shows a small preview below itself.
+    Initial state:
+      - Short answer contains: “Alpha / Beta / Gamma” (single line, with slashes).
+      - Long answer contains three plain lines:
+          Alpha
+          Beta
+          Gamma
+    Distractors: none besides the second editor instance.
+    Feedback: using the Unordered List toolbar control or manual markdown will update the preview.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Two visually similar editor instances require disambiguation, and formatting multiple lines as a list demands correct markdown structure.
+  success_trigger:
+    human_readable:
+    - Editor markdown value, after normalization, matches one of the acceptable target strings.
+    - No extra confirmation is required (live value is checked).
+    - 'Predicate is evaluated only for the labeled instance: ''Long answer''.'
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+      - |-
+        - Alpha
+        - Beta
+        - Gamma
+      - |-
+        * Alpha
+        * Beta
+        * Gamma
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Long answer
+      terminal_condition: true
+      value_source: editor_value
+      non_target_instances_must_remain:
+        Short answer: Alpha / Beta / Gamma
+  negative_cases:
+  - Applying the bullet list formatting to the “Short answer” editor instead of “Long answer”.
+  - Changing both editors (only the “Long answer” editor should change).
+  - Creating a numbered list instead of bullets.
+  - Leaving the content as three plain lines.
+  expected_interaction_path: Click into the Long answer editor → select the three lines → click Unordered List (or add `- ` to each line) → verify preview shows bullets.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T13
+  name: Insert a markdown link in a dashboard card
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor under “Announcement”, enter the sentence with a markdown link so the content becomes: Read the documentation for details. (The word “documentation” must be a link to https://example.com/docs.) The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor under “Announcement”, enter the sentence with a markdown link so the content becomes: Read the documentation for details. (The word “documentation” must be a link to https://example.com/docs.) The task will finish automatically when done.'
+  setup_description: |
+    Layout: dashboard — a two-column page with multiple cards (clutter medium).
+    Non-target cards (distractors):
+      - “Traffic” chart placeholder
+      - “Recent activity” list
+      - “Status” KPI tiles
+    Target component: one Markdown editor in a card titled “Announcement”.
+    Configuration:
+      - Standard toolbar visible; live preview below the editor.
+      - Editor is large enough that all text is visible without scrolling.
+    Initial state: editor contains a short placeholder line (“Write an announcement…”), but the value is empty.
+    Feedback: preview renders links as clickable styled text; no Save button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires correct bracket/parenthesis syntax for a markdown link while navigating moderate dashboard clutter.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: Read the [documentation](https://example.com/docs) for details.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Using the correct URL but not making “documentation” a link.
+  - Putting the URL somewhere else (not attached to the word).
+  - Typos in the URL or link text.
+  - Editing a non-target widget instead of the Announcement editor.
+  expected_interaction_path: Locate the Announcement card → click editor → type the sentence with `[documentation](https://example.com/docs)` → verify preview shows linked word.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T14
+  name: Edit a bio in a modal and save
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Click “Edit bio”, then in the “Bio (Markdown)” editor set the content to exactly two lines:
+
+    Hi! I''m Sam.
+
+    I like markdown.
+
+    Finally, click “Save changes”. The task will finish automatically when done.'
+  ui_copy: 'Click “Edit bio”, then in the “Bio (Markdown)” editor set the content to exactly two lines:
+
+    Hi! I''m Sam.
+
+    I like markdown.
+
+    Finally, click “Save changes”. The task will finish automatically when done.'
+  setup_description: |
+    Layout: modal_flow — a profile page with a modal editor.
+    Background (clutter low): a “Profile” card shows the current bio as rendered markdown and an “Edit bio” button.
+    Target component: the Markdown editor inside the “Edit bio” modal dialog.
+    Modal behavior:
+      - Clicking “Edit bio” opens a centered modal.
+      - Modal contains a single Markdown editor labeled “Bio (Markdown)”.
+      - Footer buttons: “Cancel” and “Save changes”.
+      - Changes are NOT committed to the profile card until “Save changes” is clicked.
+    Editor configuration inside modal:
+      - Standard toolbar; preview shown below the textarea.
+      - No internal scrolling needed for short bios.
+    Initial state:
+      - Current committed bio (shown on profile card): “(empty)”.
+      - Modal editor starts empty when opened.
+    Feedback:
+      - On Save, modal closes and the profile card bio updates immediately.
+      - No toast; the updated bio text is visibly rendered in the background card after closing.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A modal overlay adds layering and requires an explicit Save to commit; the markdown itself is short and easy to verify.
+  success_trigger:
+    human_readable:
+    - The committed (saved) bio markdown value equals the target after normalization (newline + trailing whitespace).
+    - The “Save changes” control has been clicked to commit the modal draft.
+    - The modal dialog is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        Hi! I'm Sam.
+        I like markdown.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: committed_value
+      overlay_state_required:
+        bio_modal_open: false
+  negative_cases:
+  - Typing the correct content but clicking “Cancel” or closing the modal without saving.
+  - Leaving the modal open after editing (must save and close).
+  - Saving content that differs from the target (missing line break or extra text).
+  - Entering the text into a non-modal field on the background page.
+  expected_interaction_path: Click Edit bio → type/paste the two lines in the modal editor → click Save changes → confirm modal closes and the profile card shows the new bio.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T15
+  name: Reset the editor to a default template
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Click “Reset to template” for the Markdown editor labeled “Weekly update” so it restores the default weekly-update template. The task will finish automatically when done.
+  ui_copy: Click “Reset to template” for the Markdown editor labeled “Weekly update” so it restores the default weekly-update template. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Weekly update”.
+    Configuration:
+      - Standard toolbar + an extra footer control labeled “Reset to template”.
+      - Clicking “Reset to template” replaces the entire editor value with a predefined template.
+      - Preview updates live.
+    Initial state: editor contains a modified note (not matching the template), e.g. “Random thoughts…”.
+    Distractors: none.
+    Feedback: reset immediately changes the textarea value and preview; no confirmation dialog.
+    Template content (for implementers/checker):
+      # Weekly update
+      - Wins:
+      - Risks:
+      - Next:
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires locating the correct reset affordance and verifying a multi-line template; otherwise there are no overlays or distractors.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # Weekly update
+        - Wins:
+        - Risks:
+        - Next:
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Clearing the editor instead of restoring the template.
+  - Restoring only part of the template or leaving extra lines.
+  - Manually editing the text but not matching the exact template structure.
+  expected_interaction_path: Locate the footer control “Reset to template” → click it → verify the template appears in the editor.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T16
+  name: Scroll to a TODO line and fix it
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Sprint notes”, scroll within the editor until you find the checklist line “TODO: add screenshots”. Change only “TODO” to “DONE”, leaving the rest unchanged. The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Sprint notes”, scroll within the editor until you find the checklist line “TODO: add screenshots”. Change only “TODO” to “DONE”, leaving the rest unchanged. The task will finish automatically when done.'
+  setup_description: |2
+        Layout: isolated_card anchored near the bottom-left of the viewport.
+        Component: one Markdown editor labeled “Sprint notes”.
+        Configuration:
+          - The editor has a fixed height (about 10 visible lines); the textarea scrolls internally.
+          - Standard toolbar is visible; live preview is shown below but is not required.
+        Initial state: the editor is prefilled with a multi-section markdown document (see below).
+        Prefilled content (for implementers/checker):
+        # Sprint 5 Notes
+
+    This document is intentionally long enough to require scrolling inside the editor.
+
+    ## Summary
+    - Completed the API wiring
+    - Fixed flaky tests
+    - Reviewed analytics events
+
+    ## Details
+    The team focused on stability work and documentation.
+
+    ## Action items
+    1. Follow up with design
+    2. Update onboarding checklist
+    3. Prepare demo script
+
+    ## Checklist
+    - [ ] TODO: add screenshots
+    - [ ] Confirm links
+    - [ ] Run spellcheck
+        Distractors: none.
+        Feedback: changes appear immediately in the textarea; no Save/Apply.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires internal scrolling to reach an off-screen line and a precise local edit without altering surrounding markdown.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # Sprint 5 Notes
+
+        This document is intentionally long enough to require scrolling inside the editor.
+
+        ## Summary
+        - Completed the API wiring
+        - Fixed flaky tests
+        - Reviewed analytics events
+
+        ## Details
+        The team focused on stability work and documentation.
+
+        ## Action items
+        1. Follow up with design
+        2. Update onboarding checklist
+        3. Prepare demo script
+
+        ## Checklist
+        - [ ] DONE: add screenshots
+        - [ ] Confirm links
+        - [ ] Run spellcheck
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Editing a different TODO (there is only one target line).
+  - Changing the checkbox markers (e.g., switching [ ] to [x]) when not requested.
+  - Adding/removing lines or changing other sections beyond the TODO→DONE replacement.
+  - Not scrolling and editing only the visible top section.
+  expected_interaction_path: Click into editor → scroll inside textarea to Checklist section → edit the TODO line to DONE → stop.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T17
+  name: Preview mode on the correct instance
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Switch only the Markdown editor labeled “Internal note” to Preview mode (preview-only). Do not change the mode of “Public note”. The task will finish automatically when done.
+  ui_copy: Switch only the Markdown editor labeled “Internal note” to Preview mode (preview-only). Do not change the mode of “Public note”. The task will finish automatically when done.
+  setup_description: |
+    Layout: settings_panel — a settings page with a left-side navigation list and right-side panel.
+    Clutter (low): a few toggles and dropdowns above the editors (not required).
+    Components (instances): two Markdown editors in the right panel:
+      - “Public note” (shown first)
+      - “Internal note” (shown second)  ← TARGET
+    Configuration:
+      - Each editor has an identical mode toggle group (Edit / Live / Preview).
+      - Both start in Edit mode.
+      - Preview panels are hidden unless Live/Preview modes are enabled.
+    Initial state:
+      - Public note contains: “Visible to all users.”
+      - Internal note contains: “Visible to staff only.”
+    Feedback: switching modes immediately changes whether the textarea is editable for that instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Multiple similar editor instances inside a cluttered settings panel create disambiguation load; the action itself is a simple mode toggle.
+  success_trigger:
+    human_readable:
+    - For the target instance “Internal note”, the editor mode equals 'preview'.
+    - The non-target instance “Public note” remains in its initial mode ('edit').
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: preview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Internal note
+      terminal_condition: true
+      value_source: component_mode
+      non_target_instances_must_remain:
+        Public note:
+          mode: edit
+  negative_cases:
+  - Switching “Public note” to Preview mode instead of “Internal note”.
+  - Switching both editors (only Internal note should change).
+  - Leaving Internal note in Edit or Live mode.
+  expected_interaction_path: Locate Internal note editor → click its “Preview” toggle → ensure Public note toggle stays on Edit.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T18
+  name: Match a callout reference in dark theme
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Markdown editor labeled “Callout”, make your rendered preview match the Reference preview card (a blockquote with a bold label). The task will finish automatically when done.
+  ui_copy: In the Markdown editor labeled “Callout”, make your rendered preview match the Reference preview card (a blockquote with a bold label). The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, dark theme.
+    Component: one Markdown editor labeled “Callout”.
+    Guidance:
+      - A “Reference preview” card sits to the right of the editor and shows the target formatting visually.
+      - Above the editor, helper text says: “Make your callout match the reference (blockquote with a bold label).”
+    Configuration:
+      - Editor starts in Live (split) mode so you can see your own preview while editing.
+      - Toolbar present.
+    Initial state: editor is empty.
+    Distractors: none.
+    Reference preview content (for implementers/checker): it renders a single blockquote line with bold “Note:” followed by “Doors close at 7pm.”
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The target is visually specified and requires correct markdown nesting (blockquote + bold), but the snippet is short and easy to inspect.
+  success_trigger:
+    human_readable:
+    - Rendered preview for the target editor instance is semantically equivalent to the reference panel 'ref-note-callout' (ignoring trivial whitespace differences).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-note-callout
+        reference_surface: rendered_preview_panel
+        match_basis: rendered_markdown_equivalence
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+        render_equivalence: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Using bold without a blockquote, or a blockquote without the bold label.
+  - Matching the words but not the formatting of the reference.
+  - Adding extra lines beyond the single callout line.
+  expected_interaction_path: Look at the reference callout → type markdown like a blockquote with bold label → adjust until preview matches.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+    Flexible matching (T18): also accepts structural match (blockquote + bold Note: + "Doors close at 7pm") in addition to exact string match.
+- id: markdown_editor-external-T19
+  name: Write an agenda in a small compact editor
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Agenda”, enter this markdown exactly:
+
+    # Agenda
+
+    1. Intro
+
+    2. Demo
+
+    3. Q&A
+
+    The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Agenda”, enter this markdown exactly:
+
+    # Agenda
+
+    1. Intro
+
+    2. Demo
+
+    3. Q&A
+
+    The task will finish automatically when done.'
+  setup_description: |
+    Layout: isolated_card centered.
+    Spacing: compact; Scale: small (small toolbar icons and denser text).
+    Component: one Markdown editor labeled “Agenda”.
+    Configuration:
+      - Standard toolbar present.
+      - Preview is shown below; no Save/Apply.
+    Initial state: editor is empty.
+    Distractors: none.
+    Feedback: live preview renders the ordered list.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Ordered-list formatting and punctuation must be exact, and compact+small styling increases the chance of targeting/typing mistakes.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # Agenda
+        1. Intro
+        2. Demo
+        3. Q&A
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Using bullets instead of numbered list items.
+  - Numbering that skips or duplicates items.
+  - Missing the heading line or using a different heading level.
+  - Typos (especially the ampersand in “Q&A”).
+  expected_interaction_path: Click editor → type the heading and three numbered lines → verify preview shows a numbered list.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T20
+  name: Edit a small markdown editor inside a table cell
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the table row “Release 1.0”, set the Markdown editor labeled “Notes (Release 1.0)” to: Ships on Friday. The task will finish automatically when done.'
+  ui_copy: 'In the table row “Release 1.0”, set the Markdown editor labeled “Notes (Release 1.0)” to: Ships on Friday. The task will finish automatically when done.'
+  setup_description: |
+    Layout: table_cell — a releases table is shown with several rows and columns (clutter medium).
+    Target location: in the “Notes” column for the row labeled “Release 1.0”, there is an inline Markdown editor (small scale) labeled “Notes (Release 1.0)”.
+    Configuration:
+      - The inline editor is always visible inside the cell (no popover), but it is small and requires precise clicking to focus.
+      - Toolbar is minimized to a single row of icons; preview is hidden (edit-only) to conserve space.
+      - No Save/Apply; live value is checked.
+    Initial state: the Notes editor contains “(none)”.
+    Distractors:
+      - Other rows have similar “Notes” cells (read-only text, not editors).
+      - The table has sortable headers and pagination controls (not required).
+    Feedback: when focused, a caret appears and the textarea border highlights.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Small inline editor inside a table cell increases targeting difficulty and introduces similar nearby distractors, though the text content is simple.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: Ships on Friday.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Editing the wrong row’s notes (any row other than “Release 1.0”).
+  - Leaving the old text “(none)” in place.
+  - Entering extra text or newlines beyond the target sentence.
+  expected_interaction_path: Locate Release 1.0 row → click into its Notes editor → select existing text → type the sentence.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T21
+  name: Create a 2×2 markdown table
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the Markdown editor labeled “Inventory table”, create a markdown table with columns Item and Qty and rows Apples=3 and Oranges=2. Make your preview match the reference table. The task will finish automatically when done.
+  ui_copy: In the Markdown editor labeled “Inventory table”, create a markdown table with columns Item and Qty and rows Apples=3 and Oranges=2. Make your preview match the reference table. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Inventory table”.
+    Guidance (mixed):
+      - Text instructions describe the required table content.
+      - A small “Reference preview” panel shows what the rendered table should look like (but the source markdown is not shown).
+    Configuration:
+      - Toolbar includes an “Insert table” control that inserts a 2×2 table skeleton in markdown.
+      - Editor is in Live (split) mode so the preview updates alongside the textarea.
+    Initial state: editor is empty.
+    Distractors: none besides the reference panel.
+    Feedback: preview renders a table when markdown pipes and header separator are correct.
+    Reference preview content (for implementers/checker): a 2-column table with headers “Item” and “Qty”, and rows (Apples, 3) and (Oranges, 2).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Tables require precise markdown structure (pipes + header separator) and typically involve small toolbar targets; even minor formatting errors break the rendered result.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        | Item | Qty |
+        | --- | --- |
+        | Apples | 3 |
+        | Oranges | 2 |
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - A table that renders but has different headers or values.
+  - Missing the header separator row (the `---` line).
+  - Using commas or tabs instead of pipes so it does not form a markdown table.
+  - Adding extra rows or columns.
+  expected_interaction_path: Click Insert table (or type the table) → fill headers and cells → adjust until preview shows the correct 2×2 table.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+    Flexible matching (T21): uses semantic table parser — accepts any valid markdown table with headers Item/Qty and rows Apples/3, Oranges/2 regardless of pipe spacing or dash count.
+- id: markdown_editor-external-T22
+  name: Linkify a phrase to the support URL
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the Markdown editor labeled “Support message”, turn the words “support portal” into a markdown link to https://example.com/support, keeping the rest of the sentence the same. The task will finish automatically when done.
+  ui_copy: In the Markdown editor labeled “Support message”, turn the words “support portal” into a markdown link to https://example.com/support, keeping the rest of the sentence the same. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Component: one Markdown editor labeled “Support message”.
+    Configuration:
+      - Toolbar includes a “Link” control. Clicking it opens a small in-editor popover dialog with two fields:
+          • Link text
+          • URL
+        and an “Insert link” button.
+      - Editor is in Edit mode with a preview panel below.
+    Initial state: editor contains plain text:
+      “For help, visit the support portal.”
+      The phrase “support portal” is NOT a link initially.
+    Distractors: none.
+    Feedback:
+      - After inserting, preview renders “support portal” as a hyperlink.
+      - If the popover is open, it sits above the editor and must be dismissed/used.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires precise text selection or correct link syntax, often via a nested link popover with small targets and multiple fields.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: For help, visit the [support portal](https://example.com/support).
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Adding the URL but not linking the exact words “support portal”.
+  - Linking the wrong words (e.g., linking “help”).
+  - Using the correct link but changing other parts of the sentence.
+  - Leaving the sentence unlinked.
+  expected_interaction_path: Select ‘support portal’ → click Link → fill URL (or type markdown) → ensure preview shows only that phrase as a link.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T23
+  name: Discard edits with Cancel in a modal (dark theme)
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Click “Edit announcement”. In the modal editor, append a new line that says: This line should NOT be saved. Then click “Cancel” to discard changes. The task will finish automatically when done.'
+  ui_copy: 'Click “Edit announcement”. In the modal editor, append a new line that says: This line should NOT be saved. Then click “Cancel” to discard changes. The task will finish automatically when done.'
+  setup_description: |2
+        Layout: modal_flow on a dark-themed page.
+        Background: an “Announcement” card renders the currently committed markdown and has an “Edit announcement” button.
+        Target component: Markdown editor inside the “Edit announcement” modal.
+        Modal behavior:
+          - Opened via “Edit announcement”.
+          - Footer buttons: “Cancel” and “Save”.
+          - Only clicking “Save” commits changes; “Cancel” discards draft edits.
+        Editor configuration:
+          - Standard toolbar; preview below.
+        Initial state:
+          - Committed announcement markdown (shown on background card):
+            # Announcement
+    Public launch next week.
+          - When the modal opens, the editor is prefilled with the same committed content.
+        Feedback:
+          - On Cancel, modal closes and the background card remains unchanged.
+          - A subtle inline message appears briefly: “Changes discarded.”
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A dark-themed modal introduces layering and explicit cancel/commit dynamics; success depends on correctly discarding edits rather than saving them.
+  success_trigger:
+    human_readable:
+    - The committed announcement markdown remains exactly the original value after normalization.
+    - The “Cancel” control has been used to close the modal and discard the draft.
+    - 'Precondition: the draft content was changed at least once while the modal was open (to avoid trivial cancel-without-edit).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # Announcement
+        Public launch next week.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: committed_value
+      overlay_state_required:
+        announcement_modal_open: false
+      preconditions:
+        draft_changed_at_least_once: true
+  negative_cases:
+  - Clicking “Save” (even with the correct draft) instead of “Cancel”.
+  - Closing the modal with Escape/click-away if it results in saving or in an ambiguous state.
+  - Leaving the modal open at the end.
+  - Committed announcement changes (meaning the draft was incorrectly saved).
+  expected_interaction_path: Open modal → add the new line in the editor → click Cancel → verify modal closes and background announcement stays the same.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T24
+  name: Scroll to Metadata and set a release date
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Product copy”, scroll within the editor to the “Metadata” section and change “Release date: TBD” to “Release date: 2026-06-15”. Do not change anything else. The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Product copy”, scroll within the editor to the “Metadata” section and change “Release date: TBD” to “Release date: 2026-06-15”. Do not change anything else. The task will finish automatically when done.'
+  setup_description: |2
+        Layout: isolated_card centered.
+        Spacing: compact (denser typography).
+        Component: one Markdown editor labeled “Product copy”.
+        Configuration:
+          - Fixed-height editor with internal scrolling; only ~8–10 lines are visible at once.
+          - Toolbar present; preview hidden (edit-only) to emphasize source editing.
+        Initial state: editor is prefilled with a multi-section document (see below). The “Release date” field is off-screen initially and requires scrolling within the editor.
+        Prefilled content (for implementers/checker):
+        # Product Page Copy
+
+    ## Overview
+    This draft describes the key features and limitations of the product.
+
+    ## Highlights
+    - Fast setup
+    - Works offline
+    - Includes export tools
+
+    ## Details
+    The copy below is for internal review. Please do not publish until approved.
+
+    ### Limitations
+    - No mobile support yet
+    - Limited theme customization
+
+    ## Metadata
+    Owner: Marketing
+    Release date: TBD
+    Channel: Web
+        Distractors: none.
+        Feedback: caret position and scroll bar inside textarea indicate progress.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Internal scrolling plus a precise, localized edit in a dense editor increases the risk of altering surrounding text or missing the correct field.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # Product Page Copy
+
+        ## Overview
+        This draft describes the key features and limitations of the product.
+
+        ## Highlights
+        - Fast setup
+        - Works offline
+        - Includes export tools
+
+        ## Details
+        The copy below is for internal review. Please do not publish until approved.
+
+        ### Limitations
+        - No mobile support yet
+        - Limited theme customization
+
+        ## Metadata
+        Owner: Marketing
+        Release date: 2026-06-15
+        Channel: Web
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Editing the wrong field (e.g., Owner or Channel) instead of Release date.
+  - Changing the date but adding extra spaces or removing the colon/label.
+  - Modifying other sections such as Highlights or Limitations.
+  - Not scrolling and leaving Release date as TBD.
+  expected_interaction_path: Click editor → scroll to Metadata section → edit the Release date line → stop when it matches exactly.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T25
+  name: Edit the correct editor among three instances
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Details”, replace the content with:
+
+    ## Details
+
+    The release includes:
+
+    - API is stable
+
+    - UI polish pending
+
+    Do not edit the “Summary” or “Internal notes” editors. The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Details”, replace the content with:
+
+    ## Details
+
+    The release includes:
+
+    - API is stable
+
+    - UI polish pending
+
+    Do not edit the “Summary” or “Internal notes” editors. The task will finish automatically when done.'
+  setup_description: |
+    Layout: dashboard with several cards (clutter medium).
+    Target area: a “Release blurb” card contains THREE Markdown editor instances stacked vertically:
+      - “Summary”
+      - “Details”        ← TARGET
+      - “Internal notes”
+    Configuration:
+      - All three editors share the same small toolbar and look nearly identical.
+      - Each editor has its own preview under it.
+      - No Save/Apply; live value is checked.
+    Initial state:
+      - Summary contains: “Short summary goes here.”
+      - Details contains: “(empty)”
+      - Internal notes contains: “For staff only.”
+    Distractors:
+      - Other dashboard cards (charts, lists) are present but irrelevant.
+    Feedback: the Details preview should show a subheading and a bullet list once filled.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: Three similar editor instances in a dashboard card create high disambiguation load, and the target markdown is multi-line with list structure.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - 'Predicate is evaluated only for the labeled instance: ''Details''.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        ## Details
+        The release includes:
+        - API is stable
+        - UI polish pending
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Details
+      terminal_condition: true
+      value_source: editor_value
+      non_target_instances_must_remain:
+        Summary: Short summary goes here.
+        Internal notes: For staff only.
+  negative_cases:
+  - Editing the wrong instance (Summary or Internal notes) instead of Details.
+  - Editing more than one editor instance.
+  - Correct content but missing line breaks or list markers.
+  - Adding extra text beyond the requested four lines.
+  expected_interaction_path: Locate the Release blurb card → click into the Details editor → paste/type the markdown → verify only Details changed.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+    Flexible matching (T25): also accepts structural match (## Details heading + "The release includes:" + bullet "API is stable" + bullet "UI polish pending") in addition to exact string match. Summary/Internal notes checked with trailing-period tolerance.
+- id: markdown_editor-external-T26
+  name: Match a complex visual reference
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the rendered preview of the Markdown editor labeled “Snippet” match the Reference preview panel. The task will finish automatically when done.
+  ui_copy: Make the rendered preview of the Markdown editor labeled “Snippet” match the Reference preview panel. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card anchored near the bottom-right of the viewport.
+    Component: one Markdown editor labeled “Snippet”.
+    Guidance: a large “Reference preview” panel shows the target rendered markdown (no source text shown).
+    Configuration:
+      - Editor is in Live (split) mode so your preview is visible while editing.
+      - Toolbar present (Bold/Italic/Code/List/Quote/Task list).
+    Initial state: editor is empty.
+    Distractors: none besides the reference preview.
+    Reference preview content (for implementers/checker): a multi-line snippet containing:
+      - A level-2 heading “Setup”
+      - A task list with two items, where the first is checked and the second is unchecked
+      - A blockquote line that includes inline code around the word `config`
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Purely visual specification plus mixed markdown constructs (heading, task list, blockquote, inline code) raises precision and verification difficulty.
+  success_trigger:
+    human_readable:
+    - Rendered preview for the target editor instance is semantically equivalent to the reference panel 'ref-complex-snippet' (ignoring trivial whitespace differences).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-complex-snippet
+        reference_surface: rendered_preview_panel
+        match_basis: rendered_markdown_equivalence
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+        render_equivalence: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Matching the text content but not the formatting (e.g., missing checked checkbox).
+  - Creating the right elements but in the wrong order.
+  - Only partially matching the reference (e.g., heading and list but no blockquote).
+  - Adding extra lines beyond what is shown in the reference.
+  expected_interaction_path: Inspect reference preview carefully → compose markdown with the same structure → iterate until your preview visually matches.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+    Flexible matching (T26): also accepts structural match (heading "Setup" + checked task "Install dependencies" + unchecked task "Run tests" + blockquote with inline code `config`) in addition to exact string match.
+- id: markdown_editor-external-T27
+  name: Enable live split preview in a small editor
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Switch the Markdown editor labeled “Live preview toggle” to Live mode (split view with editor and preview visible). The task will finish automatically when done.
+  ui_copy: Switch the Markdown editor labeled “Live preview toggle” to Live mode (split view with editor and preview visible). The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered.
+    Scale: small (compact header + smaller mode toggle targets).
+    Component: one Markdown editor labeled “Live preview toggle”.
+    Configuration:
+      - Mode toggle group exists with three options (Edit / Live / Preview). In this task the toggle is rendered as icons, but each icon has an accessible label/tooltip.
+      - Live mode displays split view: textarea left, preview right.
+    Initial state: editor is in Edit mode (textarea only; preview panel is hidden).
+    Content: a short markdown sentence is present so preview changes are obvious once enabled.
+    Distractors: none.
+    Feedback: switching to Live mode should show a visible vertical split with preview on the right.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small icon-only toggles increase acquisition difficulty, and success depends on a specific mode state that is not purely text-based.
+  success_trigger:
+    human_readable:
+    - Editor mode equals 'live' (split view).
+    - The preview pane for this editor instance is visible at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: live
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: component_mode
+      additional_state_required:
+        preview_panel_visible: true
+  negative_cases:
+  - Switching to Preview mode instead of Live mode.
+  - Leaving the editor in Edit mode (preview still hidden).
+  - Entering text without changing the mode.
+  expected_interaction_path: Locate the mode icons → hover/inspect labels if needed → click the Live toggle → verify split preview appears.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T28
+  name: Reset content in a drawer with confirmation
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Click “Edit README” to open the drawer. Then reset the Markdown editor content back to the default README template by using “Reset” and confirming “Confirm reset”. The task will finish automatically when done.
+  ui_copy: Click “Edit README” to open the drawer. Then reset the Markdown editor content back to the default README template by using “Reset” and confirming “Confirm reset”. The task will finish automatically when done.
+  setup_description: |
+    Layout: drawer_flow — the page has a right-side drawer that contains the editor.
+    Background (clutter low): a simple “Repository” page with a README preview and a button “Edit README”.
+    Target component: the Markdown editor inside the “Edit README” drawer.
+    Drawer behavior:
+      - Click “Edit README” to open a drawer sliding in from the right.
+      - The drawer header contains actions: “Close”, and “Reset”.
+    Reset behavior (layering):
+      - Clicking “Reset” opens an inline confirmation popover inside the drawer (“Reset content to default?”).
+      - Confirmation buttons: “Confirm reset” and “Cancel”.
+      - Only after confirming does the editor content change.
+    Editor configuration:
+      - Standard toolbar; preview hidden (edit-only).
+    Initial state:
+      - When opened, the editor contains a modified README with multiple lines (not equal to the default).
+      - Default template (for implementers/checker):
+        # README
+        Describe your project here.
+    Feedback:
+      - After confirming reset, the editor content becomes the default template immediately.
+      - A small inline status text shows “Reset complete”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires navigating a drawer overlay and a nested confirmation popover; success depends on a reset action that only applies after explicit confirmation.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the default README template after normalization.
+    - The reset confirmation control “Confirm reset” has been activated (reset must be confirmed, not just clicked).
+    - Drawer remains open and the confirmation popover is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        # README
+        Describe your project here.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Confirm reset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+      overlay_state_required:
+        drawer_open: true
+        reset_confirm_open: false
+  negative_cases:
+  - Clicking “Reset” but not confirming “Confirm reset”.
+  - Choosing “Cancel” in the confirmation popover.
+  - Closing the drawer without resetting.
+  - Ending with content that is close to the template but not an exact match.
+  expected_interaction_path: Click Edit README → in drawer click Reset → click Confirm reset → verify editor shows the default template.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T29
+  name: Fix a nested agenda list in a cluttered form
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: "In the Markdown editor labeled “Agenda (Markdown)”, reformat the content into:\n## Agenda\n1. Intro\n2. Demo\n   - Q&A\nKeep the same words, but fix the markdown formatting. The task will finish automatically when done."
+  ui_copy: "In the Markdown editor labeled “Agenda (Markdown)”, reformat the content into:\n## Agenda\n1. Intro\n2. Demo\n   - Q&A\nKeep the same words, but fix the markdown formatting. The task will finish automatically when done."
+  setup_description: |
+    Layout: form_section with high clutter — a realistic event-creation form.
+    Distractor UI (not required):
+      - Event name input
+      - Date picker input
+      - Location input
+      - Right-side “Formatting tips” panel
+      - Bottom sticky action bar with “Save draft” and “Publish” buttons (NOT required)
+    Target component: one Markdown editor labeled “Agenda (Markdown)”.
+    Configuration:
+      - Standard toolbar present; preview shown below the editor.
+      - No Save/Apply for the editor; live value is checked.
+    Initial state: the editor is prefilled with an incorrectly formatted outline:
+      Agenda
+      Intro
+      Demo
+        Q&A
+    Required final formatting (for implementers/checker): a level-2 heading “Agenda”, followed by an ordered list where item 2 (“Demo”) has a nested bullet “Q&A”.
+    Feedback: preview should show a heading, a numbered list, and an indented bullet under item 2.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 3
+    justification: High form clutter increases the chance of editing the wrong field, and the target requires precise indentation and list syntax for a nested list.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - Only one editor instance is present (no instance disambiguation).
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        ## Agenda
+        1. Intro
+        2. Demo
+           - Q&A
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+      value_source: editor_value
+  negative_cases:
+  - Leaving the first line as plain text instead of a level-2 heading.
+  - Creating a flat list (no nested bullet under item 2).
+  - Putting the nested bullet under the wrong numbered item.
+  - Editing a different form field instead of the markdown editor.
+  expected_interaction_path: Focus the Agenda editor → rewrite lines with correct markdown (heading + numbered list + indentation) → verify preview structure.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+- id: markdown_editor-external-T30
+  name: Format a public quote (two instances, compact dark)
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor (textarea-based markdown editor with toolbar + preview)'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: 'In the Markdown editor labeled “Public quote”, format the quote as a blockquote with an italic attribution so the content becomes:
+
+    > The only way out is through.
+
+    >
+
+    > *— Robert Frost*
+
+    Do not change the “Internal note” editor. The task will finish automatically when done.'
+  ui_copy: 'In the Markdown editor labeled “Public quote”, format the quote as a blockquote with an italic attribution so the content becomes:
+
+    > The only way out is through.
+
+    >
+
+    > *— Robert Frost*
+
+    Do not change the “Internal note” editor. The task will finish automatically when done.'
+  setup_description: |
+    Layout: isolated_card centered.
+    Theme: dark; Spacing: compact.
+    Components (instances): two Markdown editors stacked:
+      - “Public quote”   ← TARGET
+      - “Internal note”
+    Configuration:
+      - Toolbars include Quote and Italic controls (small icons in compact spacing).
+      - Editors are in Live (split) mode so preview is visible while formatting.
+    Initial state:
+      - Public quote contains two plain lines (not a blockquote):
+          The only way out is through.
+          — Robert Frost
+      - Internal note contains: “Do not share before approval.”
+    Goal intent: format the Public quote as a proper blockquote and italicize the attribution line, without modifying the Internal note.
+    Feedback: preview should show a quoted block with an italicized attribution.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Compact dark UI makes toolbar targets harder to acquire, and the task requires multiple markdown constructs (blockquote + italic + correct blank line) with strict disambiguation between two instances.
+  success_trigger:
+    human_readable:
+    - Editor markdown value equals the target after normalization (newline + trailing whitespace).
+    - No extra confirmation is required (live value is checked).
+    - 'Predicate is evaluated only for the labeled instance: ''Public quote''.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state: |-
+        > The only way out is through.
+        >
+        > *— Robert Frost*
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Public quote
+      terminal_condition: true
+      value_source: editor_value
+      non_target_instances_must_remain:
+        Internal note: Do not share before approval.
+  negative_cases:
+  - Formatting the Internal note editor instead of Public quote.
+  - Changing both editors.
+  - Missing the blank quoted line between the quote and the attribution.
+  - Attribution not italicized or not inside the blockquote.
+  expected_interaction_path: Focus Public quote editor → apply blockquote formatting → italicize attribution line → ensure Internal note unchanged.
+  notes: |
+    Fallback source note: AntD/MUI/Mantine do not ship a core markdown editor component in this benchmark’s mapping, so this task uses an external implementation.
+    Instrumentation: wrap each editor instance in a container with data-testid like 'md-editor-<label>' and expose:
+      - the live textarea value (editor_value) for equality checks,
+      - an optional committed_value when Save/Cancel flows are used,
+      - the current mode (edit/live/preview) and overlay state (help/link/table dialogs) for non-content predicates.
+    Normalization in checker: convert CRLF->LF, trim trailing whitespace per line, and trim leading/trailing blank lines before comparing markdown strings.
+    Flexible matching (T30): also accepts structural match (blockquote containing "The only way out is through" + italic attribution with "Robert Frost") in addition to exact string match. Internal note checked with trailing-period tolerance.

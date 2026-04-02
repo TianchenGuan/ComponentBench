@@ -1,0 +1,2126 @@
+- id: rating-antd-T01
+  name: Set product quality to 4 stars (AntD)
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Product quality" star rating to 4 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Product review
+    Product quality: [star rating]
+    Goal: 4 out of 5
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered in the viewport with a simple "Product review" header.
+    A single Ant Design Rate component is shown inline under the label "Product quality".
+    Configuration: count=5 stars, allowHalf=false (whole stars only), allowClear=true (default), tooltips enabled on hover (e.g., "1 star", "2 stars"...).
+    Initial state: no stars selected (value = 0). No other Rate components are present.
+    No extra buttons are required; the rating commits immediately when clicked.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single default Rate control with whole-star selection and immediate feedback; minimal clutter and no instance ambiguity.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the Rate control labeled "Product quality".
+  - Click the 4th star to set the value to 4.
+  notes: 'Instrumentation: expose a stable selector (e.g., data-testid=''rating-product-quality'') and read the committed value from the Rate component state/aria attributes.'
+- id: rating-antd-T02
+  name: Clear an existing rating back to zero (AntD)
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the "Overall" rating so that no stars are selected. The task will finish automatically when done.
+  ui_copy: |-
+    Quick feedback
+    Overall: [star rating prefilled]
+    Hint: Click again to clear
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered with a "Quick feedback" header.
+    One Ant Design Rate component labeled "Overall".
+    Configuration: count=5, allowHalf=false, allowClear=true (clicking the currently selected value clears to 0).
+    Initial state: pre-selected value = 3 (three filled stars). A small helper text below reads "Hint: Click again to clear".
+    No other interactive components affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Clearing relies on a single common affordance (allowClear) on a single rating control with immediate visible change.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 0 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 0.0
+        max: 5
+        cleared_state: empty
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Leaving any non-zero value selected (1-5) must NOT count as success.
+  expected_interaction_path:
+  - Find the Rate control labeled "Overall".
+  - Click the currently selected star value again (or otherwise clear) until all stars are empty.
+  notes: 'Checker note: treat both numeric value 0 and an explicit ''no rating'' / empty state as equivalent cleared state.'
+- id: rating-antd-T03
+  name: Match a reference star pattern (AntD)
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the "Your rating" control to the example shown (★★★☆☆). The task will finish automatically when done.
+  ui_copy: |-
+    Match the example
+    Example: ★★★☆☆
+    Your rating: [star rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    At the top of the card, a non-interactive reference row shows: "Example: ★★★☆☆" (3 out of 5).
+    Below it, one Ant Design Rate component labeled "Your rating".
+    Configuration: count=5, allowHalf=false, allowClear=true, tooltips enabled.
+    Initial state: Your rating value = 0 (empty).
+    No confirm button; success is based only on the committed value of "Your rating".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The target is visually specified but still maps directly to a small set of 5 options with immediate on-control feedback.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 3 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 3.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Matching the wrong number of stars compared with the reference (e.g., 2 or 4) must NOT count as success.
+  expected_interaction_path:
+  - Read the reference example (★★★☆☆).
+  - Click the 3rd star in the "Your rating" control.
+  notes: If the UI also displays a numeric value (e.g., "3/5"), ensure it is derived from the same canonical rating state to avoid mismatch.
+- id: rating-antd-T04
+  name: 'Form section rating: set delivery speed to 5 (AntD)'
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the order feedback form, set the "Delivery speed" rating to 5 out of 5. The task will finish automatically when done.
+  ui_copy: |
+    Order feedback
+    [Order ID field]
+    [Comments field]
+    Delivery speed: [star rating]
+    Packaging: (read-only display)
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: form_section centered, resembling a short feedback form.
+    The form includes two non-target inputs above the rating (Order ID text input and Comments textarea) as low clutter distractors.
+    One Ant Design Rate component labeled "Delivery speed" is the only editable rating.
+    A second row labeled "Packaging" shows a greyed-out, read-only 4-star display (not interactive) to act as a visual distractor.
+    Configuration of the target Rate: count=5, allowHalf=false, allowClear=true.
+    Initial state: Delivery speed value = 0 (empty). No submit button is required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Still a single whole-star rating, but embedded in a realistic form with a read-only distractor rating that increases selection/disambiguation slightly.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 5.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Interacting with the read-only "Packaging" display must NOT count as success.
+  expected_interaction_path:
+  - Locate the "Delivery speed" Rate control within the form section.
+  - Click the 5th star to set the rating to 5.
+  notes: Consider marking the read-only distractor with aria-disabled=true to ensure agents cannot change it; checker should ignore it.
+- id: rating-antd-T05
+  name: 'Half-star selection: set taste to 2.5 (AntD)'
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Taste" rating to 2.5 out of 5 (two and a half stars). The task will finish automatically when done.
+  ui_copy: |-
+    Restaurant feedback
+    Taste: [star rating allows halves]
+    Current value: 0.0
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered with a "Restaurant feedback" header.
+    One Ant Design Rate component labeled "Taste".
+    Configuration: count=5, allowHalf=true (supports half-star selection), allowClear=true.
+    A small text readout under the stars shows "Current value: X.X" updating live when the rating is committed.
+    Initial state: Taste value = 0.0.
+    No extra confirmation is required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Half-star selection increases precision and target acquisition demands while keeping the scene otherwise simple.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.5
+        max: 5
+        step: 0.5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Selecting 2.0 or 3.0 stars instead of 2.5 must NOT count as success.
+  expected_interaction_path:
+  - Find the "Taste" Rate control.
+  - Click (or otherwise select) the half-step so the control commits to 2.5.
+  notes: Checker should read the committed value (not hover state). For allowHalf, ensure half selection is encoded in the DOM/aria as 2.5.
+- id: rating-antd-T06
+  name: 'Two ratings: update only Service to 4 stars (AntD)'
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Service" rating to 4 out of 5 stars. Do not change "Food". The task will finish automatically when done.
+  ui_copy: |
+    Meal review
+    Food: [star rating]
+    Service: [star rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    Two Ant Design Rate components are stacked vertically with clear labels:
+      1) "Food" (top)
+      2) "Service" (bottom)
+    Configuration: both have count=5, allowHalf=false, allowClear=true.
+    Initial state: Food = 5 (pre-filled), Service = 0 (empty).
+    Only the Service rating should be changed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar instances require correct label-based disambiguation, even though each control is otherwise simple.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Service
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Changing the "Food" rating from its initial value (5) must NOT count as success, even if Service is correct.
+  expected_interaction_path:
+  - Identify the second Rate control labeled "Service".
+  - Click the 4th star in that control.
+  - Verify the "Food" control remains unchanged.
+  notes: 'Checker should assert both: target instance value==4 AND non-target instance value remains at its initial value (5).'
+- id: rating-antd-T07
+  name: 'Modal review flow: rate 3 and submit (AntD)'
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate (inside AntD Modal)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the "Write a review" dialog, set the "Overall rating" to 3 out of 5, and click "Submit review". The task will finish automatically when done.
+  ui_copy: |-
+    Product page
+    [Write a review]
+    (Modal) Overall rating: [star rating]
+    (Modal) [Cancel] [Submit review]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: modal_flow. The page shows a product summary card with a primary button labeled "Write a review".
+    Clicking "Write a review" opens an Ant Design Modal centered on the screen.
+    Inside the modal:
+      • One Ant Design Rate component labeled "Overall rating" (count=5, allowHalf=false, allowClear=true).
+      • Two buttons in the modal footer: "Cancel" and "Submit review".
+    Initial state: the modal is closed; the rating value inside the modal starts empty (0) when opened.
+    Feedback: after clicking "Submit review", the modal closes and a small toast "Review saved" appears (toast is not required for success, but indicates submission).
+    Success requires both the correct rating value and pressing "Submit review".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening a modal overlay and confirming via a submit action; multiple steps increase depth and feedback dependencies.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 3 out of 5 on the specified rating control.
+    - If the UI includes a confirmation action, it has been confirmed via the specified control.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 3.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: true
+      confirm_control: Submit review
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct rating value but NOT clicking the required confirmation control must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Clicking "Cancel" (even after setting the correct stars) must NOT count as success.
+  expected_interaction_path:
+  - Click "Write a review" to open the modal.
+  - In the modal, set "Overall rating" to 3 stars.
+  - Click "Submit review" in the modal footer.
+  notes: 'Instrumentation: expose a submission flag (e.g., data-testid=''review-submitted''=true) or persist saved rating in a store the checker can read after the modal closes.'
+- id: rating-antd-T08
+  name: 'Table cell edit: set Hotel B cleanliness to 4.5 (AntD)'
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate (rendered inside Table cell)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the hotels table, set "Hotel B - Cleanliness" to 4.5 out of 5 stars. The task will finish automatically when done.
+  ui_copy: |-
+    Hotels
+    Table columns: Name | Cleanliness | Notes
+    Row: Hotel A ...
+    Row: Hotel B ...
+    Row: Hotel C ...
+  setup_description: |-
+    Scene details: theme=light, spacing=compact, scale=default, placement=center.
+    Layout: table_cell with compact spacing.
+    A small table is centered on the page with exactly three rows: "Hotel A", "Hotel B", and "Hotel C".
+    In the "Cleanliness" column, each row contains an Ant Design Rate component.
+    Configuration for each Rate: count=5, allowHalf=true (half-star), allowClear=true.
+    Initial state: Hotel A cleanliness = 3.0, Hotel B cleanliness = 0.0, Hotel C cleanliness = 5.0.
+    Clutter/distractors: each row also has a "Notes" cell with a non-interactive tag and a "Details" link (link does nothing for success).
+    The target instance is specifically the Rate control in the "Hotel B" row.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Half-star precision in a compact table layout with multiple similar row instances increases both acquisition difficulty and disambiguation load.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.5
+        max: 5
+        step: 0.5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Hotel B - Cleanliness
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Setting the cleanliness rating for Hotel A or Hotel C (even to 4.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the "Hotel B" row in the table.
+  - In the Cleanliness cell, select 4.5 stars (half-step).
+  notes: Checker should identify instances by row key + column key (e.g., data-row='hotel-b' and data-col='cleanliness').
+- id: rating-antd-T09
+  name: 'Dark settings panel: set Value to 1.5 and save (AntD)'
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate (in Settings panel)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the settings panel, set "Value for money" to 1.5 out of 5 stars and click "Save changes". The task will finish automatically when done.
+  ui_copy: |-
+    Preferences (dark)
+    Overall: [star rating]
+    Value for money: [half-star rating]
+    [Cancel] [Save changes]
+  setup_description: |-
+    Scene details: theme=dark, spacing=comfortable, scale=default, placement=bottom_right.
+    Layout: settings_panel in dark theme, anchored near the bottom-right of the viewport.
+    The panel shows two editable Ant Design Rate controls:
+      • "Overall" (count=5, allowHalf=false)
+      • "Value for money" (count=5, allowHalf=true)
+    A compact footer bar at the bottom of the panel contains "Cancel" and "Save changes" buttons.
+    Initial state: Overall = 4, Value for money = 3.0.
+    Feedback dynamics: changing stars updates the preview immediately, but the state is only considered saved after clicking "Save changes".
+    Clutter: a non-target toggle ("Email me receipts") appears above the footer but does not affect success.
+    Success requires the saved rating value for "Value for money" to be 1.5.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires half-star precision plus an explicit save/confirm step in a dark settings panel with multiple similar rating instances.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 1.5 out of 5 on the specified rating control.
+    - If the UI includes a confirmation action, it has been confirmed via the specified control.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 1.5
+        max: 5
+        step: 0.5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Value for money
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Setting the correct rating value but NOT clicking the required confirmation control must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Clicking "Cancel" must NOT count as success, even if the preview shows 1.5.
+  expected_interaction_path:
+  - In the panel, locate the "Value for money" Rate control.
+  - Select 1.5 stars (half-step).
+  - Click "Save changes" to commit.
+  notes: Checker should distinguish preview vs saved state (e.g., saved value stored in data-saved-value attribute after Save).
+- id: rating-antd-T10
+  name: Drag across small stars to set a 5-star rating (AntD)
+  canonical_type: rating
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Rate'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Set the "Checkout speed" rating to 5 out of 5 stars. You may drag across the stars. The task will finish automatically when done.
+  ui_copy: |
+    Analytics dashboard
+    Widget: Checkout speed
+    Checkout speed: [small star rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=small, placement=center.
+    Layout: dashboard with medium clutter (several non-interactive metric cards above and to the side).
+    The target is a small Ant Design Rate component inside a narrow dashboard widget titled "Checkout speed".
+    Configuration: count=5, allowHalf=false, allowClear=true, size visually small (reduced icon size).
+    Initial state: value = 2 (two stars selected).
+    Interaction: users can click or click-and-drag across the stars; the selection commits on mouse up.
+    No Apply/Save button is required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small targets in a cluttered dashboard increase acquisition difficulty; drag interaction can be slightly unstable for agents compared to a single click.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 5.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the "Checkout speed" widget.
+  - Drag or click to set the rating to 5 stars.
+  notes: If you implement drag, ensure pointer events are reliable and the checker reads the committed (onChange) value.
+- id: rating-mui-T01
+  name: Set article helpfulness to 4 stars (MUI)
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Article helpfulness" rating to 4 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Was this article helpful?
+    Article helpfulness: [star rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered with the prompt "Was this article helpful?".
+    One Material UI Rating component labeled "Article helpfulness".
+    Configuration: max=5, precision=1 (whole stars), default empty icon for unselected stars.
+    Initial state: value is empty/0 (no stars selected).
+    Selecting a star commits immediately; there is no submit button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single default MUI Rating control with whole-star steps and immediate feedback in a simple isolated card.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the Rating control labeled "Article helpfulness".
+  - Click the 4th star.
+  notes: 'Instrumentation: data-testid=''rating-article-helpfulness''; read value from the underlying input/aria-label state used by MUI Rating.'
+- id: rating-mui-T02
+  name: Match a 2-star reference pattern (MUI)
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the "Your rating" control to the reference shown (★★☆☆☆). The task will finish automatically when done.
+  ui_copy: |-
+    Match the reference
+    Reference: ★★☆☆☆
+    Your rating: [star rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    A non-interactive reference row shows "Reference: ★★☆☆☆" (2 out of 5).
+    Below, one MUI Rating component labeled "Your rating".
+    Configuration: max=5, precision=1 (whole-star), default icons.
+    Initial state: Your rating = 0 (empty).
+    No additional buttons or confirmation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Visual reference still maps directly to an unambiguous 2/5 selection on a single control with immediate feedback.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Any value other than 2 (including 1 or 3) must NOT count as success.
+  expected_interaction_path:
+  - Read the reference (★★☆☆☆).
+  - Set the MUI Rating to 2 stars.
+  notes: If the UI uses aria-label strings like "2 Stars", ensure the checker normalizes to numeric value 2.
+- id: rating-mui-T03
+  name: 'Large-size rating: set to 1 star (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "New feature excitement" rating to 1 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Feature poll
+    New feature excitement: [large star rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=large, placement=center.
+    Layout: isolated_card centered.
+    One MUI Rating component labeled "New feature excitement", rendered in a visually large size.
+    Configuration: max=5, precision=1, size='large'.
+    Initial state: value = 0 (empty).
+    No confirm controls; the value commits immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: large
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Large clickable targets reduce acquisition difficulty; otherwise a straightforward whole-star selection.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 1 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 1.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the large rating under "New feature excitement".
+  - Click the first star.
+  notes: Scale=large is a robustness variant for size; checker logic remains identical (numeric value).
+- id: rating-mui-T04
+  name: 'Half-step precision: set to 3.5 stars (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Session satisfaction" rating to 3.5 out of 5 (three and a half stars). The task will finish automatically when done.
+  ui_copy: |
+    Session survey
+    Session satisfaction: [rating allows halves]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    One MUI Rating component labeled "Session satisfaction".
+    Configuration: max=5, precision=0.5 (half-star increments).
+    Initial state: value = 0 (empty). A small helper text below reads "Half-stars are allowed".
+    No submit/confirm button; the value is committed on selection.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Half-step increments increase precision and make the click target effectively smaller compared to whole-star selection.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 3.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 3.5
+        max: 5
+        precision: 0.5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Selecting 3.0 or 4.0 instead of 3.5 must NOT count as success.
+  expected_interaction_path:
+  - Find "Session satisfaction".
+  - Select the 3.5 value (half-step) on the Rating component.
+  notes: Checker should compare numeric value with exact half-step (or use a tiny float tolerance).
+- id: rating-mui-T05
+  name: 'Two ratings: set Performance to 5 (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Performance" rating to 5 out of 5 stars. Do not change "Ease of use". The task will finish automatically when done.
+  ui_copy: |
+    App feedback
+    Ease of use: [rating]
+    Performance: [rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    Two MUI Rating components are shown with labels:
+      • "Ease of use" (top)
+      • "Performance" (bottom)
+    Configuration: both use max=5 and precision=1.
+    Initial state: Ease of use = 4 (pre-filled), Performance = 2 (pre-filled).
+    Only the "Performance" control should be changed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires correctly identifying and modifying the intended instance among two similar rating controls.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 5.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Performance
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Changing "Ease of use" from 4 must NOT count as success, even if Performance becomes 5.
+  expected_interaction_path:
+  - Locate the "Performance" rating (second control).
+  - Set it to 5 stars.
+  - Confirm "Ease of use" remains at 4.
+  notes: 'Checker should validate both: target instance==5 and non-target instance unchanged.'
+- id: rating-mui-T06
+  name: 'Drawer feedback: set rating to 2 and send (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating (inside MUI Drawer)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the "Give feedback" panel, set "Support experience" to 2 out of 5, and click "Send feedback". The task will finish automatically when done.
+  ui_copy: |-
+    Help center
+    [Give feedback]
+    (Drawer) Support experience: [rating]
+    (Drawer) [Send feedback]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=top_left.
+    Layout: drawer_flow with the main trigger placed near the top-left of the viewport.
+    The page shows a help-center card with a button labeled "Give feedback".
+    Clicking the button opens a side Drawer.
+    Inside the Drawer:
+      • A short instruction line: "Rate your support experience (1-5)".
+      • One MUI Rating component labeled "Support experience" (max=5, precision=1).
+      • A small reference chip that visually shows "★★☆☆☆" next to the text "Target: 2".
+      • A primary button labeled "Send feedback".
+    Initial state: Drawer closed; when opened, Support experience value = 0.
+    Success requires setting the rating to 2 and clicking "Send feedback".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Adds an overlay layer (drawer) and a required confirm action; mixed guidance includes both text and a star reference.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2 out of 5 on the specified rating control.
+    - If the UI includes a confirmation action, it has been confirmed via the specified control.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: true
+      confirm_control: Send feedback
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct rating value but NOT clicking the required confirmation control must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Closing the drawer without sending feedback must NOT count as success.
+  expected_interaction_path:
+  - Click "Give feedback" to open the drawer.
+  - Set "Support experience" to 2 stars.
+  - Click "Send feedback".
+  notes: Checker should confirm a persisted 'sent' flag (e.g., data-sent=true) in addition to the rating value.
+- id: rating-mui-T07
+  name: Scroll to find rating and set to 4 (MUI)
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the "Customer support" section and set its rating to 4 out of 5. The task will finish automatically when done.
+  ui_copy: |
+    Service dashboard
+    (Several sections)
+    Customer support: [rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: dashboard with medium clutter (multiple summary cards and charts placeholders).
+    The target MUI Rating control is not initially visible; it appears in a section titled "Customer support" below the fold.
+    In the "Customer support" card, there is one MUI Rating component labeled "Customer support rating".
+    Configuration: max=5, precision=1.
+    Initial state: value = 0 (empty) when first revealed.
+    No confirmation button; success is immediate after the rating value is set.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling to locate the target component within a dashboard before performing a standard whole-star selection.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Setting a rating in any other section (if present) must NOT count as success.
+  expected_interaction_path:
+  - Scroll down until the "Customer support" section is visible.
+  - Set the "Customer support rating" control to 4 stars.
+  notes: To avoid ambiguity, ensure only the "Customer support" section contains an editable Rating, or label instances clearly if multiple are present.
+- id: rating-mui-T08
+  name: 'Compact table: set Plan B SLA to 4.5 (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating (inside Table cell)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the plans table, set "Plan B - SLA rating" to 4.5 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Plans
+    Table: Name | SLA rating | Price
+    Row: Plan A ...
+    Row: Plan B ...
+  setup_description: |-
+    Scene details: theme=light, spacing=compact, scale=small, placement=center.
+    Layout: table_cell with compact spacing and small-sized rating icons.
+    A two-row table is displayed with rows "Plan A" and "Plan B".
+    In the "SLA rating" column, each row contains a MUI Rating component.
+    Configuration: max=5, precision=0.5 (half-star), size='small'.
+    Initial state: Plan A SLA rating = 5.0, Plan B SLA rating = 1.0.
+    Clutter: the table also contains a "Price" column and small info icons that are non-functional distractors.
+    The target instance is the rating control in the "Plan B" row.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Half-star precision combined with small targets and a compact table layout makes both acquisition and correct-row disambiguation challenging.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.5
+        max: 5
+        precision: 0.5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Plan B - SLA rating
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Setting Plan A's SLA rating instead of Plan B's must NOT count as success.
+  expected_interaction_path:
+  - Locate the "Plan B" row.
+  - In the SLA rating cell, set the rating to 4.5.
+  notes: Use row identifiers to disambiguate instances for the checker (e.g., data-row='plan-b').
+- id: rating-mui-T09
+  name: 'Dark theme heart icons: set to 3.5 (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating (custom icon)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Satisfaction" rating to 3.5 out of 5. The icons are hearts instead of stars. The task will finish automatically when done.
+  ui_copy: |-
+    Satisfaction (dark)
+    Satisfaction: [heart rating allows halves]
+  setup_description: |-
+    Scene details: theme=dark, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered in dark theme.
+    One MUI Rating component labeled "Satisfaction".
+    Configuration: max=5, precision=0.5, custom full icon = heart, custom empty icon = outlined heart.
+    Initial state: value = 0 (empty).
+    No confirm button; the rating commits immediately.
+    This task probes whether agents can generalize the rating affordance when the symbol is not a star.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Half-step precision plus non-star iconography can reduce semantic observability and make it harder to map the visual state to the intended numeric value.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 3.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 3.5
+        max: 5
+        precision: 0.5
+        symbol: heart
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the heart-based "Satisfaction" rating.
+  - Select 3.5 out of 5 (half-step).
+  notes: Checker should rely on the component's numeric value, not icon count pixels, since the symbol differs.
+- id: rating-mui-T10
+  name: 'Modal with two ratings: set Issue resolution to 2 and confirm (MUI)'
+  canonical_type: rating
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Rating (inside Dialog)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the "Rate support call" dialog, set "Issue resolution" to 2 out of 5, and click "Confirm rating". The task will finish automatically when done.
+  ui_copy: |-
+    Support call summary
+    [Rate support call]
+    (Dialog) Agent politeness: [read-only rating]
+    (Dialog) Issue resolution: [rating]
+    (Dialog) [Cancel] [Confirm rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: modal_flow. The page shows a support call summary with a button labeled "Rate support call".
+    Clicking the button opens a MUI Dialog.
+    Inside the Dialog there are two rating rows:
+      • "Agent politeness" - displayed as a read-only MUI Rating pre-set to 5.
+      • "Issue resolution" - an editable MUI Rating with max=5 and precision=1.
+    Dialog actions: "Cancel" and "Confirm rating".
+    Initial state when dialog opens: Issue resolution = 0 (empty).
+    Success requires setting the Issue resolution rating to 2 and clicking "Confirm rating" (Cancel must not be used).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Overlay depth plus a required confirm step and the presence of a similar read-only distractor instance increases disambiguation and feedback dependency.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2 out of 5 on the specified rating control.
+    - If the UI includes a confirmation action, it has been confirmed via the specified control.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: true
+      confirm_control: Confirm rating
+      require_correct_instance: true
+      target_instance_label_or_id: Issue resolution
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Setting the correct rating value but NOT clicking the required confirmation control must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Changing only the read-only "Agent politeness" display must NOT count as success.
+  - Closing the dialog without confirming must NOT count as success.
+  expected_interaction_path:
+  - Click "Rate support call" to open the dialog.
+  - In the dialog, locate the editable "Issue resolution" rating.
+  - Set it to 2 stars.
+  - Click "Confirm rating".
+  notes: Checker should ensure the confirmed/saved value corresponds to the Issue resolution field specifically (not the read-only politeness display).
+- id: rating-mantine-T01
+  name: Set workspace comfort to 4 stars (Mantine)
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Workspace comfort" rating to 4 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Office survey
+    Workspace comfort: [rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    One Mantine Rating component labeled "Workspace comfort".
+    Configuration: count=5, fractions=1 (whole-step), default star symbols.
+    Initial state: value = 0 (empty).
+    The rating updates immediately on selection; there is no submit/confirm control.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single default Mantine Rating in an isolated card with whole-star increments and immediate feedback.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Find the "Workspace comfort" rating.
+  - Click the 4th star.
+  notes: 'Instrumentation: provide data-testid=''rating-workspace-comfort''; checker reads numeric value from Mantine Rating state.'
+- id: rating-mantine-T02
+  name: 'Match reference: 3 out of 5 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the "Your rating" control to the reference shown (★★★☆☆). The task will finish automatically when done.
+  ui_copy: |-
+    Match the reference
+    Reference: ★★★☆☆
+    Your rating: [rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    A non-interactive reference row shows "Reference: ★★★☆☆" (3 out of 5).
+    Below it, one Mantine Rating component labeled "Your rating".
+    Configuration: count=5, fractions=1.
+    Initial state: Your rating = 0 (empty).
+    No confirm controls; success depends only on the committed rating value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Visual reference mapping to a small discrete set (1-5) with immediate and visible star feedback.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 3 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 3.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Any value other than 3 must NOT count as success.
+  expected_interaction_path:
+  - Read the reference (★★★☆☆).
+  - Set "Your rating" to 3.
+  notes: If the reference is rendered as icons, ensure it is clearly distinct from the interactive control to avoid accidental clicks.
+- id: rating-mantine-T03
+  name: 'Corner placement: set to 2 stars (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Clarity of instructions" rating to 2 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Training feedback
+    Clarity of instructions: [rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=bottom_left.
+    Layout: isolated_card placed near the bottom-left of the viewport (placement robustness).
+    One Mantine Rating component labeled "Clarity of instructions".
+    Configuration: count=5, fractions=1.
+    Initial state: value = 5 (pre-filled).
+    No confirm controls; value changes commit immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple whole-star adjustment on a single control; only robustness factor is non-center placement.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  expected_interaction_path:
+  - Locate the card at the bottom-left.
+  - Set the rating to 2 stars.
+  notes: Placement variation tests scrolling/viewport awareness but keeps component interaction simple.
+- id: rating-mantine-T04
+  name: 'Half-star fractions: set to 3.5 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Lesson usefulness" rating to 3.5 out of 5 (three and a half stars). The task will finish automatically when done.
+  ui_copy: |
+    Course feedback
+    Lesson usefulness: [rating allows halves]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    One Mantine Rating component labeled "Lesson usefulness".
+    Configuration: count=5, fractions=2 (each star split into halves, allowing 0.5 steps).
+    Initial state: value = 0.0.
+    A small text note reads "Half-star ratings are enabled".
+    No save/confirm button; selection commits immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Fractional selection (0.5) increases precision requirement and makes the click targets smaller than whole-star ratings.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 3.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 3.5
+        max: 5
+        fractions: 2
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Selecting 3.0 or 4.0 instead of 3.5 must NOT count as success.
+  expected_interaction_path:
+  - Find the "Lesson usefulness" rating.
+  - Select 3.5 using the half-step.
+  notes: Checker should validate exact half-step value produced by fractions=2.
+- id: rating-mantine-T05
+  name: 'Form with two ratings: set Value to 1 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the purchase feedback form, set the "Value" rating to 1 out of 5. Do not change "Packaging". The task will finish automatically when done.
+  ui_copy: |
+    Purchase feedback
+    [Order number]
+    Packaging: [rating]
+    Value: [rating]
+    [Comments]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: form_section with low clutter.
+    The form contains two text inputs ("Order number" and "Comments") as distractors.
+    Two Mantine Rating components appear in the middle of the form:
+      • "Packaging" (top)
+      • "Value" (bottom)
+    Configuration: both have count=5 and fractions=1.
+    Initial state: Packaging = 4, Value = 3.
+    No submit button required for success; ratings commit immediately when selected.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar instances embedded in a form require careful label-based disambiguation while keeping interaction simple.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 1 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 1.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Value
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Changing "Packaging" from 4 must NOT count as success.
+  expected_interaction_path:
+  - Locate the "Value" rating row.
+  - Set it to 1 star and leave "Packaging" unchanged.
+  notes: Checker should assert Packaging remains 4 while Value becomes 1.
+- id: rating-mantine-T06
+  name: 'Modal flow: set rating to 5 and submit (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating (inside Modal)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the "Rate the session" dialog, set "Overall session" to 5 out of 5, and click "Submit". The task will finish automatically when done.
+  ui_copy: |-
+    Webinar page
+    [Rate the session]
+    (Modal) Overall session: [rating]
+    (Modal) [Close] [Submit]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: modal_flow.
+    The main page shows a webinar summary with a button labeled "Rate the session".
+    Clicking it opens a modal dialog.
+    Inside the modal:
+      • A short line: "Please rate the session".
+      • One Mantine Rating component labeled "Overall session" (count=5, fractions=1).
+      • Two action buttons: "Close" and "Submit".
+    Initial state: modal closed; when opened, Overall session starts at 0 (empty).
+    Success requires selecting 5 and then clicking "Submit" to confirm.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Overlay depth plus a required submit step increases the number of interaction stages beyond a simple inline rating.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 5 out of 5 on the specified rating control.
+    - If the UI includes a confirmation action, it has been confirmed via the specified control.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 5.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: true
+      confirm_control: Submit
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct rating value but NOT clicking the required confirmation control must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Clicking "Close" instead of "Submit" must NOT count as success.
+  expected_interaction_path:
+  - Click "Rate the session" to open the modal.
+  - Set "Overall session" to 5 stars.
+  - Click "Submit".
+  notes: Checker can verify a saved state (e.g., data-submitted=true) and stored rating value after the modal closes.
+- id: rating-mantine-T07
+  name: 'Custom per-item symbols (mood faces): match level 4/6 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating (symbols for each item)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the "Mood" rating to match the reference shown (level 4 out of 6). The task will finish automatically when done.
+  ui_copy: |-
+    Mood check
+    Reference mood: [icon for level 4]
+    Mood: [rating with 6 different face icons]
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered.
+    A "Mood check" card contains a non-interactive reference row labeled "Reference mood", showing the face icon corresponding to level 4 on this scale.
+    Below it is one Mantine Rating component labeled "Mood".
+    Configuration: count=6 (six positions), fractions=1, and each position uses a different face icon (from very sad → very happy).
+    Initial state: Mood = 1 (pre-filled with the first face).
+    No confirm button; the selected level commits immediately.
+    This task tests semantic generalization when each rating item has distinct glyphs.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A larger count (6) and non-uniform per-item icons increase choice interference and reduce straightforward star-count mapping.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 4 out of 6 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 4.0
+        max: 6
+        count: 6
+        symbol_set: mood_faces
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Selecting the wrong mood level (not level 4) must NOT count as success, even if the chosen icon looks similar.
+  expected_interaction_path:
+  - Look at the reference mood icon (level 4).
+  - Set the "Mood" rating control to level 4.
+  notes: Checker should treat the rating value as 1-6 integer; do not rely on icon identity at runtime.
+- id: rating-mantine-T08
+  name: 'Quarter-step rating in dark theme: set to 2.75 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the "Design polish" rating to 2.75 out of 5 (two and three quarters). The task will finish automatically when done.
+  ui_copy: |
+    Design review (dark)
+    Design polish: [rating with quarter steps]
+  setup_description: |-
+    Scene details: theme=dark, spacing=comfortable, scale=default, placement=center.
+    Layout: isolated_card centered in dark theme.
+    One Mantine Rating component labeled "Design polish".
+    Configuration: count=5, fractions=4 (each star divided into quarters, allowing 0.25 increments).
+    Initial state: value = 0.0.
+    A small numeric readout "Current value: X.XX" is shown beneath the rating to help observability (readout reflects committed value).
+    No confirm button; selection commits immediately.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Quarter-step increments dramatically increase precision and make targets very small, even though the scene is otherwise simple.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2.75 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.75
+        max: 5
+        fractions: 4
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Selecting 2.5 or 3.0 instead of 2.75 must NOT count as success.
+  expected_interaction_path:
+  - Locate "Design polish".
+  - Select the quarter-step value so the numeric readout becomes 2.75.
+  notes: Checker should compare to the committed numeric value (float) using a small tolerance to avoid floating-point issues.
+- id: rating-mantine-T09
+  name: 'Cluttered dashboard: set Support to 2.5 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: On the dashboard, set the "Support" rating to 2.5 out of 5. Do not change the other ratings. The task will finish automatically when done.
+  ui_copy: |-
+    Customer dashboard
+    Card: Documentation [rating]
+    Card: Support [rating]
+    Card: Pricing [rating]
+    (Other widgets...)
+  setup_description: |-
+    Scene details: theme=light, spacing=comfortable, scale=default, placement=center.
+    Layout: dashboard with high clutter.
+    Three separate cards each contain an editable Mantine Rating component:
+      • "Documentation" rating (fractions=1)
+      • "Support" rating (fractions=2, half-step)
+      • "Pricing" rating (fractions=1)
+    Additional clutter includes a search box, filter chips, and a notifications icon row; these do not affect success.
+    Initial state: Documentation = 4, Support = 4.0, Pricing = 3.
+    Only the "Support" rating should be changed, and it supports half-stars.
+    No confirm button; changes commit immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: High clutter plus three similar instances increases disambiguation load; the target instance also requires half-step precision.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 2.5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - The correct labeled instance is modified.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 2.5
+        max: 5
+        fractions: 2
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Support
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the rating on any non-target instance (wrong labeled row/field) must NOT count as success.
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Changing "Documentation" or "Pricing" ratings must NOT count as success, even if Support becomes 2.5.
+  expected_interaction_path:
+  - Find the dashboard card labeled "Support".
+  - Set its rating to 2.5 using the half-step.
+  - Ensure the other cards remain unchanged.
+  notes: Checker should assert non-target instances keep their initial values (Documentation=4, Pricing=3).
+- id: rating-mantine-T10
+  name: 'Compact small rating below fold: set to 5 (Mantine)'
+  canonical_type: rating
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Rating'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the "Final check-in" section and set "Overall experience" to 5 out of 5. The task will finish automatically when done.
+  ui_copy: |-
+    Long feedback form
+    ...
+    Final check-in
+    Overall experience: [small rating]
+  setup_description: |-
+    Scene details: theme=light, spacing=compact, scale=small, placement=center.
+    Layout: form_section in compact spacing.
+    The page is a long feedback form with several accordion-like sections; only the last section ("Final check-in") contains the target rating.
+    The "Final check-in" section is below the fold at initial load.
+    Inside that section is one Mantine Rating component labeled "Overall experience", rendered in a small visual size.
+    Configuration: count=5, fractions=1, size='xs' (or equivalent small size).
+    Initial state: value = 0.
+    Clutter: there are other non-target fields above (text inputs, checkboxes) but they are not required.
+    No submit/confirm button; success is immediate once the rating is set to 5.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: form_section
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling to locate the target section and then interacting with a small-sized rating control with reduced hit targets.
+  success_trigger:
+    human_readable:
+    - Target rating value equals 5 out of 5 on the specified rating control.
+    - No additional confirmation is required once the rating value is set.
+    - Only one rating instance is present, so instance disambiguation is not required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        rating_value: 5.0
+        max: 5
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any rating value outside the allowed tolerance (even if visually close, e.g., 3.0 vs 3.5) must NOT count as success.
+  - A partial/hover-only highlight that does not commit the rating value must NOT count as success.
+  - If the component supports fractional steps, selecting the wrong fraction (e.g., 2.0 instead of 2.5) must NOT count as success.
+  - Setting a rating in any earlier section must NOT count as success.
+  expected_interaction_path:
+  - Scroll down to find the "Final check-in" section.
+  - Set "Overall experience" to 5 stars.
+  notes: Ensure only one editable Rating appears in the Final check-in section to keep the checker unambiguous.

@@ -1,0 +1,2160 @@
+- id: data_table_sortable-antd-T01
+  name: 'Invoices: sort Amount low→high'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Invoices table, sort the Amount column from lowest to highest. The task will finish automatically when done.
+  ui_copy: Sort the Invoices table by Amount (low → high).
+  setup_description: 'Baseline scene with a single Ant Design Table inside an isolated card titled “Invoices”.
+
+
+    - The table is centered on the page and uses default size and comfortable spacing.
+
+    - Columns (left→right): Invoice #, Client, Amount, Due date, Status.
+
+    - Only some columns are sortable; sortable headers show the standard AntD sorter affordance (up/down caret icon next to the header label).
+
+    - Initial state: no active sort (all headers show the neutral sorter icon).
+
+    - No filters are opened; no pagination interaction is required.
+
+    - There are ~15 rows with distinct Amount values so the sort order is unambiguous.
+
+
+    Distractors: none (just the table and a non-interactive “Invoices” subtitle).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single table, single-column sort, immediate feedback via the header sort indicator.
+  success_trigger:
+    human_readable:
+    - 'The only table instance (“Invoices”) has its active sort model set to: Amount ascending.'
+    - No other column is marked as sorted.
+    - No confirmation/apply step is required; sort must be reflected in the UI state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: amount
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting the Amount column in descending order (high → low).
+  - Sorting a different column (e.g., Due date) even if the row order looks similar.
+  - Having multiple columns sorted (multi-sort) when the target requires exactly one sort key.
+  - Changing any other table state (pagination/filters) without achieving the required sort state.
+  expected_interaction_path:
+  - Locate the Amount column header in the Invoices table.
+  - Click the Amount header/sort control until the table is sorted ascending.
+  - Verify the sort indicator shows ascending for Amount.
+  notes: 'Instrumentation suggestion: expose canonical sort state via either (a) aria-sort on the Amount <th>, or (b) a data-testid on the table root with a JSON-encoded sort_model like [{"column_key":"amount","direction":"asc"}].
+
+    Checker should ensure only one sorted column is active (no multi-sort).'
+- id: data_table_sortable-antd-T02
+  name: 'Customers: sort Name Z→A'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Customers table, sort the Name column from Z to A (descending). The task will finish automatically when done.
+  ui_copy: Sort Customers by Name (Z → A).
+  setup_description: 'Single Ant Design Table in an isolated card titled “Customers”.
+
+
+    - Center placement, default scale, comfortable spacing.
+
+    - Columns: Name, City, Segment, Sign-up date.
+
+    - The Name header is sortable and uses the standard AntD sort toggle (clicking cycles through unsorted → ascend → descend).
+
+    - Initial state: unsorted (neutral icon shown for all sortable headers).
+
+    - Rows include mixed-case names but the table sorts by the displayed Name string (dataset curated so the final order is deterministic).
+
+
+    Distractors: a non-interactive “Export CSV” button above the table (disabled).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires toggling to the correct sort direction on a single column with clear arrow feedback.
+  success_trigger:
+    human_readable:
+    - 'The Customers table has active sort: Name descending.'
+    - No other column is sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: name
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Name sorted ascending (A → Z).
+  - A different column sorted (e.g., Sign-up date).
+  - Multi-sort enabled (more than one sorted column).
+  - Header shows descending arrow but sort state is not actually applied (e.g., controlled state mismatch).
+  expected_interaction_path:
+  - Find the Name column header.
+  - Click the Name header until the descending sort indicator is shown.
+  - Confirm only Name is sorted.
+  notes: Checker can read aria-sort='descending' on the Name header cell or a dedicated test hook that emits the current sort_model.
+- id: data_table_sortable-antd-T03
+  name: 'Shipments: clear the active ETA sort'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Shipments table, clear the current sort so that no column is sorted. The task will finish automatically when done.
+  ui_copy: Clear sorting in the Shipments table (no column should be sorted).
+  setup_description: 'Single Ant Design Table in an isolated card titled “Shipments”.
+
+
+    - Baseline styling (light theme, comfortable spacing, default scale), centered.
+
+    - Columns: Tracking #, Carrier, ETA, Destination, Status.
+
+    - Sorting is enabled on ETA and Status.
+
+    - Initial state: ETA is pre-sorted in ascending order (the ETA header shows an active ascending arrow).
+
+    - The sorter toggle cycles through ascend → descend → unsorted (returning to neutral state is allowed).
+
+
+    Distractors: a small legend below the table explaining status colors (non-interactive).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires reaching the neutral (unsorted) state from an initially sorted header; still a single table with immediate feedback.
+  success_trigger:
+    human_readable:
+    - The Shipments table has no active sort keys (sort_model is empty).
+    - All sortable headers show the neutral/unsorted state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model: []
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - ETA sorted descending instead of cleared.
+  - Status becomes sorted while ETA is cleared (still counts as sorted).
+  - Any multi-sort remains active (sort_model not empty).
+  - Clearing sort on a different component (no effect on table sort state).
+  expected_interaction_path:
+  - Locate the ETA column header (currently sorted ascending).
+  - Click ETA until the header returns to the neutral unsorted indicator.
+  - Verify no other column is sorted.
+  notes: 'Ensure the implementation allows returning to the unsorted state (do NOT set sortDirections to prevent resetting).
+
+    Checker should validate sort_model == [] rather than inferring from row order alone.'
+- id: data_table_sortable-antd-T04
+  name: 'Employees: sort Start date newest→oldest (top-right card)'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Employees table, sort the Start date column from newest to oldest. The task will finish automatically when done.
+  ui_copy: Sort Employees by Start date (newest → oldest).
+  setup_description: 'Single Ant Design Table in an isolated card titled “Employees”, anchored near the top-right of the viewport (not centered).
+
+
+    - Light theme, comfortable spacing, default component scale.
+
+    - Columns: Employee, Team, Start date, Location.
+
+    - Start date is sortable; clicking the header toggles sort direction.
+
+    - Initial state: unsorted.
+
+
+    Distractors: a small “Search” input above the table (present but not required for the task).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Same simple single-column sort as baseline; only placement changes from center.
+  success_trigger:
+    human_readable:
+    - Employees table is sorted by Start date descending (newest first).
+    - No other column is sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: start_date
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Start date sorted ascending (oldest first).
+  - Sorting a different date-like column (e.g., Location) by mistake.
+  - Leaving multi-sort active (more than one sorted column).
+  expected_interaction_path:
+  - Scroll if needed to bring the top-right Employees card fully into view.
+  - Click Start date header until descending sort is active.
+  notes: For robustness, ensure the card is fully visible without requiring long scrolling; placement is the primary non-baseline factor.
+- id: data_table_sortable-antd-T05
+  name: 'Dashboard: sort Orders by Total high→low (two tables)'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Orders table (not the Returns table), sort the Total column from highest to lowest. The task will finish automatically when done.
+  ui_copy: 'Orders table: sort Total (high → low).'
+  setup_description: "Dashboard layout with multiple cards and two Ant Design Tables of the same type.\n\n- Layout: “Sales overview” dashboard with KPI tiles at the top and two table cards below.\n- Two table instances (same canonical component):\n  1) Card title: “Orders” (target)\n  2) Card title: “Returns” (distractor)\n- Both tables share similar columns: ID, Customer, Total, Status, Updated.\n- Only the Orders table should be modified.\n- Initial state: both tables unsorted.\n- Sorting affordance: AntD sorter caret icons next to sortable headers.\n\nClutter: medium (KPI tiles, date range chip group, and a non-required “Download report” button)."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires selecting the correct table instance in a dashboard and applying a single-column descending sort.
+  success_trigger:
+    human_readable:
+    - 'In the Orders table instance, active sort is: Total descending.'
+    - The Returns table instance remains unsorted (sort_model empty).
+    - No multi-sort is active on Orders (exactly one sort key).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          orders:
+            sort_model:
+            - column_key: total
+              direction: desc
+              priority: 1
+          returns:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting the Returns table instead of Orders.
+  - Orders sorted by Total ascending instead of descending.
+  - Orders has additional sort keys active (multi-sort).
+  - Both tables are sorted (even if Orders is correct).
+  expected_interaction_path:
+  - Locate the two table cards and identify the one titled Orders.
+  - Click the Total header in Orders until descending is active.
+  - Double-check Returns table has not changed.
+  notes: 'Instrumentation: give each table root a stable identifier (e.g., data-testid=''table-orders'' and ''table-returns'') so the checker can attribute sort state to the correct instance.
+
+    Checker should verify Returns sort_model == [] to enforce disambiguation.'
+- id: data_table_sortable-antd-T06
+  name: 'Wide table: scroll to Profit % and sort descending'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (fixed columns + horizontal scroll)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Sales by SKU table, scroll as needed to find the Profit % column, then sort Profit % from highest to lowest. The task will finish automatically when done.
+  ui_copy: 'Sales by SKU: sort Profit % (high → low).'
+  setup_description: 'A single wide Ant Design Table in an isolated card titled “Sales by SKU”.
+
+
+    - Spacing mode is compact; the table uses a tighter row height and narrower header padding.
+
+    - The table has many columns and uses horizontal scrolling (scroll.x enabled). The first column (“SKU”) is fixed on the left.
+
+    - The target column “Profit %” is near the far right and is not visible until you scroll horizontally.
+
+    - Profit % is sortable via the AntD sorter caret icon in the header.
+
+    - Initial state: unsorted.
+
+
+    Distractors: none outside the table; the challenge is locating the off-screen header and interacting with its sorter in a compact layout.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires horizontal scrolling to reach an off-screen sortable header and clicking a small sorter target in compact spacing.
+  success_trigger:
+    human_readable:
+    - 'Sales by SKU table has active sort: profit_pct descending.'
+    - No other column is sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: profit_pct
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Profit % ascending.
+  - Sorting a nearby numeric column (e.g., Margin or Revenue) by mistake.
+  - Failing to bring the Profit % header into view and interacting with the wrong header.
+  - Multi-sort active.
+  expected_interaction_path:
+  - Use the table's horizontal scroll to reveal columns to the right.
+  - Find the Profit % header.
+  - Click its sorter until descending is active.
+  notes: Checker should not rely on visual scroll position; it should read canonical sort state from the table component.
+- id: data_table_sortable-antd-T07
+  name: 'Tickets: match the reference sort (Priority high→low)'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: 'Match the sorting shown in the Reference card: in the Tickets table, sort by Priority from high to low. The task will finish automatically when done.'
+  ui_copy: 'Reference sort: Priority (high → low). Apply this to the Tickets table.'
+  setup_description: "Single Ant Design Table in an isolated card titled “Tickets”, with a small “Reference” panel on the right.\n\n- Layout: isolated card centered; two-column layout inside the card:\n  - Left: the Tickets table\n  - Right: a compact Reference card showing a small header mock (“Priority” with a downward arrow) and the text “High → Low”.\n- Tickets table columns: Ticket ID, Title, Priority, Owner, Last updated.\n- Priority header is sortable and uses AntD sorter caret icons.\n- Initial state: unsorted.\n- The Reference card is purely a cue; it does not change the table automatically.\n\nDistractors: a non-interactive “View settings” link in the card header (no modal)."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Goal is given via a mixed visual/text reference, requiring the agent to map the reference cue to the correct sortable column.
+  success_trigger:
+    human_readable:
+    - 'Tickets table active sort is: priority descending (High → Low).'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: priority
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Priority in the opposite direction (Low → High).
+  - Sorting Last updated or another column that also has a downward arrow elsewhere in the UI (e.g., in the Reference card only).
+  - Leaving the table unsorted.
+  - Multi-sort active.
+  expected_interaction_path:
+  - Read the Reference card cue (Priority with down arrow / High → Low).
+  - Click the Priority header in the Tickets table until descending is active.
+  - Verify only Priority is sorted.
+  notes: To reduce ambiguity, ensure the Reference card is visually distinct and labeled 'Reference' but does not share DOM ids with the table headers.
+- id: data_table_sortable-antd-T08
+  name: 'Tasks: sort by Priority (High→Low), then Due date (earliest first)'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: multiple_sorter
+  implementation_component: 'AntD: Table (column sorter with sorter.multiple)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Tasks table, sort primarily by Priority from High to Low, and then (within the same priority) sort by Due date from earliest to latest. The task will finish automatically when done.
+  ui_copy: 'Tasks table: sort by Priority (High → Low), then Due date (earliest → latest).'
+  setup_description: 'Single Ant Design Table in an isolated card titled “Tasks”.
+
+
+    - Baseline styling (light theme, comfortable spacing), centered.
+
+    - Columns: Task, Priority, Due date, Owner, Status.
+
+    - Priority and Due date are both sortable and configured for multi-column sorting (AntD multiple sorter via column.sorter.multiple priorities).
+
+    - Initial state: unsorted (no active sort keys).
+
+    - Sort indicators show on each sorted column; when multiple columns are sorted, both headers display active arrows.
+
+
+    Distractors: a small “New task” primary button above the table (does nothing for this task).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires configuring a two-key sort state (multi-sort) and keeping both columns active with the correct priority and directions.
+  success_trigger:
+    human_readable:
+    - 'Tasks table has exactly two active sort keys in this priority order:'
+    - '  1) priority descending (High first)'
+    - '  2) due_date ascending (earliest first)'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: priority
+          direction: desc
+          priority: 1
+        - column_key: due_date
+          direction: asc
+          priority: 2
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only Priority is sorted (Due date not added as a secondary sort).
+  - Priority sorted in the wrong direction (Low first).
+  - Due date sorted in the wrong direction (latest first).
+  - Priority and Due date are both sorted but in the wrong priority order.
+  - Any third sort key is active.
+  expected_interaction_path:
+  - Click Priority header to set descending order.
+  - Add Due date as a secondary sort key and set it to ascending.
+  - Verify both headers show active sort indicators and no other column is sorted.
+  notes: 'Implementation hint: configure AntD columns with sorter: { multiple: 1 } for Priority and sorter: { multiple: 2 } for Due date.
+
+    Checker should read the full sort_model (including priority/order), not just the top-level sorted column.'
+- id: data_table_sortable-antd-T09
+  name: 'Dashboard: sort Team Members by Last active newest→oldest (3 tables)'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (column sorter)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Team Members table (not Vendors or Projects), sort the Last active column from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'Team Members table: sort Last active (newest → oldest).'
+  setup_description: "High-clutter dashboard scene with three sortable Ant Design Tables.\n\n- Layout: dashboard with a left sidebar (non-interactive for this task), KPI tiles, and three table cards stacked vertically.\n- Table instances (same canonical_type):\n  1) “Team Members” (target)\n  2) “Vendors” (distractor)\n  3) “Projects” (distractor)\n- Each table has a date/time column with similar meaning (e.g., Last active, Last invoice, Last updated), increasing confusability.\n- Sorting affordance: AntD sorter caret icons in headers; only header clicks are needed (no menus).\n- Initial state: all three tables are unsorted.\n\nPlacement: the table stack starts near the bottom-left quadrant of the viewport, so the agent may need small scroll adjustments to align with the target header row."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: 'High disambiguation: multiple similar tables and similar date/time columns in a cluttered dashboard; requires sorting the correct instance without altering others.'
+  success_trigger:
+    human_readable:
+    - 'Team Members table has active sort: last_active descending.'
+    - Vendors and Projects tables remain unsorted (sort_model empty).
+    - No multi-sort is active on any table.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          team_members:
+            sort_model:
+            - column_key: last_active
+              direction: desc
+              priority: 1
+          vendors:
+            sort_model: []
+          projects:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Team Members
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Vendors or Projects instead of Team Members.
+  - Sorting Team Members correctly but also sorting any other table (should not count as success).
+  - Sorting Last active ascending.
+  - Sorting a different date column inside Team Members (e.g., Joined).
+  - Multi-sort active.
+  expected_interaction_path:
+  - Identify the table card labeled Team Members.
+  - Find the Last active header in that table.
+  - Click until descending sort is active on Last active.
+  - Verify other tables remain untouched.
+  notes: 'Strongly recommend per-instance data-testid: table-team-members, table-vendors, table-projects.
+
+    Checker should map UI labels to instance ids and verify non-target instances are unchanged.'
+- id: data_table_sortable-antd-T10
+  name: 'Modal audit log: open overlay and sort Event time newest→oldest (dark)'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: modal_table_small
+  implementation_component: 'AntD: Modal + Table (column sorter)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Audit Log modal, then sort the Event time column from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'Audit Log (modal): sort Event time (newest → oldest).'
+  setup_description: 'Dark theme scene where the target sortable table is inside a modal overlay.
+
+
+    - Layout: modal_flow. The main page shows a settings panel with a button labeled “Open Audit Log”.
+
+    - Clicking “Open Audit Log” opens an Ant Design Modal centered on the page.
+
+    - Inside the modal is a compact AntD Table titled “Audit Log” with small row height.
+
+    - Columns: Event, Actor, Event time, IP address.
+
+    - Event time is sortable via the standard AntD sorter caret icon.
+
+    - Initial state: unsorted.
+
+
+    Distractors:
+
+    - Background page contains a small “Recent alerts” list (non-table) but remains visible behind the modal dimmer.
+
+    - Modal also has Close (X) and Cancel buttons, neither required for success.
+
+
+    Feedback: sorting updates immediately within the modal table; no Apply step.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a modal overlay and interacting with a compact table header in dark theme; overlay layering increases interaction depth.
+  success_trigger:
+    human_readable:
+    - The Audit Log modal is open (table is the active/foreground instance).
+    - 'Audit Log table active sort is: event_time descending (newest first).'
+    - No other sort keys are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay:
+          type: modal
+          label: Audit Log
+        sort_model:
+        - column_key: event_time
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Audit Log (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Not opening the Audit Log modal (sorting something in the background).
+  - Event time sorted ascending (oldest first).
+  - Sorting a different column in the modal (e.g., Actor).
+  - Multi-sort active.
+  - Modal opened but table remains unsorted.
+  expected_interaction_path:
+  - Click “Open Audit Log” to open the modal.
+  - In the modal table, click the Event time header until descending is active.
+  - Verify the modal remains open and shows the correct sort indicator.
+  notes: 'Checker should confirm it is reading the table inside the modal (e.g., within the modal DOM subtree).
+
+    Prefer reading aria-sort on the Event time header or a modal-scoped data-testid for sort_model.'
+- id: data_table_sortable-mui-T11
+  name: 'Nutrition: sort Calories ascending (TableSortLabel)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: table_sort_label
+  implementation_component: 'MUI: Table + TableSortLabel (composed)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Nutrition table, sort the Calories column from lowest to highest. The task will finish automatically when done.
+  ui_copy: 'Nutrition table: sort Calories (low → high).'
+  setup_description: 'Baseline scene using Material UI Table with a clickable sort label in the header.
+
+
+    - Layout: isolated card centered on the page.
+
+    - Component: MUI <Table> with <TableSortLabel> placed inside the Calories header cell.
+
+    - Columns: Dessert, Calories, Fat (g), Carbs (g), Protein (g).
+
+    - Initial state: unsorted (Calories TableSortLabel is not active).
+
+    - Clicking the Calories header toggles sorting; the active column shows the arrow indicator.
+
+
+    Distractors: none; only the table is interactive.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Straightforward single-column sort with a clear arrow indicator on the active TableSortLabel.
+  success_trigger:
+    human_readable:
+    - 'Nutrition table has active sort: calories ascending.'
+    - No other column is active/sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: calories
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Calories sorted descending.
+  - Sorting a different macro column instead of Calories.
+  - Multiple columns appear active/sorted.
+  expected_interaction_path:
+  - Locate the Calories header (with sort affordance).
+  - Click until the sort arrow indicates ascending.
+  notes: Checker can read aria-sort on the Calories <th> (if set) or a test hook that mirrors TableSortLabel active+direction into canonical sort_model.
+- id: data_table_sortable-mui-T12
+  name: 'Contacts: sort Last name A→Z (DataGrid)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Contacts grid, sort the Last name column from A to Z. The task will finish automatically when done.
+  ui_copy: 'Contacts: sort Last name (A → Z). (Hint chip shown next to the title.)'
+  setup_description: 'Single MUI X DataGrid in an isolated card titled “Contacts”.
+
+
+    - Light theme, comfortable spacing, default scale, centered.
+
+    - DataGrid columns: First name, Last name, Email, Company.
+
+    - Sorting is enabled; clicking a column header applies sorting to that column.
+
+    - Mixed guidance: the card header also shows a small hint chip reading “A→Z” next to the text “Last name”, reinforcing the desired direction visually.
+
+    - Initial state: unsorted (no sort indicator on any header).
+
+    - The column header shows an arrow icon when sorted.
+
+
+    Distractors: a non-interactive “Add contact” button (disabled) above the grid.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single DataGrid instance; sorting by clicking a clearly labeled header.
+  success_trigger:
+    human_readable:
+    - 'Contacts grid sort model is: last_name ascending.'
+    - No other sort items are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: last_name
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Last name sorted descending.
+  - First name sorted instead of Last name.
+  - Multiple sort columns active.
+  expected_interaction_path:
+  - Click the Last name column header.
+  - If needed, click again until ascending is active.
+  notes: For MUI DataGrid, prefer checking the exposed sort model (e.g., via an onSortModelChange mirror) or aria-sort on the header cell.
+- id: data_table_sortable-mui-T13
+  name: 'Tickets: toggle Priority to High→Low (DataGrid)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Tickets grid, sort the Priority column from High to Low (descending). The task will finish automatically when done.
+  ui_copy: 'Tickets: sort Priority (High → Low).'
+  setup_description: 'Single MUI X DataGrid in an isolated card titled “Tickets”.
+
+
+    - Baseline scene: centered, light theme, comfortable spacing.
+
+    - Columns: Ticket #, Subject, Priority, Owner, Updated.
+
+    - Priority is sortable; clicking the Priority header cycles sort direction.
+
+    - Initial state: unsorted.
+
+    - Priority values are categorical (High/Medium/Low) with a deterministic custom comparator so descending corresponds to High → Medium → Low.
+
+
+    Distractors: none.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires toggling to a specific direction and relies on understanding the displayed direction cue for a categorical column.
+  success_trigger:
+    human_readable:
+    - 'Tickets grid sort model is: priority descending.'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: priority
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Priority sorted ascending (Low → High).
+  - Sorting Updated instead of Priority.
+  - Multiple sort columns active.
+  expected_interaction_path:
+  - Click Priority header until descending indicator is active.
+  - Verify no other sort is applied.
+  notes: Ensure the UI clearly shows sort direction (arrow) even for categorical columns; checker should verify sort_model rather than inferring from row order.
+- id: data_table_sortable-mui-T14
+  name: 'Settings: sort Active Users by Role A→Z (two grids)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Active Users grid (not Pending Invitations), sort the Role column from A to Z. The task will finish automatically when done.
+  ui_copy: 'Active Users: sort Role (A → Z).'
+  setup_description: 'Settings panel layout with two DataGrid instances in separate sections.
+
+
+    - Layout: settings_panel with a left navigation list (not required) and a main content area.
+
+    - Section 1: “Active Users” (target) containing a DataGrid with columns: Name, Email, Role, Last seen.
+
+    - Section 2: “Pending Invitations” (distractor) containing a DataGrid with columns: Email, Invited by, Role, Sent.
+
+    - Both grids include a “Role” column, increasing disambiguation load.
+
+    - Initial state: both grids unsorted.
+
+    - Sorting is done by clicking the column header in the correct grid.
+
+
+    Clutter: low (a few toggle switches above each grid; no modals).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires disambiguating between two similar DataGrids and sorting the correct Role column.
+  success_trigger:
+    human_readable:
+    - 'Active Users grid sort model is: role ascending.'
+    - Pending Invitations grid remains unsorted.
+    - No multi-sort on either grid.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          active_users:
+            sort_model:
+            - column_key: role
+              direction: asc
+              priority: 1
+          pending_invitations:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Active Users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Role in Pending Invitations instead of Active Users.
+  - Active Users Role sorted descending.
+  - Both grids are sorted.
+  - Sorting a different column (e.g., Last seen) in Active Users.
+  expected_interaction_path:
+  - Locate the Active Users section and its grid.
+  - Click the Role column header until ascending is active.
+  - Verify Pending Invitations grid did not change.
+  notes: Give each grid a stable id (e.g., data-testid='grid-active-users' / 'grid-pending-invitations') and expose current sort_model for checking.
+- id: data_table_sortable-mui-T15
+  name: 'Dense table: sort Hours high→low (compact)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: table_sort_label
+  implementation_component: 'MUI: Table (dense) + TableSortLabel (composed)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Timesheets table, set sorting on the Hours column to highest to lowest. The task will finish automatically when done.
+  ui_copy: 'Timesheets: sort Hours (high → low).'
+  setup_description: 'A compact-density MUI Table (dense padding) in an isolated card titled “Timesheets”.
+
+
+    - Spacing: compact (dense table variant); header padding and sort target are smaller than baseline.
+
+    - Scale: small (table font size slightly reduced).
+
+    - Columns: Employee, Project, Hours, Week.
+
+    - The Hours header uses TableSortLabel (arrow icon appears only when active).
+
+    - Initial state: unsorted.
+
+    - There are many rows (~25) so the table body scrolls inside the card, but the header remains visible.
+
+
+    Distractors: a “Show only billable” checkbox above the table (unchecked; irrelevant).'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Compact spacing makes the sort target smaller; still a single-column sort with immediate feedback.
+  success_trigger:
+    human_readable:
+    - 'Timesheets table has active sort: hours descending.'
+    - No other columns are active/sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: hours
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Hours sorted ascending.
+  - A different numeric column sorted (e.g., Week).
+  - Sort indicator visible but Hours is not the active column.
+  - Multiple columns sorted/active.
+  expected_interaction_path:
+  - Find the Hours header cell (dense table).
+  - Click the TableSortLabel until descending is active.
+  notes: If using TableSortLabel with hideSortIcon=true, ensure the icon becomes visible when active so the agent can confirm direction.
+- id: data_table_sortable-mui-T16
+  name: 'Wide grid: scroll to Created on and sort newest→oldest (bottom-right)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid
+  implementation_component: 'MUI X: DataGrid (horizontal scroll)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Activity grid, scroll as needed to find the Created on column, then sort it from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'Activity: sort Created on (newest → oldest).'
+  setup_description: 'Single wide MUI X DataGrid titled “Activity”, positioned near the bottom-right of the viewport.
+
+
+    - The grid contains many columns (some hidden off-screen) and supports horizontal scrolling.
+
+    - The target column “Created on” is near the far right and is not initially visible.
+
+    - Sorting is enabled; clicking a column header applies sorting to that field.
+
+    - Initial state: unsorted.
+
+
+    Distractors: none outside the grid; the difficulty is locating the off-screen header in a non-centered placement.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires horizontal scrolling plus accurate header interaction in a non-centered placement.
+  success_trigger:
+    human_readable:
+    - 'Activity grid sort model is: created_on descending.'
+    - No additional sort keys are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: created_on
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Created on sorted ascending.
+  - Sorting a different timestamp column (e.g., Updated on).
+  - Failing to reach the Created on header and sorting the wrong visible column.
+  - Multiple sort keys active.
+  expected_interaction_path:
+  - Scroll horizontally within the grid until Created on header is visible.
+  - Click Created on header until descending is active.
+  notes: If the grid virtualizes columns, ensure the checker can still map header fields to column keys for sort state validation.
+- id: data_table_sortable-mui-T17
+  name: 'Payments: match reference badge sort (visual guidance)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Payments grid, set the sorting to match the Reference badge shown next to the grid. The task will finish automatically when done.
+  ui_copy: Payments grid — match the Reference sort badge.
+  setup_description: 'Single MUI X DataGrid in an isolated card titled “Payments”, with a visual reference badge.
+
+
+    - The card is centered and uses baseline theme and spacing.
+
+    - To the right of the DataGrid is a “Reference” badge that visually depicts a tiny column header mock with an arrow (no explanatory text).
+
+    - The intended reference corresponds to sorting the “Amount” column in descending order (high → low).
+
+    - DataGrid columns: Payment ID, Payer, Amount, Method, Date.
+
+    - Initial state: unsorted.
+
+
+    Distractors: a “Filter” button above the grid that opens nothing (disabled), included as realistic clutter without being adversarial.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Visual guidance requires mapping a non-text reference badge to the correct column and direction; interaction remains a single-column sort.
+  success_trigger:
+    human_readable:
+    - 'Payments grid sort model equals: amount descending.'
+    - No additional sort keys are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: amount
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Amount ascending.
+  - Sorting Date instead of Amount.
+  - Leaving the grid unsorted.
+  - Having multiple sort keys active.
+  expected_interaction_path:
+  - Inspect the Reference badge next to the grid.
+  - Identify the matching column in the grid (Amount) and apply the depicted direction.
+  - Verify the Amount header shows the correct sort arrow.
+  notes: For checker robustness, encode the intended reference in a hidden data attribute (e.g., data-reference-sort='amount:desc') so it can be audited, while still requiring the agent to act on the visible reference.
+- id: data_table_sortable-mui-T18
+  name: 'Column menu: sort Status ascending (open-and-select)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid_column_menu
+  implementation_component: 'MUI X: DataGrid (with column header menu)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Deployments grid, use the Status column’s header menu to set sorting to ascending. The task will finish automatically when done.
+  ui_copy: 'Deployments: set Status sorting to ascending (use the column menu).'
+  setup_description: 'Single MUI X DataGrid in an isolated card titled “Deployments”.
+
+
+    - Columns: Deployment, Environment, Status, Started, Duration.
+
+    - The Status column is sortable.
+
+    - Each column header includes a small “more/options” icon that opens the column menu (popover). The column menu contains explicit actions such as “Sort ascending”, “Sort descending”, and “Unsort”.
+
+    - Initial state: unsorted.
+
+
+    Distractors: the grid also has a toolbar row above it with icons (Columns, Density, Export) but they are not required for success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a small header-menu affordance and selecting the correct sort action from a popover list.
+  success_trigger:
+    human_readable:
+    - 'Deployments grid sort model is: status ascending.'
+    - No other sort items are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: status
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Status sorted descending.
+  - Sorting a different column via its menu (e.g., Started).
+  - Leaving the grid unsorted.
+  - Multiple sort keys active.
+  expected_interaction_path:
+  - Locate the Status column header.
+  - Open its column menu (kebab/more icon).
+  - Choose “Sort ascending”.
+  - Verify the Status header shows ascending.
+  notes: If the column menu icon is only visible on hover, ensure it is still discoverable in pixels/AX (e.g., keep it in DOM with visibility styles).
+- id: data_table_sortable-mui-T19
+  name: 'Server-like grid: sort Last updated newest→oldest with loading (dark)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: data_grid_server_sort
+  implementation_component: 'MUI X: DataGrid (server-side sorting simulation)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the User Sessions grid, sort the Last updated column from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'User Sessions: sort Last updated (newest → oldest).'
+  setup_description: "Dark theme scene with a single MUI X DataGrid titled “User Sessions”.\n\n- The grid supports sorting, but it is configured to simulate server-side sorting:\n  - When the sort changes, a loading overlay appears for ~1–2 seconds and the rows update after the delay.\n- Columns: User, IP address, Last updated, Status.\n- Initial state: unsorted.\n\nDistractors: a small help tooltip icon next to the title (hoverable but not required).\n\nFeedback dynamics: the key challenge is that the final sorted state should only be considered applied after the loading overlay disappears and the sort indicator remains stable."
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Server-like loading introduces timing/feedback challenges; agents must wait for the sort to settle and persist.
+  success_trigger:
+    human_readable:
+    - 'User Sessions grid sort model is: last_updated descending.'
+    - Grid is not in a loading state when evaluated (loading overlay absent).
+    - No other sort items are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: last_updated
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+        loading: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Last updated sorted ascending.
+  - Sort indicator changes but grid is still loading (not yet applied).
+  - Sorting a different timestamp column (if present).
+  - Multiple sort keys active.
+  expected_interaction_path:
+  - Click Last updated header until descending is active.
+  - Wait for the loading overlay to disappear.
+  - Confirm the descending indicator remains on Last updated.
+  notes: Expose a boolean loading state for the checker (e.g., data-loading='true/false' on the grid root) to avoid flaky timing-based checks.
+- id: data_table_sortable-mui-T20
+  name: 'Drawer: reset sorting and confirm (Inventory grid)'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: drawer_reset_confirm
+  implementation_component: 'MUI: Drawer + DataGrid + Dialog confirmation'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Inventory drawer, then click Reset sorting and confirm the reset so that the Inventory grid has no active sorting. The task will finish automatically when done.
+  ui_copy: 'Inventory (drawer): Reset sorting (confirmation required).'
+  setup_description: 'Drawer flow scene with confirmation.
+
+
+    - The main page shows a button labeled “Open Inventory”.
+
+    - Clicking it opens a right-side MUI Drawer titled “Inventory”.
+
+    - Inside the drawer is a MUI X DataGrid with columns: Item, Category, Stock, Reorder level, Updated.
+
+    - Initial state: the grid is pre-sorted by Stock descending.
+
+    - Above the grid is a text button “Reset sorting”.
+
+    - Clicking “Reset sorting” opens a MUI Dialog asking “Reset sorting for Inventory?” with buttons: Cancel and Reset.
+
+    - The sort state is only cleared when Reset is clicked (Cancel leaves the existing sort intact).
+
+
+    Distractors: the drawer also contains a non-required “Close” icon in the top-right.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires navigating drawer + dialog layering and ensuring the reset is confirmed so the grid reaches an unsorted state.
+  success_trigger:
+    human_readable:
+    - Inventory drawer is open and Inventory grid is the target instance.
+    - Reset action has been confirmed (the dialog’s “Reset” control was used, not Cancel).
+    - Inventory grid sort_model is empty (no active sorting).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay:
+          type: drawer
+          label: Inventory
+        sort_model: []
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Reset
+      require_correct_instance: true
+      target_instance_label_or_id: Inventory (drawer)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Reset sorting but dismissing the dialog (Cancel or close icon).
+  - Drawer opened but the grid remains sorted (sort_model not empty).
+  - Sorting is cleared in another grid on the page (if present) instead of Inventory.
+  - Reset confirmed but a different sort becomes active (still not empty).
+  expected_interaction_path:
+  - Click “Open Inventory” to open the drawer.
+  - Click “Reset sorting”.
+  - In the confirmation dialog, click “Reset”.
+  - Verify the grid shows no active sort indicator.
+  notes: 'Checker should verify both: (a) sort_model == [] and (b) confirmation path taken (e.g., event log or dialog control click tracked) if the implementation keeps a transient dialog state.'
+- id: data_table_sortable-mantine-T21
+  name: 'Products: sort Price low→high (Mantine composite)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table (core) + sortable header buttons (composed)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Products table, sort the Price column from lowest to highest. The task will finish automatically when done.
+  ui_copy: 'Products: sort Price (low → high).'
+  setup_description: 'Baseline Mantine scene with a single sortable table implemented as a composite:
+
+    Mantine core <Table> plus custom clickable header buttons that toggle sort direction and show an up/down chevron icon.
+
+
+    - Layout: isolated card centered.
+
+    - Columns: Product, Category, Price, Stock.
+
+    - Price header is a button-like control (e.g., UnstyledButton) that toggles sorting and displays a chevron icon indicating direction when active.
+
+    - Initial state: unsorted (no active chevron).
+
+
+    Distractors: none.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single table with a simple clickable header control and immediate visual feedback.
+  success_trigger:
+    human_readable:
+    - 'Products table active sort is: price ascending.'
+    - No other column is sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: price
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Price sorted descending.
+  - Sorting Stock instead of Price.
+  - Multiple columns sorted.
+  expected_interaction_path:
+  - Click the Price header control until ascending is active.
+  - Verify only Price shows the active chevron.
+  notes: 'Instrumentation: set aria-sort on the Price header button or expose data-sort-model on the table root for the checker.'
+- id: data_table_sortable-mantine-T22
+  name: 'Customers: sort Name Z→A (toggle)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + sortable headers (composed)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Customers table, sort the Name column from Z to A. The task will finish automatically when done.
+  ui_copy: 'Customers: sort Name (Z → A).'
+  setup_description: 'Single Mantine composite sortable table in an isolated card titled “Customers”.
+
+
+    - Baseline layout and spacing.
+
+    - Columns: Name, City, Segment, Joined.
+
+    - Name header toggles sorting state (unsorted → asc → desc).
+
+    - Initial state: unsorted.
+
+
+    Distractors: a non-required “Invite customer” button above the table.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple toggle to reach a specific direction on a single column; clear chevron feedback.
+  success_trigger:
+    human_readable:
+    - 'Customers table active sort is: name descending.'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: name
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Name sorted ascending.
+  - Sorting Joined date instead of Name.
+  - Multi-sort active.
+  expected_interaction_path:
+  - Click Name header until the descending chevron is active.
+  notes: Ensure the header control has an accessible name equal to the column label (e.g., aria-label='Sort by Name').
+- id: data_table_sortable-mantine-T23
+  name: 'Accordion: open Archived Orders and sort Order # ascending'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Accordion + Table (composed sortable headers)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: 'Expand the Archived Orders section, then sort the Order # column from lowest to highest. The task will finish automatically when done.'
+  ui_copy: 'Archived Orders: sort Order # (low → high).'
+  setup_description: 'Form section layout with an accordion disclosure controlling visibility of the target table.
+
+
+    - Layout: form_section with two accordion items: “Active Orders” and “Archived Orders”.
+
+    - The “Archived Orders” accordion item is collapsed by default (table not visible until expanded).
+
+    - Inside “Archived Orders” is a Mantine composite sortable table.
+
+    - Columns: Order #, Customer, Total, Archived on.
+
+    - Order # is sortable via clickable header control with chevron feedback.
+
+    - Initial state (once revealed): unsorted.
+
+
+    Distractors:
+
+    - The “Active Orders” accordion item contains its own content (not a table).
+
+    - There are a few non-required form toggles above the accordion.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires a simple disclosure step to reveal the table before performing a basic ascending sort.
+  success_trigger:
+    human_readable:
+    - 'Archived Orders table is present (section disclosed) and has active sort: order_id ascending.'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        container_disclosed: true
+        sort_model:
+        - column_key: order_id
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archived Orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting while the Archived Orders section remains collapsed (no effect).
+  - 'Sorting Order # descending.'
+  - Sorting the wrong table/section (if any other table exists).
+  - Multi-sort active.
+  expected_interaction_path:
+  - Click the Archived Orders accordion header to expand it.
+  - 'Click the Order # header control until ascending is active.'
+  notes: Checker should ensure the correct accordion panel is expanded (e.g., aria-expanded=true) and then validate sort_model.
+- id: data_table_sortable-mantine-T24
+  name: 'Billing: sort Invoices by Due date earliest→latest (two tables)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + sortable headers (composed)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Invoices table (not the Payments table), sort the Due date column from earliest to latest. The task will finish automatically when done.
+  ui_copy: 'Invoices: sort Due date (earliest → latest).'
+  setup_description: "Billing page form section with two Mantine composite sortable tables.\n\n- Layout: form_section with two cards stacked:\n  1) “Invoices” (target table)\n  2) “Payments” (distractor table)\n- Both tables include a “Due date”/“Date” style column and similar numeric columns, increasing disambiguation.\n- Each sortable header is a clickable control with a chevron icon indicating direction.\n- Initial state: both tables unsorted.\n\nClutter: low (a couple of summary pills like “Outstanding balance” above the tables)."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Two similar table instances require careful disambiguation to apply the sort to the correct Due date header.
+  success_trigger:
+    human_readable:
+    - 'Invoices table active sort is: due_date ascending.'
+    - Payments table remains unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          invoices:
+            sort_model:
+            - column_key: due_date
+              direction: asc
+              priority: 1
+          payments:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invoices
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting the Payments table instead of Invoices.
+  - Due date sorted descending in Invoices.
+  - Both tables sorted.
+  - Sorting a different date column (e.g., Issued on) instead of Due date.
+  expected_interaction_path:
+  - Identify the card titled Invoices.
+  - Click Due date header until ascending is active.
+  - Check the Payments table was not modified.
+  notes: Assign stable instance ids (table-invoices, table-payments) and map card title text to instance id for the checker.
+- id: data_table_sortable-mantine-T25
+  name: 'Compact wide table: scroll to Last updated and sort newest→oldest'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea
+  implementation_component: 'Mantine: ScrollArea + Table (composed sortable headers)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Deployments table, scroll as needed to find the Last updated column, then sort it from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'Deployments: sort Last updated (newest → oldest).'
+  setup_description: 'A single Mantine composite sortable table wrapped in a horizontal ScrollArea.
+
+
+    - Spacing: compact and scale: small (denser header and smaller sort chevrons).
+
+    - The table has many columns (Deployment, Service, Region, Version, Owner, Status, Last updated, Notes…).
+
+    - Last updated is near the far right; horizontal scrolling is required to reveal it.
+
+    - Sorting is triggered by clicking the Last updated header control (chevron indicates direction when active).
+
+    - Initial state: unsorted.
+
+
+    Distractors: none outside the table; the main challenge is horizontal scroll + precise header interaction.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Dense layout and horizontal scrolling make the target header harder to acquire; still single-column sorting with immediate feedback.
+  success_trigger:
+    human_readable:
+    - 'Deployments table active sort is: last_updated descending.'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: last_updated
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Last updated sorted ascending.
+  - Sorting a nearby column (e.g., Status) after scrolling.
+  - Not scrolling enough and sorting an on-screen column instead.
+  - Multi-sort active.
+  expected_interaction_path:
+  - Use the horizontal ScrollArea to reveal the Last updated header.
+  - Click Last updated until descending is active.
+  notes: To keep this as an interaction task, ensure the column label is clearly visible once scrolled into view (avoid truncated header text).
+- id: data_table_sortable-mantine-T26
+  name: 'Leads: match reference preview order (visual)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + sortable headers (composed)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Leads table match the Reference preview shown on the page. The task will finish automatically when done.
+  ui_copy: Leads table — match the Reference preview order.
+  setup_description: "Single Mantine composite sortable table titled “Leads” with a visual reference preview.\n\n- Layout: isolated card centered.\n- The main Leads table columns: Lead, Company, Score, Last contact.\n- Sorting is done by clicking sortable header controls (chevrons for direction).\n- To the right of the table is a “Reference preview” mini-card that shows:\n  - the header “Score” with a downward arrow icon, and\n  - a tiny 3-row preview list of the top leads as they should appear.\n- The reference contains no explicit text like “sort descending”; it is conveyed visually.\n- Initial state: Leads table unsorted.\n\nDistractors: a search input above the table that is present but not required."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Visual reference requires interpreting a header+arrow preview and applying the equivalent sort to the table.
+  success_trigger:
+    human_readable:
+    - 'Leads table active sort is: score descending.'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: score
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Score sorted ascending.
+  - Sorting Last contact instead of Score.
+  - Leaving the table unsorted.
+  - Multi-sort active.
+  expected_interaction_path:
+  - Inspect the Reference preview card (header mock + arrow).
+  - Apply the corresponding sort on the Score header in the main table.
+  - Verify the Score chevron indicates descending.
+  notes: Optionally include a hidden data attribute on the reference preview (e.g., data-ref-sort='score:desc') for debugging, but the agent must rely on visible cues.
+- id: data_table_sortable-mantine-T27
+  name: 'Dark dashboard: sort Pipelines by Win probability high→low (3 tables)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite_dashboard
+  implementation_component: 'Mantine: Table cards with sortable header controls (composed)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Pipelines table (not Deals or Accounts), sort the Win probability column from highest to lowest. The task will finish automatically when done.
+  ui_copy: 'Pipelines table: sort Win probability (high → low).'
+  setup_description: "High-clutter, dark-theme dashboard with three Mantine composite sortable tables.\n\n- Layout: dashboard with a top navigation bar, KPI tiles, and three table cards in the main area.\n- Table instances:\n  1) “Pipelines” (target)\n  2) “Deals” (distractor)\n  3) “Accounts” (distractor)\n- Each table has a percentage-like column, increasing confusability (e.g., Win probability, Discount %, Churn risk).\n- Sorting is done through clickable header controls with small chevrons.\n- Initial state: all tables unsorted.\n- Placement: the main table region begins near the top-left of the viewport.\n\nFeedback: immediate (no loading), but dark theme reduces contrast between inactive and active chevrons."
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Dark, high-clutter dashboard with three similar tables; requires precise target acquisition and correct-instance disambiguation.
+  success_trigger:
+    human_readable:
+    - 'Pipelines table active sort is: win_probability descending.'
+    - Deals and Accounts tables remain unsorted.
+    - No multi-sort is active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          pipelines:
+            sort_model:
+            - column_key: win_probability
+              direction: desc
+              priority: 1
+          deals:
+            sort_model: []
+          accounts:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Pipelines
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Deals or Accounts instead of Pipelines.
+  - Pipelines sorted ascending (low → high).
+  - Pipelines sorted correctly but another table is also sorted (should not count as success).
+  - Sorting a different % column in Pipelines (e.g., Conversion %).
+  expected_interaction_path:
+  - Identify the Pipelines table card by its title.
+  - Locate the Win probability header and click until descending is active.
+  - Verify other tables remain unsorted.
+  notes: Use clear card titles and stable data-testid per table for the checker; ensure header controls have accessible names for AX-tree agents.
+- id: data_table_sortable-mantine-T28
+  name: 'Modal: open Manage Sessions and sort Last activity newest→oldest'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite_modal
+  implementation_component: 'Mantine: Modal + Table (composed sortable headers)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Manage Sessions modal, then sort the Last activity column from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'Manage Sessions (modal): sort Last activity (newest → oldest).'
+  setup_description: 'Modal flow scene where the sortable table is only available in a modal.
+
+
+    - The page shows a settings card with a button labeled “Manage Sessions”.
+
+    - Clicking it opens a Mantine Modal titled “Manage Sessions”.
+
+    - Inside the modal is a small-scale table (smaller font and tighter padding) listing active sessions.
+
+    - Columns: Device, Location, Last activity, Status.
+
+    - Last activity header is sortable via a clickable header control with chevron direction.
+
+    - Initial state: unsorted.
+
+
+    Distractors: modal includes a “Close” button and an X icon; neither is required for success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a modal overlay and performing a precise header interaction in a smaller-scale table.
+  success_trigger:
+    human_readable:
+    - Manage Sessions modal is open and the modal table is the active instance.
+    - 'Modal table active sort is: last_activity descending.'
+    - No other columns are sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay:
+          type: modal
+          label: Manage Sessions
+        sort_model:
+        - column_key: last_activity
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Manage Sessions (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Not opening the modal (no access to the table).
+  - Last activity sorted ascending.
+  - Sorting a different column (e.g., Location).
+  - Multi-sort active.
+  expected_interaction_path:
+  - Click “Manage Sessions” to open the modal.
+  - Click Last activity header until descending is active.
+  notes: Checker should scope to the modal subtree and verify the modal is open before evaluating sort_model.
+- id: data_table_sortable-mantine-T29
+  name: 'Dashboard: sort Expense Claims by Submitted newest→oldest (two tables, bottom-right)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite_dashboard
+  implementation_component: 'Mantine: Table cards with sortable headers (composed)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Expense Claims table (not Travel Requests), sort the Submitted column from newest to oldest. The task will finish automatically when done.
+  ui_copy: 'Expense Claims: sort Submitted (newest → oldest).'
+  setup_description: "Medium-clutter dashboard with two similar Mantine composite sortable tables positioned toward the bottom-right.\n\n- Two table cards are shown side-by-side:\n  - “Expense Claims” (target)\n  - “Travel Requests” (distractor)\n- Both tables include a date column and a status column.\n- Initial state: Expense Claims is pre-sorted by Status ascending (an active chevron is visible on Status). Travel Requests is unsorted.\n- The task requires switching the active sort to Submitted descending (newest first) on Expense Claims. The implementation uses a single-sort mode: applying a new sort clears the previous one.\n- Submitted header control may be partially truncated (“Submitted…”) due to narrow card width.\n\nDistractors: KPI tiles and a date-range pill above the tables (not required)."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires disambiguating between two similar tables and changing an existing sort to a different column/direction in a constrained bottom-right placement.
+  success_trigger:
+    human_readable:
+    - 'Expense Claims table has active sort: submitted descending.'
+    - Expense Claims has exactly one active sort key (Status is no longer sorted).
+    - Travel Requests table remains unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          expense_claims:
+            sort_model:
+            - column_key: submitted
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          travel_requests:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Expense Claims
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Travel Requests instead of Expense Claims.
+  - Expense Claims Submitted sorted ascending.
+  - Expense Claims still sorted by Status (sort not switched).
+  - Both tables sorted.
+  - Multi-sort active (more than one sort key).
+  expected_interaction_path:
+  - Identify the Expense Claims card.
+  - Click Submitted header until descending is active (and Status sort clears).
+  - Verify Travel Requests remains unsorted.
+  notes: If header text is truncated, ensure the full column label is available in accessible name (aria-label) to support AX-tree agents.
+- id: data_table_sortable-mantine-T30
+  name: 'Header menu: sort Score descending (open-and-select, compact)'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: composite_header_menu
+  implementation_component: 'Mantine: Table + ActionIcon menu per header (popover)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Leaderboard table, open the Score column menu and choose the option to sort from highest to lowest. The task will finish automatically when done.
+  ui_copy: 'Leaderboard: Score → sort highest to lowest (use column menu).'
+  setup_description: "A compact, embedded table-cell style layout with a Mantine composite sortable table that uses per-column header menus.\n\n- Layout: table_cell (the Leaderboard table is embedded inside a bordered cell-like container, similar to a spreadsheet widget).\n- Spacing: compact; header row height is small.\n- Columns: Player, Score, Streak.\n- Each header cell has a small menu icon (three dots ActionIcon). Clicking it opens a Popover menu with actions:\n  - Sort ascending\n  - Sort descending\n  - Clear sort\n- The Score column is the target. The menu icon is small and close to the header text.\n- Initial state: unsorted.\n\nDistractors: the same header menu icons exist for Player and Streak, and the popover closes if you click outside."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small header menu targets plus a popover selection step make this a high-precision, multi-layer interaction.
+  success_trigger:
+    human_readable:
+    - 'Leaderboard table sort_model is: score descending.'
+    - No additional sort keys are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column_key: score
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Score ascending.
+  - Opening the wrong column’s menu (Player/Streak) and sorting that column instead.
+  - Leaving the table unsorted.
+  - Multiple sort keys active.
+  expected_interaction_path:
+  - Locate the Score header cell.
+  - Click the Score header menu (three dots) to open the popover.
+  - Choose “Sort descending”.
+  - Verify the Score header indicates descending sort.
+  notes: For instrumentation, assign unique data-testid to each header menu button (e.g., header-menu-score) and mirror current sort_model on the table root.

@@ -1,0 +1,1870 @@
+- id: window_splitter-antd-T01
+  name: Resize sidebar to 30% (basic)
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the Sidebar pane is 30% of the available width. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Sidebar width target: 30%'
+  setup_description: 'A single isolated card is centered in the viewport titled “Primary splitter”. Inside the card is an Ant Design Splitter in its default (horizontal) layout with two side-by-side panes: the left pane is labeled “Sidebar” and the right pane is labeled “Main”. The splitter bar is visible between panes with the default draggable hit area and a subtle grip indicator. Below the splitter, a live text readout updates while dragging: “Sidebar: 50% • Main: 50%” (starting state). No other interactive elements are required; the only meaningful change is the splitter position.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single splitter with a generous percentage target and a live readout; requires only a straightforward drag and release.
+  success_trigger:
+    human_readable:
+    - The Primary splitter’s orientation is horizontal (left/right panes).
+    - The Sidebar (left) pane width is 30% of the splitter container width within an absolute tolerance of ±5 percentage points.
+    - No confirmation button is required; the live splitter state is used.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.3
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.05
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sidebar ends up noticeably different than 30% (outside the allowed tolerance), even if it looks close.
+  - The divider is dragged but released back near the starting 50/50 position.
+  - Any change to non-target UI elements (if present) without achieving the target splitter state.
+  expected_interaction_path:
+  - Hover the splitter bar until the resize cursor appears.
+  - Drag the bar left/right while watching the percentage readout.
+  - Release when the Sidebar readout is about 30%.
+  notes: 'Instrumentation: add data-testid=''splitter-primary'' on the Splitter root; expose computed pane fractions via DOM text readout for debugging.'
+- id: window_splitter-antd-T02
+  name: Collapse the Details pane (collapsible handle)
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (collapsible)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Collapse the Details pane in the Primary splitter (use the collapse control on the divider). The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Action: Collapse Details pane'
+  setup_description: 'A centered isolated card titled “Primary splitter” contains an Ant Design Splitter configured with `collapsible` enabled. Two side-by-side panes are shown: the left pane is labeled “Editor” and the right pane is labeled “Details”. The splitter handle includes the standard collapsible chevron controls on the bar. Initial state: both panes are expanded (about 60% Editor / 40% Details). A small status line under the component reads: “Details: Expanded” and flips to “Details: Collapsed” when the right pane collapses.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires triggering a built-in collapse state via a clearly indicated control; no numeric precision is required.
+  success_trigger:
+    human_readable:
+    - The Primary splitter’s right pane (Details) is in the collapsed state.
+    - The checker confirms the collapsed flag/state for the right pane (not merely a smaller size).
+    - No confirmation button is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        orientation: horizontal
+        collapsed_panels:
+        - right
+        collapse_state: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only shrinking the Details pane without entering the component’s collapsed state.
+  - Collapsing the Editor (left) pane instead of the Details (right) pane.
+  - Collapsing the correct pane but immediately expanding it again (final state must be collapsed).
+  expected_interaction_path:
+  - Locate the chevron/collapse control on the divider.
+  - Click the control that collapses the right (Details) pane.
+  - 'Verify the status text changes to “Details: Collapsed”.'
+  notes: 'Checker hint: treat a pane as ''collapsed'' using the component''s internal collapsed state or a data attribute (preferred) rather than a raw pixel threshold.'
+- id: window_splitter-antd-T03
+  name: Reset to equal split using divider control
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (custom handle with reset)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Primary splitter so both panes are equal (50% / 50%) using the Reset control on the divider. The task will finish automatically when done.
+  ui_copy: Primary splitter — Reset layout to 50/50
+  setup_description: 'A centered isolated card titled “Primary splitter” contains an Ant Design Splitter with two panes (“Left pane” and “Right pane”). The initial layout is intentionally uneven: Left pane about 70%, Right pane about 30%. The splitter handle is customized to include a small inline control labeled “Reset” (a circular arrow icon with text) embedded on the bar itself. A percentage readout below the splitter shows the current sizes to one decimal place. Clicking the embedded Reset control immediately restores the default equal split.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The intent is simple (restore default), but the reset control is a smaller target embedded on the divider.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is in horizontal (left/right) mode.
+    - Both panes are equal within ±2 percentage points (i.e., ~50% / 50%).
+    - The final state must be non-collapsed (both panes visible).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.5
+        unit: fraction_of_container
+        require_both_visible: true
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging the divider near 50/50 but leaving it outside the tolerance.
+  - Clicking Reset but ending with a collapsed pane (must restore a normal split).
+  - Resetting a different (non-existent) control outside the divider (if any decorative buttons exist).
+  expected_interaction_path:
+  - Find the “Reset” control embedded on the splitter bar.
+  - Click Reset once.
+  - Verify the readout shows about 50% / 50%.
+  notes: 'Implementation note: this uses AntD Splitter ''customize handle elements'' style; ensure the reset control is inside the splitter bar DOM so it is counted as part of the component.'
+- id: window_splitter-antd-T04
+  name: Set sidebar width within a pixel range
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (fixed container width)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the Sidebar pane is between 300 and 340 pixels wide. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Sidebar width target: 300–340 px'
+  setup_description: 'A centered isolated card titled “Primary splitter” contains an Ant Design Splitter inside a fixed-width container (exactly 800 px wide). Two panes are side-by-side: “Sidebar” on the left and “Content” on the right. Below the splitter is a live pixel readout: “Sidebar width: 400 px” (starting state) that updates continuously while dragging. The splitter bar is the default AntD bar; there is no Apply button. The rest of the page is empty to keep the interaction focused.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Uses a wide acceptable range and provides a pixel readout; the main action is a simple drag.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - The Sidebar (left) pane width in pixels is within [300, 340] (inclusive) at the final state.
+    - No confirmation action is required.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        orientation: horizontal
+        measure: pane_px
+        pane: left
+        min_value: 300
+        max_value: 340
+        unit: px
+      tolerance:
+        type: measurement_jitter_px
+        value: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sidebar width ends up below 300 px or above 340 px.
+  - Sidebar width is in range while dragging but ends outside the range after releasing the mouse.
+  - Changing browser zoom or other non-component settings instead of resizing the splitter.
+  expected_interaction_path:
+  - Drag the splitter bar left until the pixel readout approaches the target range.
+  - Fine-adjust the drag and release when the readout is between 300 and 340 px.
+  notes: 'Checker: compute the left pane''s content box width from DOM bounding box; use the fixed 800 px container to avoid responsive drift.'
+- id: window_splitter-antd-T05
+  name: 'Vertical split: make chart area 65% height'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (vertical layout)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, resize the horizontal divider so the Chart pane (top) is 65% of the height. The task will finish automatically when done.
+  ui_copy: 'Primary splitter (vertical) — Chart height target: 65%'
+  setup_description: 'The page is a settings_panel layout with a left navigation column (non-functional) and a main content area. In the main area, a card titled “Primary splitter” contains an Ant Design Splitter configured in vertical layout (top/bottom panes). The top pane is labeled “Chart” and the bottom pane is labeled “Table”. A horizontal splitter bar separates them. A readout beneath the component shows: “Chart: 50% height • Table: 50% height” and updates continuously while dragging.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Vertical resizing is slightly less common and the target is more specific; additional surrounding settings add mild distraction.
+  success_trigger:
+    human_readable:
+    - The Primary splitter orientation is vertical (top/bottom panes).
+    - The Chart (top) pane height is 65% of the splitter container height within ±3 percentage points.
+    - No confirmation button is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: vertical
+        measure: primary_pane_fraction
+        primary_pane: top
+        value: 0.65
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Chart height ends outside the tolerance (e.g., 60% or 70%).
+  - Resizing causes the Table pane to collapse (must remain a normal split).
+  - Interacting with unrelated settings controls without achieving the target layout.
+  expected_interaction_path:
+  - Locate the horizontal splitter bar between Chart and Table.
+  - Drag the bar downward until the Chart readout is about 65%.
+  - Release to finalize the split.
+  notes: 'Robustness: includes surrounding settings UI; ensure checker targets the Splitter in the “Primary splitter” card only.'
+- id: window_splitter-antd-T06
+  name: 'Two splitters: resize the Workspace split to 25%'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (multiple instances)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, adjust the Workspace split (labeled “Primary — Workspace”) so the Files pane is 25% of the width. The task will finish automatically when done.
+  ui_copy: 'Dashboard — Primary — Workspace: Files width target 25%'
+  setup_description: The page uses a dashboard layout with two cards in a grid, each containing an Ant Design Splitter of the same style. Card A is labeled “Primary — Workspace” and contains panes “Files” (left) and “Editor” (right). Card B is labeled “Secondary — Logs” and contains panes “Stream” (left) and “Details” (right). Both splitters start at approximately 50/50 and both have similar looking resize bars and readouts. Each card has its own size readout directly beneath its splitter. Only the split ratio of the Workspace splitter should determine success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires selecting the correct splitter among two similar instances; otherwise the resizing itself is straightforward.
+  success_trigger:
+    human_readable:
+    - The correct splitter instance is the one labeled “Primary — Workspace”.
+    - Within that instance, the Files (left) pane width is 25% of its container within ±3 percentage points.
+    - Changes to the Secondary — Logs splitter must not count as success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.25
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary — Workspace
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the Secondary — Logs splitter to the correct ratio while leaving the Workspace split unchanged.
+  - Files pane ends up outside the tolerance (e.g., 30% or 20%).
+  - Achieving the correct ratio transiently while dragging but ending in the wrong final state.
+  expected_interaction_path:
+  - Locate the card labeled “Primary — Workspace”.
+  - Drag its splitter bar until the Files readout is about 25%.
+  - Release to set the final layout.
+  notes: 'Instrumentation: attach data-testid to each Splitter root using the card label (e.g., splitter-workspace, splitter-logs) and ensure checker targets splitter-workspace.'
+- id: window_splitter-antd-T07
+  name: 'Modal apply: set Preview to 35% then Apply'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (controlled in modal)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Layout Editor modal, set the Preview pane to 35% of the width, then click Apply layout. The task will finish automatically when done.
+  ui_copy: 'Layout Editor — Preview width target: 35% (must Apply)'
+  setup_description: 'The page uses a modal_flow layout in dark theme. In the center is a button labeled “Open Layout Editor”. Clicking it opens an Ant Design Modal titled “Layout Editor”. Inside the modal is a controlled AntD Splitter with two panes: “Editor” (left) and “Preview” (right). The splitter starts at 50/50. A readout inside the modal footer shows “Editor: 50% • Preview: 50%” and updates while dragging. Below the readout are two buttons: “Cancel” and a primary button “Apply layout”. Resizing changes are considered “pending” until Apply layout is clicked; the page shows a small badge “Not applied” until then.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires an extra layer (modal) and an explicit Apply step; success depends on committed state rather than transient drag state.
+  success_trigger:
+    human_readable:
+    - The Layout Editor modal is open.
+    - The Preview (right) pane width is 35% of the modal splitter container within ±2 percentage points.
+    - The committed (applied) layout must match the target; clicking “Apply layout” is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_secondary_pane_fraction
+        secondary_pane: right
+        value: 0.35
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: true
+      confirm_control: Apply layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Preview to ~35% but not clicking “Apply layout”.
+  - Clicking “Apply layout” with Preview outside the tolerance.
+  - Clicking “Cancel” after making the correct adjustment (final committed state must be correct).
+  expected_interaction_path:
+  - Click “Open Layout Editor” to open the modal.
+  - Drag the splitter bar until the Preview readout is about 35%.
+  - Click “Apply layout”.
+  notes: 'Checker note: distinguish live layout vs applied layout (e.g., store applied sizes in state and expose via data attribute like data-committed-layout).'
+- id: window_splitter-antd-T08
+  name: 'Three-pane IDE layout: match 25/50/25'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (multiple panels)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: 'In the Primary splitter, match the pane sizes to the reference preview: Files 25%, Editor 50%, Console 25%. The task will finish automatically when done.'
+  ui_copy: Primary splitter — Match reference (Files 25% / Editor 50% / Console 25%)
+  setup_description: 'A centered isolated card titled “Primary splitter” contains an Ant Design Splitter configured with three horizontal panes (multiple panels). Pane labels appear in each pane header: “Files” (left), “Editor” (middle), and “Console” (right). There are two resize handles: one between Files↔Editor and one between Editor↔Console. The scene uses compact spacing and the component is rendered in a small scale variant, making the handles visually thinner. To the right of the splitter card is a small non-interactive reference diagram labeled “Target layout” showing the desired 25/50/25 proportions. A compact readout under the splitter lists current sizes for all three panes (e.g., “Files: 33% • Editor: 34% • Console: 33%”).'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Two similar handles must be adjusted to satisfy three simultaneous size targets; compact+small rendering increases acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The Primary splitter has three panes in horizontal (left/right) arrangement.
+    - Final pane fractions match Files=25%, Editor=50%, Console=25% within ±3 percentage points for each pane.
+    - Both resize operations must affect the same splitter instance (Primary).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: pane_fractions
+        pane_order:
+        - Files
+        - Editor
+        - Console
+        values:
+        - 0.25
+        - 0.5
+        - 0.25
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one handle is moved so one of the outer panes remains far from 25%.
+  - The three panes add up correctly visually but one pane is outside tolerance (e.g., 22/53/25).
+  - Accidentally collapsing a pane (if collapse behavior is enabled) instead of achieving the target proportions.
+  expected_interaction_path:
+  - Use the left handle to set Files near 25%.
+  - Use the right handle to set Console near 25% (which also sets Editor near 50%).
+  - Check the three-value readout and fine-adjust if needed.
+  notes: 'Checker: compute each pane’s bounding box along the horizontal axis and normalize by container width; ignore handle thickness.'
+- id: window_splitter-antd-T09
+  name: 'Lazy resize: set Preview to 40% (updates on release)'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (lazy mode)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, set the Preview pane to 40% of the width. The size readout only updates after you release the divider. The task will finish automatically when done.
+  ui_copy: 'Primary splitter (lazy) — Preview width target: 40%'
+  setup_description: 'The page uses a form_section layout titled “Report builder” with several realistic but non-required controls (text inputs and checkboxes) above the main preview area. In the main area is a card labeled “Primary splitter” containing an Ant Design Splitter configured in lazy mode: dragging shows a ghost divider, but the actual pane sizes and the numeric readout only update when the pointer is released. Two horizontal panes are shown: “Fields” (left) and “Preview” (right). Initial state is 50/50. A readout line under the splitter displays “Preview: 50%” and updates only on drag end. Spacing is compact to increase density around the splitter.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 5
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Lazy mode removes continuous feedback and forces iterative drag–release adjustments amid mild form clutter.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - After the drag is released (final applied size), the Preview (right) pane is 40% of container width within ±2 percentage points.
+    - Success is evaluated on the final committed size after pointer release (not transient drag position).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: secondary_pane_fraction
+        secondary_pane: right
+        value: 0.4
+        unit: fraction_of_container
+        evaluated_on: resize_end
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Preview ends up at 38% or 43% (outside tolerance) even if it looked close during dragging.
+  - Stopping mid-drag without releasing the pointer (lazy mode requires release to apply).
+  - Resizing the wrong region (e.g., trying to resize the card) instead of the splitter bar.
+  expected_interaction_path:
+  - Drag the divider toward the target position.
+  - Release to apply and update the readout.
+  - Repeat small adjustments until the readout shows about 40%.
+  notes: AntD Splitter supports lazy mode per docs; implement by updating layout only on drag end and exposing the final percent in a stable text node for the checker.
+- id: window_splitter-antd-T10
+  name: 'Visual-only: match the target split image (70/30)'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (minimal UI)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, adjust the divider so the panes match the target layout shown in the reference image. The task will finish automatically when done.
+  ui_copy: Primary splitter — Match the reference layout image
+  setup_description: A centered isolated card titled “Primary splitter” is shown in dark theme with standard spacing. The card contains a two-pane Ant Design Splitter (left pane “A”, right pane “B”). To emphasize visual matching, the UI does NOT show a numeric percent readout; instead it shows a small static reference thumbnail labeled “Target layout” directly below the splitter. The reference thumbnail depicts pane A clearly wider than pane B (approximately a 70/30 split). The splitter handle is the standard bar; the only feedback is the relative visual widths of the panes.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: No textual state is provided; the agent must infer the correct ratio from a visual reference with a tight acceptance tolerance.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - Pane A (left) occupies ~70% of the width within ±1.5 percentage points.
+    - No confirmation action is required; the final live layout is checked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        orientation: horizontal
+        reference_id: ref_70_30
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.7
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.015
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Pane A ends up close but outside tolerance (e.g., 67% or 73%).
+  - Pane widths match the reference transiently while dragging but end outside tolerance on release.
+  - Changing theme/zoom or other page settings instead of resizing the divider.
+  expected_interaction_path:
+  - Compare the live pane widths to the reference thumbnail.
+  - Drag the divider until the live layout visually matches the reference.
+  - Release and (if needed) make small adjustments.
+  notes: 'Checker: compute left pane fraction from bounding boxes; do not rely on the absence/presence of a readout since this task intentionally hides numeric state.'
+- id: window_splitter-mui-T11
+  name: Resize list pane to 40% (basic)
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (PanelGroup/Panel/PanelResizeHandle)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the List pane is 40% of the available width. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — List width target: 40%'
+  setup_description: 'A centered isolated card titled “Primary splitter” uses MUI styling but the resizable behavior is implemented with the external `react-resizable-panels` library. Two side-by-side panels are labeled “List” (left) and “Details” (right). The resize handle is an 8px-wide bar with a dotted grip; it has `role="separator"` for accessibility. A live text readout below the panels shows “List: 50% • Details: 50%” at start and updates continuously while dragging.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single handle with continuous feedback and a generous tolerance; core challenge is basic dragging.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - The List (left) pane width is 40% within ±5 percentage points.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.4
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.05
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - List pane ends outside tolerance after release.
+  - Resizing is performed but the final layout remains near 50/50.
+  - Interacting with non-splitter UI (if any) without achieving the target split.
+  expected_interaction_path:
+  - Drag the resize handle left/right while watching the percentage readout.
+  - Release when List is about 40%.
+  notes: react-resizable-panels emits data attributes (data-group/data-panel/role=separator). Add stable ids (e.g., id='mui-primary') for the checker to locate the correct PanelGroup.
+- id: window_splitter-mui-T12
+  name: Double-click handle to reset to 50/50
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (with double-click reset handler)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Primary splitter back to its default equal layout (50% / 50%) by double-clicking the divider. The task will finish automatically when done.
+  ui_copy: Primary splitter — Double-click divider to reset
+  setup_description: 'A centered isolated card titled “Primary splitter” contains a two-panel resizable layout (react-resizable-panels styled with MUI). Initial state is uneven: “Pane A” is about 70% and “Pane B” is about 30%. A helper hint directly under the handle says “Tip: Double-click the divider to reset”. The handle listens for a double-click event and restores the default layout (50/50). A live readout beneath the panels shows the current percentages.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Reset is a single action with clear hinting; the only nuance is performing a double-click on the handle.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - After reset, Pane A is 50% within ±2 percentage points (equivalently Pane B is 50% ±2%).
+    - No Apply/Save is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.5
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Single-clicking the handle (no reset) and leaving the layout uneven.
+  - Dragging near 50/50 but ending outside tolerance.
+  - Resetting other UI state without changing the splitter layout.
+  expected_interaction_path:
+  - Locate the divider between the two panes.
+  - Double-click the divider.
+  - Confirm the readout shows about 50% / 50%.
+  notes: This task uses an explicit double-click handler on the PanelResizeHandle; expose a data attribute like data-reset-supported='true' for debugging.
+- id: window_splitter-mui-T13
+  name: Collapse the Sidebar by dragging until it snaps closed
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (collapsible left panel)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Collapse the Sidebar panel in the Primary splitter by resizing it all the way closed. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Action: Collapse Sidebar'
+  setup_description: 'A centered isolated card titled “Primary splitter” contains a two-panel layout: “Sidebar” (left) and “Workspace” (right). The Sidebar panel is configured as collapsible: when resized below its minimum, it snaps to a collapsed size (0%). A status chip under the layout reads “Sidebar: Expanded” initially and changes to “Sidebar: Collapsed” when the snap-collapse occurs. The resize handle is the only interactive control needed for the task.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Goal is a discrete collapsed state, but it requires dragging to a snapping threshold rather than clicking a dedicated button.
+  success_trigger:
+    human_readable:
+    - The Primary splitter’s Sidebar (left) panel is in the collapsed state (snapped).
+    - The checker detects a collapsed flag/state (preferred) or a near-zero size consistent with collapse behavior.
+    - Final state must be collapsed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        orientation: horizontal
+        collapsed_panels:
+        - left
+        collapse_state: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sidebar is only made small but not snapped into the collapsed state.
+  - Workspace (right) is collapsed instead of Sidebar (left).
+  - Sidebar is collapsed but then expanded again before finishing.
+  expected_interaction_path:
+  - Drag the divider toward the far left until the Sidebar snaps closed.
+  - 'Verify the status chip shows “Sidebar: Collapsed”.'
+  notes: If using react-resizable-panels, collapse can be represented via a data attribute or stored state when panel size reaches collapsedSize; prefer explicit state over pixel heuristics.
+- id: window_splitter-mui-T14
+  name: Set sidebar between 20% and 25% (narrow range)
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the Sidebar pane is between 20% and 25% of the width. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Sidebar width target: 20–25%'
+  setup_description: 'The page is a form_section layout labeled “Layout settings” with a few non-required MUI inputs above (theme selector, checkboxes). Within the section is a card titled “Primary splitter” containing a two-panel resizable layout: “Sidebar” (left) and “Content” (right). A compact readout beneath the panels shows current percentages to one decimal place and updates live. The acceptable target is a relatively narrow band (20–25%), encouraging fine adjustment.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: A narrower acceptable range increases precision demands; surrounding form UI adds mild distraction.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - Sidebar (left) pane fraction is within [0.20, 0.25] at the final state.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        min_value: 0.2
+        max_value: 0.25
+        unit: fraction_of_container
+      tolerance:
+        type: measurement_jitter
+        value: 0.005
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sidebar ends below 20% or above 25% after releasing the handle.
+  - Achieving the range while dragging but ending outside the range.
+  - Resizing other page elements instead of the splitter.
+  expected_interaction_path:
+  - Drag the handle left/right while monitoring the percent readout.
+  - Release when Sidebar is within 20–25%.
+  notes: Consider exposing the current normalized fraction in an aria-valuenow on the separator for easier a11y-based checking.
+- id: window_splitter-mui-T15
+  name: 'Two splitters: adjust the Chat Split (Secondary) to 60%'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (two instances)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Chat Split (labeled “Secondary — Chat Split”), resize the divider so the Conversation pane is 60% of the width. The task will finish automatically when done.
+  ui_copy: 'Dashboard — Secondary — Chat Split: Conversation 60%'
+  setup_description: The page uses a dashboard layout with two nearly identical resizable cards stacked vertically. The first card is labeled “Primary — Email Split” with panes “Folders” and “Message”. The second card is labeled “Secondary — Chat Split” with panes “Conversation” and “Info”. Both use the same handle styling and both show a similar percent readout under the panels. Initial state for both is 50/50. Only the Secondary — Chat Split should be modified for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The main difficulty is disambiguating the correct splitter instance among two similar cards; resizing itself is standard.
+  success_trigger:
+    human_readable:
+    - The target instance is the splitter card labeled “Secondary — Chat Split”.
+    - Within that instance, the Conversation (left) pane is 60% of width within ±3 percentage points.
+    - Changes to the Primary — Email Split must not count.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.6
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Chat Split
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the Primary — Email Split to 60% instead of the Chat Split.
+  - Conversation ends outside tolerance (e.g., 56% or 65%).
+  - Changing both splitters and leaving the target one incorrect.
+  expected_interaction_path:
+  - Locate the card labeled “Secondary — Chat Split”.
+  - Drag its handle until Conversation is about 60%.
+  - Release to set the final size.
+  notes: Use PanelGroup id/data-testid per card label to allow checker to select the correct group deterministically.
+- id: window_splitter-mui-T16
+  name: Scroll to Resizable Preview and set it to 70%
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll down to the “Resizable Preview” section and resize the divider so the Live Preview pane is 70% of the width. The task will finish automatically when done.
+  ui_copy: 'Settings — Resizable Preview: Live Preview 70%'
+  setup_description: 'The page is a long settings_panel view with multiple collapsible sections and helper text. At load, the “Resizable Preview” section is below the fold, so the splitter is not initially visible. Within that section is a card titled “Primary splitter” containing a two-pane resizable layout: “Live Preview” (left) and “Config” (right). A small percent readout under the layout updates live. No Apply/Save is needed; the final live layout is checked.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The splitter must be located by scrolling within a longer page; once found, resizing is standard with a numeric readout.
+  success_trigger:
+    human_readable:
+    - The target splitter is the one inside the “Resizable Preview” section.
+    - Live Preview (left) pane fraction is 70% within ±3 percentage points.
+    - No confirmation action is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.7
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Resizable Preview / Primary splitter
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing a different splitter-like element (e.g., a slider) in another section.
+  - Live Preview ends outside tolerance after release.
+  - Failing to scroll to the correct section and interacting only with top-of-page controls.
+  expected_interaction_path:
+  - Scroll down until the “Resizable Preview” heading is visible.
+  - Drag the divider to make Live Preview about 70%.
+  - Release to finish.
+  notes: 'Checker: locate the target section by a stable heading id or data-testid=''section-resizable-preview'' before evaluating panel sizes.'
+- id: window_splitter-mui-T17
+  name: 'Modal save: set Inspector to 25% and Save changes'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: MUI Modal + react-resizable-panels
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Customize Layout dialog, set the Inspector pane to 25% of the width, then click Save changes. The task will finish automatically when done.
+  ui_copy: Customize Layout — Inspector 25% (must Save)
+  setup_description: 'The page uses a modal_flow layout with a button labeled “Customize layout”. Clicking it opens a MUI Dialog titled “Customize Layout”. Inside the dialog is a resizable two-pane layout: “Canvas” (left) and “Inspector” (right), starting at 50/50. A readout shows the current percent split. The dialog footer contains “Cancel” and a primary “Save changes” button. Resizing changes are not considered committed until Save changes is pressed; the dialog shows a small “Unsaved” indicator while pending.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Adds modal layering and requires an explicit save to commit the new layout, increasing feedback/commit complexity.
+  success_trigger:
+    human_readable:
+    - The Customize Layout dialog is open.
+    - The committed layout after clicking “Save changes” has Inspector (right) at 25% within ±2 percentage points.
+    - Success requires Save changes (Cancel must not count).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_secondary_pane_fraction
+        secondary_pane: right
+        value: 0.25
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Inspector to the right size but closing or canceling without saving.
+  - Saving with Inspector outside tolerance.
+  - Saving a different setting while leaving the splitter unchanged.
+  expected_interaction_path:
+  - Click “Customize layout” to open the dialog.
+  - Drag the divider until Inspector is about 25%.
+  - Click “Save changes”.
+  notes: 'Checker note: store a committed layout snapshot on Save changes; evaluate committed values rather than transient drag state.'
+- id: window_splitter-mui-T18
+  name: 'Three panels: set 20/60/20 in compact small layout'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (3 panels, 2 handles)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, resize the dividers so the panes are Files 20%, Editor 60%, Terminal 20%. The task will finish automatically when done.
+  ui_copy: Primary splitter — Files 20% / Editor 60% / Terminal 20%
+  setup_description: A centered isolated card titled “Primary splitter” contains a three-panel horizontal resizable group. Pane labels are “Files” (left), “Editor” (middle), and “Terminal” (right). Two resize handles are present and look identical; each is a thin bar with a small grip. The scene uses compact spacing and a small component scale, reducing whitespace and making the handles closer together. A compact table-style readout beneath the group lists the current percentages for all three panes and updates while dragging.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Two similar handles must be manipulated to satisfy three simultaneous targets; compact+small increases acquisition difficulty and makes fine control harder.
+  success_trigger:
+    human_readable:
+    - The Primary splitter has three horizontal panes with labels Files, Editor, Terminal.
+    - Final pane fractions match [0.20, 0.60, 0.20] within ±2 percentage points for each pane.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: pane_fractions
+        pane_order:
+        - Files
+        - Editor
+        - Terminal
+        values:
+        - 0.2
+        - 0.6
+        - 0.2
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one divider is moved so the other outer pane remains far from 20%.
+  - Pane sizes look close but one pane is outside tolerance.
+  - Accidentally collapsing an outer pane (if collapsible behavior exists) instead of reaching the target ratios.
+  expected_interaction_path:
+  - Drag the left handle to set Files near 20%.
+  - Drag the right handle to set Terminal near 20%.
+  - Use the readout table to confirm Editor is near 60% and fine-adjust as needed.
+  notes: 'Checker: use panel IDs to map sizes to labels (Files/Editor/Terminal) rather than relying on DOM order alone, since layout could be nested.'
+- id: window_splitter-mui-T19
+  name: 'Visual-only in dark theme: match reference split (65/35)'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (minimal UI, visual reference)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, adjust the divider so the live layout matches the reference image. The task will finish automatically when done.
+  ui_copy: Primary splitter — Match the reference image (no numbers)
+  setup_description: A centered isolated card is rendered in dark theme. It contains a two-pane resizable layout labeled “Left” and “Right”. To force visual reasoning, the UI hides numeric percentages; instead, a small reference image labeled “Target layout” is shown beneath the panes. The reference image depicts the Left pane moderately larger than the Right pane (approximately 65% / 35%). The resize handle is thin and high-contrast on dark background, but the only way to judge progress is visual comparison to the reference.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: No textual state is visible; matching is purely visual with a tight acceptance window.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - Left pane fraction matches 65% within ±1.5 percentage points.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        orientation: horizontal
+        reference_id: ref_65_35
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.65
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.015
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending outside tolerance (e.g., 62% or 68%) even if it looks similar.
+  - Matching the reference while dragging but finishing in a different final position.
+  - Using zoom to approximate the reference instead of resizing.
+  expected_interaction_path:
+  - Compare the live pane widths to the reference image.
+  - Drag the handle until they visually align.
+  - Release and fine-adjust if needed.
+  notes: For robustness, ensure the reference thumbnail has consistent aspect ratio and is not itself resizable; checker should ignore it and compute actual pane widths.
+- id: window_splitter-mui-T20
+  name: 'Top-left small: set left pane to 33% with tight tolerance'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external-react-resizable-panels
+  implementation_component: 'MUI-styled: react-resizable-panels (thin visible handle)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the left pane is 33% of the width. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Left pane target: 33%'
+  setup_description: The splitter card is positioned near the top-left of the viewport (not centered) to test cursor travel and anchoring. The component is rendered in a small scale variant. A two-pane horizontal resizable layout is shown with labels “Left pane” and “Right pane”. The visible divider line is very thin (2px) although the interactive hit target is larger, making visual acquisition harder. A numeric readout beneath the panes shows the left pane percentage to one decimal place and updates live. Initial state is 50/50.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Tight numeric target (33%) combined with a thin visible handle and non-central placement increases both precision and acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The Primary splitter is horizontal (left/right).
+    - Left pane fraction equals 33% within ±1 percentage point.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.33
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending at 31% or 35% (outside tolerance) even if close.
+  - Dragging the handle but releasing back near 50/50.
+  - Adjusting the right pane via other UI (if present) without changing the splitter fraction.
+  expected_interaction_path:
+  - Locate the thin divider line between panes (or hover to find the resize cursor).
+  - Drag until the readout shows about 33.0%.
+  - Release and fine-adjust if necessary.
+  notes: 'Checker: compute fraction from DOM bounds; do not rely on the readout text for truth (use it only as a UI aid).'
+- id: window_splitter-mantine-T21
+  name: Resize Notes pane to 65% (basic)
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (Split/Split.Pane/Split.Resizer)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the Notes pane is 65% of the width. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Notes width target: 65%'
+  setup_description: 'A centered isolated card titled “Primary splitter” uses Mantine styling and the @gfazioli/mantine-split-pane extension component. The Split is in default horizontal mode (left/right panes) with two panes: “Notes” (left) and “Preview” (right). The resizer is a visible bar between panes. A readout below shows “Notes: 50.0% • Preview: 50.0%” and updates live as the resizer is dragged. No other interactions are required.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single resizer with continuous percent readout and a generous tolerance; basic drag suffices.
+  success_trigger:
+    human_readable:
+    - Primary splitter orientation is horizontal (left/right).
+    - Notes (left) pane fraction is 65% within ±5 percentage points.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.65
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.05
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Notes ends outside tolerance after release.
+  - Leaving the split unchanged near 50/50.
+  - Interacting with non-splitter UI without achieving the target layout.
+  expected_interaction_path:
+  - Drag the resizer bar while watching the percent readout.
+  - Release when Notes is about 65%.
+  notes: Mantine split pane supports custom resizer styling; ensure the readout is a separate stable element for debugging but checker uses actual DOM sizes.
+- id: window_splitter-mantine-T22
+  name: Double-click resizer to reset to initial size
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (onResetInitialSize)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Primary splitter back to its initial equal layout (50% / 50%) by double-clicking the resizer. The task will finish automatically when done.
+  ui_copy: Primary splitter — Double-click resizer to reset
+  setup_description: 'A centered isolated card titled “Primary splitter” contains a two-pane Split (Mantine split pane extension). The initial layout was saved as equal halves (50/50), but the current state on load is intentionally skewed (about 70/30). A helper line under the component says: “Tip: Double-click the resizer to reset to the initial sizes.” The resizer has an onDoubleClick handler wired to the extension’s reset mechanism (onResetInitialSize) to restore the initial sizes. A percent readout confirms the current split.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single double-click action resets the layout with immediate feedback; minimal precision is required once reset occurs.
+  success_trigger:
+    human_readable:
+    - Primary splitter is horizontal (left/right).
+    - After reset, the split is 50/50 within ±2 percentage points.
+    - Both panes must be visible (not collapsed).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.5
+        unit: fraction_of_container
+        require_both_visible: true
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Single-clicking the resizer (no reset) and leaving the skewed layout.
+  - Dragging to approximate 50/50 but ending outside tolerance.
+  - Resetting another control (if present) without changing the split.
+  expected_interaction_path:
+  - Locate the resizer bar between panes.
+  - Double-click the resizer bar.
+  - Verify the percent readout shows ~50% / 50%.
+  notes: Extension docs mention resetting on double-click via onResetInitialSize; implement the handler on Split.Resizer and expose a test id for the resizer.
+- id: window_splitter-mantine-T23
+  name: Set left pane to a pixel range (260–280 px)
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (pixel readout)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the left pane is between 260 and 280 pixels wide. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Left pane width target: 260–280 px'
+  setup_description: 'A centered isolated card titled “Primary splitter” contains a two-pane Mantine Split pane inside a fixed-width container (800 px). The left pane is labeled “Navigation” and the right pane is labeled “Document”. A pixel readout beneath the splitter shows the current Navigation width (e.g., “Navigation width: 300 px”) and updates live while resizing. Initial state is 300 px for the left pane. No other UI elements are required.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Wide acceptable pixel range with explicit readout; basic dragging is sufficient.
+  success_trigger:
+    human_readable:
+    - Primary splitter orientation is horizontal (left/right).
+    - Left pane width is within [260, 280] px (inclusive).
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        orientation: horizontal
+        measure: pane_px
+        pane: left
+        min_value: 260
+        max_value: 280
+        unit: px
+      tolerance:
+        type: measurement_jitter_px
+        value: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Left pane ends below 260 px or above 280 px.
+  - Ending in range during drag but outside after release.
+  - Resizing by changing browser zoom rather than moving the resizer.
+  expected_interaction_path:
+  - Drag the resizer bar until the pixel readout enters 260–280 px.
+  - Release to finish.
+  notes: 'Checker: compute left pane width from DOM bounds; container width is fixed to reduce responsive variability.'
+- id: window_splitter-mantine-T24
+  name: 'Step snapping: set left pane to 336 px'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (step=16)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Resize the divider in the Primary splitter so the left pane is 336 pixels wide. The resizer snaps in steps. The task will finish automatically when done.
+  ui_copy: 'Primary splitter — Left pane target: 336 px (snaps)'
+  setup_description: 'A centered isolated card titled “Primary splitter” contains a two-pane Mantine Split pane in a fixed-width container. The split is configured with snapping: `step=16` so the resizer moves in 16 px increments (Shift-drag uses a larger step but is not required). The left pane is labeled “Sidebar” and the right pane is labeled “Main”. A pixel readout below shows “Sidebar width: … px” and updates live; it always lands on multiples of 16 due to snapping. Initial state is 320 px.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Snapping introduces discrete motion and may require multiple small adjustments to land on the exact target.
+  success_trigger:
+    human_readable:
+    - Primary splitter is horizontal (left/right).
+    - Left pane width equals 336 px within ±8 px (to allow minor measurement variance while respecting the step behavior).
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: pane_px
+        pane: left
+        value: 336
+        unit: px
+      tolerance:
+        type: absolute_px
+        value: 8
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Landing on a nearby snapped width (e.g., 320 px or 352 px) outside tolerance.
+  - Dragging the divider but releasing back at the start value.
+  - Changing unrelated UI instead of resizing.
+  expected_interaction_path:
+  - Drag the resizer slightly to increase/decrease the left width.
+  - Watch the pixel readout until it reaches 336 px.
+  - Release to finish.
+  notes: Mantine split pane supports step/shiftStep props; expose them in the UI copy for transparency, but do not require keyboard modifiers.
+- id: window_splitter-mantine-T25
+  name: 'Vertical stack: make top pane 40% height'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (orientation=''horizontal'' for top/bottom)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, resize the horizontal divider so the top pane is 40% of the height. The task will finish automatically when done.
+  ui_copy: 'Primary splitter (stacked) — Top pane height target: 40%'
+  setup_description: 'The page is a settings_panel view with a header and side navigation. In the main area, a card titled “Primary splitter” contains a stacked split layout (top/bottom panes). The split pane is configured to resize vertically (a horizontal divider between panes). Pane labels: “Graph” on top and “Logs” on bottom. A readout below shows “Graph: 50% height • Logs: 50% height” and updates live while dragging the divider.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Vertical resizing plus surrounding settings UI increases complexity compared to a simple isolated horizontal split.
+  success_trigger:
+    human_readable:
+    - Primary splitter orientation is vertical (top/bottom).
+    - Top pane fraction is 40% within ±3 percentage points.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: vertical
+        measure: primary_pane_fraction
+        primary_pane: top
+        value: 0.4
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Top pane ends outside tolerance after release.
+  - Resizing the wrong direction (attempting to change width instead of height).
+  - Interacting with non-required settings instead of resizing.
+  expected_interaction_path:
+  - Locate the horizontal divider between Graph and Logs.
+  - Drag the divider upward/downward until Graph is about 40%.
+  - Release to finalize.
+  notes: 'Checker: for vertical orientation, use heights to compute fractions; ignore header/footer within panes when measuring.'
+- id: window_splitter-mantine-T26
+  name: 'Two splitters: match the Secondary reference preview'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: Mantine dashboard + @gfazioli/mantine-split-pane (2 instances)
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: On the dashboard, match the Secondary splitter (labeled “Secondary — Map/Details”) to its reference preview. The task will finish automatically when done.
+  ui_copy: 'Dashboard — Secondary — Map/Details: match reference preview'
+  setup_description: 'The page uses a dashboard layout with two Mantine cards stacked. Each card contains a Split pane and a small reference preview on the right side. Card 1 is labeled “Primary — Editor/Preview” and shows a reference preview for that card. Card 2 is labeled “Secondary — Map/Details” and shows a different reference preview. Both splitters look similar and both start at 50/50. The goal is to adjust ONLY the Secondary — Map/Details splitter so that its live split matches its adjacent reference preview (mixed guidance: label text + visual preview).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires choosing the correct instance and using a visual reference; however the reference is colocated and the UI provides mixed guidance.
+  success_trigger:
+    human_readable:
+    - The target instance is labeled “Secondary — Map/Details”.
+    - That instance’s Map (left) pane fraction matches the reference target of 35% within ±3 percentage points (equivalently Details is 65% ±3%).
+    - Resizing the Primary — Editor/Preview splitter must not count.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        orientation: horizontal
+        reference_id: ref_35_65_secondary
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.35
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Map/Details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching the Primary card’s reference while leaving the Secondary card unchanged.
+  - Changing both splitters and leaving Secondary incorrect.
+  - Ending outside tolerance even if the split seems visually close.
+  expected_interaction_path:
+  - Locate the card labeled “Secondary — Map/Details”.
+  - Compare its live split to the small reference preview beside it.
+  - Drag the resizer until it matches, then release.
+  notes: 'Checker: use card label to bind instance; reference_id maps to a numeric target stored in fixture (e.g., 0.35).'
+- id: window_splitter-mantine-T27
+  name: 'Nested splitters: resize the Outer splitter to 30%'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (nested instances)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Resize the Outer splitter so the Navigation pane is 30% of the width. Do not change the Inner splitter. The task will finish automatically when done.
+  ui_copy: Outer splitter — Navigation 30% (Inner splitter is a distractor)
+  setup_description: 'A single card is placed toward the bottom-right of the viewport. The card title reads “Nested layout”. Inside the card is an Outer Mantine Split pane (left/right) with panes labeled “Navigation” (left) and “Workspace” (right). Within the Workspace pane, there is an Inner Split pane (also a window splitter) that divides Workspace into “Output” and “Help”. Both splitters have their own resizer bars and their own small readouts; the Inner splitter is explicitly labeled “Inner splitter (do not adjust)” above its bar. Initial state: Outer splitter is 50/50; Inner splitter is 60/40. Only the Outer splitter’s Navigation fraction determines success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Two splitter instances are simultaneously visible (one nested), increasing the risk of dragging the wrong resizer while still requiring a precise target.
+  success_trigger:
+    human_readable:
+    - The correct instance is the Outer splitter labeled “Outer splitter”.
+    - Outer Navigation (left) pane fraction is 30% within ±2 percentage points.
+    - Changes to the Inner splitter must not count toward success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.3
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Outer splitter
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the Inner splitter to 30% while leaving the Outer splitter unchanged.
+  - Outer Navigation ends outside tolerance after release.
+  - Changing both splitters and ending with Outer incorrect.
+  expected_interaction_path:
+  - Locate the Outer resizer between Navigation and Workspace.
+  - Drag it until the Outer readout shows Navigation about 30%.
+  - Avoid dragging the Inner resizer.
+  notes: 'Checker: identify instances by data-testid (e.g., split-outer, split-inner) and ensure only split-outer is evaluated.'
+- id: window_splitter-mantine-T28
+  name: 'Drawer save: set Canvas to 60% then Save layout'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: Mantine Drawer + @gfazioli/mantine-split-pane (controlled commit)
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the Layout drawer, set the Canvas pane to 60% of the width, then click Save layout. The task will finish automatically when done.
+  ui_copy: Layout drawer — Canvas 60% (must Save)
+  setup_description: 'The page uses a drawer_flow layout with a button labeled “Open layout drawer”. Clicking it opens a Mantine Drawer from the right titled “Layout”. Inside the drawer is a two-pane Split component: “Canvas” (left) and “Settings” (right). The split starts at 50/50 and a readout inside the drawer shows the current split. At the bottom of the drawer are two actions: “Close” and a primary “Save layout” button. The split is treated as pending until Save layout is clicked; a small indicator reads “Not saved” until commit.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A drawer overlay adds layering and requires an explicit Save to commit; success depends on committed state rather than transient resizing.
+  success_trigger:
+    human_readable:
+    - The Layout drawer is open.
+    - After clicking “Save layout”, the committed Canvas (left) pane fraction is 60% within ±2 percentage points.
+    - Save layout must be clicked; closing without saving must not count.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_primary_pane_fraction
+        primary_pane: left
+        value: 0.6
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Canvas to ~60% but not clicking “Save layout”.
+  - Saving while the split is outside tolerance.
+  - Clicking “Close” instead of saving (should discard or not commit changes).
+  expected_interaction_path:
+  - Click “Open layout drawer”.
+  - Drag the resizer until Canvas is about 60%.
+  - Click “Save layout”.
+  notes: 'Checker: store committed split in state on Save layout; expose committed values via data attributes for deterministic evaluation.'
+- id: window_splitter-mantine-T29
+  name: 'Dark compact small: match visual reference (75/25)'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: 'Mantine: @gfazioli/mantine-split-pane (minimal UI, gradient resizer)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Primary splitter, adjust the divider so the panes match the target layout shown in the reference image. The task will finish automatically when done.
+  ui_copy: Primary splitter — Match reference image (dark, compact, small)
+  setup_description: 'A centered isolated card is rendered in dark theme with compact spacing and a small scale. It contains a two-pane Mantine Split: “Left pane” and “Right pane”. The resizer uses a subtle gradient variant and is thinner than default due to the small scale. Numeric readouts are intentionally hidden; a static reference thumbnail labeled “Target layout” is displayed under the panes. The reference depicts a strong asymmetry: left pane much wider than right (approximately 75% / 25%). The only feedback is the visual widths of the panes.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Visual-only target with tight tolerance; dark+compact+small reduces contrast and increases acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - Primary splitter is horizontal (left/right).
+    - Left pane fraction matches 75% within ±1.5 percentage points.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        orientation: horizontal
+        reference_id: ref_75_25
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.75
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.015
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending outside tolerance (e.g., 72% or 78%).
+  - Relying on transient alignment during drag but ending wrong after release.
+  - Changing unrelated page settings (zoom/theme) instead of resizing.
+  expected_interaction_path:
+  - Compare the live layout to the reference thumbnail.
+  - Drag the resizer until the widths match.
+  - Release and fine-adjust if needed.
+  notes: For checker robustness, compute fraction from DOM geometry; avoid relying on low-contrast visual cues.
+- id: window_splitter-mantine-T30
+  name: 'Dashboard scroll: find Timeline vs Logs and set Logs to 30% height'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: extension-@gfazioli/mantine-split-pane
+  implementation_component: Mantine dashboard + @gfazioli/mantine-split-pane
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, scroll to the “Timeline vs Logs” card and resize the divider so the Logs pane is 30% of the height. The task will finish automatically when done.
+  ui_copy: 'Dashboard — Timeline vs Logs: Logs height 30%'
+  setup_description: 'The page is a busy dashboard with multiple charts, KPI cards, and filters. The dashboard is vertically scrollable. The target component is not visible at initial load; it appears further down in a card titled “Timeline vs Logs”. Inside that card is a stacked split layout (top/bottom panes) implemented with Mantine Split pane: the top pane is labeled “Timeline” and the bottom pane is labeled “Logs”. A horizontal resizer separates the panes. A small readout within the card shows “Logs: 50% height” initially and updates live. Other dashboard cards contain scrollable content and buttons but are distractors and do not affect success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires locating the correct card in a high-clutter, scrollable dashboard and then performing a vertical resize to a specific target.
+  success_trigger:
+    human_readable:
+    - The target splitter is inside the card titled “Timeline vs Logs”.
+    - Logs (bottom) pane height is 30% of the splitter container height within ±3 percentage points.
+    - No confirmation action is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: vertical
+        measure: secondary_pane_fraction
+        secondary_pane: bottom
+        value: 0.3
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.03
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Timeline vs Logs
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing a different splitter-like element in another dashboard card.
+  - Logs ends outside tolerance after release.
+  - Only scrolling without changing the splitter state.
+  expected_interaction_path:
+  - Scroll down until the “Timeline vs Logs” card is visible.
+  - Drag the horizontal resizer to make Logs about 30% height.
+  - Release to finalize.
+  notes: 'Checker: locate the target card by heading text or data-testid, then compute bottom pane height fraction within that card’s splitter container.'

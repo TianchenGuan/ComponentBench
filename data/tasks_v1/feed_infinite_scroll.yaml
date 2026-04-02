@@ -1,0 +1,1865 @@
+- id: feed_infinite_scroll-antd-T01
+  name: 'News Feed: scroll to ART-008'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List (Scrolling loaded pattern) inside a fixed-height scroll container'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the News Feed, scroll until the item “ART-008 — City council approves new park” is visible in the feed. The task will finish automatically when done.
+  ui_copy: 'Goal: In the News Feed, scroll until “ART-008 — City council approves new park” is visible.'
+  setup_description: |-
+    Layout: an isolated card centered on the page titled “News Feed”.
+    The feed is an AntD List rendered inside a fixed-height scroll container (so the page itself does not need to scroll).
+    The list starts with 20 items loaded (ART-001 … ART-020) and shows ~6 items at a time; items below the fold require scrolling within the feed.
+    Each row shows a bold ID+title (e.g., “ART-007 — …”) and a lighter subtitle with a timestamp; rows are visually similar.
+    Infinite-loading behavior exists (a small spinner appears at the bottom when more items load), but the target item is within the initial 20 items (no new fetch required).
+    No additional controls or distractors are present beyond the feed header and the scrollable list.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires scrolling within a single feed until a uniquely labeled item is visible; no selection, confirmation, or multi-instance disambiguation.
+  success_trigger:
+    human_readable:
+    - The News Feed scroll container has an item with id ART-008 rendered.
+    - ART-008 is visible within the feed viewport (not off-screen inside the feed).
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: ART-008
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - A different item is visible (e.g., ART-018 or ART-008 in a different feed if multiple feeds existed).
+  - ART-008 is loaded in the DOM but scrolled out of view inside the feed container.
+  - Only the page is scrolled (feed remains unchanged) and ART-008 never becomes visible in the feed.
+  expected_interaction_path:
+  - Focus the scrollable feed container.
+  - Scroll down until ART-008 appears in view.
+  notes: 'Instrumentation: feed container data-testid=''feed-News''; each item row data-item-id=''ART-###''; compute visibility via bounding box overlap with feed viewport.'
+- id: feed_infinite_scroll-antd-T02
+  name: 'News Feed: open ART-011 details'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List with clickable rows (expands inline) in a scroll container'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the News Feed, open the item “ART-011 — Museum opens new exhibit” so its details are expanded. The task will finish automatically when done.
+  ui_copy: Click the news item ART-011 to expand its details.
+  setup_description: |-
+    Layout: isolated “News Feed” card in the center.
+    Each List row is clickable; clicking a row expands an inline details section directly under that row (a short paragraph labeled “Details”).
+    Only one item can be expanded at a time; expanding a new item collapses the previously expanded one.
+    The feed starts at the top with items ART-001 … ART-020 loaded; ART-011 is present but may require a short scroll within the feed to bring it into view.
+    There is no separate confirmation button; expansion happens immediately on click.
+    No other components are required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single feed with uniquely labeled items; success is an immediate, visibly expanded state after one click.
+  success_trigger:
+    human_readable:
+    - The active/expanded item in the News Feed is ART-011.
+    - The details panel for ART-011 is rendered and visible (expanded state=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: ART-011
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - ART-011 is visible but not expanded.
+  - A different item is expanded (e.g., ART-010).
+  - ART-011 was clicked but expansion did not occur (e.g., click missed the row target).
+  expected_interaction_path:
+  - Scroll within the feed until ART-011 is visible (if needed).
+  - Click the ART-011 row to expand details.
+  notes: Checker can read data-active-item-id on the feed root, or aria-expanded on the ART-011 row; require expanded content region for ART-011 to be visible.
+- id: feed_infinite_scroll-antd-T03
+  name: 'News Feed: back to top'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List in scroll container with an in-feed “Back to top” control'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Use the News Feed’s “Back to top” control to return the feed to the top so “ART-001 — Morning market opens” is visible again. The task will finish automatically when done.
+  ui_copy: Reset the News Feed back to the top (ART-001 visible).
+  setup_description: |-
+    Layout: isolated card titled “News Feed” centered on the page.
+    Initial state: the feed is pre-scrolled to the middle (around ART-040), and multiple pages have already been loaded so scrolling is possible in both directions.
+    A small “Back to top” button (icon + text) floats at the bottom-right corner of the feed container when the feed is not at the top.
+    Clicking “Back to top” scrolls the feed container back to the top with a short smooth animation.
+    No other page elements are interactive beyond the feed; success is determined only by the feed’s scroll position/state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires using a single in-component reset control; success is a clearly visible return-to-top state.
+  success_trigger:
+    human_readable:
+    - The News Feed scroll position is at (or extremely close to) the top.
+    - ART-001 is visible within the feed viewport after the reset.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        scroll_top_px: 0
+        top_item_id: ART-001
+        top_item_visible: true
+      tolerance:
+        scroll_top_px: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - The page scroll position changes but the feed remains scrolled (ART-001 not visible in the feed).
+  - The feed is near the top but still not at the top (ART-001 is not visible).
+  - ART-001 is visible in a different feed instance (if multiple existed).
+  expected_interaction_path:
+  - Locate the floating “Back to top” control inside the feed container.
+  - Click it and wait for the feed to scroll to the top.
+  notes: Expose feed scrollTop and firstVisibleItemId via data attributes for robust checking; allow small tolerance for smooth-scroll end position.
+- id: feed_infinite_scroll-antd-T04
+  name: 'News Feed: enable Unread only'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List feed with header Switch filter'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the News Feed, turn on the “Unread only” filter. The task will finish automatically when done.
+  ui_copy: Toggle on “Unread only” for the News Feed.
+  setup_description: |-
+    Layout: isolated “News Feed” card centered on the page.
+    The feed header contains a labeled Switch: “Unread only”. It is OFF by default.
+    List items include a small unread dot for unread entries; some items are marked read and some unread.
+    When “Unread only” is turned on, the feed instantly filters to show only unread items and a small tag appears next to the header label: “Filter: Unread”.
+    No confirmation button is required; the filter applies immediately.
+    No other controls are needed for the task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single labeled toggle with immediate visible effect; no scrolling to deep items or multi-instance ambiguity.
+  success_trigger:
+    human_readable:
+    - The News Feed filter state has unread_only = true.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+          unread_only: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Unread only is still off.
+  - A different control is toggled (e.g., 'Compact view' if present as a distractor in other tasks).
+  - Unread only is on in the wrong feed instance (if multiple feeds existed).
+  expected_interaction_path:
+  - Find the “Unread only” switch in the feed header.
+  - Click the switch to turn it on.
+  notes: Checker can read data-filters='{"unread_only":true}' on the feed root or the Switch aria-checked state scoped to this feed.
+- id: feed_infinite_scroll-antd-T05
+  name: 'Incident Feed: search and open INC-1088'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List feed with Input.Search header (composite infinite scroll)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Incident Feed, use the search box to find “INC-1088 — VPN login failure” and open it. The task will finish automatically when done.
+  ui_copy: Search the Incident Feed for INC-1088 and open it.
+  setup_description: |-
+    Layout: form_section with two columns. Left column contains unrelated form fields (Rule name, Severity dropdown, Email checkbox) as realistic clutter.
+    Right column contains an “Incident Feed” card with a fixed-height scrollable List.
+    The feed header includes an AntD Input.Search with placeholder “Search incidents (ID or text)”.
+    Initial state: the feed is at the top showing the most recent incidents (INC-1001 …) and the search box is empty.
+    Typing in the search box filters the feed server-side: the list clears, shows a small loading spinner, and then displays matching results with the same infinite-scroll behavior.
+    Clicking a row expands inline details (similar to T02). No extra confirmation is required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires interacting with a search control and waiting for filtered results amid mild form clutter; the correct result must then be selected.
+  success_trigger:
+    human_readable:
+    - The active/expanded item in the Incident Feed is INC-1088.
+    - INC-1088’s details section is expanded (expanded=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: INC-1088
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - INC-1088 appears in the filtered list but is not opened/expanded.
+  - A different incident is opened (e.g., INC-1080).
+  - Text is entered into an unrelated form field instead of the feed search input.
+  - Search is typed but results are not loaded (still showing stale unfiltered list).
+  expected_interaction_path:
+  - Click into the Incident Feed search box.
+  - Type 'INC-1088' and submit (Enter or search icon).
+  - When results load, click the INC-1088 row to expand details.
+  notes: Add data-testid for search input and for expanded row content; checker should scope active_item_id to the Incident Feed component subtree.
+- id: feed_infinite_scroll-antd-T06
+  name: 'Audit Log modal: open AUD-072'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: Modal containing a scrollable List feed (composite infinite scroll)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Audit Log modal, then in the Audit Log feed scroll until “AUD-072 — API key created” is visible and open it. The task will finish automatically when done.
+  ui_copy: Open the Audit Log modal and open AUD-072.
+  setup_description: |-
+    Layout: modal_flow. The page shows a compact card titled “Security” with a primary button “View audit log”.
+    Clicking “View audit log” opens an AntD Modal anchored visually near the top-right of the viewport.
+    Inside the modal is an “Audit Log” infinite-scrolling List with fixed height (internal scroll).
+    Initial state: the modal is closed; once opened, the feed shows AUD-001 … AUD-020 and loads more as you scroll to the bottom (spinner at bottom).
+    Clicking an audit row expands a small details panel inside the modal (no navigation away).
+    The rest of the page is not relevant; success depends only on the Audit Log feed state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening an overlay (modal) to access the feed and then scrolling/loading until the target entry is reachable and opened.
+  success_trigger:
+    human_readable:
+    - Within the Audit Log feed, the active/expanded item is AUD-072.
+    - AUD-072 details are expanded and visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: AUD-072
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - The modal is opened but AUD-072 is not opened.
+  - A different audit entry is opened.
+  - AUD-072 is loaded but not visible/expanded (e.g., scrolled past).
+  expected_interaction_path:
+  - Click “View audit log” to open the modal.
+  - Scroll within the modal feed until AUD-072 appears (triggering one or more lazy loads).
+  - Click AUD-072 to expand its details.
+  notes: Modal root data-testid='audit-modal'; feed root data-testid='feed-Audit'; ensure the checker targets the feed inside the modal rather than any background lists.
+- id: feed_infinite_scroll-antd-T07
+  name: 'Dashboard: find ALERT-042 in System alerts'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: Two List feeds in dashboard cards (composite infinite scroll)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “System alerts” feed, scroll until the item “ALERT-042 — High memory usage” is visible. The task will finish automatically when done.
+  ui_copy: 'System alerts: make ALERT-042 visible.'
+  setup_description: |-
+    Layout: dashboard with two side-by-side cards, each containing its own scrollable infinite List.
+    Left card: “Team activity” feed (ACT-xxx items). Right card: “System alerts” feed (ALERT-xxx items).
+    Both feeds look similar (same row height and typography) and each loads more items when scrolled to the bottom.
+    Initial state: both feeds are at the top with their first page loaded; the target ALERT-042 is not in the first viewport and typically requires scrolling and at least one lazy-load.
+    There are a few unrelated dashboard widgets (small KPI chips and a refresh icon) but they do not affect success.
+    The task must be completed in the “System alerts” feed, not the “Team activity” feed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two visually similar feeds require correct disambiguation; the target alert is deeper in the list and may require triggering lazy loading.
+  success_trigger:
+    human_readable:
+    - In the feed instance labeled “System alerts”, item ALERT-042 is rendered.
+    - ALERT-042 is visible within that feed’s viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: ALERT-042
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: System alerts
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - ALERT-042 is made visible in the wrong feed (e.g., Team activity).
+  - A different alert with a similar number is visible (ALERT-024).
+  - ALERT-042 is loaded but not visible in the System alerts feed viewport.
+  expected_interaction_path:
+  - Identify the “System alerts” card/feed.
+  - Scroll within that feed until ALERT-042 is visible (wait for loading if it triggers).
+  notes: 'Add data-testid for each feed instance: feed-TeamActivity and feed-SystemAlerts; checker must scope queries to the target instance.'
+- id: feed_infinite_scroll-antd-T08
+  name: 'Bulk select: apply 3 tickets in Primary queue'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List feed with Checkbox selection and in-feed Apply button'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the “Primary queue” feed, select tickets TCK-021, TCK-024, and TCK-027, then click “Apply selection”. The task will finish automatically when done.
+  ui_copy: 'Primary queue: select TCK-021, TCK-024, TCK-027 and apply.'
+  setup_description: |-
+    Layout: isolated_card with two stacked feeds of the same component type.
+    Top feed is labeled “Primary queue”; bottom feed is labeled “Secondary queue”. Both are infinite-scrolling Lists with checkboxes.
+    Spacing mode is compact: rows are shorter and the checkboxes are small and close to the left edge.
+    Each row displays a ticket ID (TCK-###) and a short summary. Many summaries are similar (e.g., 'Password reset').
+    Selection is two-phase: checking boxes marks items as “Selected (pending)” and enables a feed-local button at the bottom: “Apply selection”.
+    Only after pressing “Apply selection” does the selection become committed (a small label appears: “3 selected (saved)”).
+    The target ticket IDs are present but may require scrolling within the Primary feed to reach them.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires precise multi-item checkbox selection in compact rows, correct feed disambiguation, and an explicit Apply step to commit the state.
+  success_trigger:
+    human_readable:
+    - In the “Primary queue” feed instance, the committed selected item IDs equal {TCK-021, TCK-024, TCK-027}.
+    - The selection has been committed via the “Apply selection” control (no pending/unapplied changes).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selected_item_ids:
+        - TCK-021
+        - TCK-024
+        - TCK-027
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply selection
+      require_correct_instance: true
+      target_instance_label_or_id: Primary queue
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - The three tickets are checked but “Apply selection” was not clicked (pending selection only).
+  - Extra tickets are selected in addition to the required three.
+  - One or more of the required tickets is missing from the committed selection.
+  - Selection was applied in the wrong feed instance (Secondary queue).
+  expected_interaction_path:
+  - In the Primary queue feed, scroll as needed to locate TCK-021, TCK-024, TCK-027.
+  - Check the checkbox for each of the three tickets.
+  - Click “Apply selection” within the Primary queue feed.
+  notes: 'For checking, expose committed selection separately from pending selection: data-committed-selected=''[...]'' on each feed root; Apply button should be scoped within feed container.'
+- id: feed_infinite_scroll-antd-T09
+  name: 'Dark feed: match reference icon and select POST-034'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_infinite_load
+  implementation_component: 'AntD: List feed with leading category icons (visual match task)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Saved Posts feed, select the post whose leading icon matches the reference icon shown above the feed. The task will finish automatically when done.
+  ui_copy: Select the feed item that matches the reference icon.
+  setup_description: |-
+    Theme: dark.
+    Layout: isolated card titled “Saved Posts” centered on the page.
+    At the top of the card (above the scrollable feed) there is a “Reference icon” preview: a single large glyph inside a square badge.
+    Feed rows are visually uniform and each row begins with a small icon badge (same style as the reference, but smaller). Titles are intentionally generic (e.g., “Weekly update”) so the icon is the primary differentiator.
+    The feed is infinite-scrolling with a bottom loader; the matching item is not in the first viewport and may require scrolling and loading.
+    Selecting a row highlights it with an accent outline and sets it as the active item; there is no Apply button.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target is specified visually via an icon reference rather than unique text, increasing confusability and reliance on pixel-level perception during scrolling.
+  success_trigger:
+    human_readable:
+    - The active/selected item in the Saved Posts feed is the unique item whose icon matches the reference icon.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF-ICON-1
+        matched_item_id: POST-034
+      tolerance:
+        match_rule: icon_glyph_and_color
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - An item is selected but its icon does not match the reference.
+  - The correct item is visible but not selected.
+  - A visually similar icon is selected (same shape but different color, or vice versa).
+  expected_interaction_path:
+  - Look at the reference icon shown above the feed.
+  - Scroll within the feed until you find an item with the same icon badge.
+  - Click that item to select it.
+  notes: Implementation should assign stable item IDs and expose each item's icon token (e.g., data-icon='shield-teal') so the checker can validate match_reference deterministically.
+- id: feed_infinite_scroll-antd-T10
+  name: 'Virtualized Logs: reach end and open LOG-200'
+  canonical_type: feed_infinite_scroll
+  implementation_source: antd
+  implementation_variant: composite_virtualized
+  implementation_component: 'AntD: List virtualized feed (virtual list pattern) with endless loading'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Logs feed, scroll to the very end and open “LOG-200 — Backup completed” (it has the same orange “Archive” tag shown in the reference tag). The task will finish automatically when done.
+  ui_copy: 'Logs: open the final entry LOG-200 (Archive tag).'
+  setup_description: |-
+    Layout: dashboard with a left sidebar (navigation links) and a main content area.
+    Main content shows a card titled “Logs” with some non-functional filter chips above the feed (clutter).
+    The log feed itself is a virtualized List: only the visible rows are mounted; scrolling reuses row elements.
+    The feed supports infinite loading and has a finite dataset of 200 items (LOG-001 … LOG-200). A small counter in the footer shows progress (e.g., “Loaded 60 / 200”).
+    A reference tag (an orange pill labeled “Archive”) is displayed next to the feed title; some log rows include the same orange tag.
+    Initial state: the feed starts near the top (LOG-001 visible) and must be scrolled repeatedly to trigger multiple lazy-loads until the final item LOG-200 is reachable.
+    Clicking a row marks it active and reveals a details pane below the feed header (inline, no modal).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Deep scrolling with repeated lazy-loads in a virtualized list increases depth and feedback uncertainty; selection must occur on the final item amid dashboard clutter.
+  success_trigger:
+    human_readable:
+    - The Logs feed has reached the end of the dataset (end_reached=true / no more items to load).
+    - The active/expanded log entry is LOG-200.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        end_reached: true
+        active_item_id: LOG-200
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - LOG-200 is visible but not opened/active.
+  - A different item near the end is opened (e.g., LOG-199).
+  - The feed has not actually reached the end (more items could still load).
+  - The orange “Archive” tag is matched but the wrong row is selected.
+  expected_interaction_path:
+  - Scroll within the Logs feed to trigger additional loads until you reach the bottom.
+  - Locate LOG-200 (with the orange Archive tag).
+  - Click LOG-200 to open/expand it.
+  notes: 'Virtualization note: checker should rely on feed-level state (end_reached, active_item_id) and stable item ids, not DOM position. Provide data-end-reached and data-active-item-id on feed root.'
+- id: feed_infinite_scroll-mui-T01
+  name: 'Notifications: scroll to NOTIF-013'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List inside Paper with composite infinite-scroll (sentinel/onScroll)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Notifications feed, scroll until the item “NOTIF-013 · Password changed” is visible in the feed. The task will finish automatically when done.
+  ui_copy: 'Notifications feed: make NOTIF-013 visible.'
+  setup_description: |-
+    Layout: isolated card (Paper) centered on the page titled “Notifications”.
+    The feed is a MUI List rendered inside a fixed-height scroll container; the page itself does not scroll.
+    Initial state: 25 notifications are loaded, but only ~7 fit in the viewport; items below require scrolling within the feed.
+    Each ListItem shows an ID prefix (e.g., NOTIF-012) and a short label; items are visually uniform.
+    Infinite-loading is enabled (a CircularProgress appears at the bottom when loading), but the target NOTIF-013 is within the initially loaded range.
+    No other interactive controls are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A straightforward scroll-within-list task with a uniquely labeled target and no confirmation or competing instances.
+  success_trigger:
+    human_readable:
+    - The Notifications feed has NOTIF-013 rendered.
+    - NOTIF-013 is visible within the feed viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: NOTIF-013
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - A different notification is visible instead of NOTIF-013.
+  - NOTIF-013 exists but is not visible within the scroll container.
+  - Only the page is scrolled (feed stays in place).
+  expected_interaction_path:
+  - Scroll within the Notifications list until NOTIF-013 appears.
+  notes: Use data-testid='feed-Notifications' and data-item-id='NOTIF-###' on ListItem roots; measure visibility relative to the scroll container.
+- id: feed_infinite_scroll-mui-T02
+  name: 'Messages: expand MSG-004'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List with ListItemButton + Collapse for inline expansion'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Messages feed, open “MSG-004 · Updated shipping address” so that its preview is expanded. The task will finish automatically when done.
+  ui_copy: 'Messages feed: expand MSG-004 preview.'
+  setup_description: |-
+    Layout: isolated card centered on the page titled “Messages”.
+    The feed is a fixed-height scrollable MUI List; clicking a ListItemButton expands an inline preview area using a Collapse component.
+    Only one message can be expanded at a time.
+    Initial state: the feed is at the top with MSG-001 … MSG-020 loaded; MSG-004 is visible without triggering a load.
+    No Apply/Save buttons exist; the expanded state updates immediately.
+    No other page elements influence success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single click expands a clearly visible preview in a single list; no disambiguation or waiting.
+  success_trigger:
+    human_readable:
+    - The active/expanded message in the Messages feed is MSG-004.
+    - MSG-004 preview region is expanded (expanded=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: MSG-004
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - MSG-004 is highlighted but the preview is not expanded.
+  - A different message is expanded.
+  - The user clicks an icon inside the row that does not toggle expansion.
+  expected_interaction_path:
+  - Click the MSG-004 row to expand it.
+  notes: Expose aria-expanded on the MSG-004 row button; checker can verify that the Collapse content region for MSG-004 is mounted and visible.
+- id: feed_infinite_scroll-mui-T03
+  name: 'Notifications: enable Starred only'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List feed with header Switch filter'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Notifications feed, turn on the “Starred only” filter. The task will finish automatically when done.
+  ui_copy: Toggle on “Starred only” for Notifications.
+  setup_description: |-
+    Layout: isolated card titled “Notifications” centered on the page.
+    The feed header contains a labeled Switch: “Starred only” (OFF by default).
+    Some notification rows show a small star icon indicating they are starred.
+    Turning the filter ON immediately refreshes the list to show only starred notifications and displays a small Chip in the header: “Filtered”.
+    No confirmation is required.
+    No other interactive elements are required for completion.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single labeled switch with immediate visible effect and no competing components.
+  success_trigger:
+    human_readable:
+    - Notifications feed filter starred_only is true.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+          starred_only: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Starred only remains off.
+  - A different switch is toggled (if present as a distractor).
+  - Filter is applied in the wrong feed instance (if multiple feeds existed).
+  expected_interaction_path:
+  - Click the “Starred only” switch in the feed header.
+  notes: Checker can read Switch aria-checked or a feed-root data-filters blob; scope to Notifications feed container.
+- id: feed_infinite_scroll-mui-T04
+  name: 'Orders Feed: search and open ORD-0924'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List feed with TextField search (composite infinite scroll)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders feed, use the search field to find “ORD-0924 · Refund requested” and open it. The task will finish automatically when done.
+  ui_copy: 'Orders feed: search for ORD-0924 and open it.'
+  setup_description: |-
+    Layout: form_section. The page resembles an admin page with a left column of unrelated form controls (Status dropdown, Date range placeholders) and a right column containing the “Orders” feed.
+    The Orders feed is a scrollable MUI List with a header search TextField labeled “Search orders”.
+    Initial state: the search field is empty and the feed shows recent orders (ORD-0900 …) with infinite scrolling enabled.
+    Submitting a search (press Enter or click the magnifying glass icon) filters the feed and shows a small linear progress bar while results load.
+    Clicking an order row expands an inline details panel (Collapse) beneath the row.
+    The rest of the form is distractor-only; it does not affect the feed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires typing and submitting in a header search field and then selecting the correct result amid mild surrounding form clutter.
+  success_trigger:
+    human_readable:
+    - The active/expanded order in the Orders feed is ORD-0924.
+    - ORD-0924 details are expanded.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: ORD-0924
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - The search text is entered in a non-feed field.
+  - ORD-0924 is visible but not opened/expanded.
+  - A different order is opened.
+  - Results have not updated (still showing unfiltered list).
+  expected_interaction_path:
+  - Click into the Orders search field.
+  - Type 'ORD-0924' and submit the search.
+  - Click the ORD-0924 row to expand it.
+  notes: Expose active_item_id on the feed root; search input should have an accessible label. Checker should verify that expansion content is visible for ORD-0924.
+- id: feed_infinite_scroll-mui-T05
+  name: 'Inbox drawer: mark INB-057 as read'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: Drawer containing a scrollable List feed'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Inbox drawer, then in the Inbox feed find “INB-057 · Contract signed” and mark it as read. The task will finish automatically when done.
+  ui_copy: 'Inbox: open drawer and mark INB-057 as read.'
+  setup_description: |-
+    Layout: drawer_flow. The main page shows a small header and a button labeled “Open inbox”.
+    Clicking “Open inbox” opens a MUI Drawer from the right side; the Drawer contains the “Inbox” feed.
+    Inside the Drawer is a fixed-height scrollable List with infinite loading; a CircularProgress appears at the bottom during loading.
+    Each row shows an ID (INB-###), a subject line, and a small “Mark read” icon button on the right.
+    Unread items are indicated by bold text; marking as read removes the bold styling and sets a subtle “Read” label.
+    INB-057 is not in the first viewport and may require scrolling and one or more loads.
+    No confirmation dialog is shown; marking read is immediate.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires opening a drawer to access the feed, then locating a deep item and clicking a small per-row control with immediate state change.
+  success_trigger:
+    human_readable:
+    - Within the Inbox feed, item INB-057 has read=true.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_id: INB-057
+        item_state:
+          read: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - The drawer is opened but INB-057 is not marked read.
+  - A different message is marked read instead.
+  - INB-057 is selected but the read state did not change (wrong control clicked).
+  expected_interaction_path:
+  - Click “Open inbox” to open the drawer.
+  - Scroll within the drawer feed to find INB-057.
+  - Click the “Mark read” icon on the INB-057 row.
+  notes: Ensure each row exposes data-item-id and data-read=true/false; mark-read control should be within the row. Checker should ignore read state changes in any other list.
+- id: feed_infinite_scroll-mui-T06
+  name: 'Messages: use Scroll-to-top button'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List feed with in-feed Scroll-to-top FloatingActionButton'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Use the Messages feed’s “Scroll to top” button to return the feed to the top so “MSG-001 · Welcome message” is visible. The task will finish automatically when done.
+  ui_copy: 'Messages: reset to top (MSG-001 visible).'
+  setup_description: |-
+    Layout: isolated card titled “Messages” centered on the page.
+    Initial state: the feed is pre-scrolled down (around MSG-060) with multiple pages already loaded.
+    A small FloatingActionButton labeled “Top” appears overlayed inside the feed container when not at the top.
+    Clicking the “Top” FAB scrolls the feed container back to scrollTop=0.
+    No other controls are needed; success is purely the feed’s scroll reset state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires recognizing a feed-local floating control and resetting the scroll state from a pre-scrolled starting position.
+  success_trigger:
+    human_readable:
+    - The Messages feed scroll position is at the top (within tolerance).
+    - MSG-001 is visible within the feed viewport.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        scroll_top_px: 0
+        top_item_id: MSG-001
+        top_item_visible: true
+      tolerance:
+        scroll_top_px: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - The page scroll position changes but the feed remains scrolled.
+  - The feed is near the top but MSG-001 is not visible.
+  - The user scrolls manually but leaves the feed slightly offset from the top beyond tolerance.
+  expected_interaction_path:
+  - Locate the “Top” floating button inside the Messages feed.
+  - Click it and wait for the feed to scroll to the top.
+  notes: Expose feed scrollTop and firstVisibleItemId on feed root for checking; tolerate small rounding differences after smooth scroll.
+- id: feed_infinite_scroll-mui-T07
+  name: 'Dashboard: find TASK-032 in Tasks feed'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: Two List feeds in dashboard layout (composite infinite scroll)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the “Tasks” feed, scroll until “TASK-032 · Update invoice template” is visible. The task will finish automatically when done.
+  ui_copy: 'Tasks feed: make TASK-032 visible.'
+  setup_description: |-
+    Layout: dashboard with two cards side-by-side.
+    Left card contains a “Notifications” infinite-scroll List; right card contains a “Tasks” infinite-scroll List.
+    Both lists share the same styling (dense rows with a left icon and two lines of text) and both are independently scrollable.
+    Initial state: both lists start at the top with their initial page loaded. TASK-032 is deeper in the Tasks list and requires scrolling within that list.
+    A small toolbar at the top of the dashboard (search icon, settings icon) is present as clutter but does not affect the feeds.
+    The goal must be satisfied within the Tasks feed instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two similar scrollable feeds require selecting the correct one; the target task is not immediately visible and may require triggering lazy loading.
+  success_trigger:
+    human_readable:
+    - In the feed instance labeled “Tasks”, TASK-032 is rendered and visible in the feed viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: TASK-032
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Tasks
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - TASK-032 is visible in the Notifications feed (wrong instance).
+  - A different task is visible instead.
+  - TASK-032 is loaded but scrolled out of view inside the Tasks list.
+  expected_interaction_path:
+  - Identify the Tasks feed card.
+  - Scroll within the Tasks list until TASK-032 is visible.
+  notes: Provide data-testid for each feed instance (feed-Notifications, feed-Tasks); checker should confirm visibility inside the target instance’s scroll container.
+- id: feed_infinite_scroll-mui-T08
+  name: 'Small bulk triage: save 4 cases'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List with Checkbox multi-select and sticky Save action'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Case Triage feed, select CASE-014, CASE-017, CASE-019, and CASE-023, then click “Save selection”. The task will finish automatically when done.
+  ui_copy: 'Case Triage: select four cases and save selection.'
+  setup_description: |-
+    Layout: isolated card titled “Case Triage”.
+    Scale: small. The feed card is narrower and rows are more compact, making the checkbox targets smaller.
+    The feed is an infinite-scrolling MUI List with a Checkbox at the start of each row (ListItemIcon).
+    Selection is staged: checking boxes updates a “Selected (pending)” count in the footer; the selection is only committed after clicking the sticky footer button “Save selection”.
+    The target case IDs are not all in the initial viewport; at least one requires scrolling and may trigger a lazy-load.
+    No other components are required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small-scale UI increases target acquisition difficulty; multiple specific items must be selected and then explicitly saved to commit the state.
+  success_trigger:
+    human_readable:
+    - The Case Triage feed committed selection equals {CASE-014, CASE-017, CASE-019, CASE-023}.
+    - The selection is committed (Save selection was applied; no pending changes).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selected_item_ids:
+        - CASE-014
+        - CASE-017
+        - CASE-019
+        - CASE-023
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save selection
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Items are checked but 'Save selection' was not clicked (pending only).
+  - Wrong case IDs are included or any required ID is missing.
+  - Extra cases are selected beyond the four required.
+  expected_interaction_path:
+  - Scroll within the feed to find each required CASE-### row.
+  - Check the checkbox for each of the four cases.
+  - Click the sticky “Save selection” button.
+  notes: Feed root should expose committed_selected_item_ids; Save button should be part of the feed component subtree so confirmation is attributable to the component.
+- id: feed_infinite_scroll-mui-T09
+  name: 'Dark chats: match reference avatar and select CHAT-118'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_virtuoso_virtualized
+  implementation_component: 'MUI: List-based feed with virtualized endless scrolling (React Virtuoso integration style)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Chats feed, select the conversation that matches the reference avatar (same color) and initials “RJ”. The task will finish automatically when done.
+  ui_copy: 'Chats: select the conversation matching the reference avatar + initials RJ.'
+  setup_description: |-
+    Theme: dark.
+    Layout: dashboard with a left sidebar and a main panel containing the “Chats” card.
+    The Chats feed is an endless/virtualized list of conversations (many items), styled with MUI List components. Only visible rows are mounted.
+    Above the feed is a small “Reference avatar” preview showing a colored circle with the initials “RJ”.
+    Each feed row shows an avatar circle with initials and a conversation title. Several rows may share similar initials, so matching both the initials and avatar color is required.
+    The matching conversation is not near the top and requires scrolling (which triggers virtualized rendering).
+    Clicking a row selects it and highlights it; no confirmation button is required.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Virtualized endless scrolling increases depth and can complicate observability; the target is specified by a combination of visual avatar color and initials rather than unique text.
+  success_trigger:
+    human_readable:
+    - The selected chat item is the one whose avatar matches the reference (initials='RJ' and matching avatar color).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF-AVATAR-RJ
+        matched_item_id: CHAT-118
+      tolerance:
+        match_rule: initials_and_avatar_color
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - A chat with initials RJ is selected but avatar color does not match the reference.
+  - A chat with matching color is selected but initials differ.
+  - The correct chat is visible but not selected.
+  expected_interaction_path:
+  - Look at the reference avatar (color + initials RJ).
+  - Scroll the Chats feed until you find a row with matching avatar and initials.
+  - Click the matching row to select it.
+  notes: Expose each row's avatar token (e.g., data-avatar='RJ|purple') and stable item id. Checker should validate match deterministically without relying on DOM position (virtualization).
+- id: feed_infinite_scroll-mui-T10
+  name: 'Bulk Review: cancel clear-selection confirmation'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mui
+  implementation_variant: composite_onScroll
+  implementation_component: 'MUI: List feed with selection toolbar and confirmation Dialog'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Bulk Review feed, click “Clear selection”. When the confirmation dialog appears, click “Cancel” so the selected items stay selected. The task will finish automatically when done.
+  ui_copy: 'Bulk Review: cancel the clear-selection dialog (keep selection).'
+  setup_description: |-
+    Layout: isolated card titled “Bulk Review”.
+    The feed is a scrollable infinite List with checkboxes. Two items are already selected and committed: REV-055 and REV-058.
+    A toolbar above the feed shows “2 selected” and includes a button “Clear selection”.
+    Clicking “Clear selection” opens a MUI Dialog asking “Clear 2 selected items?” with two buttons: “Clear” (destructive) and “Cancel”.
+    Goal is to cancel the destructive action so the committed selection remains unchanged.
+    No other UI elements affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires handling an overlay confirmation dialog correctly and preserving an existing multi-selection state.
+  success_trigger:
+    human_readable:
+    - The last clear-selection confirmation dialog action is 'cancel' (dialog dismissed via Cancel).
+    - The committed selected items remain exactly {REV-055, REV-058}.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        last_confirm_dialog_action: cancel
+        committed_selected_item_ids:
+        - REV-055
+        - REV-058
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Clicked “Clear” in the dialog, which removes the selection.
+  - Dialog is dismissed by clicking outside/escape without registering a Cancel action (if tracked separately).
+  - Selection changes (missing or extra selected items).
+  - Cancel action is taken but in a different dialog unrelated to the feed.
+  expected_interaction_path:
+  - Click “Clear selection” in the feed toolbar.
+  - In the confirmation dialog, click “Cancel”.
+  notes: 'Instrumentation: record last_confirm_dialog_action on feed root (''cancel'' vs ''confirm''); expose committed_selected_item_ids. Treat overlay dismissal without clicking Cancel as not-success.'
+- id: feed_infinite_scroll-mantine-T01
+  name: 'Changelog: scroll to CHG-014'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea with list of items + composite infinite loading'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Changelog feed, scroll until “CHG-014 — Added export button” is visible. The task will finish automatically when done.
+  ui_copy: 'Changelog feed: make CHG-014 visible.'
+  setup_description: |-
+    Layout: isolated card centered on the page titled “Changelog”.
+    The feed uses Mantine ScrollArea to provide an internal scroll container; the page does not need to scroll.
+    Initial state: first 30 changelog entries are loaded (CHG-001 … CHG-030), with ~8 visible at a time.
+    Rows are visually consistent: each has an ID, a short title, and a small Badge with type (Fix/Feature).
+    Infinite loading exists (Loader appears at the bottom when more items load), but CHG-014 is in the initially loaded set.
+    No additional controls or clutter are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple scroll within a single ScrollArea until a uniquely identified entry is visible.
+  success_trigger:
+    human_readable:
+    - CHG-014 is rendered in the Changelog feed.
+    - CHG-014 is visible within the ScrollArea viewport.
+    canonical_predicate:
+      predicate_type: item_visible
+      target_state:
+        item_id: CHG-014
+        visibility: in_viewport
+      tolerance:
+        min_visible_ratio: 0.5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - A different changelog item is visible instead of CHG-014.
+  - CHG-014 is loaded but not visible in the ScrollArea viewport.
+  - Only the page scroll changes, not the internal ScrollArea.
+  expected_interaction_path:
+  - Scroll inside the Changelog ScrollArea until CHG-014 is visible.
+  notes: Use data-testid='feed-Changelog' on ScrollArea viewport; each row should include data-item-id='CHG-###'.
+- id: feed_infinite_scroll-mantine-T02
+  name: 'Changelog: expand CHG-006 details'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea feed with clickable items and inline details'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Changelog feed, open “CHG-006 — Improved keyboard shortcuts” so its details are expanded. The task will finish automatically when done.
+  ui_copy: Expand changelog entry CHG-006.
+  setup_description: |-
+    Layout: isolated “Changelog” card centered on the page.
+    The list is inside a Mantine ScrollArea; each item is a clickable Paper row.
+    Clicking a row expands an inline details section under it (a small Text block labeled “Notes”).
+    Only one entry can be expanded at a time.
+    CHG-006 is in the initial loaded items and is reachable with little or no scrolling.
+    No confirmation button is required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single click to expand a uniquely labeled entry within a single feed.
+  success_trigger:
+    human_readable:
+    - The active/expanded entry in the Changelog feed is CHG-006.
+    - CHG-006 details are expanded and visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: CHG-006
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - CHG-006 is visible but not expanded.
+  - A different entry is expanded.
+  - Details are opened in a different feed instance (if multiple existed).
+  expected_interaction_path:
+  - Scroll within the feed if needed to locate CHG-006.
+  - Click CHG-006 to expand its details.
+  notes: Expose active_item_id and expansion state on feed root; expanded content should have data-expanded-for='CHG-006'.
+- id: feed_infinite_scroll-mantine-T03
+  name: 'Changelog: back to top'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea feed with in-feed Back to top button'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Use the Changelog feed’s “Back to top” button to return the feed to the top so “CHG-001 — Initial release” is visible. The task will finish automatically when done.
+  ui_copy: 'Changelog: reset to top (CHG-001 visible).'
+  setup_description: |-
+    Layout: isolated “Changelog” card centered.
+    Initial state: the ScrollArea is pre-scrolled (mid-list) with several pages loaded already.
+    A small button labeled “Back to top” appears in the bottom-right corner of the feed when not at the top.
+    Clicking it scrolls the ScrollArea viewport back to the top.
+    No other components affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single visible reset control returns the feed to a clear top-of-list state.
+  success_trigger:
+    human_readable:
+    - The Changelog feed scroll position is at the top (within tolerance).
+    - CHG-001 is visible within the feed viewport.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        scroll_top_px: 0
+        top_item_id: CHG-001
+        top_item_visible: true
+      tolerance:
+        scroll_top_px: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Only the page scroll changes, not the ScrollArea.
+  - The feed is near the top but CHG-001 is not visible.
+  - CHG-001 is visible in the wrong feed instance.
+  expected_interaction_path:
+  - Click “Back to top” inside the feed and wait for the scroll to finish.
+  notes: Checker should read scrollTop from the ScrollArea viewport element; tolerate small scroll offsets after smooth animation.
+- id: feed_infinite_scroll-mantine-T04
+  name: 'Settings panel: show Errors only'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea feed with SegmentedControl filter'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Event Feed, switch the filter to “Errors only”. The task will finish automatically when done.
+  ui_copy: 'Event Feed: set filter to Errors only.'
+  setup_description: |-
+    Layout: settings_panel. The page is split into a left settings column (various unrelated switches and inputs) and a right panel containing the “Event Feed”.
+    The Event Feed is an infinite-scrolling list inside a Mantine ScrollArea.
+    In the feed header there is a SegmentedControl with options “All” and “Errors only”. It starts on “All”.
+    When switched to “Errors only”, the list updates to show only error events and displays a small red Badge “Errors” in the header.
+    No confirmation button is required; the filter applies immediately.
+    Surrounding settings controls are distractors only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The filter control is embedded in a busier settings panel and requires correctly targeting the feed’s header control rather than unrelated toggles.
+  success_trigger:
+    human_readable:
+    - The Event Feed filter mode equals 'errors_only'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+          mode: errors_only
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Filter remains set to All.
+  - A different setting outside the feed is toggled.
+  - Errors-only is enabled on a different feed instance (if multiple existed).
+  expected_interaction_path:
+  - Locate the SegmentedControl in the Event Feed header.
+  - Click “Errors only”.
+  notes: Expose filter mode on feed root (data-filter-mode='errors_only'); ensure SegmentedControl has an accessible label tied to the Event Feed.
+- id: feed_infinite_scroll-mantine-T05
+  name: 'Top-left feed: search and open CUST-221'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea feed with TextInput search and inline expansion'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Customer Notes feed, use the search field to find “CUST-221 — Payment follow-up” and open it. The task will finish automatically when done.
+  ui_copy: 'Customer Notes: search for CUST-221 and open it.'
+  setup_description: |-
+    Layout: isolated_card anchored at the top-left of the viewport (so the main content is not centered).
+    The card is titled “Customer Notes” and contains a Mantine ScrollArea feed.
+    The feed header includes a TextInput labeled “Search notes” with a small search icon.
+    Submitting the search filters results; a Loader appears briefly at the bottom while results refresh.
+    Clicking a note row expands an inline details section (the full note body).
+    No other page elements are required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires correct interaction with the in-feed search input and selection of the right result; non-centered placement modestly increases target acquisition load.
+  success_trigger:
+    human_readable:
+    - The active/expanded note in the Customer Notes feed is CUST-221.
+    - CUST-221’s details section is expanded and visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: CUST-221
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - CUST-221 appears but is not opened/expanded.
+  - Search input is not used (still unfiltered list).
+  - A different note is opened.
+  expected_interaction_path:
+  - Click into the Search notes input.
+  - Type 'CUST-221' and submit.
+  - Click the CUST-221 row to expand it.
+  notes: Provide data-testid for feed and search input; scope active_item_id to the Customer Notes feed component.
+- id: feed_infinite_scroll-mantine-T06
+  name: 'Release notes modal: open RLS-042'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: Modal containing ScrollArea infinite feed'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Release Notes modal, then in the feed find “RLS-042 — SSO improvements” and open it. The task will finish automatically when done.
+  ui_copy: 'Release Notes: open RLS-042 in the modal.'
+  setup_description: |-
+    Layout: modal_flow. The base page shows a button labeled “View release notes”.
+    Clicking it opens a Mantine Modal.
+    Inside the modal is a fixed-height ScrollArea feed of release note entries (RLS-###) with infinite loading and a Loader at the bottom.
+    Clicking an entry expands its details inline within the modal.
+    RLS-042 is not in the initial viewport and may require scrolling and lazy-loading.
+    No additional confirmations are required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening an overlay to reach the feed and then scrolling/loading to the target entry before selecting it.
+  success_trigger:
+    human_readable:
+    - Within the Release Notes feed, the active/expanded item is RLS-042.
+    - RLS-042 details are expanded and visible.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: RLS-042
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Modal is opened but RLS-042 is not opened.
+  - A different RLS entry is expanded.
+  - RLS-042 is loaded but not expanded/active.
+  expected_interaction_path:
+  - Click “View release notes” to open the modal.
+  - Scroll within the modal ScrollArea until RLS-042 appears.
+  - Click RLS-042 to expand it.
+  notes: Modal should have data-testid; feed root inside modal should have data-testid='feed-ReleaseNotes' to avoid confusion with background content.
+- id: feed_infinite_scroll-mantine-T07
+  name: 'Two timelines: open EVT-077 in Secondary'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: Two ScrollArea feeds with compact rows (composite infinite scroll)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the “Secondary timeline” feed, find and open “EVT-077 — Database failover”. The task will finish automatically when done.
+  ui_copy: 'Secondary timeline: open EVT-077.'
+  setup_description: |-
+    Layout: isolated_card with two stacked timeline feeds.
+    Top feed label: “Primary timeline”. Bottom feed label: “Secondary timeline”. Both are Mantine ScrollArea components with infinite loading.
+    Spacing mode is compact: rows have reduced padding and smaller click targets.
+    Each timeline row shows an event ID (EVT-###) and a short title; many titles use similar verbs (e.g., 'Restarted', 'Rolled back').
+    Clicking a row expands an inline details section.
+    EVT-077 is not in the first viewport of the Secondary timeline and requires scrolling and likely at least one lazy-load.
+    The Primary timeline is a distractor with similar styling; success must occur in the Secondary timeline.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two similar compact feeds increase disambiguation and target acquisition difficulty; the target event is deeper and requires scrolling with lazy-loading.
+  success_trigger:
+    human_readable:
+    - In the “Secondary timeline” feed instance, the active/expanded event is EVT-077.
+    - EVT-077 details are expanded.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item_id: EVT-077
+        expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary timeline
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - EVT-077 is opened in the Primary timeline (wrong instance).
+  - A different EVT event is opened.
+  - EVT-077 is visible but not expanded/active.
+  expected_interaction_path:
+  - Identify the Secondary timeline feed (lower one).
+  - Scroll within it until EVT-077 appears (wait for loading as needed).
+  - Click EVT-077 to expand details.
+  notes: Add data-testid feed-PrimaryTimeline and feed-SecondaryTimeline; checker must scope active_item_id to the targeted instance.
+- id: feed_infinite_scroll-mantine-T08
+  name: 'Dashboard triage: apply 4 alerts'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea feed with Checkbox multi-select and Apply action'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Alert Triage feed, select ALR-012, ALR-018, ALR-021, and ALR-024, then click “Apply”. The task will finish automatically when done.
+  ui_copy: 'Alert Triage: select four alerts and apply.'
+  setup_description: |-
+    Layout: dashboard with several widgets (KPI cards, small chart placeholder) creating medium clutter.
+    One widget is the “Alert Triage” card containing an infinite-scrolling feed inside a Mantine ScrollArea.
+    Each row has a checkbox, an alert ID (ALR-###), and a short description. Rows are dense but readable.
+    Selection is staged: checked boxes update a “Selected (pending)” count in the footer; selection is committed only when the footer button “Apply” is clicked.
+    At least one required alert is not initially visible and requires scrolling within the feed.
+    No other dashboard controls influence completion.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires multi-item selection and an explicit Apply step within a busier dashboard context, increasing disambiguation and recovery cost for mistakes.
+  success_trigger:
+    human_readable:
+    - The Alert Triage feed committed selection equals {ALR-012, ALR-018, ALR-021, ALR-024}.
+    - Apply has been clicked (selection committed; no pending changes).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_selected_item_ids:
+        - ALR-012
+        - ALR-018
+        - ALR-021
+        - ALR-024
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Checked boxes but did not click Apply (pending only).
+  - Wrong alert IDs selected, missing IDs, or extras selected.
+  - Apply clicked in a different widget’s control (not inside the Alert Triage feed).
+  expected_interaction_path:
+  - Scroll within the Alert Triage feed to locate each required ALR-### row.
+  - Check the checkbox for each of the four alerts.
+  - Click the “Apply” button in the feed footer.
+  notes: Expose committed selection on feed root; Apply button should be within the feed component subtree for scoping. Provide stable data-item-id on each row.
+- id: feed_infinite_scroll-mantine-T09
+  name: 'Dark pins: match reference dot and select PIN-066'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea feed with visual markers (dot color) for match_reference'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Pinned Items feed, select the item whose colored dot matches the reference dot shown above the feed. The task will finish automatically when done.
+  ui_copy: 'Pinned Items: select the row matching the reference dot.'
+  setup_description: |-
+    Theme: dark.
+    Layout: isolated card titled “Pinned Items” centered on the page.
+    Above the feed is a small “Reference dot” preview: a single colored circle.
+    Each feed row begins with a small colored dot (one of several colors). The text labels are intentionally similar (e.g., 'Reminder') so the dot is the primary cue.
+    The feed is infinite-scrolling inside a Mantine ScrollArea; the matching item is not in the first viewport and requires scrolling/lazy-loading.
+    Clicking a row selects it and highlights the row; no Apply button exists.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The goal is specified visually (dot color) rather than by unique text, increasing choice interference during scrolling in dark theme.
+  success_trigger:
+    human_readable:
+    - The selected item is the one whose dot color matches the reference dot.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF-DOT-1
+        matched_item_id: PIN-066
+      tolerance:
+        match_rule: dot_color
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - An item is selected but its dot color does not match the reference.
+  - The correct item is visible but not selected.
+  - A different row with a similar dot shade is selected (if multiple close colors exist).
+  expected_interaction_path:
+  - Observe the reference dot color.
+  - Scroll the feed until you find a row with the same dot color.
+  - Click that row to select it.
+  notes: Expose each row's dot color token (e.g., data-dot='cyan') and stable item id; checker should validate match via canonical token, not pixel sampling.
+- id: feed_infinite_scroll-mantine-T10
+  name: 'Bottom-left archive: pin ARCH-150'
+  canonical_type: feed_infinite_scroll
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_onScroll
+  implementation_component: 'Mantine: ScrollArea infinite feed with per-row pin ActionIcon'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Archive feed, scroll until “ARCH-150 — Completed migration” is visible and pin it using the pin icon on that row. The task will finish automatically when done.
+  ui_copy: 'Archive: pin ARCH-150.'
+  setup_description: |-
+    Layout: isolated card anchored near the bottom-left of the viewport.
+    The card is titled “Archive” and contains a Mantine ScrollArea feed with infinite loading (Loader at the bottom while fetching).
+    There are many items (ARCH-001 … ARCH-160). The target ARCH-150 is far down, requiring multiple lazy-load cycles.
+    Each row has an ID and title on the left and a small pin ActionIcon on the right. Unpinned rows show an outline pin; pinned rows show a filled pin and the row gains a subtle 'Pinned' badge.
+    Initial state: ARCH-150 is unpinned.
+    No confirmation dialog is used; pin toggles immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires deep infinite scrolling with repeated loading plus precise clicking of a small per-row pin control near the viewport edge.
+  success_trigger:
+    human_readable:
+    - Within the Archive feed, item ARCH-150 has pinned=true.
+    - ARCH-150 is the one pinned (pin state change scoped to that item).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        item_id: ARCH-150
+        item_state:
+          pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task_ends_when_predicate_holds
+  negative_cases:
+  - Pinned the wrong ARCH item.
+  - ARCH-150 is visible but the pin state did not change.
+  - ARCH-150 is pinned via a different control outside the feed (should not exist).
+  expected_interaction_path:
+  - Scroll the Archive feed until ARCH-150 becomes visible (triggering multiple loads).
+  - On the ARCH-150 row, click the pin icon to pin it.
+  notes: Expose per-item pinned state (data-pinned) and stable data-item-id. Checker should validate pinned=true specifically for ARCH-150.

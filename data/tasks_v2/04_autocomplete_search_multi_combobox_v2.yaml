@@ -1,0 +1,3847 @@
+- id: autocomplete_freeform-antd-v2-T01
+  name: 'Drawer labels: add one suggested tag and one custom tag'
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: Select.tags (autoClearSearchValue=false)
+  implementation_component: 'AntD: Select (mode="tags", autoClearSearchValue=false) inside Drawer'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit labels” drawer. In the “Incident labels” field, keep the existing tag `backend`, add the suggested tag `urgent`, add the custom tag `sev-zero`, and end with exactly those three tags. Then click “Apply labels”. The task will finish automatically when done.
+  ui_copy: Open the “Edit labels” drawer. In the “Incident labels” field, keep the existing tag `backend`, add the suggested tag `urgent`, add the custom tag `sev-zero`, and end with exactly those three tags. Then click “Apply labels”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a drawer_flow layout with compact spacing and medium clutter. A release triage dashboard remains visible in the background with charts, counters, and a recent incidents list. Clicking “Edit labels” opens a right-side drawer. Inside the drawer are two visually similar tag inputs: “Incident labels” and “Archive labels”. Both are Ant Design Select controls in tags mode with search, and both render selected values as removable chips.
+
+    Initial state:
+    - Incident labels: backend
+    - Archive labels: legacy
+
+    For the Incident labels field, dropdown suggestions include urgent, customer-visible, infra, backend. The value `sev-zero` is not in the suggestions and must be committed as a custom tag. Search text is not cleared automatically after each selection, so residual input can remain visible until it is explicitly committed or removed. The drawer footer contains “Cancel” and “Apply labels”. Changes are committed only when “Apply labels” is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: Two nearly identical editable tag fields inside a drawer create wrong-instance pressure, and the residual search buffer means the agent must distinguish between typed-but-uncommitted text and actual chips before applying the change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is hard because the agent must edit the correct tags field, preserve an existing chip, add one option-backed value and one custom value, audit the final chip set, and then commit via the drawer-local action.
+  success_trigger:
+    human_readable:
+    - The committed value of “Incident labels” is exactly {backend, urgent, sev-zero}.
+    - “Archive labels” remains exactly {legacy}.
+    - The drawer-local “Apply labels” control has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Incident labels
+        values:
+        - backend
+        - urgent
+        - sev-zero
+        non_target_instances_must_remain:
+          Archive labels:
+          - legacy
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply labels
+      require_correct_instance: true
+      target_instance_label_or_id: Incident labels
+      terminal_condition: true
+  negative_cases:
+  - Adding the right text in the input but leaving it uncommitted as residual search text.
+  - Editing “Archive labels” instead of “Incident labels”.
+  - Keeping any extra chip such as customer-visible or infra.
+  - Stopping with the right chips visible but without clicking “Apply labels”.
+  expected_interaction_path:
+  - Open the drawer.
+  - Focus the Incident labels field, not Archive labels.
+  - Use the dropdown to add urgent, then commit the custom value sev-zero as a chip.
+  - Verify the final Incident labels chip set is exactly backend, urgent, sev-zero.
+  - Click Apply labels.
+  notes: Track both the chip array and any live search buffer so uncommitted text does not count as a final value.
+- id: autocomplete_freeform-antd-v2-T02
+  name: 'Settings panel alias: suggestion selection on the second field only'
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete with custom option labels
+  implementation_component: 'AntD: AutoComplete with grouped custom labels in settings panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the routing settings panel, set only the “Escalation alias” field to `plat-eu — Platform Europe` by selecting it from the suggestions list. Do not change “Owner alias”. Then click “Save routing”. The task will finish automatically when done.
+  ui_copy: In the routing settings panel, set only the “Escalation alias” field to `plat-eu — Platform Europe` by selecting it from the suggestions list. Do not change “Owner alias”. Then click “Save routing”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, off-center placement, and high clutter. Above the target area are unrelated toggles, segmented controls, and two compact selects. The target area contains two Ant Design AutoComplete inputs with the same custom option renderer:
+    - Owner alias
+    - Escalation alias
+
+    Both inputs open a suggestion popup with aliases rendered as `shortcode — team name`, including:
+    - plat-us — Platform US
+    - plat-eu — Platform Europe
+    - plat-ops — Platform Operations
+    - platform — Shared Platform
+
+    Initial state:
+    - Owner alias: platform — Shared Platform
+    - Escalation alias: (empty)
+
+    The control allows arbitrary typing, but the benchmark checker distinguishes free text from a committed suggestion selection. A panel-local button labeled “Save routing” commits changes.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The old family often collapsed to direct typing, so this task forces suggestion commitment on one of two similar fields inside a dense settings panel and makes the untouched sibling part of the success boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The alias itself is short, but the field is one of two similar freeform autocompletes in a cluttered panel and success requires a real suggestion commit plus preservation of the non-target field.
+  success_trigger:
+    human_readable:
+    - The committed value of “Escalation alias” is exactly `plat-eu — Platform Europe` and its selection origin is a suggestion commit.
+    - “Owner alias” remains `platform — Shared Platform`.
+    - “Save routing” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Escalation alias
+        value: plat-eu — Platform Europe
+        selection_origin: suggestion
+        non_target_instances_must_remain:
+          Owner alias: platform — Shared Platform
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save routing
+      require_correct_instance: true
+      target_instance_label_or_id: Escalation alias
+      terminal_condition: true
+  negative_cases:
+  - Typing the text into Escalation alias without committing a suggestion.
+  - Changing Owner alias as well as Escalation alias.
+  - Selecting plat-us — Platform US or plat-ops — Platform Operations.
+  - Leaving the panel unsaved.
+  expected_interaction_path:
+  - Focus the Escalation alias field.
+  - Type a prefix such as plat to reveal suggestions.
+  - Choose plat-eu — Platform Europe from the popup.
+  - Leave Owner alias unchanged.
+  - Click Save routing.
+  notes: Expose whether the final value came from suggestion selection or raw free text.
+- id: autocomplete_freeform-antd-v2-T03
+  name: Table row city binding with diacritic near-misses
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete inside editable table row
+  implementation_component: 'AntD: AutoComplete inside table cell with row-local save'
+  task_template: table_operation
+  secondary_template: search_and_select
+  browsergym_goal: In the deployment table, find the row “Service B”. In that row only, set “Rollout city” to `San José (CR)` by choosing it from the suggestion list, then click the “Save” action for Service B. The task will finish automatically when done.
+  ui_copy: In the deployment table, find the row “Service B”. In that row only, set “Rollout city” to `San José (CR)` by choosing it from the suggestion list, then click the “Save” action for Service B. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a table_cell layout with compact spacing, small scale, and medium clutter. A deployment table shows three rows: Service A, Service B, and Service C. The “Rollout city” column is editable for Service B and Service C, each with an Ant Design AutoComplete input and a row-local “Save” button.
+
+    The suggestion list contains several confusable entries:
+    - San Jose
+    - San José
+    - San José (CR)
+    - Santo Domingo
+    - São Paulo
+
+    Initial state:
+    - Service B Rollout city: (empty)
+    - Service C Rollout city: São Paulo
+
+    The input accepts arbitrary text, but only a suggestion-origin selection counts for this task. Saving is scoped to the row where the edit was made.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: A dense table row with two editable autocomplete instances makes row binding and small-target acquisition primary, while the city list uses accent and suffix near-misses to keep direct typing from being the whole problem.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: 'This is a row-scoped high-pressure task: the target row is dense, the editable cells are small, the options are confusable, and the final row-local Save must be applied to the correct row.'
+  success_trigger:
+    human_readable:
+    - Service B “Rollout city” equals `San José (CR)` with suggestion-origin selection.
+    - Service C remains `São Paulo`.
+    - The Service B row Save action has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Service B
+        field: Rollout city
+        value: San José (CR)
+        selection_origin: suggestion
+        non_target_instances_must_remain:
+          Service C__Rollout city: São Paulo
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-service-b
+      require_correct_instance: true
+      target_instance_label_or_id: Service B
+      terminal_condition: true
+  negative_cases:
+  - Typing San José (CR) as raw text without suggestion commit.
+  - Saving the Service C row instead of Service B.
+  - Selecting San Jose or San José instead of San José (CR).
+  - Changing Service C while editing Service B.
+  expected_interaction_path:
+  - Locate the Service B row.
+  - Open the Rollout city suggestions for Service B and search with San.
+  - Select San José (CR).
+  - Click Save on the Service B row.
+  notes: The checker should bind to a row identifier and record both the committed city and selection origin.
+- id: autocomplete_freeform-antd-v2-T04
+  name: Reference-card employee match in modal invite flow
+  canonical_type: autocomplete_freeform
+  implementation_source: antd
+  implementation_variant: AutoComplete with custom option render in Modal
+  implementation_component: 'AntD: AutoComplete with avatar options inside Modal'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Add reviewer”. In the modal, set the “Reviewer” field to match the person shown in the reference card and choose that person from the suggestions list. Then click “Invite reviewer”. The task will finish automatically when done.
+  ui_copy: Click “Add reviewer”. In the modal, set the “Reviewer” field to match the person shown in the reference card and choose that person from the suggestions list. Then click “Invite reviewer”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. A review dashboard in the background shows a reference card labeled “Next reviewer”, including a small avatar, the display name “Olivia Chen”, and the team label “Platform”. Clicking “Add reviewer” opens a modal with one target AutoComplete labeled “Reviewer”.
+
+    The modal’s suggestion list uses custom option rendering with avatar + name + team, including:
+    - Olivia Chen — Platform
+    - Olivia Cheng — Platform
+    - Oliver Chen — Platform
+    - Olivia Chen — Design
+
+    The input accepts arbitrary text, but only a suggestion-origin selection counts. The modal footer contains “Cancel” and “Invite reviewer”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The target is grounded from an on-page reference card rather than copied from the prompt, and the nested modal-plus-suggestions flow ensures the task measures both visual matching and suggestion commitment.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: The task is short but genuinely hard because several near-duplicate people are present, the correct answer is specified by a reference card, and the modal commit is explicit.
+  success_trigger:
+    human_readable:
+    - The committed Reviewer value is `Olivia Chen — Platform` and it was selected from the suggestion list.
+    - The modal “Invite reviewer” action has been confirmed.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: next-reviewer-card
+        value: Olivia Chen — Platform
+        selection_origin: suggestion
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Invite reviewer
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting Olivia Cheng — Platform, Oliver Chen — Platform, or Olivia Chen — Design.
+  - Typing “Olivia Chen” without choosing a suggestion.
+  - Closing the modal or clicking Cancel instead of Invite reviewer.
+  - Ignoring the team label shown in the reference card.
+  expected_interaction_path:
+  - Read the name and team on the reference card.
+  - Open the modal.
+  - Type Olivia to filter suggestions and choose Olivia Chen — Platform.
+  - Click Invite reviewer.
+  notes: Use the reference card text to derive the expected answer, but still require suggestion-origin selection in the checker.
+- id: autocomplete_freeform-mui-v2-T01
+  name: Collapsed chips in dark panel with explicit save
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete (multiple, freeSolo, limitTags=1, filterSelectedOptions)
+  implementation_component: 'MUI: Autocomplete (multiple, freeSolo, limitTags=1) in dashboard panel'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dark “Ticket labels” panel, edit only the “Labels” field so the selected chips are exactly `backend`, `urgent`, and `p0`. The field starts with `backend`. Then click “Save labels”. The task will finish automatically when done.
+  ui_copy: In the dark “Ticket labels” panel, edit only the “Labels” field so the selected chips are exactly `backend`, `urgent`, and `p0`. The field starts with `backend`. Then click “Save labels”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with dark theme, compact spacing, off-center placement, and medium clutter. The target panel contains two MUI Autocomplete controls rendered as chip inputs:
+    - Labels (target)
+    - Watch tags (distractor)
+
+    The Labels field is configured with multiple, freeSolo, filterSelectedOptions, and limitTags=1. When the input is not focused, only one visible chip and a “+N” counter are shown. Initial state:
+    - Labels: backend
+    - Watch tags: triage
+
+    Suggestions include backend, urgent, p0, p1, frontend, qa. The panel-local action “Save labels” commits the edited state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - instances
+    - confirmation_model
+    factor_rationale: Collapsed chip display makes state auditing harder, and the sibling chip field plus explicit save step prevent the task from collapsing to “type two strings and leave.”
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A hidden +N chip counter, a dark compact panel, and a nearby distractor chip field make this an exact-set state-tracking task rather than a simple free-solo input.
+  success_trigger:
+    human_readable:
+    - The committed Labels value is exactly {backend, urgent, p0}.
+    - Watch tags remains exactly {triage}.
+    - Save labels has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Labels
+        values:
+        - backend
+        - urgent
+        - p0
+        non_target_instances_must_remain:
+          Watch tags:
+          - triage
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save labels
+      require_correct_instance: true
+      target_instance_label_or_id: Labels
+      terminal_condition: true
+  negative_cases:
+  - Stopping with the right chips visible in the draft state but not clicking Save labels.
+  - Adding p1 or frontend as an extra chip.
+  - Editing Watch tags instead of Labels.
+  - Leaving a typed but uncommitted input buffer after adding chips.
+  expected_interaction_path:
+  - Focus the Labels field so hidden chips expand if needed.
+  - Add urgent and p0 while keeping backend.
+  - Verify Watch tags still contains only triage.
+  - Click Save labels.
+  notes: Record the controlled chip array at commit time; visual chip collapse should not affect correctness.
+- id: autocomplete_freeform-mui-v2-T02
+  name: Backup alias only with grouped suggestion headings
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete (freeSolo, groupBy, openOnFocus, autoHighlight)
+  implementation_component: 'MUI: Autocomplete (freeSolo, grouped options) in settings panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the alias settings panel, set only the “Backup alias” field to `alpha-admin` by selecting it from the grouped suggestion list. Do not change “Primary alias”. Then click “Apply aliases”. The task will finish automatically when done.
+  ui_copy: In the alias settings panel, set only the “Backup alias” field to `alpha-admin` by selecting it from the grouped suggestion list. Do not change “Primary alias”. Then click “Apply aliases”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a settings_panel layout with compact spacing, top-left placement, and high clutter. The target card contains two single-value MUI Autocomplete fields:
+    - Primary alias
+    - Backup alias
+
+    Both use freeSolo with grouped options and openOnFocus. The options are grouped under headings “Admins”, “Analysts”, and “Automation”, and include:
+    - alpha-admin
+    - alpha-analyst
+    - alpha-auto
+    - beta-admin
+
+    autoHighlight is enabled, so the first visible option becomes highlighted when the popup opens. Initial state:
+    - Primary alias: beta-admin
+    - Backup alias: (empty)
+
+    The panel action “Apply aliases” commits both fields.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - guidance
+    factor_rationale: Grouped headings and auto-highlight add real interaction-knowledge pressure because clicking the field is not enough; the agent must target the second alias field and commit the intended grouped option rather than the first highlighted near-match.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Wrong-field errors and wrong-highlight errors are both plausible here, and the explicit Apply step means the agent has to verify the final state before committing.
+  success_trigger:
+    human_readable:
+    - Backup alias equals `alpha-admin` and the value came from the grouped suggestion list.
+    - Primary alias remains `beta-admin`.
+    - Apply aliases has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Backup alias
+        value: alpha-admin
+        selection_origin: suggestion
+        non_target_instances_must_remain:
+          Primary alias: beta-admin
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply aliases
+      require_correct_instance: true
+      target_instance_label_or_id: Backup alias
+      terminal_condition: true
+  negative_cases:
+  - Accepting the first highlighted suggestion in the wrong group.
+  - Typing alpha-admin as raw input without suggestion commit.
+  - Changing Primary alias.
+  - Leaving the panel unsaved.
+  expected_interaction_path:
+  - Focus Backup alias.
+  - Use the grouped popup to find and select alpha-admin.
+  - Confirm Primary alias is still beta-admin.
+  - Click Apply aliases.
+  notes: The checker should distinguish suggestion-origin values from freeSolo raw text.
+- id: autocomplete_freeform-mui-v2-T03
+  name: Async office picker in modal with explicit save
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete (freeSolo, async search-as-you-type)
+  implementation_component: 'MUI: Autocomplete with async options inside Modal'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Add office”. In the modal, use the “Office” autocomplete to select `San Sebastián Office` from the async suggestions list, then click “Save office”. The task will finish automatically when done.
+  ui_copy: Click “Add office”. In the modal, use the “Office” autocomplete to select `San Sebastián Office` from the async suggestions list, then click “Save office”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, centered placement, and medium clutter. A button labeled “Add office” opens a modal containing one MUI Autocomplete labeled “Office”. The control is configured for async search-as-you-type: a loading indicator appears while options are being fetched, and the visible option list updates after each query. Built-in filtering is disabled so the server-returned list is used as-is.
+
+    The async suggestions for `San` include:
+    - San Diego Office
+    - San José Office
+    - San Sebastián Office
+    - Santiago Office
+
+    The input permits arbitrary text, but only an async suggestion selection counts. The modal action “Save office” commits the selection.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - clutter
+    factor_rationale: The option list appears behind a modal boundary and is intentionally asynchronous, so the task pressures the “wait, re-ground, then commit” loop that plain static autocompletes often miss.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target text is readable, but the async update and explicit save boundary make this a real state-verification task instead of an instant fill.
+  success_trigger:
+    human_readable:
+    - The committed Office value is `San Sebastián Office` and its selection origin is an async suggestion.
+    - The modal Save office action has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: San Sebastián Office
+        selection_origin: suggestion
+        options_source: async
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save office
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Typing the target text and saving without selecting a suggestion.
+  - Choosing San Diego Office, San José Office, or Santiago Office.
+  - Closing the modal or canceling instead of saving.
+  - Trying to select before the async suggestions have loaded and ending with no committed value.
+  expected_interaction_path:
+  - Open the modal.
+  - Type San into the Office field and wait for the async list to populate.
+  - Select San Sebastián Office from the returned options.
+  - Click Save office.
+  notes: Expose loading state and selection origin so the checker can enforce async option commitment.
+- id: autocomplete_freeform-mui-v2-T04
+  name: 'Allowed domains: replace one existing chip and add one custom domain'
+  canonical_type: autocomplete_freeform
+  implementation_source: mui
+  implementation_variant: Autocomplete (multiple, freeSolo, filterSelectedOptions)
+  implementation_component: 'MUI: Autocomplete (multiple, freeSolo) inside Drawer'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Allowed domains”. In the “Domains” field, remove `example.net`, keep `example.com`, add the suggested value `research.org`, add the custom value `labs.dev`, and end with exactly those three domains. Then click “Save domains”. The task will finish automatically when done.
+  ui_copy: Open “Allowed domains”. In the “Domains” field, remove `example.net`, keep `example.com`, add the suggested value `research.org`, add the custom value `labs.dev`, and end with exactly those three domains. Then click “Save domains”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a drawer_flow layout with compact spacing, bottom-right placement, and medium clutter. Clicking “Allowed domains” opens a right-side drawer containing one MUI Autocomplete configured with multiple and freeSolo. Selected values are shown as chips inside the input.
+
+    Initial chips:
+    - example.com
+    - example.net
+
+    Suggested options include example.com, example.net, research.org, staging.local. The value labs.dev is not in the suggestions and must be committed as free text. filterSelectedOptions is enabled so already selected suggestions disappear from the list. The drawer-local action “Save domains” commits the chip set.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - placement
+    factor_rationale: This task mixes deletion, suggestion-backed addition, and custom-value creation in one chip field, so the agent has to audit the exact final set before leaving the drawer.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Removing one existing chip, preserving one, adding one suggestion-backed chip, and adding one custom chip creates more recovery/state-tracking burden than a plain add-only labels task.
+  success_trigger:
+    human_readable:
+    - The committed Domains chip set is exactly {example.com, research.org, labs.dev}.
+    - Save domains has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - example.com
+        - research.org
+        - labs.dev
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save domains
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving example.net selected.
+  - Adding research.org but failing to commit labs.dev as a chip.
+  - Adding an extra domain such as staging.local.
+  - Leaving the correct chips visible but not clicking Save domains.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove the example.net chip.
+  - Add research.org from suggestions and labs.dev as a custom value.
+  - Verify the final set is example.com, research.org, labs.dev.
+  - Click Save domains.
+  notes: Track final chip array and ensure free-text values are committed as chips rather than left in the text buffer.
+- id: autocomplete_freeform-mantine-v2-T01
+  name: Primary labels only with accept-on-blur disabled
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: TagsInput (acceptValueOnBlur=false, maxTags=3)
+  implementation_component: 'Mantine: TagsInput (acceptValueOnBlur=false, maxTags=3) in settings panel'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: In the labels settings panel, edit only the “Primary labels” field so it ends with exactly `api`, `ui`, and `agent`. It starts with `api`. Do not change “Secondary labels”. Then click “Save labels”. The task will finish automatically when done.
+  ui_copy: In the labels settings panel, edit only the “Primary labels” field so it ends with exactly `api`, `ui`, and `agent`. It starts with `api`. Do not change “Secondary labels”. Then click “Save labels”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, off-center placement, and high clutter. Two Mantine TagsInput controls are stacked in the target section:
+    - Primary labels (target) — initial chips: api
+    - Secondary labels — initial chips: docs
+
+    Both fields are configured with suggestions, acceptValueOnBlur={false}, and maxTags=3. Suggestions include api, ui, agent, docs, infra. Because acceptValueOnBlur is disabled, typing and then blurring does not create a chip; values are committed only by pressing Enter or clicking a suggestion. A panel-local “Save labels” button commits both fields.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: The task combines a common Mantine-specific commit rule with two near-identical tags fields, so the agent has to manage chip commitment and wrong-instance risk simultaneously.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is difficult because blurring does not commit values, the target field has a max tag cap, and a sibling TagsInput with overlapping suggestions is present in the same cluttered panel.
+  success_trigger:
+    human_readable:
+    - Primary labels equals exactly {api, ui, agent}.
+    - Secondary labels remains exactly {docs}.
+    - Save labels has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Primary labels
+        values:
+        - api
+        - ui
+        - agent
+        non_target_instances_must_remain:
+          Secondary labels:
+          - docs
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save labels
+      require_correct_instance: true
+      target_instance_label_or_id: Primary labels
+      terminal_condition: true
+  negative_cases:
+  - Leaving typed text uncommitted because the field was blurred instead of submitting a tag.
+  - Editing Secondary labels.
+  - Exceeding the max tag cap and ending with the wrong chip set.
+  - Forgetting to click Save labels.
+  expected_interaction_path:
+  - Focus Primary labels.
+  - Commit ui and agent as chips via Enter or suggestion clicks.
+  - Leave Secondary labels untouched.
+  - Click Save labels.
+  notes: The checker should inspect the controlled value array, not the live search text.
+- id: autocomplete_freeform-mantine-v2-T02
+  name: Reviewer autocomplete with first-option trap
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete (selectFirstOptionOnChange)
+  implementation_component: 'Mantine: Autocomplete (selectFirstOptionOnChange) in compact inline surface'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the compact review card, set the “Reviewer” field to `Ana María` by choosing it from the suggestions list, then click “Apply reviewer”. The task will finish automatically when done.
+  ui_copy: In the compact review card, set the “Reviewer” field to `Ana María` by choosing it from the suggestions list, then click “Apply reviewer”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses an inline_surface layout anchored near the top-left with compact spacing, small scale, and medium clutter. The target card contains one Mantine Autocomplete labeled “Reviewer”. selectFirstOptionOnChange is enabled, so when the user types, the first option is automatically selected for keyboard submission.
+
+    Suggestions include:
+    - Ana Marin
+    - Ana María
+    - Ana-Marie
+    - Annika Ma
+
+    Initial state is empty. The card footer contains “Apply reviewer”. The field still accepts arbitrary input because Mantine Autocomplete is not a searchable select; the checker therefore requires suggestion-origin selection rather than raw text entry.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - scale
+    - placement
+    - guidance
+    factor_rationale: This task exploits a documented autocomplete behavior that can make the first option too “sticky”, so the agent must actively choose the right diacritic variant instead of assuming Enter is safe.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The compact top-left placement raises acquisition cost, and the option list is intentionally full of near-miss names where auto-selecting the first candidate is often wrong.
+  success_trigger:
+    human_readable:
+    - Reviewer equals `Ana María` with suggestion-origin selection.
+    - Apply reviewer has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: Ana María
+        selection_origin: suggestion
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply reviewer
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Submitting Ana Marin because it appears first.
+  - Typing Ana María as raw text without selecting a suggestion.
+  - Selecting Ana-Marie or Annika Ma.
+  - Leaving the card unapplied.
+  expected_interaction_path:
+  - Focus the Reviewer field.
+  - Type Ana and inspect the suggestion list carefully.
+  - Click Ana María rather than accepting the first near-match.
+  - Click Apply reviewer.
+  notes: Record whether the final value came from suggestion selection or raw input.
+- id: autocomplete_freeform-mantine-v2-T03
+  name: Drawer replacement under maxTags saturation
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: TagsInput (maxTags=3, clearable)
+  implementation_component: 'Mantine: TagsInput (maxTags=3, clearable) inside Drawer'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit rollout tags” drawer. In the “Rollout tags” field, replace the existing tags so the final set is exactly `alpha`, `delta`, and `epsilon`. Then click “Apply rollout tags”. The task will finish automatically when done.
+  ui_copy: Open the “Edit rollout tags” drawer. In the “Rollout tags” field, replace the existing tags so the final set is exactly `alpha`, `delta`, and `epsilon`. Then click “Apply rollout tags”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a drawer_flow layout with compact spacing, bottom-left placement, and medium clutter. Clicking “Edit rollout tags” opens a left drawer containing one Mantine TagsInput labeled “Rollout tags”.
+
+    Configuration:
+    - maxTags=3
+    - clearable
+    - suggestions: alpha, beta, gamma, delta, epsilon
+
+    Initial chips are alpha, beta, gamma, so the field is already saturated. The target set requires preserving alpha while removing beta and gamma, then adding delta and epsilon. The drawer footer contains “Cancel” and “Apply rollout tags”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - placement
+    - clutter
+    factor_rationale: 'A saturated editable tags field turns this into a recovery task: the agent must free capacity before adding replacements, verify the exact final set, and then commit inside an off-center drawer.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The maxTags cap creates a real edit-and-recover burden instead of a simple add-only action, and the save boundary makes the exact final chip set matter.
+  success_trigger:
+    human_readable:
+    - Rollout tags equals exactly {alpha, delta, epsilon}.
+    - Apply rollout tags has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - alpha
+        - delta
+        - epsilon
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply rollout tags
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving beta or gamma selected.
+  - Clearing all tags and failing to restore alpha.
+  - Adding an extra tag beyond the required three.
+  - Stopping with the right chips in the draft state but not clicking Apply rollout tags.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove beta and gamma to free capacity.
+  - Add delta and epsilon while keeping alpha.
+  - Click Apply rollout tags.
+  notes: The clear button exists, but using it would force re-entering alpha as well; the checker only cares about the final exact set at commit time.
+- id: autocomplete_freeform-mantine-v2-T04
+  name: Modal office autocomplete with auto-select-on-blur hazard
+  canonical_type: autocomplete_freeform
+  implementation_source: mantine
+  implementation_variant: Autocomplete (autoSelectOnBlur)
+  implementation_component: 'Mantine: Autocomplete (autoSelectOnBlur) inside Modal'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Assign office”. In the modal, set the “Office” field to match the office shown in the reference pill, select it from the suggestions list, and click “Save office”. The task will finish automatically when done.
+  ui_copy: Click “Assign office”. In the modal, set the “Office” field to match the office shown in the reference pill, select it from the suggestions list, and click “Save office”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, center placement, and medium clutter. A reference pill on the background card shows the target office code `ZRH-HQ`. Clicking “Assign office” opens a modal containing one Mantine Autocomplete labeled “Office”.
+
+    The field uses autoSelectOnBlur and suggestions:
+    - ZRH-HQ
+    - ZRH-Lab
+    - ZRH-Helpdesk
+    - ZRM-HQ
+
+    The control still accepts any string because it is an Autocomplete, not a Select. The benchmark checker therefore requires that the final value match the reference pill and come from a suggestion commit. The modal footer has “Cancel” and “Save office”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The reference pill grounds the target visually, while autoSelectOnBlur means a careless blur can commit the wrong highlighted option; the task therefore pressures suggestion auditing before modal save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The office code is short, but the modal flow and blur-driven commit behavior make this harder than an ordinary free text field, especially with multiple ZRH-like distractors.
+  success_trigger:
+    human_readable:
+    - Office equals the reference code `ZRH-HQ` and the final value came from a suggestion selection.
+    - Save office has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: office-reference-pill
+        value: ZRH-HQ
+        selection_origin: suggestion
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save office
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Typing ZRH-HQ as raw text without selecting the suggestion.
+  - Auto-selecting ZRH-Lab or ZRH-Helpdesk by blur.
+  - Choosing ZRM-HQ because the code looks similar.
+  - Closing the modal without saving.
+  expected_interaction_path:
+  - Read the reference pill.
+  - Open the modal and type ZRH.
+  - Select ZRH-HQ from the suggestion list.
+  - Click Save office.
+  notes: The checker should derive the target from the reference pill and still require suggestion-origin commitment.
+- id: autocomplete_restricted-antd-v2-T01
+  name: Clear only the fallback region in a compact routing panel
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select (allowClear, showSearch)
+  implementation_component: 'AntD: Select (showSearch, allowClear) in settings panel'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the routing settings panel, clear the “Fallback region” field so it has no selection. Do not change “Primary region”. Then click “Save routing”. The task will finish automatically when done.
+  ui_copy: In the routing settings panel, clear the “Fallback region” field so it has no selection. Do not change “Primary region”. Then click “Save routing”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, off-center placement, and high clutter. The target area contains two Ant Design Select controls with allowClear enabled:
+    - Primary region — selected value: us-east-1
+    - Fallback region — selected value: eu-west-1
+
+    Both controls share the same small clear affordance on the right side and identical option lists. Above them are unrelated checkboxes, a text input, and status chips. Hovering or focusing a field reveals its clear button. The panel action “Save routing” commits the current selections.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The difficulty comes from locating and activating the correct embedded clear affordance among two identical selects in a cluttered compact panel, then explicitly saving the preserved/cleared state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is a hard clear task because the actionable target is a small suffix control on one of two nearly identical selects, and the wrong field is easy to clear by mistake.
+  success_trigger:
+    human_readable:
+    - Fallback region is committed as empty / null.
+    - Primary region remains us-east-1.
+    - Save routing has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Fallback region
+        selected_option: null
+        non_target_instances_must_remain:
+          Primary region: us-east-1
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save routing
+      require_correct_instance: true
+      target_instance_label_or_id: Fallback region
+      terminal_condition: true
+  negative_cases:
+  - Clearing Primary region instead of Fallback region.
+  - Selecting a different fallback option rather than clearing.
+  - Opening the dropdown and closing it without changing the committed value.
+  - Clearing the right field but not clicking Save routing.
+  expected_interaction_path:
+  - Locate Fallback region.
+  - Reveal and click its clear affordance.
+  - Leave Primary region unchanged.
+  - Click Save routing.
+  notes: Expose the controlled selected value after save; clearing the search text alone must not count.
+- id: autocomplete_restricted-antd-v2-T02
+  name: Drawer severity selection from a non-searchable long list
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select (showSearch=false, virtual=false)
+  implementation_component: 'AntD: Select (non-searchable) inside Drawer'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Escalation policy” drawer. In the “Severity level” field, open the dropdown, scroll the list, and select `Level 72`. Then click “Apply policy”. The task will finish automatically when done.
+  ui_copy: Open the “Escalation policy” drawer. In the “Severity level” field, open the dropdown, scroll the list, and select `Level 72`. Then click “Apply policy”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses drawer_flow with compact spacing, bottom-right placement, and medium clutter. Clicking “Escalation policy” opens a right-side drawer. Inside is one Ant Design Select labeled “Severity level”. Search is disabled for this instance.
+
+    The dropdown contains a fixed-height, internally scrollable list of 80 options from Level 01 to Level 80. Level 72 is not visible when the dropdown first opens. The drawer also contains a read-only summary card and two unrelated toggles. “Apply policy” commits the drawer state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - overlay_model
+    - confirmation_model
+    factor_rationale: This preserves a high-value restricted-select failure mode from v1—within-list scrolling when search is unavailable—but raises pressure with a drawer boundary and explicit apply step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The task is intrinsically hard because the option list is long and non-searchable, the scroll region is inside the dropdown rather than the page, and the result still must be explicitly applied.
+  success_trigger:
+    human_readable:
+    - Severity level equals Level 72.
+    - Apply policy has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: Level 72
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply policy
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Scrolling the page or drawer instead of the dropdown list.
+  - Selecting a neighboring option such as Level 71 or Level 73.
+  - Typing into the field even though search is disabled.
+  - Selecting Level 72 but not clicking Apply policy.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Severity level.
+  - Scroll within the dropdown list until Level 72 is visible.
+  - Select Level 72 and click Apply policy.
+  notes: Disable virtualization for this task or expose a stable list container so dropdown scrolling is deterministic.
+- id: autocomplete_restricted-antd-v2-T03
+  name: Modal time zone requires real option commit
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select (showSearch, optionFilterProp="label")
+  implementation_component: 'AntD: Select (showSearch) inside Modal'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Edit profile”. In the modal, set the “Time zone” field to `UTC+05:30 — Kolkata` by selecting the matching option from the dropdown, then click “Save profile”. The task will finish automatically when done.
+  ui_copy: Click “Edit profile”. In the modal, set the “Time zone” field to `UTC+05:30 — Kolkata` by selecting the matching option from the dropdown, then click “Save profile”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, centered placement, and medium clutter. Clicking “Edit profile” opens a modal containing one Ant Design Select labeled “Time zone”. The Select uses showSearch and optionFilterProp="label", so typing filters by the displayed label rather than the internal value code.
+
+    The dropdown contains 52 time zones spanning UTC‒12:00 through UTC+14:00, requiring scrolling to reach the target. Similar options near the target include:
+    - UTC+05:00 — Karachi
+    - UTC+05:00 — Tashkent
+    - UTC+05:30 — Kolkata
+    - UTC+05:30 — Colombo
+    - UTC+05:45 — Kathmandu
+
+    Initial value is UTC+00:00 — UTC. Typing only changes the popup filter; the committed value changes only after an option selection. The modal footer contains “Cancel” and “Save profile”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - clutter
+    factor_rationale: The target list is confusable and the search box is only a filter, so the task measures whether the agent understands that typed search text is not the same thing as a committed restricted value.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The option list is semantically dense, and the modal save boundary raises recovery cost if the agent stops after filtering instead of actually selecting.
+  success_trigger:
+    human_readable:
+    - Time zone equals `UTC+05:30 — Kolkata` as a committed selected option.
+    - Save profile has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: UTC+05:30 — Kolkata
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save profile
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving the field at UTC+00:00 — UTC after typing a search query.
+  - Selecting UTC+05:00 — Karachi, UTC+05:45 — Kathmandu, or UTC+06:00 — Dhaka.
+  - Closing or canceling the modal instead of saving.
+  - Typing the label and assuming that is enough without selecting the option.
+  expected_interaction_path:
+  - Open the modal.
+  - Open Time zone and type 05:30 or Kolkata.
+  - Select UTC+05:30 — Kolkata from the filtered list.
+  - Click Save profile.
+  notes: The checker should read the committed selected value, not the transient search input.
+- id: autocomplete_restricted-antd-v2-T04
+  name: Server B region only in compact editable table
+  canonical_type: autocomplete_restricted
+  implementation_source: antd
+  implementation_variant: Select in table cell
+  implementation_component: 'AntD: Select inside editable table row with row-local save'
+  task_template: table_operation
+  secondary_template: search_and_select
+  browsergym_goal: In the server table, set the “Region” field for `Server B` to `eu-central-1`, then click “Save” for Server B. Do not change the other rows. The task will finish automatically when done.
+  ui_copy: In the server table, set the “Region” field for `Server B` to `eu-central-1`, then click “Save” for Server B. Do not change the other rows. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and medium clutter. A three-row server table lists Server A, Server B, and Server C. The Region column is editable for Server B and Server C only. Each editable cell contains an Ant Design Select with showSearch enabled and a row-local Save action.
+
+    Options include:
+    - us-east-1
+    - us-west-2
+    - eu-central-1
+    - eu-west-3
+
+    Initial state:
+    - Server B: us-east-1
+    - Server C: eu-west-3
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - scale
+    - instances
+    factor_rationale: Dense row layout plus two editable same-type instances makes row binding and row-local save the primary pressure rather than the select choice itself.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: 'This is a classic wrong-row risk task: the options are easy, but the table layout is compact, two rows are editable, and the save control is row-scoped.'
+  success_trigger:
+    human_readable:
+    - Server B Region equals eu-central-1.
+    - Server C remains eu-west-3.
+    - Server B Save has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Server B
+        selected_option: eu-central-1
+        non_target_instances_must_remain:
+          Server C: eu-west-3
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-server-b
+      require_correct_instance: true
+      target_instance_label_or_id: Server B
+      terminal_condition: true
+  negative_cases:
+  - Changing Server C instead of Server B.
+  - Selecting eu-west-3 instead of eu-central-1.
+  - Changing the right row but not clicking the Save action for that row.
+  - Editing both editable rows.
+  expected_interaction_path:
+  - Locate the Server B row.
+  - Open its Region select and choose eu-central-1.
+  - Leave Server C unchanged.
+  - Click Save on the Server B row.
+- id: autocomplete_restricted-mui-v2-T01
+  name: Clear billing channel only with the embedded clear button
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete (clearable, freeSolo=false)
+  implementation_component: 'MUI: Autocomplete (restricted) in compact settings panel'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the channels panel, clear only the “Billing channel” field so it has no value. Do not change “Shipping channel”. Then click “Save channels”. The task will finish automatically when done.
+  ui_copy: In the channels panel, clear only the “Billing channel” field so it has no value. Do not change “Shipping channel”. Then click “Save channels”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a settings_panel layout with compact spacing, top-right placement, and high clutter. Two MUI Autocomplete controls appear side by side:
+    - Shipping channel — value: Email
+    - Billing channel — value: SMS
+
+    Both are restricted (freeSolo=false) and clearable, so a clear indicator appears inside the input when the field has a value. The panel is dense: there are several switches, helper texts, and an unrelated select directly above the fields. “Save channels” commits the panel state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - confirmation_model
+    factor_rationale: A small embedded clear affordance inside one of two neighboring autocompletes is easy to mis-ground, especially in a crowded top-right panel; the explicit save step makes preservation of the other field part of success.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the action target is the clear button, not the whole field, and it sits in a crowded compact panel with an almost identical neighboring input.
+  success_trigger:
+    human_readable:
+    - Billing channel is null / empty.
+    - Shipping channel remains Email.
+    - Save channels has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Billing channel
+        selected_option: null
+        non_target_instances_must_remain:
+          Shipping channel: Email
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save channels
+      require_correct_instance: true
+      target_instance_label_or_id: Billing channel
+      terminal_condition: true
+  negative_cases:
+  - Clearing Shipping channel instead of Billing channel.
+  - Replacing Billing channel with a different value rather than clearing it.
+  - Removing the visible text without clearing the selected value.
+  - Forgetting to click Save channels.
+  expected_interaction_path:
+  - Reveal the clear indicator for Billing channel.
+  - Clear Billing channel only.
+  - Verify Shipping channel is still Email.
+  - Click Save channels.
+  notes: Use the committed selected value for checking; transient input text should not count.
+- id: autocomplete_restricted-mui-v2-T02
+  name: Manager selection with clearOnBlur false and near-duplicate names
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete (freeSolo=false, clearOnBlur=false)
+  implementation_component: 'MUI: Autocomplete (restricted) in settings panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the assignment panel, set the “Manager” field to `Dana Wu` by selecting it from the dropdown, then click “Apply assignment”. The task will finish automatically when done.
+  ui_copy: In the assignment panel, set the “Manager” field to `Dana Wu` by selecting it from the dropdown, then click “Apply assignment”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, bottom-right placement, and medium clutter. The target section contains one restricted MUI Autocomplete labeled “Manager”. clearOnBlur is set to false, so filtering text can remain visible when focus moves away if no option has been selected.
+
+    The option list includes:
+    - Dana Wu
+    - Daniel Wu
+    - Dina Wu
+    - Dana Xu
+
+    Initial value is empty. The panel action “Apply assignment” commits the value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - placement
+    - confirmation_model
+    - clutter
+    factor_rationale: Because clearOnBlur is false, the field can look “worked on” without actually holding a committed option, so the task explicitly tests whether the agent distinguishes filtered text from a selected value.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Several near-duplicate names are present, and the component is configured so filtered text can persist after blur, which makes false-positive state perception more likely.
+  success_trigger:
+    human_readable:
+    - Manager equals Dana Wu as a committed selected option.
+    - Apply assignment has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: Dana Wu
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply assignment
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving filter text in the input without actually selecting Dana Wu.
+  - Selecting Daniel Wu, Dina Wu, or Dana Xu.
+  - Applying the panel while the selected option is still null.
+  - Using keyboard blur or outside click as if it committed the value.
+  expected_interaction_path:
+  - Focus Manager and type Dana.
+  - Select Dana Wu from the popup.
+  - Verify the field shows a committed selection, not just search text.
+  - Click Apply assignment.
+  notes: Record selected option separately from inputValue so free text residue cannot satisfy the checker.
+- id: autocomplete_restricted-mui-v2-T03
+  name: Async warehouse picker in modal
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete (freeSolo=false, async load-on-open)
+  implementation_component: 'MUI: Autocomplete (restricted, async load-on-open) inside Modal'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Edit warehouse”. In the modal, open the “Warehouse” field, wait for the options to load, choose `Frankfurt-03`, and click “Save warehouse”. The task will finish automatically when done.
+  ui_copy: Click “Edit warehouse”. In the modal, open the “Warehouse” field, wait for the options to load, choose `Frankfurt-03`, and click “Save warehouse”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, centered placement, and medium clutter. Clicking “Edit warehouse” opens a modal containing one restricted MUI Autocomplete labeled “Warehouse”. The field uses async load-on-open rather than static options: a loading spinner is shown after the popup opens, and the list becomes selectable only after the results arrive.
+
+    Loaded options include Frankfurt-01, Frankfurt-02, Frankfurt-03, and Paris-01. Initial value is Frankfurt-01. The modal action “Save warehouse” commits the selection.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - clutter
+    factor_rationale: This tests whether the agent can manage an async open-boundary flow inside a modal instead of treating the first empty popup state as final.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The options themselves are simple, but the interaction is multi-step and asynchronous, so premature clicks or premature save actions are easy failure modes.
+  success_trigger:
+    human_readable:
+    - Warehouse equals Frankfurt-03.
+    - Save warehouse has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: Frankfurt-03
+        options_source: async
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save warehouse
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Saving Frankfurt-01 because the options were never changed.
+  - Clicking before the async options have loaded and ending with no committed change.
+  - Choosing Frankfurt-02 or Paris-01.
+  - Closing or canceling the modal.
+  expected_interaction_path:
+  - Open the modal.
+  - Open Warehouse and wait for the spinner to resolve.
+  - Choose Frankfurt-03.
+  - Click Save warehouse.
+  notes: Expose loading state and selected option in the wrapper; raw input text should not matter because freeSolo is false.
+- id: autocomplete_restricted-mui-v2-T04
+  name: Node 3 availability zone in editable dashboard table
+  canonical_type: autocomplete_restricted
+  implementation_source: mui
+  implementation_variant: Autocomplete in table row
+  implementation_component: 'MUI: Autocomplete (restricted) inside row editor with save'
+  task_template: table_operation
+  secondary_template: open_and_select
+  browsergym_goal: In the node table, set the “Availability zone” for `Node 3` to `us-east-1c`, then click “Save” for Node 3. Do not change any other row. The task will finish automatically when done.
+  ui_copy: In the node table, set the “Availability zone” for `Node 3` to `us-east-1c`, then click “Save” for Node 3. Do not change any other row. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a dashboard_panel layout with compact spacing, off-center placement, and medium clutter. A node health panel above the table shows charts and counters. The table itself contains three rows: Node 1, Node 2, and Node 3. Only Node 2 and Node 3 have editable Availability zone cells, each implemented with a restricted MUI Autocomplete and a row-local Save action.
+
+    Valid zones are us-east-1a, us-east-1b, us-east-1c, and us-east-1d. Initial values:
+    - Node 2: us-east-1b
+    - Node 3: us-east-1a
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - confirmation_model
+    factor_rationale: The target cell is embedded in a cluttered dashboard and there are two same-type editable row controls, so row binding and row-local commit are the real sources of pressure.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The option set is easy, but wrong-row editing is a real risk and the save action is local rather than global, making this a robust disambiguation task.
+  success_trigger:
+    human_readable:
+    - Node 3 Availability zone equals us-east-1c.
+    - Node 2 remains us-east-1b.
+    - Node 3 Save has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Node 3
+        selected_option: us-east-1c
+        non_target_instances_must_remain:
+          Node 2: us-east-1b
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-node-3
+      require_correct_instance: true
+      target_instance_label_or_id: Node 3
+      terminal_condition: true
+  negative_cases:
+  - Editing Node 2 instead of Node 3.
+  - Selecting the wrong availability zone.
+  - Changing the correct row but failing to click its Save action.
+  - Changing both editable rows.
+  expected_interaction_path:
+  - Locate Node 3.
+  - Open its Availability zone editor and choose us-east-1c.
+  - Leave Node 2 untouched.
+  - Click Save for Node 3.
+- id: autocomplete_restricted-mantine-v2-T01
+  name: Clear backup locale only in a dense locale panel
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select (clearable)
+  implementation_component: 'Mantine: Select (clearable, searchable) in settings panel'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the locale settings panel, clear only the “Backup locale” field so it has no selection. Do not change “Primary locale”. Then click “Save locale settings”. The task will finish automatically when done.
+  ui_copy: In the locale settings panel, clear only the “Backup locale” field so it has no selection. Do not change “Primary locale”. Then click “Save locale settings”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, top-left placement, and high clutter. Two Mantine Select controls are shown:
+    - Primary locale — en-US
+    - Backup locale — de-DE
+
+    Both are searchable and clearable, so a clear button appears in the right section when the field has a value. Several helper descriptions, switches, and a radio group are packed around the two fields. “Save locale settings” commits the panel state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The embedded clear affordance is small and visually similar across both fields, so this task is about correctly targeting one value-preserving clear action inside a dense settings panel.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target action is tiny and duplicated, and the panel is cluttered enough that a wrong-field clear is plausible even for a careful agent.
+  success_trigger:
+    human_readable:
+    - Backup locale is null / empty.
+    - Primary locale remains en-US.
+    - Save locale settings has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Backup locale
+        selected_option: null
+        non_target_instances_must_remain:
+          Primary locale: en-US
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save locale settings
+      require_correct_instance: true
+      target_instance_label_or_id: Backup locale
+      terminal_condition: true
+  negative_cases:
+  - Clearing Primary locale.
+  - Replacing Backup locale with another value instead of clearing it.
+  - Removing visible text without clearing the controlled value.
+  - Not clicking Save locale settings.
+  expected_interaction_path:
+  - Reveal the clear affordance for Backup locale.
+  - Clear Backup locale only.
+  - Verify Primary locale is still en-US.
+  - Click Save locale settings.
+  notes: Use the committed selected option for checking; transient search text must not count.
+- id: autocomplete_restricted-mantine-v2-T02
+  name: Non-searchable project code in nested scroll
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select (searchable=false)
+  implementation_component: 'Mantine: Select (non-searchable) inside nested scroll panel'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the nested “Timesheet link” panel, open the “Project code” field, scroll the dropdown list, select `PRJ-087`, and click “Save project link”. The task will finish automatically when done.
+  ui_copy: In the nested “Timesheet link” panel, open the “Project code” field, scroll the dropdown list, select `PRJ-087`, and click “Save project link”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing, center placement, and medium clutter. The page itself has an outer scroll container. Inside it, a scrollable side panel titled “Timesheet link” contains one Mantine Select labeled “Project code”. Search is disabled for this Select.
+
+    The dropdown contains 100 project codes from PRJ-001 to PRJ-100 and is internally scrollable. PRJ-087 is initially offscreen. The panel footer has a “Save project link” action.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: The page and the dropdown both scroll, so the task directly tests whether the agent can operate the right scroll region before committing a non-searchable restricted value.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The long code list is uniform and non-searchable, and the nested scroll structure makes it easy to manipulate the wrong viewport.
+  success_trigger:
+    human_readable:
+    - Project code equals PRJ-087.
+    - Save project link has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: PRJ-087
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save project link
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Scrolling the panel or page instead of the dropdown.
+  - Selecting PRJ-086 or PRJ-088.
+  - Leaving the field empty after scrolling.
+  - Not clicking Save project link.
+  expected_interaction_path:
+  - Open Project code.
+  - Scroll within the dropdown until PRJ-087 is visible.
+  - Select PRJ-087 and click Save project link.
+- id: autocomplete_restricted-mantine-v2-T03
+  name: On-call team only in a three-select routing card
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select (searchable, withCheckIcon=false)
+  implementation_component: 'Mantine: Select (searchable, withCheckIcon=false) in dashboard panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the routing card, set only the “On-call team” field to `Platform Core` and then click “Apply routing”. Do not change “Primary team” or “Escalation team”. The task will finish automatically when done.
+  ui_copy: In the routing card, set only the “On-call team” field to `Platform Core` and then click “Apply routing”. Do not change “Primary team” or “Escalation team”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses a dashboard_panel layout with compact spacing, off-center placement, and high clutter. A routing card contains three Mantine Select controls with the same searchable option list:
+    - Primary team — Payments
+    - On-call team — (empty)
+    - Escalation team — Infra
+
+    The option list includes Platform Core, Platform Ops, Product Infra, Payments, and Infra. withCheckIcon={false} is enabled, so the active-option checkmark is removed from the dropdown. The card-local action “Apply routing” commits all three values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - guidance
+    factor_rationale: The active-option check icon is removed, so the task emphasizes post-selection verification and correct field binding across three same-type searchable selects in a cluttered dashboard card.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Without an option check icon, it is easier to lose track of which select actually changed, and three same-type instances in one card make the task strongly disambiguation-heavy.
+  success_trigger:
+    human_readable:
+    - On-call team equals Platform Core.
+    - Primary team remains Payments.
+    - Escalation team remains Infra.
+    - Apply routing has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: On-call team
+        selected_option: Platform Core
+        non_target_instances_must_remain:
+          Primary team: Payments
+          Escalation team: Infra
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply routing
+      require_correct_instance: true
+      target_instance_label_or_id: On-call team
+      terminal_condition: true
+  negative_cases:
+  - Setting Primary team or Escalation team instead of On-call team.
+  - Selecting Platform Ops or Product Infra instead of Platform Core.
+  - Applying routing with the target field still empty.
+  - Changing more than one field.
+  expected_interaction_path:
+  - Focus On-call team.
+  - Search for Platform and choose Platform Core.
+  - Leave the other two selects unchanged.
+  - Click Apply routing.
+- id: autocomplete_restricted-mantine-v2-T04
+  name: Backup approver in modal with three similar selects
+  canonical_type: autocomplete_restricted
+  implementation_source: mantine
+  implementation_variant: Select (searchable, allowDeselect=false)
+  implementation_component: 'Mantine: Select (searchable, allowDeselect=false) inside Modal'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Edit approvers”. In the modal, set only “Backup approver” to `Nina Shah`, then click “Save approvers”. Do not change the other approver fields. The task will finish automatically when done.
+  ui_copy: Click “Edit approvers”. In the modal, set only “Backup approver” to `Nina Shah`, then click “Save approvers”. Do not change the other approver fields. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, centered placement, and medium clutter. Clicking “Edit approvers” opens a modal containing three searchable Mantine Select controls:
+    - Primary approver — Alex Kim
+    - Backup approver — (empty)
+    - Escalation approver — Morgan Lee
+
+    The shared option list is Alex Kim, Nina Shah, Morgan Lee, Priya Singh, and Dana Wu. allowDeselect={false} is enabled so selecting an already selected option will not clear it. The modal footer contains “Cancel” and “Save approvers”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: This keeps the core difficulty on correct-instance selection across three same-type controls, but the modal boundary and explicit save step add the layered state verification that old low-pressure cases lacked.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three same-type selects in one modal create strong wrong-field risk, and the explicit modal save means the task cannot end immediately after the dropdown closes.
+  success_trigger:
+    human_readable:
+    - Backup approver equals Nina Shah.
+    - Primary approver remains Alex Kim.
+    - Escalation approver remains Morgan Lee.
+    - Save approvers has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Backup approver
+        selected_option: Nina Shah
+        non_target_instances_must_remain:
+          Primary approver: Alex Kim
+          Escalation approver: Morgan Lee
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save approvers
+      require_correct_instance: true
+      target_instance_label_or_id: Backup approver
+      terminal_condition: true
+  negative_cases:
+  - Changing Primary approver or Escalation approver.
+  - Selecting Dana Wu or Priya Singh instead of Nina Shah.
+  - Leaving Backup approver empty and still saving.
+  - Closing the modal without clicking Save approvers.
+  expected_interaction_path:
+  - Open the modal.
+  - Focus Backup approver and search for Nina.
+  - Select Nina Shah.
+  - Click Save approvers.
+- id: select_with_search-antd-v2-T01
+  name: Billing market with label-based search and explicit save
+  canonical_type: select_with_search
+  implementation_source: antd
+  implementation_variant: Select (showSearch, optionFilterProp="label")
+  implementation_component: 'AntD: Select (showSearch, optionFilterProp="label") in settings panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the market settings panel, set only the “Billing market” field to `Congo (DRC)` and then click “Save markets”. Do not change “Shipping market”. The task will finish automatically when done.
+  ui_copy: In the market settings panel, set only the “Billing market” field to `Congo (DRC)` and then click “Save markets”. Do not change “Shipping market”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, off-center placement, and high clutter. The card contains two Ant Design Select controls with showSearch:
+    - Shipping market — Germany
+    - Billing market — (empty)
+
+    The option list is built from `{label, value}` objects, and optionFilterProp is set to `label` so filtering follows the visible labels. Confusable options include:
+    - Congo (Republic)
+    - Congo (DRC)
+    - Congo (Brazzaville)
+    - Cameroon
+
+    “Save markets” commits the panel state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: This preserves a strong old search-and-choose pattern but raises pressure by making the correct field one of two similar selects in a crowded settings panel and by requiring an explicit save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The candidate labels are highly confusable and the task becomes truly hard once the agent also has to bind the action to the right one of two searchable selects and preserve the sibling field.
+  success_trigger:
+    human_readable:
+    - Billing market equals Congo (DRC).
+    - Shipping market remains Germany.
+    - Save markets has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Billing market
+        selected_option: Congo (DRC)
+        non_target_instances_must_remain:
+          Shipping market: Germany
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save markets
+      require_correct_instance: true
+      target_instance_label_or_id: Billing market
+      terminal_condition: true
+  negative_cases:
+  - Selecting Congo (Republic) or Congo (Brazzaville).
+  - Changing Shipping market instead of Billing market.
+  - Filtering the options with Congo but not selecting a value.
+  - Forgetting to click Save markets.
+  expected_interaction_path:
+  - Focus Billing market.
+  - Type Congo to narrow the visible labels.
+  - Select Congo (DRC).
+  - Click Save markets.
+- id: select_with_search-antd-v2-T02
+  name: Pipeline B region in compact row editor
+  canonical_type: select_with_search
+  implementation_source: antd
+  implementation_variant: Select (showSearch) in table cell
+  implementation_component: 'AntD: Select (showSearch) inside editable table row'
+  task_template: table_operation
+  secondary_template: search_and_select
+  browsergym_goal: In the compact pipelines table, set the “Region” field for `Pipeline B` to `South Asia`, then click “Save” for Pipeline B. Do not change the other rows. The task will finish automatically when done.
+  ui_copy: In the compact pipelines table, set the “Region” field for `Pipeline B` to `South Asia`, then click “Save” for Pipeline B. Do not change the other rows. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and medium clutter. Three rows are visible: Pipeline A, Pipeline B, and Pipeline C. Pipeline B and Pipeline C each have an editable Ant Design Select with showSearch in the Region column plus a row-local Save action.
+
+    The region list includes South Asia, Southeast Asia, East Asia, Middle East, and Africa. Initial values:
+    - Pipeline B: Europe
+    - Pipeline C: East Asia
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: The term-level confusability between South Asia and Southeast Asia is modest on its own, but compact row editing plus row-local save is what turns this into a strong disambiguation test.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small row controls, two editable rows, and a near-neighbor option name create a robust hard case even though the underlying option list is short.
+  success_trigger:
+    human_readable:
+    - Pipeline B Region equals South Asia.
+    - Pipeline C remains East Asia.
+    - Save for Pipeline B has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Pipeline B
+        selected_option: South Asia
+        non_target_instances_must_remain:
+          Pipeline C: East Asia
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-pipeline-b
+      require_correct_instance: true
+      target_instance_label_or_id: Pipeline B
+      terminal_condition: true
+  negative_cases:
+  - Selecting Southeast Asia instead of South Asia.
+  - Editing Pipeline C instead of Pipeline B.
+  - Selecting the correct option but clicking the wrong row Save or not saving at all.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate Pipeline B.
+  - Open its Region select and search for South.
+  - Choose South Asia.
+  - Click Save for Pipeline B.
+- id: select_with_search-antd-v2-T03
+  name: Drawer language picker with visible-only long list and apply
+  canonical_type: select_with_search
+  implementation_source: antd
+  implementation_variant: Select (showSearch, listHeight custom, getPopupContainer parent)
+  implementation_component: 'AntD: Select (showSearch) inside Drawer with parent popup container'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Report settings” drawer. In the “Report language” field, open the dropdown, scroll the visible list until you can select `Zulu`, and then click “Apply settings”. The task will finish automatically when done.
+  ui_copy: Open the “Report settings” drawer. In the “Report language” field, open the dropdown, scroll the visible list until you can select `Zulu`, and then click “Apply settings”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses drawer_flow with compact spacing, top-right placement, and medium clutter. Clicking “Report settings” opens a right-side drawer. Inside is one Ant Design Select labeled “Report language” with showSearch enabled and a long alphabetized option list of roughly 120 languages.
+
+    The dropdown is rendered inside the drawer’s parent container rather than the page body, and the visible list is fixed-height with internal scrolling. Initial selected value is English. Zulu is near the end of the list and not initially visible. “Apply settings” commits the drawer state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - overlay_model
+    - confirmation_model
+    factor_rationale: This upgrades an old useful long-list pattern by moving it into a drawer and making the popup local to that drawer, so the agent must manage the correct overlay and commit boundary rather than a bare isolated-card scroll.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The list is long and the target is offscreen, but the main hardness comes from operating the drawer-contained dropdown correctly and not confusing it with page-level scrolling.
+  success_trigger:
+    human_readable:
+    - Report language equals Zulu.
+    - Apply settings has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: Zulu
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply settings
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Scrolling the drawer or page instead of the dropdown list.
+  - Selecting Yoruba or another end-of-list language.
+  - Typing Zulu without selecting it.
+  - Leaving the drawer unapplied.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Report language.
+  - Scroll within the dropdown list until Zulu appears.
+  - Select Zulu and click Apply settings.
+  notes: Bind the popup to the drawer parent so overlay scoping is deterministic.
+- id: select_with_search-antd-v2-T04
+  name: Reference icon to visibility level with explicit apply
+  canonical_type: select_with_search
+  implementation_source: antd
+  implementation_variant: Select (showSearch) with custom option render
+  implementation_component: 'AntD: Select (showSearch) with icon+label options in dashboard panel'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the sharing panel, set the “Visibility” field so it matches the icon shown in the reference tile, then click “Apply sharing”. The task will finish automatically when done.
+  ui_copy: In the sharing panel, set the “Visibility” field so it matches the icon shown in the reference tile, then click “Apply sharing”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, bottom-left placement, and high clutter. A small reference tile in the target card shows only an icon: 🔒. Below it is an Ant Design Select labeled “Visibility” with showSearch enabled and custom-rendered options:
+    - 🌐 Public
+    - 🏢 Internal
+    - 🔒 Confidential
+    - 🧪 Restricted Preview
+
+    Initial value is Public. The panel includes unrelated stats and action chips. “Apply sharing” commits the new visibility level.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - confirmation_model
+    factor_rationale: The target is given visually rather than textually, so the task measures whether the agent can read the reference tile, map it to the right searchable option, and still execute the explicit apply step in a cluttered panel.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The option set is short, but the icon-only reference prevents a simple text copy path and the dense dashboard context makes quick target acquisition less reliable.
+  success_trigger:
+    human_readable:
+    - Visibility equals Confidential, the option corresponding to the 🔒 reference icon.
+    - Apply sharing has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: visibility-reference-icon
+        selected_option: Confidential
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply sharing
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting Restricted Preview instead of Confidential.
+  - Ignoring the icon and leaving Public or Internal selected.
+  - Searching the right label but not selecting it.
+  - Failing to click Apply sharing.
+  expected_interaction_path:
+  - Read the reference icon.
+  - Open Visibility and choose the matching option.
+  - Click Apply sharing.
+- id: select_with_search-mui-v2-T01
+  name: Grouped destination picker in modal with save
+  canonical_type: select_with_search
+  implementation_source: mui
+  implementation_variant: Autocomplete (groupBy, freeSolo=false)
+  implementation_component: 'MUI: Autocomplete (restricted grouped search) inside Modal'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Edit destination”. In the modal, set the “Destination” field to `San Sebastián (ES)` and click “Save destination”. The task will finish automatically when done.
+  ui_copy: Click “Edit destination”. In the modal, set the “Destination” field to `San Sebastián (ES)` and click “Save destination”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, center placement, and medium clutter. Clicking “Edit destination” opens a modal containing one restricted MUI Autocomplete labeled “Destination”. The option list is grouped by country. Relevant options include:
+    - San Sebastián (ES)
+    - San Sebastián (MX)
+    - San Jose (US)
+    - San José (CR)
+
+    The field is empty initially. “Save destination” commits the modal value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - guidance
+    factor_rationale: Grouped headings and location near-misses make the search results semantically dense, and the modal save boundary forces verification of the selected restricted option rather than the search query.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Several San* destinations share almost the same name, so the task is about exact label discrimination plus proper modal commit.
+  success_trigger:
+    human_readable:
+    - Destination equals San Sebastián (ES).
+    - Save destination has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: San Sebastián (ES)
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save destination
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting San Sebastián (MX), San Jose (US), or San José (CR).
+  - Typing the label without selecting it.
+  - Closing or canceling the modal.
+  - Saving the field while it is still empty.
+  expected_interaction_path:
+  - Open the modal.
+  - Search for San Seb and inspect the grouped results carefully.
+  - Select San Sebastián (ES).
+  - Click Save destination.
+- id: select_with_search-mui-v2-T02
+  name: Backup clinic only in a two-field async form
+  canonical_type: select_with_search
+  implementation_source: mui
+  implementation_variant: Autocomplete (search-as-you-type, freeSolo=false)
+  implementation_component: 'MUI: Autocomplete (async restricted search) in inline surface'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the clinic form, set only the “Backup clinic” field to `Saint Mary — West` by selecting it from the results list, then click “Apply clinics”. Do not change “Primary clinic”. The task will finish automatically when done.
+  ui_copy: In the clinic form, set only the “Backup clinic” field to `Saint Mary — West` by selecting it from the results list, then click “Apply clinics”. Do not change “Primary clinic”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing, top-right placement, and medium clutter. Two restricted MUI Autocomplete controls appear in a narrow form:
+    - Primary clinic — Saint Mary — East
+    - Backup clinic — (empty)
+
+    Both use async search-as-you-type. Searching `Saint` returns:
+    - Saint Mary — East
+    - Saint Mary — West
+    - Saint Martha — North
+
+    The form action “Apply clinics” commits both fields.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - confirmation_model
+    factor_rationale: This is a compact two-field selective search task where the interesting failure is choosing the wrong sibling field or the wrong near-match from an async result list.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The option names are similar, the input is compact and off-center, and a sibling field with overlapping semantics raises the disambiguation load substantially.
+  success_trigger:
+    human_readable:
+    - Backup clinic equals Saint Mary — West.
+    - Primary clinic remains Saint Mary — East.
+    - Apply clinics has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Backup clinic
+        selected_option: Saint Mary — West
+        non_target_instances_must_remain:
+          Primary clinic: Saint Mary — East
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply clinics
+      require_correct_instance: true
+      target_instance_label_or_id: Backup clinic
+      terminal_condition: true
+  negative_cases:
+  - Changing Primary clinic instead of Backup clinic.
+  - Selecting Saint Mary — East or Saint Martha — North.
+  - Leaving the field as search text instead of a selected option.
+  - Failing to click Apply clinics.
+  expected_interaction_path:
+  - Focus Backup clinic.
+  - Type Saint and wait for results.
+  - Select Saint Mary — West.
+  - Click Apply clinics.
+- id: select_with_search-mui-v2-T03
+  name: Tertiary KPI only in a three-select dashboard strip
+  canonical_type: select_with_search
+  implementation_source: mui
+  implementation_variant: Autocomplete (freeSolo=false) in dashboard strip
+  implementation_component: 'MUI: Autocomplete (restricted search) in dashboard panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the KPI strip, set only the “Tertiary KPI” field to `Net Promoter Score`, then click “Apply KPIs”. Do not change the other KPI fields. The task will finish automatically when done.
+  ui_copy: In the KPI strip, set only the “Tertiary KPI” field to `Net Promoter Score`, then click “Apply KPIs”. Do not change the other KPI fields. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, center placement, and medium clutter. Three searchable MUI Autocomplete fields appear in a horizontal KPI strip:
+    - Primary KPI — Revenue
+    - Secondary KPI — Customer Satisfaction
+    - Tertiary KPI — (empty)
+
+    The shared metric list includes Net Promoter Score, Customer Satisfaction, Revenue, Churn Rate, and Response Time. A button labeled “Apply KPIs” commits the strip.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The task preserves a strong old multi-instance search pattern but adds a mandatory commit step, making it a cleaner separation between “found the label” and “actually saved the right one.”
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The metric names are readable, but three same-type fields in a dashboard strip still create substantial wrong-instance risk.
+  success_trigger:
+    human_readable:
+    - Tertiary KPI equals Net Promoter Score.
+    - Primary KPI remains Revenue.
+    - Secondary KPI remains Customer Satisfaction.
+    - Apply KPIs has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Tertiary KPI
+        selected_option: Net Promoter Score
+        non_target_instances_must_remain:
+          Primary KPI: Revenue
+          Secondary KPI: Customer Satisfaction
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply KPIs
+      require_correct_instance: true
+      target_instance_label_or_id: Tertiary KPI
+      terminal_condition: true
+  negative_cases:
+  - Changing Primary KPI or Secondary KPI instead of Tertiary KPI.
+  - Choosing Customer Satisfaction or another metric.
+  - Typing promoter and not selecting a restricted option.
+  - Forgetting to click Apply KPIs.
+  expected_interaction_path:
+  - Focus Tertiary KPI.
+  - Search for promoter or NPS.
+  - Select Net Promoter Score.
+  - Click Apply KPIs.
+- id: select_with_search-mui-v2-T04
+  name: Framework from logo reference in compact architecture card
+  canonical_type: select_with_search
+  implementation_source: mui
+  implementation_variant: Autocomplete (renderOption with icon, freeSolo=false)
+  implementation_component: 'MUI: Autocomplete with custom option render in settings card'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the architecture card, set the “Framework” field so it matches the logo shown in the reference tile, then click “Save architecture”. The task will finish automatically when done.
+  ui_copy: In the architecture card, set the “Framework” field so it matches the logo shown in the reference tile, then click “Save architecture”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing, bottom-left placement, and medium clutter. A small reference tile shows the Next.js wordmark only. Below it is a restricted MUI Autocomplete labeled “Framework” whose options are custom rendered with icon + label:
+    - Next.js
+    - Nuxt
+    - NestJS
+    - Remix
+
+    Initial value is Remix. The card action “Save architecture” commits the new framework choice.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - confirmation_model
+    factor_rationale: The reference is visual and the option labels are deliberately confusable, so the task checks whether the agent can ground the logo correctly and still finish the apply boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The label set contains close lexical distractors, and the compact off-center card makes it harder to rely on a quick text skim.
+  success_trigger:
+    human_readable:
+    - Framework equals Next.js, matching the reference logo.
+    - Save architecture has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: framework-logo-ref
+        selected_option: Next.js
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save architecture
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Choosing Nuxt or NestJS because the names look similar.
+  - Leaving Remix selected.
+  - Typing Next without selecting the option.
+  - Not clicking Save architecture.
+  expected_interaction_path:
+  - Inspect the reference logo.
+  - Open Framework and choose the matching option.
+  - Click Save architecture.
+- id: select_with_search-mantine-v2-T01
+  name: Timezone search without check icon in dark panel
+  canonical_type: select_with_search
+  implementation_source: mantine
+  implementation_variant: Select (searchable, withCheckIcon=false)
+  implementation_component: 'Mantine: Select (searchable, withCheckIcon=false) in settings panel'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the timezone panel, set the “Time zone” field to `UTC+05:30 — Kolkata`, then click “Save timezone”. The task will finish automatically when done.
+  ui_copy: In the timezone panel, set the “Time zone” field to `UTC+05:30 — Kolkata`, then click “Save timezone”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with dark theme, compact spacing, off-center placement, and medium clutter. One searchable Mantine Select labeled “Time zone” is shown in the target card. withCheckIcon={false} is enabled, so the active-option checkmark is removed from the dropdown.
+
+    The dropdown contains 52 time zones spanning UTC‒12:00 through UTC+14:00, requiring scrolling to reach the target. Similar options near the target include UTC+05:00 — Karachi, UTC+05:00 — Tashkent, UTC+05:30 — Kolkata, UTC+05:30 — Colombo, UTC+05:45 — Kathmandu. Initial value is UTC+00:00 — UTC. “Save timezone” commits the card state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - confirmation_model
+    - guidance
+    factor_rationale: Removing the dropdown check icon lowers observability of the currently active option, so the agent has to verify through the field value itself before saving in a dark compact panel.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The option list is confusable, and removing the check icon makes it easier to misread the dropdown state while searching in a dark panel.
+  success_trigger:
+    human_readable:
+    - Time zone equals UTC+05:30 — Kolkata.
+    - Save timezone has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: UTC+05:30 — Kolkata
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save timezone
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting UTC+05:00 — Karachi or UTC+05:45 — Kathmandu.
+  - Typing a search query without choosing the restricted option.
+  - Leaving the original value selected.
+  - Failing to click Save timezone.
+  expected_interaction_path:
+  - Open Time zone.
+  - Search for 05:30 or Kolkata.
+  - Choose UTC+05:30 — Kolkata.
+  - Click Save timezone.
+- id: select_with_search-mantine-v2-T02
+  name: Material row binding in inventory table with save
+  canonical_type: select_with_search
+  implementation_source: mantine
+  implementation_variant: Select (searchable) in table cell
+  implementation_component: 'Mantine: Select (searchable) inside inventory table row'
+  task_template: table_operation
+  secondary_template: scroll_find
+  browsergym_goal: In the inventory table, change the “Material” field for row 1 to `Walnut`, then click “Save” for row 1. Do not change row 2. The task will finish automatically when done.
+  ui_copy: In the inventory table, change the “Material” field for row 1 to `Walnut`, then click “Save” for row 1. Do not change row 2. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and medium clutter. The inventory table has two editable rows. Each row has a searchable Mantine Select in the Material column and a row-local Save action.
+
+    The material list is long and alphabetized; Walnut is initially offscreen. Initial values:
+    - Row 1: Aluminum
+    - Row 2: Steel
+
+    The dropdown list is internally scrollable. Only row 1 should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - instances
+    factor_rationale: This combines long-list dropdown scrolling with row binding and a row-local save, which is materially harder than the old isolated-card version of the same material search.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The long list and small table layout make acquisition and row disambiguation both meaningful, especially because only one row should change and the save action is local.
+  success_trigger:
+    human_readable:
+    - Row 1 Material equals Walnut.
+    - Row 2 remains Steel.
+    - Row 1 Save has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: row-1
+        selected_option: Walnut
+        non_target_instances_must_remain:
+          row-2: Steel
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-row-1
+      require_correct_instance: true
+      target_instance_label_or_id: row-1
+      terminal_condition: true
+  negative_cases:
+  - Changing row 2 instead of row 1.
+  - Selecting a nearby offscreen material such as Wenge or Willow.
+  - Scrolling the page instead of the dropdown list.
+  - Selecting Walnut but not clicking the row 1 Save action.
+  expected_interaction_path:
+  - Open Material for row 1.
+  - Scroll the dropdown list until Walnut is visible.
+  - Select Walnut.
+  - Click Save for row 1.
+- id: select_with_search-mantine-v2-T03
+  name: Top-position dropdown in compact corner card
+  canonical_type: select_with_search
+  implementation_source: mantine
+  implementation_variant: Select (searchable, comboboxProps position=top)
+  implementation_component: 'Mantine: Select (searchable, dropdown forced above input)'
+  task_template: search_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the compact timezone card, set “Time zone” to `UTC+05:45 — Kathmandu`, then click “Apply timezone”. The task will finish automatically when done.
+  ui_copy: In the compact timezone card, set “Time zone” to `UTC+05:45 — Kathmandu`, then click “Apply timezone”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing, bottom-right placement, small scale, and medium clutter. One searchable Mantine Select labeled “Time zone” sits in a small card. Its dropdown is forced to appear above the input using comboboxProps position=top with flip disabled.
+
+    The dropdown contains 52 time zones spanning UTC‒12:00 through UTC+14:00, requiring scrolling to reach the target. Similar options near the target include UTC+05:00 — Karachi, UTC+05:00 — Tashkent, UTC+05:30 — Kolkata, UTC+05:30 — Colombo, UTC+05:45 — Kathmandu. Initial value is UTC+00:00 — UTC. The card action “Apply timezone” commits the choice.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - overlay_model
+    factor_rationale: Forcing the dropdown above a small corner-anchored control adds acquisition pressure without making the task artificial, because the search semantics remain standard and the option set is still human-solvable.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small scale, corner placement, and an above-the-input dropdown increase target acquisition cost, while the time zone labels themselves are quite confusable.
+  success_trigger:
+    human_readable:
+    - Time zone equals UTC+05:45 — Kathmandu.
+    - Apply timezone has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_option: UTC+05:45 — Kathmandu
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply timezone
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting UTC+05:30 — Kolkata or UTC+06:00 — Dhaka.
+  - Typing the target text without selecting it.
+  - Leaving the default UTC value unchanged.
+  - Failing to click Apply timezone.
+  expected_interaction_path:
+  - Open the select and handle the dropdown appearing above the field.
+  - Search for 05:45 or Kathmandu.
+  - Choose UTC+05:45 — Kathmandu.
+  - Click Apply timezone.
+- id: select_with_search-mantine-v2-T04
+  name: Three KPI selectors in cluttered dashboard card
+  canonical_type: select_with_search
+  implementation_source: mantine
+  implementation_variant: Select (searchable, withCheckIcon=false)
+  implementation_component: 'Mantine: Select (searchable) in dashboard panel with three instances'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dashboard KPI card, set only the “Tertiary KPI” field to `Net Promoter Score`, then click “Save KPI card”. Do not change the other two KPI fields. The task will finish automatically when done.
+  ui_copy: In the dashboard KPI card, set only the “Tertiary KPI” field to `Net Promoter Score`, then click “Save KPI card”. Do not change the other two KPI fields. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, center placement, and high clutter. Three searchable Mantine Select controls appear in a KPI card:
+    - Primary KPI — Revenue
+    - Secondary KPI — Customer Satisfaction
+    - Tertiary KPI — (empty)
+
+    Shared options include Revenue, Customer Satisfaction, Net Promoter Score, Retention, and Churn. withCheckIcon={false} is enabled. The card footer has “Save KPI card”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: This leans into one of the most reliable v2 levers—same-type instance confusion inside cluttered dashboard context—while still keeping the primary component the searchable select itself.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three similar searchable selects in a cluttered KPI card create a wrong-instance failure family that remains human-solvable but strongly diagnostic.
+  success_trigger:
+    human_readable:
+    - Tertiary KPI equals Net Promoter Score.
+    - Primary KPI remains Revenue.
+    - Secondary KPI remains Customer Satisfaction.
+    - Save KPI card has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Tertiary KPI
+        selected_option: Net Promoter Score
+        non_target_instances_must_remain:
+          Primary KPI: Revenue
+          Secondary KPI: Customer Satisfaction
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save KPI card
+      require_correct_instance: true
+      target_instance_label_or_id: Tertiary KPI
+      terminal_condition: true
+  negative_cases:
+  - Changing Primary KPI or Secondary KPI.
+  - Selecting Customer Satisfaction instead of Net Promoter Score.
+  - Leaving the Tertiary KPI empty.
+  - Not clicking Save KPI card.
+  expected_interaction_path:
+  - Focus Tertiary KPI.
+  - Search for promoter or NPS.
+  - Choose Net Promoter Score.
+  - Click Save KPI card.
+- id: combobox_editable_multi-antd-v2-T01
+  name: Incident tags with persistent menu and near-miss options
+  canonical_type: combobox_editable_multi
+  implementation_source: antd
+  implementation_variant: Select (mode="tags", autoClearSearchValue=false)
+  implementation_component: 'AntD: Select (mode="tags", autoClearSearchValue=false) in settings panel'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: In the incident settings panel, make the “Incident tags” field end with exactly `canary`, `prod-hotfix`, and `rollback`, then click “Apply incident tags”. The task will finish automatically when done.
+  ui_copy: In the incident settings panel, make the “Incident tags” field end with exactly `canary`, `prod-hotfix`, and `rollback`, then click “Apply incident tags”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, off-center placement, and high clutter. The target field is an Ant Design Select in tags mode labeled “Incident tags”. Search text is not cleared automatically after each selection. Initial chips: canary.
+
+    Suggestions include:
+    - prod
+    - production
+    - prod-hotfix
+    - rollback
+    - preprod
+
+    A visually similar second tags field labeled “Archive tags” sits directly below with initial chip legacy and must remain unchanged. “Apply incident tags” commits the panel state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: 'This focuses on the strongest editable-multi failure family from v1: selecting exact chips from a persistent search state while avoiding near-miss options and preserving a sibling field.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Residual search text, highly similar production-related labels, and a second similar tags field make the exact-set audit meaningfully hard.
+  success_trigger:
+    human_readable:
+    - Incident tags equals exactly {canary, prod-hotfix, rollback}.
+    - Archive tags remains exactly {legacy}.
+    - Apply incident tags has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Incident tags
+        values:
+        - canary
+        - prod-hotfix
+        - rollback
+        non_target_instances_must_remain:
+          Archive tags:
+          - legacy
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply incident tags
+      require_correct_instance: true
+      target_instance_label_or_id: Incident tags
+      terminal_condition: true
+  negative_cases:
+  - Selecting prod or production instead of prod-hotfix.
+  - Leaving a typed value uncommitted in the search buffer.
+  - Changing Archive tags.
+  - Not clicking Apply incident tags.
+  expected_interaction_path:
+  - Focus Incident tags.
+  - Add prod-hotfix and rollback while keeping canary.
+  - Verify Archive tags still equals legacy.
+  - Click Apply incident tags.
+- id: combobox_editable_multi-antd-v2-T02
+  name: Modal labels require chip commits before OK
+  canonical_type: combobox_editable_multi
+  implementation_source: antd
+  implementation_variant: Select (mode="tags") inside Modal
+  implementation_component: 'AntD: Select (mode="tags") inside Modal'
+  task_template: confirm_cancel
+  secondary_template: select_many
+  browsergym_goal: Click “Edit labels”. In the modal, make the “Labels” field contain exactly `backend`, `urgent`, and `p0`, then click “OK”. The task will finish automatically when done.
+  ui_copy: Click “Edit labels”. In the modal, make the “Labels” field contain exactly `backend`, `urgent`, and `p0`, then click “OK”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, center placement, and medium clutter. Clicking “Edit labels” opens a modal containing one Ant Design Select in tags mode labeled “Labels”.
+
+    Initial chips: backend
+    Suggested options: backend, urgent, p0, p1, docs
+
+    The component also accepts custom text, but only committed chips count. Typed text that has not been turned into a chip does not count. The modal footer contains “Cancel” and “OK”, and changes are committed only when “OK” is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - clutter
+    factor_rationale: This keeps the task component-centric but forces the agent to distinguish draft text from committed chips and then cross the explicit modal commit boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The exact set is short, but modal commit and uncommitted chip text create a strong recovery/verification burden.
+  success_trigger:
+    human_readable:
+    - Labels equals exactly {backend, urgent, p0}.
+    - OK has been clicked to commit the modal state.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - backend
+        - urgent
+        - p0
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Having the correct text in the input buffer but not as chips.
+  - Leaving an extra chip such as p1 or docs.
+  - Clicking Cancel or closing the modal.
+  - Changing backend to something else instead of preserving it.
+  expected_interaction_path:
+  - Open the modal.
+  - Add urgent and p0 as committed chips while keeping backend.
+  - Verify no extra chips remain.
+  - Click OK.
+  notes: Track the committed chip array, not just visible text in the search input.
+- id: combobox_editable_multi-antd-v2-T03
+  name: Max-count saturated tags in a drawer
+  canonical_type: combobox_editable_multi
+  implementation_source: antd
+  implementation_variant: Select (mode="tags", maxCount=4, maxTagCount="responsive")
+  implementation_component: 'AntD: Select (mode="tags", maxCount=4) inside Drawer'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit release labels” drawer. In the “Release labels” field, end with exactly `alpha`, `gamma`, `omega`, and `theta`, then click “Save labels”. The task will finish automatically when done.
+  ui_copy: Open the “Edit release labels” drawer. In the “Release labels” field, end with exactly `alpha`, `gamma`, `omega`, and `theta`, then click “Save labels”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, top-right placement, and medium clutter. Clicking “Edit release labels” opens a drawer with one Ant Design Select in tags mode labeled “Release labels”.
+
+    maxCount=4 is enabled, and the field starts already full with:
+    - alpha
+    - beta
+    - gamma
+    - delta
+
+    Suggestions include alpha, beta, gamma, delta, omega, theta, lambda. maxTagCount is responsive, so not all selected chips may be visible when the field is unfocused. “Save labels” commits the drawer state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - placement
+    - clutter
+    factor_rationale: A saturated field forces remove-then-add recovery, and responsive chip collapsing makes exact-set verification less trivial before the drawer-local save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The exact set is easy to state but not easy to execute because the field is full at the start and not all chips remain visible when unfocused.
+  success_trigger:
+    human_readable:
+    - Release labels equals exactly {alpha, gamma, omega, theta}.
+    - Save labels has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - alpha
+        - gamma
+        - omega
+        - theta
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save labels
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving beta or delta selected.
+  - Removing alpha or gamma and not restoring the intended set.
+  - Trying to add a fifth tag without first removing one.
+  - Not clicking Save labels.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove beta and delta to free capacity.
+  - Add omega and theta while keeping alpha and gamma.
+  - Click Save labels.
+- id: combobox_editable_multi-antd-v2-T04
+  name: Rule B regions only in dense policy table
+  canonical_type: combobox_editable_multi
+  implementation_source: antd
+  implementation_variant: Select (mode="tags") in table row
+  implementation_component: 'AntD: Select (mode="tags") inside editable policy table row'
+  task_template: table_operation
+  secondary_template: select_many
+  browsergym_goal: In the policy table, set the “Regions” field for `Rule B` to exactly `US`, `EU`, and `APAC`, then click “Save” for Rule B. Do not change Rule A. The task will finish automatically when done.
+  ui_copy: In the policy table, set the “Regions” field for `Rule B` to exactly `US`, `EU`, and `APAC`, then click “Save” for Rule B. Do not change Rule A. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and medium clutter. Two policy rows are editable:
+    - Rule A — Regions: US
+    - Rule B — Regions: US
+
+    Each row has an Ant Design tags-mode field in the Regions column and a row-local Save action. Suggestions include US, EU, APAC, LATAM, and MEA. The table is dense and both rows look nearly identical.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: This isolates row binding and exact-set checking inside a dense table rather than a forgiving card, which better separates grounding failures from option-choice failures.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The selected set itself is easy, but the dense row context and row-local save make wrong-row edits very plausible.
+  success_trigger:
+    human_readable:
+    - Rule B Regions equals exactly {US, EU, APAC}.
+    - Rule A remains exactly {US}.
+    - Save for Rule B has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Rule B
+        values:
+        - US
+        - EU
+        - APAC
+        non_target_instances_must_remain:
+          Rule A:
+          - US
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-rule-b
+      require_correct_instance: true
+      target_instance_label_or_id: Rule B
+      terminal_condition: true
+  negative_cases:
+  - Adding EU and APAC to Rule A instead of Rule B.
+  - Leaving out one of the required regions.
+  - Adding any extra region such as LATAM.
+  - Changing Rule B correctly but not clicking its Save action.
+  expected_interaction_path:
+  - Locate Rule B.
+  - Add EU and APAC to the Regions field while keeping US.
+  - Leave Rule A unchanged.
+  - Click Save for Rule B.
+- id: combobox_editable_multi-mui-v2-T01
+  name: Categories from visual reference with persistent popup
+  canonical_type: combobox_editable_multi
+  implementation_source: mui
+  implementation_variant: Autocomplete (multiple, disableCloseOnSelect, filterSelectedOptions)
+  implementation_component: 'MUI: Autocomplete (multiple) in dark dashboard panel'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dark routing panel, make the “Categories” field match the chips shown in “Target categories”, then click “Save routing”. The task will finish automatically when done.
+  ui_copy: In the dark routing panel, make the “Categories” field match the chips shown in “Target categories”, then click “Save routing”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with dark theme, compact spacing, and high clutter. The target card contains one MUI Autocomplete configured with multiple, disableCloseOnSelect, and filterSelectedOptions. A visual reference row labeled “Target categories” shows the required chips: News, Sports, Finance, Travel.
+
+    Initial chips in the interactive field are News and Science. Suggestions include News, Sports, Finance, Travel, Science, Weather, Health. The popup stays open after each selection. The card action “Save routing” commits the final set.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - confirmation_model
+    factor_rationale: The persistent popup makes repeated selection efficient but also raises near-miss risk, and the visual reference means the agent must continually compare the live chip set to an external target before saving.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is hard because the exact-set comparison is externalized to a visual target row, and one existing distractor chip has to be removed before the final save.
+  success_trigger:
+    human_readable:
+    - Categories equals exactly {News, Sports, Finance, Travel}.
+    - Save routing has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - News
+        - Sports
+        - Finance
+        - Travel
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save routing
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving Science selected.
+  - Adding Weather or Health.
+  - Matching part of the reference but not all four chips.
+  - Stopping without clicking Save routing.
+  expected_interaction_path:
+  - Compare the live chip set to the Target categories row.
+  - Remove Science.
+  - Add Sports, Finance, and Travel while keeping News.
+  - Click Save routing.
+- id: combobox_editable_multi-mui-v2-T02
+  name: Collapsed chips exact set under limitTags
+  canonical_type: combobox_editable_multi
+  implementation_source: mui
+  implementation_variant: Autocomplete (multiple, limitTags=2)
+  implementation_component: 'MUI: Autocomplete (multiple, limitTags=2) in settings panel'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Categories” field, end with exactly `News`, `Sports`, `Finance`, `Travel`, `Tech`, and `Health`, then click “Apply categories”. The task will finish automatically when done.
+  ui_copy: In the “Categories” field, end with exactly `News`, `Sports`, `Finance`, `Travel`, `Tech`, and `Health`, then click “Apply categories”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, center placement, and medium clutter. The target field is a single MUI Autocomplete configured with multiple and limitTags=2, so when it is not focused only two chips and a “+N” indicator are visible.
+
+    Initial chips: none.
+    Options: News, Sports, Finance, Travel, Tech, Health, Weather, Science.
+    The panel action “Apply categories” commits the final selected set.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - clutter
+    - guidance
+    factor_rationale: The selected set is intentionally large enough that the unfocused control will collapse chips, so the agent must re-focus or otherwise verify the full state before committing.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Matching six values is exacting on its own, and limitTags makes post-selection verification harder than the visible chip count initially suggests.
+  success_trigger:
+    human_readable:
+    - Categories equals exactly {News, Sports, Finance, Travel, Tech, Health}.
+    - Apply categories has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - News
+        - Sports
+        - Finance
+        - Travel
+        - Tech
+        - Health
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply categories
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting only some of the six categories.
+  - Adding Weather or Science as extra chips.
+  - Assuming the +N counter means the field is complete without checking the actual values.
+  - Not clicking Apply categories.
+  expected_interaction_path:
+  - Open Categories.
+  - Select the six required values.
+  - Refocus or inspect the field to verify the full set despite chip collapse.
+  - Click Apply categories.
+- id: combobox_editable_multi-mui-v2-T03
+  name: Allowed domains modal with one removal and two additions
+  canonical_type: combobox_editable_multi
+  implementation_source: mui
+  implementation_variant: Autocomplete (multiple, freeSolo, filterSelectedOptions)
+  implementation_component: 'MUI: Autocomplete (multiple, freeSolo) inside Modal'
+  task_template: confirm_cancel
+  secondary_template: select_many
+  browsergym_goal: Click “Edit allowed domains”. In the modal, make the “Allowed domains” field contain exactly `example.com`, `research.org`, and `labs.dev`, then click “Save”. The task will finish automatically when done.
+  ui_copy: Click “Edit allowed domains”. In the modal, make the “Allowed domains” field contain exactly `example.com`, `research.org`, and `labs.dev`, then click “Save”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing, center placement, and medium clutter. Clicking “Edit allowed domains” opens a modal containing one MUI Autocomplete with multiple and freeSolo labeled “Allowed domains”.
+
+    Initial chips: example.com, example.net
+    Suggestions include example.com, example.net, research.org, staging.local.
+    labs.dev is not in suggestions and must be committed as custom text. The modal footer contains “Cancel” and “Save”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - clutter
+    factor_rationale: 'This is an exact editable-multi state-repair task: one old chip must be removed, one suggestion-backed chip added, and one custom chip added before the modal can be safely committed.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The chip set is short, but modal commit and mixed source-of-value behavior make it a real state auditing task rather than a simple add/remove operation.
+  success_trigger:
+    human_readable:
+    - Allowed domains equals exactly {example.com, research.org, labs.dev}.
+    - Save has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - example.com
+        - research.org
+        - labs.dev
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving example.net selected.
+  - Adding staging.local or any extra domain.
+  - Leaving labs.dev as uncommitted text.
+  - Closing the modal without clicking Save.
+  expected_interaction_path:
+  - Open the modal.
+  - Remove example.net.
+  - Add research.org from suggestions and labs.dev as a custom chip.
+  - Click Save.
+- id: combobox_editable_multi-mui-v2-T04
+  name: Regions field only in advanced filters drawer
+  canonical_type: combobox_editable_multi
+  implementation_source: mui
+  implementation_variant: Autocomplete (multiple, disableCloseOnSelect)
+  implementation_component: 'MUI: Autocomplete (multiple) inside Drawer with sibling field'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Advanced filters”. In the drawer, set only the “Regions” field to exactly `North America`, `Europe`, and `Asia`, then click “Save filters”. Do not change “Countries”. The task will finish automatically when done.
+  ui_copy: Open “Advanced filters”. In the drawer, set only the “Regions” field to exactly `North America`, `Europe`, and `Asia`, then click “Save filters”. Do not change “Countries”. The task will finish automatically when done.
+  setup_description: |-
+    The page uses drawer_flow with compact spacing, top-right placement, and medium clutter. Clicking “Advanced filters” opens a drawer containing two MUI multiple Autocomplete fields:
+    - Regions — initial chips: none
+    - Countries — initial chips: Canada
+
+    The Regions options are North America, South America, Europe, Asia, Africa, and Oceania. The drawer also contains a date range field and a checkbox. disableCloseOnSelect is enabled so the popup remains open while multiple values are chosen. The drawer-local action “Save filters” commits the state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: This is a stronger version of the old sibling-field filter task because the drawer save boundary and persistent popup force the agent to audit the target field and the untouched distractor field together.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The option set is straightforward, but the right-field-only requirement inside a drawer makes the task strongly about instance binding and commit discipline.
+  success_trigger:
+    human_readable:
+    - Regions equals exactly {North America, Europe, Asia}.
+    - Countries remains exactly {Canada}.
+    - Save filters has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Regions
+        values:
+        - North America
+        - Europe
+        - Asia
+        non_target_instances_must_remain:
+          Countries:
+          - Canada
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save filters
+      require_correct_instance: true
+      target_instance_label_or_id: Regions
+      terminal_condition: true
+  negative_cases:
+  - Changing Countries instead of Regions.
+  - Missing one of the required regions.
+  - Adding an extra region such as Africa.
+  - Leaving the drawer unsaved.
+  expected_interaction_path:
+  - Open the drawer.
+  - Use the Regions field to select North America, Europe, and Asia.
+  - Leave Countries unchanged.
+  - Click Save filters.
+- id: combobox_editable_multi-mantine-v2-T01
+  name: Primary labels only with exact three-chip target
+  canonical_type: combobox_editable_multi
+  implementation_source: mantine
+  implementation_variant: TagsInput (acceptValueOnBlur=false)
+  implementation_component: 'Mantine: TagsInput (acceptValueOnBlur=false) in settings panel'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: In the labels panel, set only the “Primary labels” field to exactly `api`, `ui`, and `agent`, then click “Save labels”. Do not change “Secondary labels”. The task will finish automatically when done.
+  ui_copy: In the labels panel, set only the “Primary labels” field to exactly `api`, `ui`, and `agent`, then click “Save labels”. Do not change “Secondary labels”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, off-center placement, and high clutter. Two Mantine TagsInput fields are shown:
+    - Primary labels — initial chips: api
+    - Secondary labels — initial chips: docs
+
+    Both fields use suggestions, acceptValueOnBlur={false}, and no duplicate chips by default. Suggestions include api, ui, agent, docs, infra. The panel action “Save labels” commits the values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: This shifts the old Mantine tags pattern upward by making sibling preservation explicit and by forcing Enter-or-suggestion chip commits instead of blur-based shortcuts.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two similar editable chip fields, no blur-commit shortcut, and explicit save create a strong wrong-instance-plus-state-auditing task.
+  success_trigger:
+    human_readable:
+    - Primary labels equals exactly {api, ui, agent}.
+    - Secondary labels remains exactly {docs}.
+    - Save labels has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Primary labels
+        values:
+        - api
+        - ui
+        - agent
+        non_target_instances_must_remain:
+          Secondary labels:
+          - docs
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save labels
+      require_correct_instance: true
+      target_instance_label_or_id: Primary labels
+      terminal_condition: true
+  negative_cases:
+  - Editing Secondary labels.
+  - Leaving a typed value uncommitted.
+  - Adding infra or docs as extra chips.
+  - Failing to click Save labels.
+  expected_interaction_path:
+  - Focus Primary labels.
+  - Commit ui and agent as chips.
+  - Verify Secondary labels remains docs.
+  - Click Save labels.
+- id: combobox_editable_multi-mantine-v2-T02
+  name: Drawer replacement under maxTags saturation
+  canonical_type: combobox_editable_multi
+  implementation_source: mantine
+  implementation_variant: TagsInput (maxTags=3, clearable)
+  implementation_component: 'Mantine: TagsInput (maxTags=3) inside Drawer'
+  task_template: select_many
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit billing tags” drawer. In the “Billing tags” field, replace the existing tags so the final set is exactly `billing`, `overdue`, and `escalation`, then click “Apply billing tags”. The task will finish automatically when done.
+  ui_copy: Open the “Edit billing tags” drawer. In the “Billing tags” field, replace the existing tags so the final set is exactly `billing`, `overdue`, and `escalation`, then click “Apply billing tags”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, bottom-left placement, and medium clutter. Clicking “Edit billing tags” opens a drawer containing one Mantine TagsInput labeled “Billing tags”.
+
+    Initial chips: invoice, payment, refund
+    maxTags=3 and clearable are enabled.
+    Suggestions include billing, overdue, escalation, refund, payment.
+    The drawer footer contains “Cancel” and “Apply billing tags”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - placement
+    - clutter
+    factor_rationale: A fully saturated field converts the task into a remove-and-rebuild operation, which better exposes recovery and final-set auditing failures than add-only chip tasks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The chip set is small but every target chip is a replacement, so the agent must carefully remove the old set, rebuild the new one, and then save.
+  success_trigger:
+    human_readable:
+    - Billing tags equals exactly {billing, overdue, escalation}.
+    - Apply billing tags has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - billing
+        - overdue
+        - escalation
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply billing tags
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Leaving invoice, payment, or refund selected.
+  - Rebuilding only part of the new set.
+  - Using clear-all and then forgetting one required chip.
+  - Not clicking Apply billing tags.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove the initial three chips.
+  - Add billing, overdue, and escalation as the new exact set.
+  - Click Apply billing tags.
+- id: combobox_editable_multi-mantine-v2-T03
+  name: Top-position multiselect from visual framework target
+  canonical_type: combobox_editable_multi
+  implementation_source: mantine
+  implementation_variant: MultiSelect (searchable, maxValues=4, comboboxProps position=top)
+  implementation_component: 'Mantine: MultiSelect (searchable, dropdown above input) in compact card'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the compact stack card, make the “Frameworks” field match the chips shown in “Target stack”, then click “Save stack”. The task will finish automatically when done.
+  ui_copy: In the compact stack card, make the “Frameworks” field match the chips shown in “Target stack”, then click “Save stack”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing, bottom-right placement, small scale, and medium clutter. One searchable Mantine MultiSelect labeled “Frameworks” sits in a small card. The dropdown is forced above the input with comboboxProps position=top, and maxValues=4 is enabled.
+
+    A visual target row labeled “Target stack” shows exactly four chips: React, Next.js, TypeScript, Tailwind.
+    Options include React, Vue, Next.js, Nuxt, TypeScript, JavaScript, Tailwind, Bootstrap.
+    “Save stack” commits the selected values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - scale
+    factor_rationale: The target set is visual and the dropdown opens above a small corner-anchored input, increasing acquisition pressure while still keeping the underlying task a realistic MultiSelect comparison.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Four exact values, a constrained max selection count, and an above-input dropdown make this meaningfully harder than a baseline multi-select card.
+  success_trigger:
+    human_readable:
+    - Frameworks equals exactly {React, Next.js, TypeScript, Tailwind}.
+    - Save stack has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        values:
+        - React
+        - Next.js
+        - TypeScript
+        - Tailwind
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save stack
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting Vue, Nuxt, JavaScript, or Bootstrap.
+  - Choosing only some of the target chips.
+  - Exceeding the maxValues limit and forcing an unintended replacement.
+  - Not clicking Save stack.
+  expected_interaction_path:
+  - Inspect the Target stack chips.
+  - Open Frameworks and select the four required options.
+  - Verify the exact set.
+  - Click Save stack.
+- id: combobox_editable_multi-mantine-v2-T04
+  name: Exclude tags only in dual filter card
+  canonical_type: combobox_editable_multi
+  implementation_source: mantine
+  implementation_variant: MultiSelect (searchable, clearable, withCheckIcon=false)
+  implementation_component: 'Mantine: MultiSelect (searchable) with two instances in dashboard panel'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the filter card, set only the “Exclude tags” field to exactly `beta`, `deprecated`, and `noisy`, then click “Save filters”. Do not change “Include tags”. The task will finish automatically when done.
+  ui_copy: In the filter card, set only the “Exclude tags” field to exactly `beta`, `deprecated`, and `noisy`, then click “Save filters”. Do not change “Include tags”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, off-center placement, and high clutter. The target card contains two searchable Mantine MultiSelect controls:
+    - Include tags — initial chips: stable
+    - Exclude tags — initial chips: beta
+
+    withCheckIcon={false} and clearable are enabled for both fields. Suggestions include stable, beta, deprecated, noisy, preview, internal. The card footer contains “Save filters”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Two same-type multiselects with overlapping vocabularies make correct-instance targeting and final-set auditing the core challenge, especially once the check icon is removed.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The field-level semantics are opposed (include vs exclude), but the widgets are visually similar enough that the task is still primarily about correct-instance editing and exact chip-set verification.
+  success_trigger:
+    human_readable:
+    - Exclude tags equals exactly {beta, deprecated, noisy}.
+    - Include tags remains exactly {stable}.
+    - Save filters has been clicked.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        target_instance: Exclude tags
+        values:
+        - beta
+        - deprecated
+        - noisy
+        non_target_instances_must_remain:
+          Include tags:
+          - stable
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save filters
+      require_correct_instance: true
+      target_instance_label_or_id: Exclude tags
+      terminal_condition: true
+  negative_cases:
+  - Editing Include tags instead of Exclude tags.
+  - Leaving out deprecated or noisy.
+  - Adding preview or internal as extra chips.
+  - Not clicking Save filters.
+  expected_interaction_path:
+  - Focus Exclude tags.
+  - Add deprecated and noisy while keeping beta.
+  - Leave Include tags unchanged.
+  - Click Save filters.

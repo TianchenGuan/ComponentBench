@@ -1,0 +1,2049 @@
+- id: datetime_picker_range-antd-T01
+  name: 'Support window: set same-day morning range'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime, 24h, HH:mm)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Support window” date-time range to 2026-02-14 09:30 through 2026-02-14 11:00, then click OK to
+    apply. The task will finish automatically when done.
+  ui_copy: |-
+    Support window
+    Please choose a start and end date/time.
+    Target format: YYYY-MM-DD HH:mm
+    Target chip: “2026-02-14 09:30 – 2026-02-14 11:00”
+    [ Start – End ] (RangePicker with time)
+    OK / Cancel buttons appear in the picker panel.
+  setup_description: 'Layout: isolated_card centered in the viewport with a single labeled field “Support window”. Theme is
+    light with comfortable spacing and default component scale. The component is an Ant Design DatePicker.RangePicker configured
+    with showTime enabled (24-hour, hour+minute). A small ‘Target’ chip on the card repeats the requested range as a visual
+    reference (mixed guidance). Clicking either input opens a popover panel showing a calendar and a time selector; the panel
+    includes “OK” and “Cancel” actions. Initial state: empty (no start/end selected). There are no other interactive elements
+    on the card.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single, clearly labeled RangePicker with time; target is fully specified and the chosen range is within
+      the currently visible month. Requires a straightforward OK confirmation.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-02-14T09:30:00 (local time).
+    - Target range end equals 2026-02-14T11:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-02-14T09:30:00'
+        end: '2026-02-14T11:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only the start is set (end still empty) when the checker evaluates.
+  - Start or end date/time does not exactly match the target values.
+  - Correct start/end are selected in the panel but OK is not clicked (value not committed).
+  - Range is applied to a different component (not applicable here because instances=1).
+  expected_interaction_path: Click the Support window input → pick start date → pick start time → pick end date → pick end
+    time → click OK.
+  notes: 'Instrumentation: wrap the RangePicker with data-cb-instance=''Support window''. Checker should read the committed
+    value (after OK) from the RangePicker value prop and normalize to local ISO timestamps.'
+- id: datetime_picker_range-antd-T02
+  name: 'Pickup window: set afternoon range (small control, corner placement)'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime, minuteStep=30)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Pickup window” date-time range to 2026-03-03 13:00 through 2026-03-03 17:30, then click OK to
+    apply. The task will finish automatically when done.
+  ui_copy: |-
+    Pickup window (small)
+    Choose a date/time range.
+    Format: YYYY-MM-DD HH:mm
+    [ Start – End ]
+    OK / Cancel
+  setup_description: 'Layout: isolated_card anchored near the top-left of the viewport. Theme is light with comfortable spacing,
+    but the RangePicker is rendered in the library’s small size variant. The Ant Design RangePicker has showTime enabled and
+    the time list uses 30-minute steps (e.g., 13:00, 13:30, 14:00, …). Clicking the field opens a popover with a calendar
+    and time selector, plus OK/Cancel actions. Initial state: empty. No distractors are present.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Target is explicit and time choices are on coarse 30-minute steps; the main added challenge is smaller
+      hit targets due to small scale and corner placement.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-03-03T13:00:00 (local time).
+    - Target range end equals 2026-03-03T17:30:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-03-03T13:00:00'
+        end: '2026-03-03T17:30:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Start or end differs from the requested time (e.g., 17:00 instead of 17:30).
+  - Only a date is selected but time remains at a default that does not match the target.
+  - OK is not clicked after selecting the range.
+  - Overlay is left open with an uncommitted draft selection.
+  expected_interaction_path: Click Pickup window → select 2026-03-03 as start → pick 13:00 → select end on same day → pick
+    17:30 → click OK.
+  notes: 'Checker: enforce exact minute-level match. Confirm required via OK.'
+- id: datetime_picker_range-antd-T03
+  name: 'Outage window: clear the prefilled range'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime, allowClear)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the “Outage window” date-time range so it becomes empty (no start and no end). The task will finish
+    automatically when done.
+  ui_copy: |-
+    Outage window
+    Current value: 2026-02-05 01:00 – 2026-02-05 03:00
+    (There is an × clear icon when you hover/focus the field.)
+  setup_description: 'Layout: isolated_card centered in the viewport with a single RangePicker labeled “Outage window”. Theme
+    is light, spacing comfortable, scale default. The RangePicker has showTime enabled but is configured to commit changes
+    immediately when cleared (no confirmation required for clearing). Initial state: pre-filled with start=2026-02-05 01:00
+    and end=2026-02-05 03:00. A clear (×) control appears in the input when hovered/focused. No other UI elements are present.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single prefilled field with a standard clear affordance; success is simply the empty state with immediate
+      visual feedback.
+  success_trigger:
+    human_readable:
+    - Start value is empty (null).
+    - End value is empty (null).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: null
+        end: null
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one side of the range is cleared (start cleared but end still present, or vice versa).
+  - Text is deleted in the input but the underlying value is still non-null (stale value).
+  - A partial draft selection remains (e.g., start selected but end missing).
+  expected_interaction_path: Focus/hover the Outage window field → click the × clear icon (or use the built-in clear action)
+    → verify the field is empty.
+  notes: Checker reads RangePicker value; must be null/empty for both start and end.
+- id: datetime_picker_range-antd-T04
+  name: 'Report window: open the date-time range popover'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Report window” date-time range picker so the calendar/time popover is visible. Do not change
+    any values. The task will finish automatically when done.
+  ui_copy: |-
+    Report window
+    [ Start – End ] (empty)
+    Clicking the field opens a popover calendar with time selection.
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. A single AntD RangePicker
+    labeled “Report window” starts empty. The picker uses a popover overlay that contains a calendar view and a time selection
+    panel. No other controls exist on the page; the intent is to test reliably opening the overlay without modifying the value.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires only locating the correct field and opening its popover; no value setting or confirmation is involved.
+  success_trigger:
+    human_readable:
+    - The date-time range picker overlay is open (calendar/time UI visible).
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Popover does not open (overlay remains closed).
+  - A date/time is accidentally selected and the component value changes.
+  - Wrong overlay is opened (not applicable here because instances=1).
+  expected_interaction_path: Click the Report window input (or its picker icon) → ensure the popover panel is open.
+  notes: Checker should detect overlay open state via DOM (e.g., popup element present and anchored to this RangePicker).
+- id: datetime_picker_range-antd-T05
+  name: 'Backup window: set range in a form with two pickers'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime) ×2 instances'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the form, set the “Backup window” date-time range to 2026-02-20 14:00 through 2026-02-20 15:15, then
+    click OK to apply. The task will finish automatically when done.
+  ui_copy: |-
+    Schedule settings
+    Primary window: 2026-02-18 09:00 – 2026-02-18 10:00
+    Backup window: [ Start – End ]
+    (Other fields: Job name, Notify on failure toggle)
+  setup_description: 'Layout: form_section centered with a short ‘Schedule settings’ form. Light theme, comfortable spacing,
+    default scale. Two AntD RangePickers with showTime are present and visually similar: “Primary window” (pre-filled) and
+    “Backup window” (empty). Each RangePicker opens a popover calendar+time panel and requires clicking “OK” to commit the
+    selection. Clutter: low—there is a text input labeled “Job name” and a toggle “Notify on failure”, but they do not affect
+    success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Two visually similar RangePickers require selecting the correct labeled instance in a small form; otherwise
+      the range itself is straightforward and same-day.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-02-20T14:00:00 (local time).
+    - Target range end equals 2026-02-20T15:15:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-02-20T14:00:00'
+        end: '2026-02-20T15:15:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Backup window
+      terminal_condition: true
+  negative_cases:
+  - The Primary window is changed instead of the Backup window.
+  - Backup window start/end do not exactly match the target.
+  - Dates/times are selected but OK is not clicked to commit.
+  - Only start is set (end missing) when the checker evaluates.
+  expected_interaction_path: Locate Backup window field → open its popover → choose start date/time → choose end date/time
+    → click OK.
+  notes: 'Instrumentation: assign data-cb-instance labels ''Primary window'' and ''Backup window'' to disambiguate in checker.'
+- id: datetime_picker_range-antd-T06
+  name: 'Edit by typing: enter a formatted date-time range'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime, format=YYYY-MM-DD HH:mm)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: Enter the “Editing window” range as 2026-04-10 08:15 through 2026-04-10 09:45 by typing into the inputs,
+    then click OK to apply. The task will finish automatically when done.
+  ui_copy: |-
+    Editing window
+    Format hint: YYYY-MM-DD HH:mm
+    [ Start – End ] (empty)
+    (You can type directly into the fields.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. A single AntD RangePicker
+    labeled “Editing window” is configured with showTime and an explicit display/parse format of ''YYYY-MM-DD HH:mm''. The
+    inputs accept keyboard entry for both start and end. When the panel is open, an “OK” button must be clicked to commit
+    the typed values. Initial state: empty. No distractors.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires correct formatted typing for both endpoints and confirming with OK; small formatting errors or
+      partial entry are common failure modes.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-04-10T08:15:00 (local time).
+    - Target range end equals 2026-04-10T09:45:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-04-10T08:15:00'
+        end: '2026-04-10T09:45:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Wrong format entered (e.g., missing leading zeros) and the value is rejected or parsed differently.
+  - Only one side is typed/committed (start set but end missing).
+  - Values are typed but not committed via OK (draft remains).
+  - Start/end swapped.
+  expected_interaction_path: Click start input → type '2026-04-10 08:15' → move to end input → type '2026-04-10 09:45' → click
+    OK.
+  notes: Checker should read parsed Dayjs values, not raw input text; reject partial/draft values if OK not pressed.
+- id: datetime_picker_range-antd-T07
+  name: 'Service window: match the reference range card'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime) + reference display'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the “Service window” date-time range to match the range shown in the “Reference” card on the page,
+    then click OK to apply. The task will finish automatically when done.
+  ui_copy: |-
+    Reference
+    Target range (shown on the card): 2026-06-01 10:00 – 2026-06-01 12:30
+
+    Service window
+    [ Start – End ]
+    OK / Cancel
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. The card contains a
+    small ‘Reference’ panel above the picker that displays the target start/end as plain text. Below it is a single AntD RangePicker
+    labeled “Service window” with showTime enabled; it opens a popover calendar and time selector and requires OK to commit.
+    Initial state: empty. No other distractors.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Goal is specified via an on-page reference (visual read) rather than directly in the instruction, but the
+      picker interaction remains standard with an OK commit.
+  success_trigger:
+    human_readable:
+    - Selected range matches the range displayed in the reference element labeled 'Reference'.
+    - Reference resolves to start=2026-06-01T10:00:00, end=2026-06-01T12:30:00 (local time).
+    - If confirmation is required, the selection must be confirmed using the specified confirm control.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_label: Reference
+        start: '2026-06-01T10:00:00'
+        end: '2026-06-01T12:30:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Service window does not match the reference exactly.
+  - A different day/time is selected due to misreading the reference.
+  - Correct values selected but OK not clicked to apply.
+  expected_interaction_path: Read the Reference card → open Service window picker → select matching start/end date+time →
+    click OK.
+  notes: Checker can either resolve reference text to canonical datetimes or use pre-known target values (recommended for
+    determinism).
+- id: datetime_picker_range-antd-T08
+  name: 'Cutover window: set cross-midnight range with seconds (dark theme)'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime with seconds, format=YYYY-MM-DD HH:mm:ss)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Cutover window” date-time range to 2026-11-07 23:30:15 through 2026-11-08 01:15:45, then click
+    OK to apply. The task will finish automatically when done.
+  ui_copy: |-
+    Cutover window (dark mode)
+    Format: YYYY-MM-DD HH:mm:ss
+    [ Start – End ]
+    OK / Cancel
+  setup_description: 'Layout: isolated_card centered in the viewport, rendered in a dark theme. Spacing is comfortable and
+    scale is default. A single AntD RangePicker labeled “Cutover window” has showTime enabled with seconds visible and an
+    explicit format ''YYYY-MM-DD HH:mm:ss''. The popover includes calendar selection and time columns for hours, minutes,
+    and seconds; an “OK” button is required to confirm the final value. Initial state: empty. No other UI elements.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires precise second-level time selection and a cross-midnight date boundary; dark theme can reduce
+      contrast for small time-column targets.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-11-07T23:30:15 (local time).
+    - Target range end equals 2026-11-08T01:15:45 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-11-07T23:30:15'
+        end: '2026-11-08T01:15:45'
+        timezone: local
+      tolerance:
+        unit: second
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Seconds are left at a default (e.g., :00) instead of the specified values.
+  - End date is set on the wrong day (e.g., still 2026-11-07).
+  - Values are selected but OK is not clicked to commit.
+  - Range is reversed (end earlier than start) or only partially selected.
+  expected_interaction_path: Open Cutover window → pick start date 2026-11-07 → set time to 23:30:15 → pick end date 2026-11-08
+    → set time to 01:15:45 → click OK.
+  notes: Checker tolerance is 0 seconds; read committed value after OK. Consider instrumenting time panel columns with stable
+    testids for hour/minute/second.
+- id: datetime_picker_range-antd-T09
+  name: 'Billing window: set an open-ended range (end left empty)'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime, allowEmpty end)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Billing window” start to 2026-05-01 00:00 and leave the end of the range empty, then click OK
+    to apply. The task will finish automatically when done.
+  ui_copy: |-
+    Billing window
+    Start is required; End is optional (open interval)
+    Format: YYYY-MM-DD HH:mm
+    [ Start – End ]
+    OK / Cancel
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. A single AntD RangePicker
+    labeled “Billing window” is configured to allow an open-ended range: the start is required but the end may be empty (allowEmpty=[false,true]).
+    showTime is enabled (hour+minute). The popover has OK/Cancel; OK commits the current start/end (including a null end).
+    Initial state: empty. No other interactive elements.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: 'Open-ended ranges are error-prone: the agent must set only the start, ensure the end remains truly empty,
+      and still confirm with OK.'
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-05-01T00:00:00 (local time).
+    - End value is empty (null).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-05-01T00:00:00'
+        end: null
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - End date/time is set (non-empty) when it should be empty.
+  - End is cleared visually but underlying value remains set.
+  - Start is correct but OK not clicked to commit.
+  - Only a date (without correct time) is set for start.
+  expected_interaction_path: Open Billing window → select start date 2026-05-01 and time 00:00 → ensure end input is blank
+    → click OK.
+  notes: Checker must accept end=null and start set. Ensure adapter exposes allowEmpty configuration so leaving end empty
+    is a valid committed state.
+- id: datetime_picker_range-antd-T10
+  name: 'Deployments table: scroll and set the Staging window (cross-year)'
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime) in table rows (3 instances)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the “Deployment windows” section and set the date-time range in the “Staging” row to 2026-12-28
+    18:00 through 2027-01-02 09:00, then click OK to apply. The task will finish automatically when done.
+  ui_copy: |-
+    Settings
+    (Several sections...)
+    Deployment windows (table)
+    Rows: Dev | Staging | Prod
+    Each row has a date-time range field.
+    Set the Staging row to: 2026-12-28 18:00 – 2027-01-02 09:00
+  setup_description: 'Layout: settings_panel with multiple collapsible sections and form controls (medium clutter). Light
+    theme, comfortable spacing, default scale. The page initially shows the top of the settings panel; the “Deployment windows”
+    section is further down and requires scrolling to reach. Inside “Deployment windows” is a compact table with three AntD
+    RangePickers (showTime) in separate rows labeled “Dev”, “Staging”, and “Prod”. All three pickers look identical and each
+    opens a popover that requires clicking OK to commit. Initial state: Dev and Prod rows are pre-filled with other ranges;
+    Staging starts empty.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Requires scrolling to locate the correct table section and disambiguating among multiple identical RangePickers.
+      The target range spans across months/years, increasing navigation steps before confirming with OK.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-12-28T18:00:00 (local time).
+    - Target range end equals 2027-01-02T09:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-12-28T18:00:00'
+        end: '2027-01-02T09:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Deployment windows > Staging
+      terminal_condition: true
+  negative_cases:
+  - The Dev or Prod row is modified instead of Staging.
+  - Staging is set to a nearby but incorrect date (off by day/month/year).
+  - Correct values chosen but OK not clicked to commit.
+  - Only one endpoint is set (partial range).
+  expected_interaction_path: Scroll down to Deployment windows → locate Staging row → open its RangePicker → navigate calendar
+    to Dec 2026/Jan 2027 → set start 2026-12-28 18:00 → set end 2027-01-02 09:00 → click OK.
+  notes: 'Instrumentation: each row wrapper should expose a stable identifier (e.g., data-cb-instance=''Deployment windows
+    > Staging''). Checker should ignore changes to other rows and only evaluate the Staging instance.'
+- id: datetime_picker_range-mui-T01
+  name: 'Booking window: set same-day range (MUI DateTimeRangePicker)'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (SingleInputDateTimeRangeField)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Booking window” date-time range to 02/14/2026 09:30 AM – 02/14/2026 11:00 AM. The task will finish
+    automatically when done.
+  ui_copy: |-
+    Booking window
+    MM/DD/YYYY hh:mm aa – MM/DD/YYYY hh:mm aa
+    [single input field with start–end]
+    (Open picker icon on the right.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. The target component
+    is the MUI X Pro DateTimeRangePicker using the default single-input field (start–end displayed in one TextField). Activating
+    the field opens a desktop popper with a date-range calendar and a digital clock view for time selection. This instance
+    is configured to commit on selection completion (no separate OK button is shown on desktop). Initial state: empty. No
+    distractors.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single clearly labeled picker with default desktop behavior; same-day range avoids calendar navigation
+      and the value is visible in the input field.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-02-14T09:30:00 (local time).
+    - Target range end equals 2026-02-14T11:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-02-14T09:30:00'
+        end: '2026-02-14T11:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - End time/date is not set (partial range).
+  - Start/end do not exactly match the requested values.
+  - A different picker instance is changed (not applicable here).
+  - Range is selected but the field displays a different parsed value (e.g., wrong AM/PM).
+  expected_interaction_path: Open Booking window picker → select start date/time → select end date/time → ensure the field
+    shows the requested range.
+  notes: Uses MUI X Pro DateTimeRangePicker. Checker should read the picker value (e.g., Day.js objects) and normalize to
+    local ISO timestamps.
+- id: datetime_picker_range-mui-T02
+  name: 'Filters: clear a prefilled date-time range'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (single input, clear button enabled)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the “Created between” date-time range so the field is empty. The task will finish automatically when
+    done.
+  ui_copy: |-
+    Created between
+    04/17/2026 03:30 PM – 04/21/2026 06:30 PM
+    (An ✕ clear icon appears at the end of the field.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. A single MUI X Pro
+    DateTimeRangePicker labeled “Created between” is pre-filled with a range. The field is configured with a clear button
+    (✕) inside the input (clearButton/clearIcon slot). Initial state: start=04/17/2026 03:30 PM, end=04/21/2026 06:30 PM.
+    No other controls.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A single field with an explicit clear icon; success is the empty value with immediate feedback.
+  success_trigger:
+    human_readable:
+    - Start value is empty (null).
+    - End value is empty (null).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: null
+        end: null
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one endpoint is cleared (start null but end still set, or vice versa).
+  - Text is edited but the value remains non-null (controlled value not cleared).
+  - Field shows an error state rather than a clean empty state.
+  expected_interaction_path: Click the clear (✕) icon in the field (or use the picker clear action) → confirm the field becomes
+    empty.
+  notes: Checker reads picker value; must be [null, null].
+- id: datetime_picker_range-mui-T03
+  name: 'Audit window: open the picker popper'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (desktop popper)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Audit window” date-time range picker so the popper with the calendar/time UI is visible. Do not
+    set any dates. The task will finish automatically when done.
+  ui_copy: |-
+    Audit window
+    MM/DD/YYYY hh:mm aa – MM/DD/YYYY hh:mm aa
+    [empty]
+    (Calendar icon button opens the popper.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing. A single DateTimeRangePicker labeled
+    “Audit window” starts empty. The field has an opening icon button; activating it opens a popper that contains the date-range
+    calendar and time selection views. No other interactive elements are present.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Only requires opening the popper overlay; no selection or confirmation is needed.
+  success_trigger:
+    human_readable:
+    - The date-time range picker overlay is open (calendar/time UI visible).
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Popper does not open (calendar/time UI not visible).
+  - A value is accidentally selected and the field becomes non-empty.
+  expected_interaction_path: Click the field or open-picker icon → verify the popper is displayed.
+  notes: 'Checker: overlay_open can be detected by the presence of the picker popper anchored to this field.'
+- id: datetime_picker_range-mui-T04
+  name: 'Approval required: set range and press OK'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (action bar with Cancel/OK enabled)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Set the “Approval window” to 03/05/2026 01:15 PM – 03/05/2026 02:45 PM, then click OK in the picker to
+    apply. The task will finish automatically when done.
+  ui_copy: |-
+    Approval window
+    [empty]
+    (When the picker is open, an action bar shows Cancel and OK.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing. A single MUI X Pro DateTimeRangePicker
+    labeled “Approval window” starts empty. Unlike the default desktop behavior, this instance is configured to always show
+    the action bar with “Cancel” and “OK” (accept) buttons. Selections made in the popper are considered draft until OK is
+    clicked. No other UI elements are present.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: 'Adds a commit step: the agent must recognize that OK is required to apply the draft range; otherwise the
+      interaction is standard.'
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-03-05T13:15:00 (local time).
+    - Target range end equals 2026-03-05T14:45:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-03-05T13:15:00'
+        end: '2026-03-05T14:45:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Correct draft selection is made but OK is not clicked (value not committed).
+  - Cancel is clicked (value remains empty).
+  - AM/PM mismatch (e.g., 01:15 AM instead of PM).
+  - Only one endpoint selected.
+  expected_interaction_path: Open Approval window → choose start date/time → choose end date/time → click OK in the action
+    bar.
+  notes: Checker should verify committed value only after OK/accept action is taken.
+- id: datetime_picker_range-mui-T05
+  name: 'Delivery window: match the on-page reference (corner placement)'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker + reference card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the “Delivery window” to match the date-time range shown in the “Reference” card. The task will finish
+    automatically when done.
+  ui_copy: |-
+    Reference
+    05/12/2026 10:00 AM – 05/12/2026 12:00 PM
+
+    Delivery window
+    [empty single input range field]
+  setup_description: 'Layout: isolated_card anchored near the bottom-right of the viewport. Light theme, comfortable spacing,
+    default scale. A small ‘Reference’ card above the picker displays the target range as formatted text. The DateTimeRangePicker
+    labeled “Delivery window” uses the single-input field and commits on completion (no OK button). Initial state: empty.
+    No other UI elements.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Target must be read from an on-page reference and the component is placed in a corner, slightly increasing
+      acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - Selected range matches the range displayed in the reference element labeled 'Reference'.
+    - Reference resolves to start=2026-05-12T10:00:00, end=2026-05-12T12:00:00 (local time).
+    - If confirmation is required, the selection must be confirmed using the specified confirm control.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_label: Reference
+        start: '2026-05-12T10:00:00'
+        end: '2026-05-12T12:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Delivery window does not match the reference exactly.
+  - AM/PM is incorrect due to misreading.
+  - Only start is set (end missing).
+  expected_interaction_path: Read reference → open Delivery window picker → select the matching start/end date+time → ensure
+    field displays the same range.
+  notes: Reference values are fixed (not relative). Checker should normalize to local time.
+- id: datetime_picker_range-mui-T06
+  name: 'Shipping window: set range with two pickers in a form'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker ×2 instances (single input fields)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the checkout form, set the “Shipping window” to 06/01/2026 09:00 AM – 06/01/2026 10:30 AM. The task
+    will finish automatically when done.
+  ui_copy: |-
+    Checkout options
+    Billing window: 06/01/2026 08:00 AM – 06/01/2026 09:00 AM
+    Shipping window: [empty]
+    (Other fields: Carrier select, Notes text area)
+  setup_description: 'Layout: form_section centered. Light theme, comfortable spacing, default scale. Two visually similar
+    DateTimeRangePickers are present, each using a single input field: “Billing window” (pre-filled) and “Shipping window”
+    (empty). Both commit on selection completion (no OK button). Clutter: low—there is a Carrier dropdown and a Notes multiline
+    field that are not required for success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Two identical range pickers in a form require correct instance selection; otherwise the range is simple
+      and same-day.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-06-01T09:00:00 (local time).
+    - Target range end equals 2026-06-01T10:30:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-06-01T09:00:00'
+        end: '2026-06-01T10:30:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping window
+      terminal_condition: true
+  negative_cases:
+  - Billing window is changed instead of Shipping window.
+  - Only one endpoint is set.
+  - Start/end are off by one hour due to AM/PM confusion.
+  expected_interaction_path: Locate Shipping window field → open picker → set start date/time → set end date/time → verify
+    the Shipping field shows the correct range.
+  notes: 'Instrumentation: data-cb-instance=''Billing window'' and ''Shipping window'' on the two pickers.'
+- id: datetime_picker_range-mui-T07
+  name: 'Keyboard edit: type a full date-time range in one field'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (SingleInputDateTimeRangeField, keyboard editing)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: Type the “Editing range” as 04/10/2026 08:15 AM – 04/10/2026 09:45 AM in the field (keyboard entry), then
+    finish editing so the value is applied. The task will finish automatically when done.
+  ui_copy: |-
+    Editing range
+    MM/DD/YYYY hh:mm aa – MM/DD/YYYY hh:mm aa
+    Hint under the field: “Press Enter to start editing”
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. A single MUI X Pro
+    DateTimeRangePicker labeled “Editing range” is configured to emphasize keyboard editing. Under the field, helper text
+    reads “Press Enter to start editing”. The single input uses the range field format and supports direct typing of the complete
+    range string. There is no action bar; once the field parses a valid range, the underlying value updates immediately. Initial
+    state: empty.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires precise formatted keyboard entry and successful parsing of both endpoints; small format mistakes
+      can leave the component in an invalid/partial state.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-04-10T08:15:00 (local time).
+    - Target range end equals 2026-04-10T09:45:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-04-10T08:15:00'
+        end: '2026-04-10T09:45:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only part of the range is entered and parsed (partial value).
+  - AM/PM mis-typed leading to wrong time.
+  - Field contains text but value is invalid (error state) and underlying range is not updated.
+  expected_interaction_path: Focus field → press Enter (start editing) → type the full range string → press Enter/blur to
+    commit editing → verify value updates.
+  notes: Checker should evaluate parsed value, not raw string; treat invalid text as failure even if it visually resembles
+    the target.
+- id: datetime_picker_range-mui-T08
+  name: 'Night shift: cross-month range with OK confirmation (dark theme)'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (action bar enabled, dark theme)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Set the “Night shift” range to 11/30/2026 10:00 PM – 12/01/2026 01:30 AM, then click OK to apply. The task
+    will finish automatically when done.
+  ui_copy: |-
+    Night shift (dark mode)
+    [empty]
+    (When open: date-range calendar + digital clock + Cancel/OK action bar.)
+  setup_description: 'Layout: isolated_card centered in dark theme; spacing comfortable, scale default. A single DateTimeRangePicker
+    labeled “Night shift” starts empty. The popper uses a date-range calendar; after selecting dates, the time view uses a
+    digital clock. An action bar with Cancel and OK is always present; the range is not committed until OK is clicked. Target
+    spans a month boundary (Nov 30 → Dec 1), requiring calendar navigation between months.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Cross-month navigation plus a required OK commit step; dark theme can reduce visibility of small calendar
+      and clock targets.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-11-30T22:00:00 (local time).
+    - Target range end equals 2026-12-01T01:30:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-11-30T22:00:00'
+        end: '2026-12-01T01:30:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - End date stays in November (wrong day/month).
+  - Time selected in AM instead of PM (or vice versa).
+  - Draft selection made but OK not clicked.
+  - Only start is selected.
+  expected_interaction_path: Open Night shift → navigate calendar to Nov 2026 → select 11/30 as start → navigate/choose 12/01
+    as end → set start time 10:00 PM and end time 01:30 AM → click OK.
+  notes: Checker should read committed value post-OK; ensure dark theme does not change formatting used by the adapter.
+- id: datetime_picker_range-mui-T09
+  name: 'Compact mode: set a tight-minute range using multi-input field'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker (MultiInputDateTimeRangeField, minute step=1)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Blackout window” to 07/04/2026 09:07 AM – 07/04/2026 09:59 AM. The task will finish automatically
+    when done.
+  ui_copy: |-
+    Blackout window
+    Start: MM/DD/YYYY hh:mm aa
+    End:   MM/DD/YYYY hh:mm aa
+    (Compact spacing; minute options include every minute.)
+  setup_description: 'Layout: isolated_card centered. Light theme but compact spacing mode. Scale default. The DateTimeRangePicker
+    is configured to use the MultiInputDateTimeRangeField (separate Start and End text fields). The time selection uses a
+    digital clock with 1-minute granularity (dense minute list). No action bar is shown; values update as soon as valid selections
+    are made. Initial state: empty.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Compact spacing reduces target sizes and the 1-minute time granularity creates a dense list of nearly identical
+      minute options, increasing selection error risk.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-07-04T09:07:00 (local time).
+    - Target range end equals 2026-07-04T09:59:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-07-04T09:07:00'
+        end: '2026-07-04T09:59:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Minute selection is off by 1–2 minutes (e.g., 09:05 instead of 09:07).
+  - Start and end times are swapped.
+  - Only Start is filled and End remains empty.
+  - End time is earlier than start (invalid range).
+  expected_interaction_path: Open picker → set Start date/time → set End date/time using the dense minute list → confirm both
+    fields display the exact requested times.
+  notes: If the implementation uses timeSteps/minuteStep config, expose it in notes for reproducibility. Checker uses exact
+    minutes.
+- id: datetime_picker_range-mui-T10
+  name: 'Dashboard filters: scroll to ‘Resolved between’ and set range'
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: mui_x_pro
+  implementation_component: 'MUI X Pro: DateTimeRangePicker in a scrollable filter sidebar (2 instances)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the dashboard Filters panel, scroll to the “Resolved between” field and set it to 10/15/2026 06:00 AM
+    – 10/15/2026 06:00 PM. The task will finish automatically when done.
+  ui_copy: |-
+    Analytics dashboard
+    Left sidebar: Filters (scrollable)
+    Includes many controls (Status, Assignee, Tags, …)
+    Date-time ranges:
+    - Created between (pre-filled)
+    - Resolved between (below fold, empty)
+  setup_description: 'Layout: dashboard with a left-hand Filters sidebar that is vertically scrollable (high clutter). Light
+    theme, comfortable spacing, default scale. Inside the sidebar are many common filter widgets (selects, chips, toggles).
+    There are two DateTimeRangePicker instances with identical styling: “Created between” (pre-filled, near the top) and “Resolved
+    between” (empty, located further down and not visible until you scroll). Both pickers use the single-input field and commit
+    on selection completion (no OK). Only the “Resolved between” value is checked for success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: High visual clutter and a scrollable sidebar increase the chance of interacting with the wrong control;
+      two similar range pickers require careful disambiguation.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-10-15T06:00:00 (local time).
+    - Target range end equals 2026-10-15T18:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-10-15T06:00:00'
+        end: '2026-10-15T18:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Resolved between
+      terminal_condition: true
+  negative_cases:
+  - Created between is modified instead of Resolved between.
+  - Resolved between is partially set (only start).
+  - Resolved between times are incorrect (AM/PM mix-up).
+  - A nearby but incorrect date is selected due to scrolling or calendar navigation.
+  expected_interaction_path: Scroll the Filters sidebar → locate Resolved between → open its picker → set start 10/15/2026
+    06:00 AM → set end 10/15/2026 06:00 PM → verify the field value.
+  notes: 'Instrumentation: use data-cb-instance=''Created between'' and ''Resolved between'' for the two pickers to support
+    correct-instance checking.'
+- id: datetime_picker_range-mantine-T01
+  name: 'Reservation window: set start and end (composite)'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (Start/End) grouped as one range component'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Reservation window” start to 2026-02-14 09:30 and end to 2026-02-14 11:00. The task will finish
+    automatically when done.
+  ui_copy: |-
+    Reservation window
+    Start: [Pick date and time]
+    End:   [Pick date and time]
+    Display format: YYYY-MM-DD HH:mm
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. Mantine does not provide
+    a single native date-time range picker; this implementation is a composite range group: two Mantine DateTimePicker inputs
+    labeled “Start” and “End” under the section title “Reservation window”. Each DateTimePicker opens a popover with a calendar
+    and a time picker. Time selection is configured with dropdowns for hour/minute (easier than free-form). Initial state:
+    both Start and End are empty. No other UI elements.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Clear labeled Start/End inputs with straightforward same-day values; composite structure is simple and
+      state is visible in both fields.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-02-14T09:30:00 (local time).
+    - Target range end equals 2026-02-14T11:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-02-14T09:30:00'
+        end: '2026-02-14T11:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only Start is set and End remains empty.
+  - End is earlier than Start (invalid ordering).
+  - Start/End times do not match exactly.
+  - Values are entered into the wrong composite group (not applicable here).
+  expected_interaction_path: Open Start picker → choose date/time → open End picker → choose date/time → verify both fields
+    show the target values.
+  notes: 'Composite note: Treat the pair (Start DateTimePicker, End DateTimePicker) as one canonical datetime range component.
+    Instrumentation: wrap group with data-cb-instance=''Reservation window'' and expose child testids for start/end fields.'
+- id: datetime_picker_range-mantine-T02
+  name: Clear a prefilled composite range
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (clearable) as composite range'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the “Maintenance window” so both Start and End become empty. The task will finish automatically when
+    done.
+  ui_copy: |-
+    Maintenance window
+    Start: 2026-03-10 01:00
+    End:   2026-03-10 03:00
+    (Clear ✕ buttons are shown in each field.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing. Composite range group “Maintenance
+    window” contains two Mantine DateTimePicker inputs (Start and End), both configured with clearable=true so each field
+    shows a clear (✕) control when it has a value. Initial state: Start=2026-03-10 01:00 and End=2026-03-10 03:00. No other
+    interactive elements.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Clearing is a direct action with visible clear buttons; success is the empty state for both fields.
+  success_trigger:
+    human_readable:
+    - Start value is empty (null).
+    - End value is empty (null).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: null
+        end: null
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one field is cleared (Start cleared but End still set, or vice versa).
+  - Text appears empty but underlying value remains (controlled value not cleared).
+  - Field enters an error state instead of being cleanly empty.
+  expected_interaction_path: Click clear on Start → click clear on End → ensure both show placeholders.
+  notes: 'Checker evaluates composite: both underlying DateTimePicker values must be null.'
+- id: datetime_picker_range-mantine-T03
+  name: Open the Start picker popover (composite)
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (popover) as composite range'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the “Event window” Start date/time picker so its calendar/time popover is visible. Do not change any
+    values. The task will finish automatically when done.
+  ui_copy: |-
+    Event window
+    Start: [Pick date and time]
+    End:   [Pick date and time]
+    (Clicking a field opens a popover.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing. Composite range group “Event window”
+    contains two empty Mantine DateTimePicker fields labeled Start and End. Each field opens its own popover with the calendar
+    and time picker when clicked. No other UI elements; intent is to test opening the Start field overlay without setting
+    values.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Only requires opening the Start field popover; no range values need to be set.
+  success_trigger:
+    human_readable:
+    - The Start DateTimePicker popover for the Event window group is open (calendar/time UI visible).
+    - The composite range value remains empty (no start/end selected).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay_open: true
+        active_part: start
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - End field popover is opened instead of Start (active_part mismatch).
+  - Any date/time is selected, making Start or End non-empty.
+  - No popover is visible.
+  expected_interaction_path: Click the Start field in Event window → verify popover opens.
+  notes: Checker should detect which child popover is open (start vs end) and ensure value is still empty.
+- id: datetime_picker_range-mantine-T04
+  name: 'Secondary schedule: set range among two composite groups'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 per group, two groups on page (instances=2)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the form, set the “Secondary schedule” start to 2026-04-01 13:00 and end to 2026-04-01 16:30. The task
+    will finish automatically when done.
+  ui_copy: |-
+    Schedules
+    Primary schedule: (pre-filled)
+    Secondary schedule: (empty)
+    Other fields: Name, Timezone select
+  setup_description: 'Layout: form_section centered with low clutter. Light theme, comfortable spacing, default scale. There
+    are two composite date-time range groups that look alike: “Primary schedule” (Start/End pre-filled) and “Secondary schedule”
+    (Start/End empty). Each group is composed of two Mantine DateTimePicker fields (Start and End). Other controls (a Name
+    text input and a Timezone select) are present but irrelevant to success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: 'Disambiguation is the main challenge: two similar composite groups require selecting the correct Start/End
+      fields under the right label.'
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-04-01T13:00:00 (local time).
+    - Target range end equals 2026-04-01T16:30:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-04-01T13:00:00'
+        end: '2026-04-01T16:30:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary schedule
+      terminal_condition: true
+  negative_cases:
+  - Primary schedule is modified instead of Secondary schedule.
+  - Only Start or only End is set in Secondary schedule.
+  - Start/end values are correct but entered in different groups (mixed fields).
+  expected_interaction_path: Locate Secondary schedule → set Start date/time → set End date/time → verify both fields show
+    correct values.
+  notes: 'Instrumentation: each composite group should have a stable instance id; checker reads start/end from that group
+    only.'
+- id: datetime_picker_range-mantine-T05
+  name: 'Service window: match reference card (composite)'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 + reference display'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the “Service window” Start and End to match the range shown in the “Reference” card. The task will
+    finish automatically when done.
+  ui_copy: |-
+    Reference
+    2026-08-09 10:00 → 2026-08-09 12:30
+
+    Service window
+    Start: [empty]
+    End:   [empty]
+  setup_description: 'Layout: isolated_card centered, light theme, comfortable spacing. A ‘Reference’ block above the composite
+    range group shows the target start/end as text (visual guidance). The “Service window” composite group contains Start
+    and End Mantine DateTimePicker fields (popover dropdowns for time). Initial state: both fields empty. No other UI.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Target is provided via an on-page reference rather than in the instruction; otherwise interaction is standard
+      with two clear fields.
+  success_trigger:
+    human_readable:
+    - Selected range matches the range displayed in the reference element labeled 'Reference'.
+    - Reference resolves to start=2026-08-09T10:00:00, end=2026-08-09T12:30:00 (local time).
+    - If confirmation is required, the selection must be confirmed using the specified confirm control.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_label: Reference
+        start: '2026-08-09T10:00:00'
+        end: '2026-08-09T12:30:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Reference is misread and values differ from target.
+  - Only Start is set.
+  - Start/End are set in the wrong order.
+  expected_interaction_path: Read Reference → set Start → set End → verify displayed values match Reference.
+  notes: Checker may parse reference text or use pre-known target values for determinism.
+- id: datetime_picker_range-mantine-T06
+  name: 'Inspection window: set range with pickers opening in modals'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (dropdownType=''modal'') as composite range'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Inspection window” start to 2026-09-15 07:00 and end to 2026-09-15 09:00. The task will finish
+    automatically when done.
+  ui_copy: |-
+    Inspection window
+    Start: [Pick date and time] (opens in a modal)
+    End:   [Pick date and time] (opens in a modal)
+  setup_description: 'Layout: modal_flow anchored near the top-right of the viewport. Light theme, comfortable spacing, default
+    scale. Composite range group “Inspection window” has two Mantine DateTimePicker fields (Start/End) configured with dropdownType=''modal'',
+    so clicking either field opens a full modal dialog containing the calendar and time picker. Initial state: empty. No extra
+    form fields or buttons; once both Start and End are set, success is achieved.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Modal-based pickers add an extra layer and larger context switches (Start modal then End modal), while
+      the target values remain straightforward.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-09-15T07:00:00 (local time).
+    - Target range end equals 2026-09-15T09:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-09-15T07:00:00'
+        end: '2026-09-15T09:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only Start is set and End remains empty.
+  - Start/End values are off by an hour due to mis-selection in modal.
+  - End is earlier than Start (invalid range).
+  expected_interaction_path: Click Start → set date/time in modal → close modal → click End → set date/time in modal → verify
+    values.
+  notes: Checker reads the two DateTimePicker values from the composite group. Instrument modals with stable roles/labels
+    for overlay detection.
+- id: datetime_picker_range-mantine-T07
+  name: 'Year-end window: cross-year range (dark theme, composite)'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (dark theme) as composite range'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Year-end window” start to 2026-12-31 23:00 and end to 2027-01-01 01:00. The task will finish automatically
+    when done.
+  ui_copy: |-
+    Year-end window (dark mode)
+    Start: [empty]
+    End:   [empty]
+    (Each field opens a calendar + time picker.)
+  setup_description: 'Layout: isolated_card centered in dark theme; comfortable spacing, default scale. Composite range group
+    “Year-end window” contains Start and End Mantine DateTimePicker fields. Target spans a year boundary (Dec 31 → Jan 1),
+    requiring navigation between months/years in the calendar view for at least one of the fields. Initial state: empty. No
+    other UI elements.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Cross-year navigation requires careful month/year changes in the calendar for Start and End, and dark theme
+      can reduce contrast for small navigation controls.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-12-31T23:00:00 (local time).
+    - Target range end equals 2027-01-01T01:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-12-31T23:00:00'
+        end: '2027-01-01T01:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - End date is set to the wrong year (2026 instead of 2027).
+  - Times are correct but dates are off by one day due to midnight boundary.
+  - Only one of Start/End is set.
+  expected_interaction_path: Set Start to Dec 31, 2026 23:00 → set End to Jan 1, 2027 01:00 → verify both fields.
+  notes: Checker must treat local time; ensure adapter uses consistent time zone when converting Date objects.
+- id: datetime_picker_range-mantine-T08
+  name: 'Precise timing: set range with seconds enabled (composite)'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (withSeconds) as composite range'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Recorder window” start to 2026-10-10 08:15:30 and end to 2026-10-10 09:45:10. The task will finish
+    automatically when done.
+  ui_copy: |-
+    Recorder window
+    Start: [HH:MM:SS]
+    End:   [HH:MM:SS]
+    (Seconds inputs are enabled.)
+  setup_description: 'Layout: isolated_card centered. Light theme, comfortable spacing, default scale. Composite range group
+    “Recorder window” uses two Mantine DateTimePicker fields with withSeconds enabled, so time selection includes hours, minutes,
+    and seconds. Initial state: empty. No other UI elements.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Second-level precision increases the likelihood of small errors; the agent must correctly set hours, minutes,
+      and seconds for both Start and End.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-10-10T08:15:30 (local time).
+    - Target range end equals 2026-10-10T09:45:10 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-10-10T08:15:30'
+        end: '2026-10-10T09:45:10'
+        timezone: local
+      tolerance:
+        unit: second
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Seconds are left at default values (e.g., :00).
+  - Only hours/minutes are set correctly but seconds are wrong.
+  - Start/End are swapped or partially set.
+  expected_interaction_path: Open Start → set date 2026-10-10 and time 08:15:30 → open End → set time 09:45:10 → verify values.
+  notes: Ensure adapter reads seconds from the underlying Date value; checker uses 0-second tolerance.
+- id: datetime_picker_range-mantine-T09
+  name: 'Compact + small: set tight-minute range in composite inputs'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 (compact spacing, small size) as composite range'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Set the “Blackout window” start to 2026-07-04 09:07 and end to 2026-07-04 09:59. The task will finish automatically
+    when done.
+  ui_copy: |-
+    Blackout window (compact)
+    Start (small): [Pick date and time]
+    End (small):   [Pick date and time]
+  setup_description: 'Layout: isolated_card centered. Light theme, but compact spacing mode and small-sized inputs. Composite
+    range group “Blackout window” contains Start and End Mantine DateTimePicker fields rendered in small size. Time selection
+    uses fine-grained minutes (no coarse stepping), making it easy to pick a nearby but incorrect minute. Initial state: empty.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Small, tightly spaced controls raise acquisition difficulty and selecting uncommon minutes (09:07, 09:59)
+      increases the chance of near-miss errors.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-07-04T09:07:00 (local time).
+    - Target range end equals 2026-07-04T09:59:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-07-04T09:07:00'
+        end: '2026-07-04T09:59:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Start or End minute is off (e.g., 09:05 or 10:00).
+  - Only one endpoint is set.
+  - End earlier than Start.
+  expected_interaction_path: Set Start to 2026-07-04 09:07 → set End to 2026-07-04 09:59 → verify both fields.
+  notes: If minute stepping is configurable in the underlying TimePicker, set it to 1-minute steps for reproducibility.
+- id: datetime_picker_range-mantine-T10
+  name: 'SLA table: edit the Silver row window (composite)'
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: DateTimePicker ×2 per table row (2 rows = 2 instances)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the SLA table, set the “Silver” row response window start to 2026-06-15 14:00 and end to 2026-06-15
+    16:00. The task will finish automatically when done.
+  ui_copy: |-
+    SLA table
+    Rows: Gold | Silver
+    Columns include: Response window (Start, End)
+    Gold row is pre-filled; Silver row is empty.
+  setup_description: 'Layout: table_cell view centered in the viewport (a small admin table). Light theme, comfortable spacing,
+    default scale. There are two rows (“Gold” and “Silver”). Each row contains a composite date-time range editor embedded
+    in the table: a Start DateTimePicker cell and an End DateTimePicker cell (together treated as one canonical datetime range
+    instance per row). The Gold row is pre-filled with a different range; the Silver row Start/End are empty. Medium clutter
+    comes from other non-interactive columns (SLA name, description) and a couple of action icons per row, but they do not
+    affect success.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Table cell embedding makes click targets smaller and increases the risk of editing the wrong row; two similar
+      row instances require careful disambiguation.
+  success_trigger:
+    human_readable:
+    - Target range start equals 2026-06-15T14:00:00 (local time).
+    - Target range end equals 2026-06-15T16:00:00 (local time).
+    - If confirmation is required, the selection is not considered final until the specified confirm control is activated.
+    - If multiple instances are present, only the labeled target instance is evaluated.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-06-15T14:00:00'
+        end: '2026-06-15T16:00:00'
+        timezone: local
+      tolerance:
+        unit: minute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: SLA table > Silver
+      terminal_condition: true
+  negative_cases:
+  - Gold row is modified instead of Silver.
+  - Only Start or End is set in Silver row.
+  - Values are set but in the wrong row/cells due to table focus behavior.
+  expected_interaction_path: Locate Silver row → set Start cell DateTimePicker → set End cell DateTimePicker → verify the
+    Silver row shows the correct times.
+  notes: 'Instrumentation: each row should expose a stable instance id (e.g., data-cb-instance=''SLA table > Silver'') to
+    support correct-instance checking.'

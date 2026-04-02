@@ -1,0 +1,2301 @@
+- id: context_menu-antd-T01
+  name: Open context menu on Quick note
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Quick note” area and leave it open. The task will finish automatically when done.
+  ui_copy: Quick note — open its context menu and leave it open.
+  setup_description: |-
+    Layout: an isolated card centered in the viewport.
+    Component placement: the interactive target is in the center of the page.
+    Spacing/size: comfortable spacing and default-sized components.
+
+    Target element: a card titled “Quick note” contains a large rectangular note area (like a sticky note) with a few lines of placeholder text. Right-clicking (context click) anywhere inside the note area opens a custom context menu.
+
+    Context menu component: implemented with Ant Design Dropdown using trigger=['contextMenu'] and an AntD Menu as the overlay. The popover menu appears at the cursor position and closes when the user clicks outside or presses Escape.
+
+    Menu items (top to bottom):
+    - Copy
+    - Paste (disabled)
+    - Rename
+    - Delete
+
+    Initial state: the context menu is closed.
+
+    Distractors/clutter: none. There are no other menus, buttons, or inputs on the page.
+
+    Feedback: when the menu is open, the Menu overlay is visible and focus is trapped within the menu list per library defaults.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires opening a single context menu on a large target with a small, simple menu. Success is purely the menu-open state with no item selection.
+  success_trigger:
+    human_readable:
+    - The custom context menu overlay is open (visible) for the Quick note area.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        menu_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The browser’s native context menu opens but the custom AntD menu overlay is not open.
+  - The menu opens and then closes (menu_open becomes false).
+  - A menu opens for some other element (should not be possible in this scene, but must not count as success).
+  expected_interaction_path:
+  - Right-click (or otherwise trigger context menu) inside the Quick note area.
+  - Do not click any menu item; leave the menu open until the checker ends the task.
+  notes:
+  - 'Instrumentation: expose menu open state (e.g., data-testid=''context-menu-overlay'') and a boolean ''menu_open''.'
+  - Checker should ignore the browser’s native context menu; only the AntD Dropdown overlay counts.
+- id: context_menu-antd-T02
+  name: Rename from context menu
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Quick note” area and click “Rename”. The task will finish automatically when done.
+  ui_copy: Quick note — use the context menu to choose Rename.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable spacing, default scale.
+
+    Target element: the same “Quick note” card as a simple text block inside a large note area. A custom context menu is available only on this note area.
+
+    Context menu: AntD Dropdown with trigger=['contextMenu'] shows an AntD Menu at the cursor.
+    Menu items: Copy, Paste (disabled), Rename, Delete.
+
+    Initial state: menu closed; no item has been activated yet (last_activated_item_path is null).
+
+    Distractors: none.
+
+    Feedback: clicking a menu item closes the menu and logs the activated item path in component state (used by the checker).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single instance and a small, clearly labeled menu; requires one click on a top-level item after opening the menu.
+  success_trigger:
+    human_readable:
+    - The activated context-menu item path equals ['Rename'] for the only menu instance.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Rename
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any other item (e.g., Copy or Delete).
+  - Opening the menu but not activating an item (last_activated_item_path remains null).
+  - The correct item is focused/highlighted but not clicked/activated.
+  expected_interaction_path:
+  - Open the context menu on the note area.
+  - Click the “Rename” menu item.
+  notes:
+  - 'Instrumentation: record last_activated_item_path whenever an item is clicked/activated by keyboard.'
+- id: context_menu-antd-T03
+  name: Enable Show caption checkbox
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (checkable item)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Open the context menu on the “Photo preview” card and turn ON “Show caption”. The task will finish automatically when done.
+  ui_copy: Photo preview — open context menu and enable Show caption.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport with one content card.
+    Spacing/size: comfortable, default.
+
+    Target element: a card titled “Photo preview” shows a small image placeholder. The card body (image area) supports a custom context menu on right-click.
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] with an AntD Menu overlay. One of the items is checkable and shows a checkmark when enabled.
+
+    Menu items:
+    - Open
+    - Show caption (checkable)
+    - Download
+
+    Initial state: Show caption is OFF (unchecked). The caption text under the photo is hidden.
+
+    Distractors: none.
+
+    Feedback: when “Show caption” is toggled on, the menu item displays a checkmark and a short caption line appears under the image (visual feedback), but success is determined by the menu's checked state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires toggling a single checkable menu item with clear on/off feedback; otherwise the scene is simple.
+  success_trigger:
+    human_readable:
+    - The context menu checked state for 'Show caption' is true (ON).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        checked_items:
+          Show caption: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the menu but leaving “Show caption” unchecked.
+  - Toggling “Show caption” off again (final state must be ON).
+  - Activating another item (Open/Download) without setting the checkbox correctly.
+  expected_interaction_path:
+  - Open the context menu on the photo area.
+  - Click the “Show caption” check item so it becomes checked.
+  - Optionally close the menu; the checker ends when the checkbox state is ON.
+  notes:
+  - Checker should read the canonical checked_items map from the menu instance (not from the caption text).
+  - 'Implementation hint: AntD Menu supports selectable/checkable items via item types or custom rendering; expose the checked state.'
+- id: context_menu-antd-T04
+  name: Choose Print using icon reference
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (items with icons)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Open the context menu for “budget.xlsx” and choose “Print” (the option with the printer icon shown in the Reference box). The task will finish automatically when done.
+  ui_copy: 'File: budget.xlsx — use its context menu and pick Print (printer icon).'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a single card shows an attachment row with a file chip labeled “budget.xlsx”. Right-clicking on the file chip opens a custom context menu.
+
+    Guidance element: within the same card, a small non-interactive “Reference” box shows a printer icon next to the word “Print”. This is the visual cue for which option to select.
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] with an AntD Menu overlay positioned at the cursor.
+
+    Menu items (with icons):
+    - Open (folder icon)
+    - Download (down arrow icon)
+    - Print (printer icon)
+    - Share (link icon)
+
+    Initial state: menu closed; no selection yet.
+
+    Distractors/clutter: none. No other interactive components affect success.
+
+    Feedback: when an item is activated, the menu closes and the component records last_activated_item_path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A short menu, but the instruction requires matching an icon reference to the correct menu item.
+  success_trigger:
+    human_readable:
+    - The activated context-menu item path equals ['Print'] for the budget.xlsx menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Print
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Download” or “Open” instead of “Print”.
+  - Selecting “Print” from a different menu instance (not applicable here, but must not count).
+  - Menu opens but no item is activated.
+  expected_interaction_path:
+  - Right-click the budget.xlsx file chip to open the context menu.
+  - Click the “Print” menu item (printer icon).
+  notes:
+  - Include icons in menu items to support the mixed guidance condition.
+  - 'Instrumentation: record activated item label/path independent of icon rendering.'
+- id: context_menu-antd-T05
+  name: Duplicate the Secondary document
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Secondary document” tile and click “Duplicate”. The task will finish automatically when done.
+  ui_copy: Documents — open the Secondary document context menu and choose Duplicate.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Instances: TWO document tiles are shown side-by-side inside the card, each supports its own context menu on right-click:
+    - “Primary document” (left tile)
+    - “Secondary document” (right tile)
+
+    Target instance: Secondary document.
+
+    Context menu: each tile is wrapped with an AntD Dropdown trigger=['contextMenu'] and shows an AntD Menu at the cursor.
+
+    Menu items for both tiles:
+    - Open
+    - Duplicate
+    - Rename
+    - Delete
+
+    Initial state: both menus closed; last_activated_item_path is null for both instances.
+
+    Distractors/clutter: none.
+
+    Feedback: item activation closes the menu and records the activated item path per instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar targets require selecting the correct instance before activating a common menu item.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Duplicate'] on the context menu instance labeled 'Secondary document'.
+    - The Primary document instance must not be the one that records the activation.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Duplicate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary document
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Duplicate is activated on the Primary document tile instead of Secondary.
+  - Any other item is activated on Secondary (Open/Rename/Delete).
+  - The menu is opened but no item is activated.
+  expected_interaction_path:
+  - Right-click the Secondary document tile (right).
+  - Click “Duplicate”.
+  notes:
+  - 'Instrumentation: each instance should have a stable label/id and separate last_activated_item_path state.'
+  - Checker must verify the instance label, not just the last action globally.
+- id: context_menu-antd-T06
+  name: Share → Copy link
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (nested submenu)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Design spec” and select Share → Copy link. The task will finish automatically when done.
+  ui_copy: 'Design spec — context menu: Share → Copy link.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a single file row labeled “Design spec” with a file icon. Right-clicking the row opens a context menu.
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] with a nested AntD Menu.
+
+    Menu structure:
+    - Open
+    - Share ▸ (submenu)
+        - Copy link
+        - Send email
+    - Rename
+    - Delete
+
+    Initial state: menu closed; no submenu open; last_activated_item_path is null.
+
+    Distractors: none.
+
+    Feedback: hovering or keyboard navigating to “Share” opens its submenu; clicking “Copy link” records the full activated path ['Share','Copy link'].
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening a submenu and selecting a nested item; the correct semantic state is a two-level activated path.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Share', 'Copy link'] for the Design spec context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Share
+        - Copy link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Activating Share without selecting Copy link (submenu opened but no activation).
+  - Selecting Share → Send email instead of Copy link.
+  - Selecting a top-level item like Open or Rename.
+  expected_interaction_path:
+  - Right-click the Design spec row to open the menu.
+  - Open the Share submenu (hover or arrow-right).
+  - Click Copy link.
+  notes:
+  - Checker should treat the activated path as canonical state, not rely on any clipboard side effects.
+  - AntD nested menu can be represented via items with children; expose the path labels used in the checker.
+- id: context_menu-antd-T07
+  name: Move to → Archive in compact small menu
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (nested submenu)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Report Q4” and select Move to → Archive. The task will finish automatically when done.
+  ui_copy: 'Report Q4 — context menu: Move to → Archive.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: COMPACT spacing mode is enabled for the page, and the context menu uses a SMALL size tier (reduced padding and font size).
+
+    Target element: a single file row labeled “Report Q4”. Right-clicking opens the context menu.
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] + nested AntD Menu. Because of compact+small styling, menu items are closer together than default.
+
+    Menu structure:
+    - Open
+    - Move to ▸ (submenu)
+        - Inbox
+        - Archive
+        - Trash
+    - Rename
+
+    Initial state: menu closed; no submenu open.
+
+    Distractors: none.
+
+    Feedback: submenu opens on hover or keyboard navigation; selecting Archive closes the menu and records path ['Move to','Archive'].
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Compact spacing and small scale make target acquisition harder, and selecting a nested submenu item adds an extra interaction layer.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Move to', 'Archive'] for the Report Q4 context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Move to
+        - Archive
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Move to → Inbox or Move to → Trash.
+  - Clicking Move to but not selecting a submenu item.
+  - Selecting Open or Rename instead.
+  expected_interaction_path:
+  - Right-click the Report Q4 row.
+  - Open the Move to submenu.
+  - Select Archive.
+  notes:
+  - 'Robustness factor: compact spacing + small scale.'
+  - Ensure submenu is fully visible; avoid clipping by using collision handling defaults.
+- id: context_menu-antd-T08
+  name: 'Table cell menu: scroll to Export as CSV'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the table, open the context menu on the “Total” cell in the first row and select “Export as CSV”. The task will finish automatically when done.
+  ui_copy: 'Sales table — Total (row 1): context menu → Export as CSV.'
+  setup_description: |-
+    Layout: table_cell. A small 3×4 data table is rendered near the center of the viewport.
+    Spacing/size: comfortable spacing, default scale.
+
+    Target element: the first row has a row label “Row 1”. In that row, the rightmost cell is labeled “Total”. Right-clicking the Total cell opens a custom context menu. Other cells do not open a custom menu (they behave normally).
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] anchored to the Total cell. The menu is intentionally long and becomes scrollable within a fixed-height popover.
+
+    Menu items: ~22 items including common actions (Copy, Copy as JSON, Pin column, Hide column, Sort ascending/descending, etc.). The target item “Export as CSV” appears near the bottom and is NOT visible without scrolling the menu list.
+
+    Initial state: menu closed; no prior activation.
+
+    Distractors/clutter: medium. The table has column headers, alternating row shading, and a non-interactive legend above it, but nothing else affects success.
+
+    Feedback: selecting a menu item closes the menu and records the activated item path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling through a long list of similar table actions inside a context menu to find an item near the bottom; table context adds targeting noise.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Export as CSV'] for the Total cell context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Export as CSV
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Right-clicking a different table cell (no custom menu) or opening the browser menu.
+  - Selecting a similar item like “Export as PDF” (if present) or “Copy as CSV”.
+  - Scrolling the page instead of the menu and never activating the target item.
+  expected_interaction_path:
+  - Right-click the Total cell in row 1 to open the menu.
+  - Scroll within the menu overlay until “Export as CSV” is visible.
+  - Click “Export as CSV”.
+  notes:
+  - 'Instrumentation: expose a scroll container for the menu list (e.g., role=''menu'') so the agent must scroll the overlay, not the page.'
+  - 'Checker: record last_activated_item_path; do not rely on any file download side effects.'
+- id: context_menu-antd-T09
+  name: Confirm Delete inside context menu
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu + inline confirm row (composite within overlay)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Invoice-013.pdf”, click “Delete…”, then click “Delete” to confirm. The task will finish automatically when done.
+  ui_copy: 'Invoice-013.pdf — context menu: Delete… then confirm Delete.'
+  setup_description: |-
+    Theme: DARK mode is enabled for the page.
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a single file row labeled “Invoice-013.pdf”. Right-clicking the row opens a custom context menu.
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] renders an AntD Menu in a popover overlay.
+
+    Menu items:
+    - Open
+    - Rename
+    - Delete… (ellipsis indicates a confirmation step)
+
+    Confirmation behavior: clicking “Delete…” does NOT immediately finish the action. Instead, the menu stays open and a confirmation row appears at the bottom of the same overlay with two buttons: “Cancel” and “Delete”.
+
+    Initial state: menu closed; no pending confirmation (pending_action_path is null).
+
+    Distractors/clutter: none.
+
+    Feedback: when the confirmation row is shown, the “Delete” button is styled as destructive. Clicking “Delete” records confirmation_result='confirmed' for action ['Delete'] and closes the menu.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Adds a multi-step confirmation interaction inside the context menu overlay; success requires completing the confirm step, not just selecting the menu item.
+  success_trigger:
+    human_readable:
+    - The context menu records that the pending action ['Delete'] was confirmed via the 'Delete' confirmation control.
+    - The confirmation result must be 'confirmed' (not cancelled).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmed_action_path:
+        - Delete
+        confirmation_result: confirmed
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Delete…” but not clicking the confirmation “Delete” button (pending confirmation only).
+  - Clicking “Cancel” in the confirmation row.
+  - Closing the menu or modal without confirming.
+  - Confirming delete for a different file (not applicable here, but must not count).
+  expected_interaction_path:
+  - Right-click the Invoice-013.pdf row to open the context menu.
+  - Click “Delete…”.
+  - In the confirmation row, click “Delete”.
+  notes:
+  - 'Implementation hint: keep confirmation UI within the same overlay DOM subtree to avoid confounding with separate dialog components.'
+  - 'Instrumentation: expose pending_action_path and confirmation_result for the checker.'
+- id: context_menu-antd-T10
+  name: Set multiple View options toggles
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (submenu with checkable items)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'Open the context menu for the “Editor” area and set these options in View options: Show line numbers ON, Word wrap ON, Minimap OFF. The task will finish automatically when done.'
+  ui_copy: 'Editor — context menu: View options → set line numbers, word wrap, minimap.'
+  setup_description: |-
+    Layout: isolated_card anchored to the BOTTOM-LEFT of the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a large text area labeled “Editor” shows a few lines of code-like text. Right-clicking inside the editor opens a context menu.
+
+    Context menu: AntD Dropdown trigger=['contextMenu'] with a nested AntD Menu. The submenu “View options” contains checkable items and is configured with closeOnItemClick=false so toggling check items does not close the menu.
+
+    Menu structure:
+    - Undo
+    - Redo
+    - View options ▸
+        - Show line numbers (checkable)
+        - Word wrap (checkable)
+        - Minimap (checkable)
+
+    Initial state in View options:
+    - Show line numbers: OFF
+    - Word wrap: ON
+    - Minimap: ON
+
+    Distractors/clutter: none.
+
+    Feedback: each check item shows a checkmark when enabled. The checker reads the final checked state map for these three items.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires navigating into a submenu and setting multiple checkable states correctly (including turning one option off) without relying on a single click.
+  success_trigger:
+    human_readable:
+    - 'Inside View options, the checked states match: Show line numbers=true, Word wrap=true, Minimap=false.'
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Show line numbers: true
+          Word wrap: true
+          Minimap: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only partially setting the toggles (e.g., enabling line numbers but leaving minimap ON).
+  - Changing the wrong check item or leaving Word wrap OFF.
+  - Not opening the View options submenu (no access to toggles).
+  - Toggling the correct states but then changing them again so final state does not match.
+  expected_interaction_path:
+  - Right-click inside the Editor area to open the menu.
+  - Open the View options submenu.
+  - Toggle Show line numbers on; ensure Word wrap stays on; toggle Minimap off.
+  notes:
+  - 'Checker: evaluate final checked state for the three named items; ignore other menu actions.'
+  - If AntD Menu does not natively support check items, render them as Menu.Item with a Checkbox and expose their canonical checked state.
+- id: context_menu-mui-T01
+  name: Open context menu on Canvas
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu (anchorPosition) + MenuList (composite right-click menu)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Canvas” area and leave it open. The task will finish automatically when done.
+  ui_copy: Canvas — open its context menu and leave it open.
+  setup_description: |-
+    Layout: isolated_card placed near the TOP-RIGHT of the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a large blank area labeled “Canvas” (a light gray rectangle) sits inside the card. Right-clicking anywhere inside this canvas opens a custom context menu.
+
+    Implementation: MUI does not ship a dedicated ContextMenu component, so the page composes one: the Canvas has an onContextMenu handler that prevents the browser menu and opens a MUI Menu anchored by cursor coordinates (anchorReference='anchorPosition').
+
+    Menu items: “Cut”, “Copy”, “Paste”, and “Select all”.
+
+    Initial state: menu closed.
+
+    Distractors: none.
+
+    Feedback: when open, the MUI Menu popover is visible at the cursor and focus is managed by the MenuList.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires opening a single context menu on a large canvas; no selection or multi-step interaction.
+  success_trigger:
+    human_readable:
+    - The custom MUI-based context menu overlay is open (menu_open=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        menu_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the browser’s native context menu instead of the custom menu.
+  - Opening and then closing the custom menu.
+  - Opening a menu for some other element (should not occur here).
+  expected_interaction_path:
+  - Right-click inside the Canvas area.
+  - Leave the menu open.
+  notes:
+  - 'Variant rationale: uses MUI Menu + onContextMenu + anchorPosition (composite context menu).'
+  - 'Instrumentation: expose menu_open boolean for the checker.'
+- id: context_menu-mui-T02
+  name: Copy message text from context menu
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu (anchorPosition) + MenuItem'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the context menu on the chat message “See you at 3pm” and click “Copy text”. The task will finish automatically when done.
+  ui_copy: 'Chat — message “See you at 3pm”: context menu → Copy text.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport showing a mini chat transcript.
+    Spacing/size: comfortable, default.
+
+    Target element: there is a single message bubble containing the exact text “See you at 3pm”. Right-clicking on that bubble opens a custom context menu.
+
+    Implementation: an onContextMenu handler on the bubble opens a MUI Menu using anchorPosition at the mouse coordinates.
+
+    Menu items:
+    - Reply
+    - Copy text
+    - Forward
+
+    Initial state: menu closed; last_activated_item_path is null.
+
+    Distractors: another older message bubble is shown above, but it does NOT open a custom context menu.
+
+    Feedback: clicking a menu item closes the menu and stores last_activated_item_path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single target message with a short three-item menu; success is a simple top-level item activation.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Copy text'] for the message context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Copy text
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Reply or Forward instead of Copy text.
+  - Opening the menu but not activating any item.
+  - Right-clicking outside the target bubble (no custom menu).
+  expected_interaction_path:
+  - Right-click the “See you at 3pm” message bubble.
+  - Click “Copy text”.
+  notes:
+  - 'Instrumentation: record last_activated_item_path on item activation (mouse or keyboard).'
+- id: context_menu-mui-T03
+  name: Turn on Pin to top
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + checkable MenuItem (custom check state)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: 'Open the context menu for “Bookmark: Research links” and turn ON “Pin to top”. The task will finish automatically when done.'
+  ui_copy: 'Bookmark: Research links — enable Pin to top from the context menu.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a single list row labeled “Bookmark: Research links”. Right-clicking the row opens a custom context menu.
+
+    Implementation: onContextMenu opens a MUI Menu at cursor position. One item behaves like a checkbox (shows a check icon when enabled).
+
+    Menu items:
+    - Open
+    - Pin to top (checkable)
+    - Remove
+
+    Initial state: Pin to top is OFF (unchecked).
+
+    Distractors: none.
+
+    Feedback: clicking “Pin to top” toggles the checkmark. The menu stays open after toggling to make the state visible.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single checkable state must be set correctly with immediate visual feedback; otherwise the scene is simple.
+  success_trigger:
+    human_readable:
+    - The checked state for 'Pin to top' is true (ON).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        checked_items:
+          Pin to top: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Pin to top OFF (unchecked).
+  - Toggling it on and then off again (final state must be ON).
+  - Activating Open or Remove without setting the checkbox.
+  expected_interaction_path:
+  - Right-click the Bookmark row.
+  - Click “Pin to top” to enable it (checkmark on).
+  notes:
+  - Expose check state in a canonical checked_items map for the checker.
+- id: context_menu-mui-T04
+  name: Set Task A priority to High
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + radio-style MenuItems (custom group state)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Task A” and set Priority to “High”. The task will finish automatically when done.
+  ui_copy: 'Tasks — Task A: context menu → Priority = High.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Instances: TWO task cards are shown, each with its own context menu on right-click:
+    - Task A
+    - Task B
+
+    Target instance: Task A.
+
+    Context menu implementation: each card has an onContextMenu handler that opens a MUI Menu anchored to cursor position.
+
+    Menu content for each task:
+    - Open
+    - Priority (radio group rendered inside the menu)
+        - Low
+        - Medium
+        - High
+    - Delete
+
+    Radio behavior: exactly one Priority option can be selected at a time. The selected option shows a filled radio indicator.
+
+    Initial state:
+    - Task A Priority: Medium
+    - Task B Priority: Medium
+
+    Distractors/clutter: none.
+
+    Feedback: selecting a Priority option updates the radio indicator immediately and keeps the menu open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires picking the correct instance (Task A) and setting a radio-style selection within the menu.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Task A', the selected radio value in group 'Priority' equals 'High'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        radio_groups:
+          Priority: High
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Task A
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Priority to High on Task B instead of Task A.
+  - Selecting Low or Medium instead of High.
+  - Activating Delete/Open but leaving Priority unchanged.
+  - Focusing High without selecting it (radio value remains Medium).
+  expected_interaction_path:
+  - Right-click Task A.
+  - In the Priority section, select High.
+  notes:
+  - 'Instrumentation: expose radio_groups state per instance (e.g., {''Priority'': ''High''}).'
+  - Although rendered as a submenu-like section, keep it within the same menu overlay to remain a single component for checking.
+- id: context_menu-mui-T05
+  name: 'Widget menu: scroll to Open settings'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu (scrollable MenuList)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, open the context menu for the “Sales chart” widget and select “Open settings”. The task will finish automatically when done.
+  ui_copy: 'Dashboard — Sales chart: context menu → Open settings.'
+  setup_description: |-
+    Layout: dashboard. A dashboard page shows several widgets (cards) in a grid.
+    Spacing/size: comfortable, default.
+
+    Target element: the widget titled “Sales chart”. Right-clicking anywhere on the widget body opens a custom context menu.
+
+    Context menu implementation: an onContextMenu handler opens a MUI Menu anchored to cursor coordinates. The menu has many items and a max height, so it becomes scrollable.
+
+    Menu items: around 18 actions such as Refresh, Duplicate widget, Move up, Move down, Change visualization, Export data, etc. The target item “Open settings” is near the bottom of the list and requires scrolling to reveal.
+
+    Initial state: menu closed; last_activated_item_path null.
+
+    Distractors/clutter: medium. Other widgets exist (e.g., “Traffic”, “Alerts”), but they do NOT open a custom context menu in this scene.
+
+    Feedback: selecting an item closes the menu and records the activated item path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling within a long context menu on a dashboard widget to find an item near the bottom.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Open settings'] for the Sales chart widget context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Open settings
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different item like “Edit widget” or “Change visualization” instead of Open settings.
+  - Scrolling the page rather than the menu and never activating the item.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click the Sales chart widget.
+  - Scroll the menu overlay until Open settings is visible.
+  - Click Open settings.
+  notes:
+  - 'Instrumentation: ensure the menu list is a scroll container; expose last_activated_item_path for the checker.'
+  - Keep other dashboard widgets non-interactive for context menus so E6 instances=1 is accurate.
+- id: context_menu-mui-T06
+  name: Pick item by shortcut reference
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu with right-aligned shortcut hints'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Link preview” and choose the option that matches the Reference shortcut “Ctrl+Shift+L” (Copy link). The task will finish automatically when done.
+  ui_copy: Link preview — select Copy link (Ctrl+Shift+L) from the context menu.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a card titled “Link preview” shows a URL and a small preview. Right-clicking inside the preview opens a custom context menu.
+
+    Guidance element: a small “Reference” pill above the preview displays the keyboard shortcut text “Ctrl+Shift+L”. The goal text explains that this shortcut corresponds to “Copy link”.
+
+    Context menu: implemented with MUI Menu anchored to cursor position. Menu items show a right-aligned shortcut hint (secondary text), similar to desktop apps.
+
+    Menu items (label — shortcut):
+    - Copy — Ctrl+C
+    - Copy link — Ctrl+Shift+L
+    - Copy as Markdown — Ctrl+M
+    - Open in new tab — Ctrl+Enter
+
+    Initial state: menu closed; no activation recorded.
+
+    Distractors: none.
+
+    Feedback: activating an item closes the menu and records last_activated_item_path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires matching a reference shortcut string to the correct menu item among several similar 'Copy' options.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Copy link'] for the Link preview context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Copy link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting “Copy” or “Copy as Markdown” instead of “Copy link”.
+  - Clicking the correct item label but for a different target (not applicable here).
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click in the Link preview to open the menu.
+  - Locate the item whose shortcut matches Ctrl+Shift+L and activate it (Copy link).
+  notes:
+  - Ensure shortcuts are part of the rendered menu item text (or accessible name) so agents with different observation spaces can use them.
+  - 'Checker: rely on last_activated_item_path only.'
+- id: context_menu-mui-T07
+  name: 'Dark theme: Share → Email'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + nested submenu (composed with Popover/Menu)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In dark theme, open the context menu for “Photo 7” and select Share → Email. The task will finish automatically when done.
+  ui_copy: 'Photo 7 — (dark theme) context menu: Share → Email.'
+  setup_description: |-
+    Theme: DARK mode is enabled for the whole page.
+    Layout: isolated_card centered.
+    Spacing/size: comfortable, default.
+
+    Target element: a photo tile labeled “Photo 7”. Right-clicking the tile opens a custom context menu.
+
+    Implementation: MUI Menu is opened via onContextMenu and anchored to cursor coordinates. A nested submenu is composed using a second Menu/Popover that opens when the parent item is hovered/focused.
+
+    Menu structure:
+    - Open
+    - Share ▸
+        - Email
+        - Copy link
+    - Delete
+
+    Initial state: menus closed; no activated path.
+
+    Distractors: none.
+
+    Feedback: selecting Email records the full path ['Share','Email'] and closes the menus.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Nested submenu interaction in a dark theme increases depth and target acquisition difficulty compared to default.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Share', 'Email'] for the Photo 7 context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Share
+        - Email
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Share → Copy link instead of Email.
+  - Selecting Open or Delete.
+  - Opening Share submenu but not activating Email.
+  expected_interaction_path:
+  - Right-click Photo 7 to open the menu.
+  - Open the Share submenu.
+  - Click Email.
+  notes:
+  - 'Variant rationale: composite submenu may involve two overlays; keep both under the canonical context_menu component for checking (e.g., treat the pair as one logical menu).'
+  - Checker should accept the activated path regardless of whether the submenu opened via hover or keyboard navigation.
+- id: context_menu-mui-T08
+  name: 'Gamma row: set Columns toggles'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + nested submenu + checkable items (composite context menu)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the table, open the context menu for the row “Gamma” and in Columns set Owner ON, Status OFF, and Due date ON. The task will finish automatically when done.
+  ui_copy: 'Table — row Gamma: context menu → Columns → set Owner/Status/Due date.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Instances: THREE simple rows are listed inside the card, each opens a context menu on right-click:
+    - Alpha
+    - Beta
+    - Gamma
+
+    Target instance: Gamma.
+
+    Context menu implementation: each row has an onContextMenu handler that opens a MUI Menu anchored at cursor position. The menu includes a nested submenu “Columns” that opens to the right.
+
+    Menu structure:
+    - View details
+    - Columns ▸
+        - Owner (checkable)
+        - Status (checkable)
+        - Due date (checkable)
+        - Tags (checkable)
+    - Export row
+
+    Initial checked state inside Columns for Gamma:
+    - Owner: OFF
+    - Status: ON
+    - Due date: OFF
+    - Tags: ON (irrelevant)
+
+    Distractors/clutter: none.
+
+    Feedback: toggling a column shows/hides a checkmark next to that item; the submenu stays open while toggling.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Requires choosing the correct row among multiple similar instances, navigating into a submenu, and setting multiple checkable states precisely.
+  success_trigger:
+    human_readable:
+    - 'For the context menu instance labeled ''Gamma'', the Columns checked states match: Owner=true, Status=false, Due date=true.'
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Owner: true
+          Status: false
+          Due date: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Gamma
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the correct column toggles on Alpha or Beta instead of Gamma.
+  - Only partially setting the toggles (e.g., Owner ON but Due date still OFF).
+  - Accidentally toggling Tags (allowed), but the three required toggles must match exactly.
+  - Closing the menu before the final states match.
+  expected_interaction_path:
+  - Right-click the Gamma row.
+  - Open the Columns submenu.
+  - Toggle Owner on; toggle Status off; toggle Due date on (ensure final states match).
+  notes:
+  - 'Instrumentation: expose open_target label for the menu (Alpha/Beta/Gamma) and the checked_items map for the Columns submenu.'
+  - Checker should only evaluate the specified keys (Owner/Status/Due date) to avoid penalizing incidental toggles like Tags.
+- id: context_menu-mui-T09
+  name: Reset layout with confirmation
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + inline confirmation footer (composite within overlay)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Dashboard grid” area, click “Reset layout…”, then click “Reset” to confirm. The task will finish automatically when done.
+  ui_copy: 'Dashboard grid — context menu: Reset layout… then confirm Reset.'
+  setup_description: |-
+    Layout: settings_panel centered in the viewport. The page looks like a dashboard customization panel.
+    Spacing/size: comfortable, default.
+
+    Target element: a rectangle labeled “Dashboard grid” (a preview of widgets). Right-clicking inside it opens a custom context menu.
+
+    Context menu implementation: onContextMenu opens a MUI Menu at cursor position.
+
+    Menu items:
+    - Add widget
+    - Arrange automatically
+    - Reset layout… (requires confirmation)
+
+    Confirmation behavior: clicking “Reset layout…” reveals an inline confirmation footer inside the same menu overlay with two buttons: “Cancel” and “Reset”. The menu remains open until one of these is clicked.
+
+    Initial state: menu closed; no pending confirmation.
+
+    Distractors/clutter: high. The settings panel contains sliders, toggles, and a list of widgets, but they do not affect success.
+
+    Feedback: clicking “Reset” records confirmation_result='confirmed' and closes the menu.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: A two-step confirm flow inside a busy settings panel; success requires completing the confirmation step rather than just selecting the item.
+  success_trigger:
+    human_readable:
+    - The pending action ['Reset layout'] is confirmed via the 'Reset' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmed_action_path:
+        - Reset layout
+        confirmation_result: confirmed
+      tolerance: null
+      require_confirm: true
+      confirm_control: Reset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Reset layout…” but then clicking outside the menu (no confirmation).
+  - Clicking “Cancel” instead of “Reset”.
+  - Selecting “Arrange automatically” or “Add widget” instead.
+  expected_interaction_path:
+  - Right-click in the Dashboard grid preview.
+  - Click Reset layout…
+  - Click Reset in the confirmation footer.
+  notes:
+  - 'Instrumentation: expose pending_action_path and confirmation_result for the checker.'
+  - Keep confirm footer within the same overlay so the task remains a single context_menu component interaction.
+- id: context_menu-mui-T10
+  name: 'Compact small: Transform → Rotate → 90° clockwise'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + multi-level nested submenus (composite)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for the shape “Rectangle 1” and select Transform → Rotate → 90° clockwise. The task will finish automatically when done.
+  ui_copy: 'Rectangle 1 — context menu: Transform → Rotate → 90° clockwise.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport
+    Spacing/size: COMPACT spacing is enabled and the menu uses a SMALL scale (reduced padding and font size).
+
+    Target element: a small canvas shows a single labeled shape “Rectangle 1”. Right-clicking directly on the rectangle opens a custom context menu.
+
+    Context menu: composed from MUI Menu components anchored to cursor position. It supports multi-level submenus that open to the right.
+
+    Menu structure:
+    - Duplicate
+    - Transform ▸
+        - Rotate ▸
+            - 90° clockwise
+            - 90° counterclockwise
+            - 180°
+        - Flip ▸
+            - Horizontal
+            - Vertical
+    - Delete
+
+    Initial state: menus closed; no activation.
+
+    Distractors: none.
+
+    Feedback: activating the final item closes the menus and records the full activated path.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small, compact targets plus a deep three-level submenu path with similar rotate options makes this interaction sequence error-prone.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Transform', 'Rotate', '90° clockwise'] for the Rectangle 1 context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Transform
+        - Rotate
+        - 90° clockwise
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting 90° counterclockwise or 180° instead of 90° clockwise.
+  - Selecting a sibling submenu like Transform → Flip → Horizontal.
+  - Activating Duplicate/Delete instead.
+  - Opening Transform/Rotate but not activating the final leaf item.
+  expected_interaction_path:
+  - Right-click Rectangle 1 to open the menu.
+  - Open Transform submenu, then Rotate submenu.
+  - Click 90° clockwise.
+  notes:
+  - 'Robustness factors: compact spacing + small scale.'
+  - 'Instrumentation: record full activation path as an array of labels.'
+- id: context_menu-mantine-T01
+  name: Open context menu on Sticky note
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu (opened via onContextMenu) (composite)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Sticky note” and leave it open. The task will finish automatically when done.
+  ui_copy: Sticky note — open its context menu and leave it open.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a large yellow-like note area titled “Sticky note” with a short message. Right-clicking inside the note opens a custom context menu.
+
+    Implementation: Mantine provides a Menu component, but right-click triggering is composed by the page: an onContextMenu handler prevents the browser menu and opens a Mantine Menu dropdown positioned at cursor coordinates.
+
+    Menu items: “Edit”, “Duplicate”, “Delete”.
+
+    Initial state: menu closed.
+
+    Distractors: none.
+
+    Feedback: when open, the menu dropdown is visible and keyboard focus is managed by Mantine Menu defaults.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only requires opening a single context menu on a large target; no item selection.
+  success_trigger:
+    human_readable:
+    - The custom Mantine-based context menu overlay is open (menu_open=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        menu_open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the browser’s native context menu instead of the custom menu.
+  - Opening and then closing the custom menu.
+  expected_interaction_path:
+  - Right-click inside the Sticky note area.
+  - Leave the menu open.
+  notes:
+  - 'Variant rationale: composite context menu built from Mantine Menu + onContextMenu positioning.'
+  - 'Instrumentation: expose menu_open boolean.'
+- id: context_menu-mantine-T02
+  name: Edit contact via context menu
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu.Item (opened via onContextMenu)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for the contact “Alicia Diaz” and click “Edit details”. The task will finish automatically when done.
+  ui_copy: 'Contact: Alicia Diaz — context menu → Edit details.'
+  setup_description: |-
+    Layout: isolated_card centered.
+    Spacing/size: comfortable, default.
+
+    Target element: a contact card shows the name “Alicia Diaz” and an email address. Right-clicking on the contact card opens a custom context menu.
+
+    Implementation: onContextMenu opens a Mantine Menu dropdown positioned at the cursor.
+
+    Menu items:
+    - View profile
+    - Edit details
+    - Remove contact
+
+    Initial state: menu closed; last_activated_item_path null.
+
+    Distractors: none.
+
+    Feedback: activating a menu item closes the menu and records last_activated_item_path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single instance with a short menu; requires selecting one clearly labeled top-level item.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Edit details'] for the Alicia Diaz context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Edit details
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting View profile or Remove contact instead of Edit details.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click the Alicia Diaz contact card.
+  - Click Edit details.
+  notes:
+  - 'Instrumentation: record last_activated_item_path on activation.'
+- id: context_menu-mantine-T03
+  name: Toggle Starred on
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu with checkable item (custom check state)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Message from Jordan” and turn ON “Starred”. The task will finish automatically when done.
+  ui_copy: 'Message from Jordan — context menu: enable Starred.'
+  setup_description: |-
+    Layout: isolated_card centered.
+    Spacing/size: comfortable, default.
+
+    Target element: a single message row labeled “Message from Jordan” with a short snippet. Right-clicking the row opens a custom context menu.
+
+    Context menu implementation: onContextMenu opens a Mantine Menu dropdown at cursor position. One item is checkable and shows a check icon when enabled.
+
+    Menu items:
+    - Reply
+    - Mark as read
+    - Starred (checkable)
+
+    Initial state: Starred is OFF (unchecked).
+
+    Distractors: none.
+
+    Feedback: toggling Starred updates the checkmark immediately; the menu remains open after toggling.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires setting a single checkable state with visible feedback; otherwise minimal complexity.
+  success_trigger:
+    human_readable:
+    - The checked state for 'Starred' is true (ON).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        checked_items:
+          Starred: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Starred unchecked (OFF).
+  - Turning Starred on and then off again (final state must be ON).
+  - Activating other items without setting Starred.
+  expected_interaction_path:
+  - Right-click the Message from Jordan row.
+  - Click Starred to toggle it ON.
+  notes:
+  - Expose checked_items in canonical state for the checker.
+- id: context_menu-mantine-T04
+  name: 'Folder B: create New file'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu (composite right-click) + Menu.Item'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Folder B” and click “New file”. The task will finish automatically when done.
+  ui_copy: 'Folders — Folder B: context menu → New file.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Instances: TWO folder rows are shown, both support a context menu on right-click:
+    - Folder A
+    - Folder B
+
+    Target instance: Folder B.
+
+    Context menu: onContextMenu opens a Mantine Menu dropdown at the cursor.
+
+    Menu items:
+    - New file
+    - New folder
+    - Rename
+
+    Initial state: both menus closed; no activation recorded.
+
+    Distractors/clutter: none.
+
+    Feedback: activating an item closes the menu and records last_activated_item_path for that folder instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar instances require disambiguating the correct folder before selecting a common action.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['New file'] on the context menu instance labeled 'Folder B'.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - New file
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Folder B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Activating New file on Folder A instead of Folder B.
+  - Selecting New folder or Rename instead.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click Folder B.
+  - Click New file.
+  notes:
+  - 'Instrumentation: separate last_activated_item_path per folder instance and expose open_target label for checking.'
+- id: context_menu-mantine-T05
+  name: Share → Copy public link (icon reference)
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu with nested submenu + item icons'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Press kit.zip” and select Share → Copy public link (the option with the globe icon shown in the Reference box). The task will finish automatically when done.
+  ui_copy: 'Press kit.zip — context menu: Share → Copy public link (globe icon).'
+  setup_description: |-
+    Layout: isolated_card centered.
+    Spacing/size: comfortable, default.
+
+    Target element: a single file row labeled “Press kit.zip”. Right-clicking opens a custom context menu.
+
+    Guidance element: a non-interactive “Reference” box above the file row shows a globe icon and the text “Copy public link”.
+
+    Context menu: composed from Mantine Menu components. The menu supports a submenu “Share” that opens to the right.
+
+    Menu structure (with icons):
+    - Open
+    - Share ▸
+        - Copy public link (globe icon)
+        - Copy private link (lock icon)
+        - Email… (envelope icon)
+    - Rename
+
+    Initial state: menu closed; no activated path.
+
+    Distractors: none.
+
+    Feedback: selecting the submenu item records last_activated_item_path=['Share','Copy public link'] and closes menus.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Nested submenu selection plus icon-based disambiguation between similar options (public vs private link).
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Share','Copy public link'] for the Press kit.zip context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Share
+        - Copy public link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Share → Copy private link instead of Copy public link.
+  - Selecting Share → Email… instead.
+  - Opening Share submenu but not activating a leaf item.
+  expected_interaction_path:
+  - Right-click Press kit.zip.
+  - Open the Share submenu.
+  - Click Copy public link (globe icon).
+  notes:
+  - Ensure icons are present and stable so the mixed-guidance condition is meaningful.
+  - Checker uses activated path only.
+- id: context_menu-mantine-T06
+  name: 'Dashboard menu: scroll to Download as PDF'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu dropdown (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, open the context menu for the “Monthly report” widget and select “Download as PDF”. The task will finish automatically when done.
+  ui_copy: Monthly report widget — context menu → Download as PDF.
+  setup_description: |-
+    Layout: dashboard. A dashboard grid is rendered near the center of the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a widget card titled “Monthly report”. Right-clicking on the widget opens a custom context menu.
+
+    Context menu: composed from Mantine Menu and positioned at cursor coordinates via onContextMenu. The menu has a fixed max height and becomes scrollable.
+
+    Menu items: about 20 actions grouped with labels (e.g., Refresh, Change timeframe, Export data, Download…). The target item “Download as PDF” appears near the bottom of the menu and requires scrolling within the menu overlay.
+
+    Initial state: menu closed; no activation yet.
+
+    Distractors/clutter: medium. Other widgets and a sidebar are present, but only the Monthly report widget has a context menu.
+
+    Feedback: activating an item closes the menu and records last_activated_item_path.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling within a long, grouped menu inside a cluttered dashboard layout near the viewport edge.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Download as PDF'] for the Monthly report context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Download as PDF
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different download format like “Download as CSV” (if present).
+  - Scrolling the page instead of the menu and never activating the target item.
+  - Opening a menu for another element (should not be possible).
+  expected_interaction_path:
+  - Right-click the Monthly report widget to open the menu.
+  - Scroll inside the menu overlay until Download as PDF is visible.
+  - Click Download as PDF.
+  notes:
+  - 'Robustness factor: dashboard clutter with an overlay that requires scrolling.'
+  - Ensure the menu overlay itself is scrollable (not the page) to make the scroll_find template meaningful.
+- id: context_menu-mantine-T07
+  name: 'Compact settings: set View checkmarks'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + submenu + multiple checkable items'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'Open the context menu for the “Markdown editor” and in View set: Show preview ON, Show toolbar OFF, Spell check ON, Word wrap ON. The task will finish automatically when done.'
+  ui_copy: 'Markdown editor — context menu: View → set preview/toolbar/spellcheck/word wrap.'
+  setup_description: |-
+    Layout: settings_panel centered, styled like an editor preferences pane.
+    Spacing/size: COMPACT spacing mode (reduced padding) is enabled for the panel.
+
+    Target element: a text area labeled “Markdown editor”. Right-clicking inside it opens a custom context menu.
+
+    Context menu: composed from Mantine Menu with a submenu “View”. The View submenu contains several checkable items. The menu is configured to stay open while toggling these items.
+
+    Menu structure:
+    - Undo
+    - Redo
+    - View ▸
+        - Show preview (checkable)
+        - Show toolbar (checkable)
+        - Spell check (checkable)
+        - Word wrap (checkable)
+
+    Initial checked state in View:
+    - Show preview: OFF
+    - Show toolbar: ON
+    - Spell check: OFF
+    - Word wrap: ON
+
+    Distractors/clutter: none. The panel contains only the editor area and the context menu; no other interactive controls affect success.
+
+    Feedback: each item shows a check icon when enabled. Success is based on the final checked state for the four named items.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Compact spacing and multiple required toggle changes (including turning one off) inside a submenu increase error risk even in an otherwise uncluttered scene.
+  success_trigger:
+    human_readable:
+    - 'In the View submenu, the checked states match: Show preview=true, Show toolbar=false, Spell check=true, Word wrap=true.'
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Show preview: true
+          Show toolbar: false
+          Spell check: true
+          Word wrap: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only partially setting the required toggles.
+  - Leaving Show toolbar ON.
+  - Accidentally turning Word wrap OFF (final must be ON).
+  - Not opening the View submenu (no access to check items).
+  expected_interaction_path:
+  - Right-click in the Markdown editor to open the menu.
+  - Open View submenu.
+  - Toggle Show preview on, toggle Show toolbar off, toggle Spell check on, ensure Word wrap remains on.
+  notes:
+  - 'Robustness factor: compact spacing.'
+  - Checker should only evaluate the four named keys in checked_items.
+- id: context_menu-mantine-T08
+  name: Cancel Revoke token confirmation
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + inline confirm footer (composite within overlay)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for “API token A1B2”, click “Revoke token…”, then click “Cancel”. The task will finish automatically when done.
+  ui_copy: 'API token A1B2 — context menu: Revoke token… then Cancel.'
+  setup_description: |-
+    Theme: DARK mode is enabled.
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Target element: a row labeled “API token A1B2” with a masked value. Right-clicking the row opens a custom context menu.
+
+    Context menu: composed from Mantine Menu and positioned via onContextMenu.
+
+    Menu items:
+    - Copy token ID
+    - Revoke token… (requires confirmation)
+
+    Confirmation behavior: selecting “Revoke token…” keeps the menu open and reveals an inline confirmation footer in the same overlay with two buttons: “Cancel” and “Revoke”.
+
+    Goal: cancel the revocation (click Cancel).
+
+    Initial state: no pending confirmation.
+
+    Distractors/clutter: low. The card has a “Create token” button, but it is unrelated.
+
+    Feedback: clicking Cancel closes the menu and records confirmation_result='cancelled' for the pending action.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires a two-step confirmation flow and specifically selecting Cancel (avoiding the destructive Revoke action) in a dark theme.
+  success_trigger:
+    human_readable:
+    - The pending action ['Revoke token'] is cancelled via the 'Cancel' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        cancelled_action_path:
+        - Revoke token
+        confirmation_result: cancelled
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Revoke” instead of “Cancel”.
+  - Clicking “Revoke token…” but then dismissing the menu without pressing Cancel (no recorded cancellation).
+  - Never opening the confirmation footer (only menu opened).
+  expected_interaction_path:
+  - Right-click the API token row.
+  - Click Revoke token…
+  - Click Cancel in the confirmation footer.
+  notes:
+  - 'Instrumentation: expose pending_action_path and confirmation_result; record cancelled_action_path explicitly for the checker.'
+  - Ensure the Cancel and Revoke buttons are inside the same overlay to keep single-component focus.
+- id: context_menu-mantine-T09
+  name: 'Small: Sort → By date → Newest first'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + multi-level submenus (composite)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Playlist item 12” and select Sort → By date → Newest first. The task will finish automatically when done.
+  ui_copy: 'Playlist item 12 — context menu: Sort → By date → Newest first.'
+  setup_description: |-
+    Layout: isolated_card anchored to the BOTTOM-LEFT of the viewport.
+    Spacing/size: default spacing, but the component SCALE is SMALL (reduced font size and padding).
+
+    Target element: a list row labeled “Playlist item 12”. Right-clicking on the row opens a custom context menu.
+
+    Context menu: composed from Mantine Menu components and positioned at cursor coordinates. It includes two nested submenu levels.
+
+    Menu structure:
+    - Play
+    - Add to queue
+    - Sort ▸
+        - By title
+        - By date ▸
+            - Newest first
+            - Oldest first
+        - By duration
+
+    Initial state: menus closed; no activation.
+
+    Distractors: none.
+
+    Feedback: activating the leaf item records full path ['Sort','By date','Newest first'] and closes the menus.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small-scale rendering plus a deep nested submenu with similar sibling options (Newest vs Oldest) increases targeting and selection errors.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Sort','By date','Newest first'] for the Playlist item 12 context menu.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Sort
+        - By date
+        - Newest first
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Oldest first instead of Newest first.
+  - Selecting Sort → By title or Sort → By duration.
+  - Opening Sort/By date but not activating the final leaf item.
+  expected_interaction_path:
+  - Right-click Playlist item 12.
+  - Open Sort submenu, then open By date submenu.
+  - Click Newest first.
+  notes:
+  - 'Robustness factors: small scale + bottom-left placement.'
+  - Checker should compare full activated path array for exact match.
+- id: context_menu-mantine-T10
+  name: 'Server 2: choose option by icon (Lock)'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu items with icons (composite right-click menu)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Server 2” and choose the option that matches the Reference icon (closed lock). The task will finish automatically when done.
+  ui_copy: 'Servers — Server 2: use the context menu and pick the option with the closed-lock icon.'
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+    Spacing/size: comfortable, default.
+
+    Instances: THREE server rows are listed inside the card and support a context menu on right-click:
+    - Server 1
+    - Server 2
+    - Server 3
+
+    Target instance: Server 2.
+
+    Guidance: a small non-interactive “Reference” box above the list shows ONLY a closed-lock icon (no text). The user must pick the menu option with the same icon.
+
+    Context menu: onContextMenu opens a Mantine Menu at cursor position. Menu items have left-side icons.
+
+    Menu items (icon + label):
+    - Lock (closed-lock icon)
+    - Unlock (open-lock icon)
+    - Restart (circular arrow icon)
+    - Shut down (power icon)
+
+    Initial state: menus closed; last_activated_item_path null for all instances.
+
+    Distractors/clutter: none.
+
+    Feedback: activating an item closes the menu and records last_activated_item_path for the server instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Requires selecting the correct instance among three similar rows and matching an icon reference (lock vs unlock) before activating the item.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Lock'] on the context menu instance labeled 'Server 2'.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Lock
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Server 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Activating Lock on Server 1 or Server 3 instead of Server 2.
+  - Selecting Unlock (open-lock icon) instead of Lock (closed-lock icon).
+  - Selecting Restart or Shut down.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click the Server 2 row to open its menu.
+  - Match the closed-lock reference icon to the “Lock” item and activate it.
+  notes:
+  - Ensure the lock vs unlock icons are visually distinct and consistently rendered across themes.
+  - 'Instrumentation: expose open_target label (Server 1/2/3) and last_activated_item_path per instance.'

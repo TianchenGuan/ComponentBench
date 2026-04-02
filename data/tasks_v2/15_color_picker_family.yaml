@@ -1,0 +1,3517 @@
+- id: color_picker_2d-antd-v2-T01
+  name: 'Drawer palette: set Series B to steel blue overlay'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: Open the “Edit chart palette” drawer. In the Series B color picker, set the color to approximately rgba(47, 119, 150, 0.70) within ±2 on each RGB channel and ±0.02 alpha, leave Series A unchanged, and click “Save palette”. The task will finish automatically when done.
+  ui_copy: Edit chart palette → Series B ≈ rgba(47, 119, 150, 0.70); keep Series A unchanged; Save palette.
+  setup_description: A dark analytics page contains a compact chart card and a button labeled “Edit chart palette”. Clicking it opens a right-side drawer. Inside the drawer are two small Ant Design ColorPicker triggers labeled “Series A” and “Series B”. Each trigger opens the standard ColorPicker popover with a 2D saturation/value surface, hue slider, and alpha slider; preset swatches are disabled. A live draft preview line under each label shows the current rgba(...) value, but the committed chart updates only after the drawer footer button “Save palette” is clicked. Initial committed values are Series A = rgba(22,119,255,1.0) and Series B = rgba(140,140,140,1.0).
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The task combines wrong-instance risk with a nested popover inside a drawer and a required Save step, so the pressure comes from choosing the correct picker, manipulating a multi-axis color state, and confirming the committed result.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Series B requires coordinated hue, saturation, brightness, and alpha adjustment inside a nested overlay, and the drawer keeps draft and committed states separate.
+  success_trigger:
+    human_readable:
+    - The committed Series B value is within ±2 on each RGB channel and ±0.02 alpha of rgba(47,119,150,0.70).
+    - Series A remains unchanged.
+    - The drawer-local “Save palette” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 47
+          g: 119
+          b: 150
+          a: 0.7
+        saved: true
+        non_target_instances_must_remain:
+          Series A:
+            color:
+              space: rgba
+              r: 22
+              g: 119
+              b: 255
+              a: 1.0
+      tolerance:
+        rgba_max_abs_channel_error: 2
+        alpha_max_abs_error: 0.02
+      require_confirm: true
+      confirm_control: Save palette
+      require_correct_instance: true
+      target_instance_label_or_id: Series B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Series A instead of Series B.
+  - Getting the draft value correct but closing the drawer or leaving without clicking “Save palette”.
+  - Changing Series B alpha correctly while leaving the RGB channels outside tolerance.
+  - Changing both series colors.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Series B.
+  - Use hue, 2D surface, and alpha slider to move Series B near the target value.
+  - Verify Series A is unchanged and click “Save palette”.
+  notes: Bind the checker to committed drawer state, not the live draft preview.
+- id: color_picker_2d-antd-v2-T02
+  name: 'Dashboard chart card: match Series B reference only'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the chart styling panel, adjust only the Series B color picker so that it matches the on-page Series B reference chip as closely as possible; the checker uses ±20 on each RGB channel and ±0.05 alpha. Do not change Series A or Series C. The task will finish automatically when done.
+  ui_copy: Chart styling panel → Series B should match the Series B reference chip; leave A and C unchanged.
+  setup_description: A dashboard panel titled “Chart styling” sits off-center with high clutter from metric chips, a legend card, and two non-target dropdowns. Three Ant Design ColorPicker triggers labeled “Series A”, “Series B”, and “Series C” are stacked in the panel. Each row also contains a small static reference chip, but only the Series B row is the target. Opening a trigger reveals the standard AntD popover with a 2D surface, hue slider, and alpha slider; no preset swatches are available. Changes auto-apply immediately to the live chart and the row chip, with no extra save button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - placement
+    factor_rationale: The target is one of three visually similar rows embedded in a busy dashboard panel, so the difficulty comes from disambiguating the correct instance and using the popover controls without a separate confirmation safety net.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: 'This is primarily a grounding-heavy task: three similar instances, high clutter, and a visual reference target all amplify the cost of touching the wrong picker.'
+  success_trigger:
+    human_readable:
+    - The final Series B color matches the Series B reference chip within ±20 RGB per channel and ±0.05 alpha.
+    - Series A and Series C remain unchanged.
+    - No extra confirmation is required; the final live state is checked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: series-b-reference-chip
+        auto_applied: true
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Series B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Series A or Series C instead of Series B.
+  - Matching the wrong reference chip.
+  - Closing the popover with Series B still outside tolerance.
+  - Changing more than one series.
+  expected_interaction_path:
+  - Locate the Series B row.
+  - Open its popover.
+  - Adjust the color until the live chip matches the reference chip.
+  - Leave Series A and C untouched.
+  notes: Use computed color from the row-level reference chip for checking.
+- id: color_picker_2d-antd-v2-T03
+  name: 'Modal theme draft: header tint visual correction'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: confirm_cancel
+  secondary_template: match_reference
+  browsergym_goal: Click “Customize shell”. In the dialog, adjust only the Header tint color picker until the Current preview matches the Target preview as closely as possible; the checker uses ±20 on each RGB channel and ±0.05 alpha. Leave Sidebar tint unchanged, then click “Apply shell”. The task will finish automatically when done.
+  ui_copy: Customize shell → Header tint should match Target preview; leave Sidebar tint unchanged; Apply shell.
+  setup_description: A settings page shows a single button “Customize shell”. Clicking it opens a modal dialog with two Ant Design ColorPickers labeled “Header tint” and “Sidebar tint”. Each opens the standard popover with the 2D surface, hue slider, and alpha slider. The dialog also shows two preview strips labeled “Current” and “Target” for the Header tint only; no numeric text is shown for the target. The dialog footer has “Cancel” and “Apply shell”. Draft changes update the Current preview immediately, but the committed page shell updates only after “Apply shell”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - instances
+    factor_rationale: The dialog nests the picker popover inside a draft-vs-committed workflow and pairs it with a non-target sibling picker, which turns a simple color drag into a layered verification problem.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The visual target keeps the task human-solvable, but the nested overlay and commit semantics make it easy to stop in the draft state or edit the wrong tint.
+  success_trigger:
+    human_readable:
+    - The committed Header tint matches the Target preview within ±20 RGB per channel and ±0.05 alpha.
+    - Sidebar tint remains unchanged.
+    - The modal “Apply shell” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: header-target-preview
+        saved: true
+        non_target_instances_must_remain:
+          Sidebar tint: initial
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: Apply shell
+      require_correct_instance: true
+      target_instance_label_or_id: Header tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching the target in the draft preview but dismissing the dialog without applying.
+  - Changing Sidebar tint instead of Header tint.
+  - Getting only alpha or only hue close while the final color remains outside tolerance.
+  - Clicking Cancel.
+  expected_interaction_path:
+  - Open the shell dialog.
+  - Open Header tint.
+  - Adjust until Current matches Target.
+  - Click “Apply shell”.
+  notes: Check the committed shell token outside the dialog, not the transient modal draft.
+- id: color_picker_2d-antd-v2-T04
+  name: 'Service table row: edit Gateway badge tint only'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: In the “Gateway” row, adjust the Badge tint color picker to approximately rgba(31, 111, 235, 1.00) within ±2 on each RGB channel, leave the “Billing” row unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  ui_copy: Gateway row → Badge tint ≈ rgba(31,111,235,1.00); Billing unchanged; Save Gateway row.
+  setup_description: A compact dark service table is anchored off-center. Two expanded rows, “Gateway” and “Billing”, each contain an inline label, a small Ant Design ColorPicker trigger for “Badge tint”, a tiny live badge preview, and a row-local “Save” button. Opening a trigger reveals the standard 2D surface and hue slider; alpha is disabled for this task and no presets are shown. Changes stay local to the row until that row’s Save button is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_2d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: The table-cell carrier makes the trigger and save controls physically small, and the local Save requirement means the agent must preserve row identity through the whole interaction.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small table targets and row-local confirmation make this a hard grounded editing task even though alpha is disabled.
+  success_trigger:
+    human_readable:
+    - The committed Gateway Badge tint is within ±2 on each RGB channel of rgba(31,111,235,1.00).
+    - Billing remains unchanged.
+    - The Gateway-row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 31
+          g: 111
+          b: 235
+          a: 1.0
+        saved: true
+        non_target_instances_must_remain:
+          Billing: initial
+      tolerance:
+        rgba_max_abs_channel_error: 2
+        alpha_max_abs_error: 0.0
+      require_confirm: true
+      confirm_control: save-gateway-row
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Saving the Billing row instead of Gateway.
+  - Changing Billing at all.
+  - Leaving Gateway outside tolerance.
+  - Adjusting the draft but not clicking the Gateway-row Save button.
+  expected_interaction_path:
+  - Locate the Gateway row.
+  - Open its Badge tint picker.
+  - Adjust the color near the target blue.
+  - Click Save in the Gateway row.
+  notes: Bind save detection to the Gateway row, not global DOM position.
+- id: color_picker_2d-antd-v2-T05
+  name: 'Scroll panel: set Map tint in overlays section'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the right settings panel, scroll to the Overlays section. Adjust only the Map tint color picker to approximately rgba(32, 85, 138, 0.52) within ±2 on each RGB channel and ±0.02 alpha, then click “Save section”. The task will finish automatically when done.
+  ui_copy: Overlays section → Map tint ≈ rgba(32,85,138,0.52); Save section.
+  setup_description: A nested-scroll settings layout places a long right-side panel over a cluttered dashboard. The “Overlays” section starts below the fold. Inside that section, “Map tint” and “Legend tint” each have a small Ant Design ColorPicker trigger that opens a popover with the 2D surface, hue slider, and alpha slider; no presets are available. A section-local “Save section” button commits both values. Initial Map tint is rgba(255,255,255,0.20); Legend tint must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: The task requires reaching the correct section inside a scrollable panel, keeping the non-target picker unchanged, and then using the matching section-local save control.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The target is offscreen, the section contains a sibling picker, and the final state mixes RGB and alpha with an explicit save step.
+  success_trigger:
+    human_readable:
+    - The committed Map tint is within ±2 on each RGB channel and ±0.02 alpha of rgba(32,85,138,0.52).
+    - Legend tint remains unchanged.
+    - The section-local “Save section” button has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 32
+          g: 85
+          b: 138
+          a: 0.52
+        saved: true
+        non_target_instances_must_remain:
+          Legend tint: initial
+      tolerance:
+        rgba_max_abs_channel_error: 2
+        alpha_max_abs_error: 0.02
+      require_confirm: true
+      confirm_control: Save section
+      require_correct_instance: true
+      target_instance_label_or_id: Map tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling to the section but editing Legend tint instead of Map tint.
+  - Getting close on alpha but leaving RGB outside tolerance.
+  - Editing correctly but not clicking “Save section”.
+  - Changing both overlay pickers.
+  expected_interaction_path:
+  - Scroll the right settings panel to Overlays.
+  - Open Map tint.
+  - Adjust hue, 2D surface, and alpha.
+  - Click “Save section”.
+  notes: Do not check DOM order because the section is below the fold and may shift.
+- id: color_picker_2d-antd-v2-T06
+  name: 'Toolbar chip: hover-open selection tint'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the toolbar card, open the Selection tint picker and adjust it so the live chip matches the reference chip as closely as possible; the checker uses ±20 on each RGB channel and ±0.05 alpha. The task will finish automatically when done.
+  ui_copy: Toolbar card → Selection tint should match the reference chip.
+  setup_description: A compact toolbar surface is anchored near the top-left of the viewport with medium surrounding clutter from filter pills and two icon buttons. The only target row is labeled “Selection tint”. Its Ant Design ColorPicker trigger is size='small' and configured to open on hover/focus rather than click. The popover exposes the standard 2D surface, hue slider, and alpha slider with no presets. A small reference chip sits to the right of the row; no numeric target is shown and the value auto-applies.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - overlay_model
+    factor_rationale: 'This uses a real trigger variant but keeps the semantics straightforward: the difficulty is acquiring a small corner trigger, opening the hover/focus popover reliably, and matching the visual target without a separate text readout.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The control is small, off in the corner, and opens in a less common way, which makes interaction knowledge and target acquisition matter more than raw option count.
+  success_trigger:
+    human_readable:
+    - The final Selection tint matches the reference chip within ±20 RGB per channel and ±0.05 alpha.
+    - No extra confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: selection-reference-chip
+        auto_applied: true
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Never opening the picker because the hover/focus trigger is missed.
+  - Leaving the color outside tolerance.
+  - Changing unrelated toolbar controls.
+  expected_interaction_path:
+  - Reveal the popover for Selection tint.
+  - Adjust the color until the live chip matches the reference chip.
+  notes: Use the committed Selection tint token rather than hover state at terminal check.
+- id: color_picker_2d-antd-v2-T07
+  name: 'Status tints panel: edit Warning only'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: In the Status tints panel, adjust only the Warning tint color picker to approximately rgba(250, 173, 20, 0.65) within ±2 on each RGB channel and ±0.02 alpha, leave Success, Info, and Danger unchanged, and click “Apply colors”. The task will finish automatically when done.
+  ui_copy: Status tints panel → Warning tint ≈ rgba(250,173,20,0.65); other tints unchanged; Apply colors.
+  setup_description: 'A settings panel contains four Ant Design ColorPicker rows: Success tint, Warning tint, Info tint, and Danger tint. All four rows are visually similar and each opens the standard popover with 2D, hue, and alpha controls; preset swatches are disabled. The panel is compact, off-center, and cluttered by nearby switches and numeric inputs. A footer button “Apply colors” commits the panel values.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The target value itself is easy to describe, but the panel creates pressure by presenting four similar instances and a single commit point after the edit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is a classic wrong-instance-and-forgot-to-apply trap layered over a mixed RGB+alpha target.
+  success_trigger:
+    human_readable:
+    - The committed Warning tint is within ±2 on each RGB channel and ±0.02 alpha of rgba(250,173,20,0.65).
+    - Success, Info, and Danger remain unchanged.
+    - The “Apply colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 250
+          g: 173
+          b: 20
+          a: 0.65
+        saved: true
+        non_target_instances_must_remain:
+          Success tint: initial
+          Info tint: initial
+          Danger tint: initial
+      tolerance:
+        rgba_max_abs_channel_error: 2
+        alpha_max_abs_error: 0.02
+      require_confirm: true
+      confirm_control: Apply colors
+      require_correct_instance: true
+      target_instance_label_or_id: Warning tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the wrong tint.
+  - Changing more than Warning.
+  - Leaving Warning outside tolerance.
+  - Closing the panel without applying.
+  expected_interaction_path:
+  - Open Warning tint.
+  - Adjust hue, 2D surface, and alpha.
+  - Click “Apply colors”.
+  notes: Check all four tokens so non-target drifts are caught.
+- id: color_picker_2d-antd-v2-T08
+  name: 'Centered dialog: no-readout chip match'
+  canonical_type: color_picker_2d
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit launch badge”. In the dialog, adjust the Badge fill color picker until the live badge matches the Target badge as closely as possible; the checker uses ±20 on each RGB channel and ±0.05 alpha. Then click “Save badge”. The task will finish automatically when done.
+  ui_copy: Edit launch badge → Badge fill should match the Target badge; Save badge.
+  setup_description: A centered modal dialog contains one target Ant Design ColorPicker labeled “Badge fill” and a live badge preview beside a static Target badge preview. The picker opens the standard 2D surface, hue slider, and alpha slider. There is no numeric readout of the target color. The dialog has “Cancel” and “Save badge” controls. The scene is otherwise clean, but the task is intrinsically hard because the target is specified only by rendered appearance and the picker controls are continuous.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - guidance
+    - overlay_model
+    factor_rationale: 'This uses a centered layout only because the intrinsic control problem is already hard: continuous multi-axis adjustment without a numeric target, plus draft-versus-committed modal behavior.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The absence of a numeric target pushes the burden onto visual verification; the modal then adds a confirmation step.
+  success_trigger:
+    human_readable:
+    - The committed Badge fill matches the Target badge within ±20 RGB per channel and ±0.05 alpha.
+    - The dialog “Save badge” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: target-badge-preview
+        saved: true
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: Save badge
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the color outside tolerance.
+  - Matching only hue or only opacity.
+  - Closing the dialog without saving.
+  - Clicking Cancel.
+  expected_interaction_path:
+  - Open the dialog.
+  - Adjust the badge fill until the live badge matches the target.
+  - Click “Save badge”.
+  notes: Compare committed badge token after modal close.
+- id: color_picker_2d-mantine-v2-T09
+  name: Secondary surface tint with sibling preserved
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorPicker
+  implementation_component: 'Mantine: ColorPicker'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: In the surface tokens panel, set only the Secondary surface tint to approximately rgba(55, 160, 220, 0.55) within ±25 on each RGB channel and ±0.05 alpha, leave Primary surface tint unchanged, and click “Save surface tokens”. The task will finish automatically when done.
+  ui_copy: Surface tokens → Secondary surface tint ≈ rgba(55,160,220,0.55); Primary unchanged; Save surface tokens.
+  setup_description: A compact settings panel contains two inline Mantine ColorPickers in rgba format labeled “Primary surface tint” and “Secondary surface tint”. Because the format is rgba, the alpha slider is visible next to the hue and saturation controls. The panel also contains unrelated typography and spacing controls. A footer button “Save surface tokens” commits both tint values. Initial Secondary surface tint is rgba(28,126,214,1.0); Primary must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The panel is dense and the two inline pickers are nearly identical, so the pressure comes from maintaining the correct target instance and preserving the sibling picker while making a mixed RGB+alpha adjustment.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The exposed controls help observability, but they also create a high-cost wrong-instance error because both pickers stay visible at once.
+  success_trigger:
+    human_readable:
+    - The committed Secondary surface tint is within ±20 RGB per channel and ±0.05 alpha of rgba(55,160,220,0.55).
+    - Primary surface tint remains unchanged.
+    - The “Save surface tokens” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 55
+          g: 160
+          b: 220
+          a: 0.55
+        saved: true
+        non_target_instances_must_remain:
+          Primary surface tint: initial
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: Save surface tokens
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary surface tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary instead of Secondary.
+  - Leaving Secondary alpha near 1.0.
+  - Changing both pickers.
+  - Forgetting to click “Save surface tokens”.
+  expected_interaction_path:
+  - Locate Secondary surface tint.
+  - Adjust the inline Mantine picker.
+  - Click “Save surface tokens”.
+  notes: Read committed tokens after the save button, not just the live inline picker state.
+- id: color_picker_2d-mantine-v2-T10
+  name: Drawer dropdown picker with input disabled
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorInput_picker_no_input
+  implementation_component: 'Mantine: ColorInput (withPicker; disallowInput)'
+  task_template: confirm_cancel
+  secondary_template: match_reference
+  browsergym_goal: Open the “Edit tooltip theme” drawer. In the Tooltip background color input, use the picker to match the Target chip as closely as possible; the checker uses ±25 on each RGB channel and ±0.05 alpha. Typing is disabled. Then click “Apply tooltip theme”. The task will finish automatically when done.
+  ui_copy: Edit tooltip theme → Tooltip background should match the Target chip; Apply tooltip theme.
+  setup_description: A drawer opens from the right when “Edit tooltip theme” is clicked. Inside it are two Mantine ColorInput fields, “Tooltip background” and “Tooltip border”. Both have withPicker enabled but direct typing disabled, so clicking the field opens a dropdown picker with a 2D surface and alpha controls. The drawer shows a Current tooltip chip and a Target tooltip chip for the background only. “Apply tooltip theme” commits the draft values.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: This task removes the text-entry loophole but keeps the real dropdown picker, so the challenge is nested overlay control plus preserving the non-target border field before applying.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The drawer and dropdown compose into a nested interaction, and the disabled text input means the agent must genuinely use the picker surface.
+  success_trigger:
+    human_readable:
+    - The committed Tooltip background matches the Target chip within ±20 RGB per channel and ±0.05 alpha.
+    - Tooltip border remains unchanged.
+    - The drawer “Apply tooltip theme” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: tooltip-target-chip
+        saved: true
+        non_target_instances_must_remain:
+          Tooltip border: initial
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: Apply tooltip theme
+      require_correct_instance: true
+      target_instance_label_or_id: Tooltip background
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Trying to type into the disabled input.
+  - Changing Tooltip border instead of Tooltip background.
+  - Matching the draft chip but not applying.
+  - Leaving the background outside tolerance.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Tooltip background.
+  - Adjust the dropdown picker until Current matches Target.
+  - Click “Apply tooltip theme”.
+  notes: Use the committed tooltip background token outside the drawer.
+- id: color_picker_2d-mantine-v2-T11
+  name: 'Three inline pickers: match only Series C preview'
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorPicker
+  implementation_component: 'Mantine: ColorPicker'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the chart palette dashboard card, adjust only Series C so that it matches the Series C reference preview as closely as possible; the checker uses ±25 on each RGB channel and ±0.05 alpha. Leave Series A and Series B unchanged. The task will finish automatically when done.
+  ui_copy: Chart palette card → Series C should match the Series C reference preview; leave A and B unchanged.
+  setup_description: A cluttered dashboard card shows three inline Mantine ColorPickers in rgba format labeled Series A, Series B, and Series C. Each row has a small live chip and a static reference chip. Only the Series C row is the target. Because the pickers are inline, hue, saturation, and alpha controls for all three are visible at once. There is no extra save button; the final live state is checked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - guidance
+    factor_rationale: All three controls stay visible simultaneously in a busy card, so the task becomes a strong test of instance disambiguation and state tracking even without extra overlay depth.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The inline layout makes the controls easy to inspect but dramatically raises the cost of touching the wrong instance.
+  success_trigger:
+    human_readable:
+    - The final Series C value matches the Series C reference chip within ±20 RGB per channel and ±0.05 alpha.
+    - Series A and Series B remain unchanged.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: series-c-reference-chip
+        auto_applied: true
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Series C
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Series A or Series B.
+  - Matching the wrong chip.
+  - Leaving Series C outside tolerance.
+  expected_interaction_path:
+  - Find the Series C row.
+  - Adjust only Series C until its live chip matches the reference.
+  notes: Check all three picker states to catch non-target drift.
+- id: color_picker_2d-mantine-v2-T12
+  name: 'Nested scroll: map pin halo below the fold'
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorPicker
+  implementation_component: 'Mantine: ColorPicker'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Scroll the right panel to the “Map pin halo” picker. Set it to approximately rgba(18, 184, 134, 0.42) within ±25 on each RGB channel and ±0.05 alpha, leave the nearby Focus ring picker unchanged, and click “Save map styling”. The task will finish automatically when done.
+  ui_copy: Map styling panel → Map pin halo ≈ rgba(18,184,134,0.42); Focus ring unchanged; Save map styling.
+  setup_description: 'A nested-scroll interface places a long configuration panel on the right side of a map dashboard. Near the bottom, two inline Mantine ColorPickers in rgba format appear: “Focus ring” and “Map pin halo”. The page outside the panel also scrolls, but only the panel contains the target. A footer button “Save map styling” commits the draft values. The target halo picker starts below the fold and is not visible initially.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: The task stresses finding the correct scroll container first, then editing the lower of two similar inline pickers and committing the change with the section-local save button.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: The target is offscreen inside a scrollable panel, and the sibling picker amplifies wrong-instance risk once the section is reached.
+  success_trigger:
+    human_readable:
+    - The committed Map pin halo is within ±2 RGB per channel and ±0.02 alpha of rgba(18,184,134,0.42).
+    - Focus ring remains unchanged.
+    - The “Save map styling” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 18
+          g: 184
+          b: 134
+          a: 0.42
+        saved: true
+        non_target_instances_must_remain:
+          Focus ring: initial
+      tolerance:
+        rgba_max_abs_channel_error: 2
+        alpha_max_abs_error: 0.02
+      require_confirm: true
+      confirm_control: Save map styling
+      require_correct_instance: true
+      target_instance_label_or_id: Map pin halo
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page but not the panel.
+  - Changing Focus ring.
+  - Leaving Map pin halo outside tolerance.
+  - Not clicking “Save map styling”.
+  expected_interaction_path:
+  - Scroll the right panel.
+  - Find Map pin halo.
+  - Adjust it to the target.
+  - Click “Save map styling”.
+  notes: Check the correct panel scroll container and committed map token.
+- id: color_picker_2d-mantine-v2-T13
+  name: 'High-contrast modal: selection background exact correction'
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorPicker
+  implementation_component: 'Mantine: ColorPicker'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: Open “Edit selection styling”. Set the Selection background picker to approximately rgba(77, 110, 245, 0.38) within ±35 on each RGB channel and ±0.05 alpha, then click “Save selection styling”. The task will finish automatically when done.
+  ui_copy: Edit selection styling → Selection background ≈ rgba(77,110,245,0.38); Save selection styling.
+  setup_description: A high-contrast modal contains one inline Mantine ColorPicker in rgba format labeled “Selection background” and a large preview strip that updates live. No target swatches are shown; only the exact target in the instruction identifies the goal. Nearby are a non-target checkbox and a font-weight select. The footer buttons are “Cancel” and “Save selection styling”.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - theme
+    - precision_surface
+    - confirmation_model
+    factor_rationale: The scene is centered, but the continuous target is already hard and high-contrast styling changes the appearance of the control while the modal still preserves the need to commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: This is an intrinsically hard mixed RGBA drag with no sibling instances, so the elevated difficulty comes from exactness and explicit commit rather than clutter.
+  success_trigger:
+    human_readable:
+    - The committed Selection background is within ±2 RGB per channel and ±0.02 alpha of rgba(77,110,245,0.38).
+    - The “Save selection styling” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        color:
+          space: rgba
+          r: 77
+          g: 110
+          b: 245
+          a: 0.38
+        saved: true
+      tolerance:
+        rgba_max_abs_channel_error: 2
+        alpha_max_abs_error: 0.02
+      require_confirm: true
+      confirm_control: Save selection styling
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the draft unsaved.
+  - Matching only the RGB or only the alpha.
+  - Changing unrelated controls instead of the picker.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust the inline picker to the requested value.
+  - Click “Save selection styling”.
+  notes: Compare committed selection styling token after modal close.
+- id: color_picker_2d-mantine-v2-T14
+  name: Table row dropdown picker with typing disabled
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorInput_picker_no_input
+  implementation_component: 'Mantine: ColorInput (withPicker; disallowInput)'
+  task_template: table_operation
+  secondary_template: match_reference
+  browsergym_goal: In the “Gateway” row, use the Tag fill color input to match the row’s Target chip as closely as possible; the checker uses ±25 on each RGB channel and ±0.05 alpha. Do not change the “Billing” row, then click “Save” in the Gateway row. The task will finish automatically when done.
+  ui_copy: Gateway row → Tag fill should match its Target chip; Billing unchanged; Save Gateway row.
+  setup_description: A compact table shows two expanded rows, “Gateway” and “Billing”. Each row contains a Mantine ColorInput labeled “Tag fill”. Typing is disabled, so clicking the field opens a dropdown picker with a 2D surface and alpha controls. Each row also shows a small Target chip and a row-local “Save” button. Only Gateway should change.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: The picker itself is legitimate, but the row structure makes the hard part preserving row identity from dropdown open through row-local save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Tiny row targets and local save controls make this a strong grounded-control task even though the goal is only a chip match.
+  success_trigger:
+    human_readable:
+    - The committed Gateway Tag fill matches the Gateway Target chip within ±20 RGB per channel and ±0.05 alpha.
+    - Billing remains unchanged.
+    - The Gateway-row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: gateway-target-chip
+        saved: true
+        non_target_instances_must_remain:
+          Billing: initial
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: save-gateway-row
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Billing.
+  - Saving the wrong row.
+  - Leaving Gateway outside tolerance.
+  - Trying to type into the disabled input.
+  expected_interaction_path:
+  - Open Gateway Tag fill.
+  - Adjust the dropdown picker until the live chip matches the target.
+  - Click Save in the Gateway row.
+  notes: Do not rely on DOM order because row expansion can change layout.
+- id: color_picker_2d-mantine-v2-T15
+  name: 'Four card accents: edit only Card C'
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorPicker
+  implementation_component: 'Mantine: ColorPicker'
+  task_template: confirm_cancel
+  secondary_template: match_reference
+  browsergym_goal: In the dashboard card set, adjust only Card C accent so that it matches the Card C reference chip as closely as possible; the checker uses ±25 on each RGB channel and ±0.05 alpha. Leave Cards A, B, and D unchanged, then click “Apply accents”. The task will finish automatically when done.
+  ui_copy: Dashboard card set → Card C accent should match its reference chip; other cards unchanged; Apply accents.
+  setup_description: A busy dashboard panel shows four small cards labeled Card A, Card B, Card C, and Card D. Each card contains an inline Mantine ColorPicker in rgba format, a live accent chip, and a static reference chip. Only Card C is the target. A single button “Apply accents” below the card set commits the current accent values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Four visible inline pickers in a busy dashboard create high disambiguation load, and the global apply button means the agent cannot recover from a wrong-card edit just by stopping.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This task intentionally shifts difficulty toward wrong-instance prevention while keeping the continuous control itself genuine.
+  success_trigger:
+    human_readable:
+    - The committed Card C accent matches the Card C reference chip within ±20 RGB per channel and ±0.05 alpha.
+    - Cards A, B, and D remain unchanged.
+    - The “Apply accents” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: card-c-reference-chip
+        saved: true
+        non_target_instances_must_remain:
+          Card A: initial
+          Card B: initial
+          Card D: initial
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: Apply accents
+      require_correct_instance: true
+      target_instance_label_or_id: Card C
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the wrong card.
+  - Changing more than one card.
+  - Not clicking “Apply accents”.
+  - Leaving Card C outside tolerance.
+  expected_interaction_path:
+  - Find Card C.
+  - Adjust its inline picker until the live chip matches the reference.
+  - Click “Apply accents”.
+  notes: Check all four committed accents after apply.
+- id: color_picker_2d-mantine-v2-T16
+  name: 'Dark drawer: sidebar active state chip match'
+  canonical_type: color_picker_2d
+  implementation_source: mantine
+  implementation_variant: ColorInput_picker_no_input
+  implementation_component: 'Mantine: ColorInput (withPicker; disallowInput)'
+  task_template: confirm_cancel
+  secondary_template: match_reference
+  browsergym_goal: Open “Edit sidebar state”. Use the Sidebar active state color input to match the Target state chip as closely as possible; the checker uses ±25 on each RGB channel and ±0.05 alpha. Then click “Save state colors”. The task will finish automatically when done.
+  ui_copy: Edit sidebar state → Sidebar active state should match Target state chip; Save state colors.
+  setup_description: A dark drawer contains one Mantine ColorInput with the picker enabled and direct typing disabled. The field is labeled “Sidebar active state”. Clicking it opens a dropdown with a 2D surface and alpha controls. A Current state chip and a Target state chip appear beneath the field. The drawer footer contains “Cancel” and “Save state colors”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - placement
+    - confirmation_model
+    factor_rationale: The control itself is singular, but the off-center drawer and nested dropdown create enough structure that the task stays hard without needing multiple sibling instances.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This ends the 2D packet with a single-target but still layered visual-match workflow that removes text-entry shortcuts.
+  success_trigger:
+    human_readable:
+    - The committed Sidebar active state matches the Target state chip within ±20 RGB per channel and ±0.05 alpha.
+    - The drawer “Save state colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: sidebar-state-target-chip
+        saved: true
+      tolerance:
+        rgba_max_abs_channel_error: 20
+        alpha_max_abs_error: 0.05
+      require_confirm: true
+      confirm_control: Save state colors
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Trying to type into the disabled input.
+  - Leaving the drawer without saving.
+  - Leaving the state color outside tolerance.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open the color input dropdown.
+  - Adjust until Current matches Target.
+  - Click “Save state colors”.
+  notes: Check committed state color after drawer close.
+- id: color_swatch_picker-antd-v2-T01
+  name: 'Banner drawer: set Background only'
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the “Edit banner” drawer, set only the Background swatch picker to Navy (#1d39c4), leave Headline and Text unchanged, and click “Save banner”. The task will finish automatically when done.
+  ui_copy: Edit banner → Background = Navy (#1d39c4); Headline/Text unchanged; Save banner.
+  setup_description: 'A marketing dashboard contains a button “Edit banner”. Clicking it opens a compact right-side drawer with three Ant Design ColorPicker fields configured as presets-only swatch pickers: “Headline”, “Text”, and “Background”. Each trigger opens a popover showing dense preset groups; there is no free-form 2D picker. The drawer also contains a title input and a visibility toggle as distractors. A footer button “Save banner” commits the drawer values.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The swatch action itself is discrete, but the drawer packs three similar fields and requires a final save, which turns a one-click picker into a grounded multi-instance commit task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The hardest part is choosing the correct field inside a nested overlay and then verifying the committed background changed rather than only the draft preview.
+  success_trigger:
+    human_readable:
+    - 'The committed Background swatch value equals #1d39c4.'
+    - Headline and Text remain unchanged.
+    - The drawer “Save banner” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#1d39c4'
+        saved: true
+        non_target_instances_must_remain:
+          Headline: initial
+          Text: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save banner
+      require_correct_instance: true
+      target_instance_label_or_id: Background
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Headline or Text instead of Background.
+  - Selecting the wrong blue swatch.
+  - Leaving the drawer without clicking “Save banner”.
+  - Changing more than the target field.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Background.
+  - Choose the Navy swatch.
+  - Click “Save banner”.
+  notes: Check the committed banner token outside the drawer.
+- id: color_swatch_picker-antd-v2-T02
+  name: 'Notifications panel: Warning chip by reference'
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: 'In the Notifications panel, set only the Warning badge color so that it matches the Target: Amber sample chip exactly, then click “Apply notifications”. Leave Info and Success unchanged. The task will finish automatically when done.'
+  ui_copy: 'Notifications panel → Warning badge color should match Target: Amber; leave Info/Success unchanged; Apply notifications.'
+  setup_description: 'A settings panel titled “Notifications” contains three presets-only Ant Design swatch pickers labeled “Info badge color”, “Warning badge color”, and “Success badge color”. A small static sample chip labeled “Target: Amber” appears only in the Warning row. The warm swatch group contains several close distractors including gold, amber, and orange. The panel footer has “Apply notifications”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The target is discrete, but the panel raises interference by pairing several similar warm choices with sibling swatch rows and a shared Apply step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is a classic near-neighbor swatch task with explicit commit and high wrong-row pressure.
+  success_trigger:
+    human_readable:
+    - 'The committed Warning badge color matches the Target: Amber sample exactly.'
+    - Info and Success remain unchanged.
+    - The “Apply notifications” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: warning-target-amber
+        saved: true
+        non_target_instances_must_remain:
+          Info badge color: initial
+          Success badge color: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply notifications
+      require_correct_instance: true
+      target_instance_label_or_id: Warning badge color
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting orange or gold instead of the amber sample.
+  - Changing Info or Success.
+  - Not clicking “Apply notifications”.
+  expected_interaction_path:
+  - Open Warning badge color.
+  - Compare the swatches against the sample chip.
+  - Select the exact amber swatch.
+  - Click “Apply notifications”.
+  notes: Compute the sample chip’s canonical hex and compare against the committed Warning token.
+- id: color_swatch_picker-antd-v2-T03
+  name: Billing card accent among four cards
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dashboard card set, set only the Billing card Accent color to Purple (#722ed1), leave the other three cards unchanged, and click “Apply palette”. The task will finish automatically when done.
+  ui_copy: Dashboard card set → Billing Accent = Purple (#722ed1); other cards unchanged; Apply palette.
+  setup_description: 'A busy dashboard panel shows four cards: Gateway, Billing, Search, and Auth. Each card contains one small presets-only Ant Design swatch trigger labeled “Accent color” and a tiny live chip. The cards look similar and are interleaved with non-target KPI badges. A single footer button “Apply palette” commits all four accent values.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The discrete choice is simple in isolation, but four similar cards and a shared commit button make wrong-instance errors highly likely.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The task is hard because it stresses selecting the right card and preserving three non-target states in a cluttered dashboard.
+  success_trigger:
+    human_readable:
+    - 'The committed Billing Accent color equals #722ed1.'
+    - Gateway, Search, and Auth remain unchanged.
+    - The “Apply palette” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#722ed1'
+        saved: true
+        non_target_instances_must_remain:
+          Gateway: initial
+          Search: initial
+          Auth: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply palette
+      require_correct_instance: true
+      target_instance_label_or_id: Billing
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing any card other than Billing.
+  - Choosing Magenta instead of Purple.
+  - Leaving Billing unchanged or not applying.
+  expected_interaction_path:
+  - Locate the Billing card.
+  - Open its swatch picker.
+  - Choose Purple.
+  - Click “Apply palette”.
+  notes: Bind the target instance to the Billing card title.
+- id: color_swatch_picker-antd-v2-T04
+  name: Worker row badge color in compact table
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: 'In the “Worker” row, set Badge color to Magenta (#eb2f96), leave the “Gateway” row unchanged, and click “Save” in the Worker row. The task will finish automatically when done.'
+  ui_copy: 'Worker row → Badge color = Magenta (#eb2f96); Gateway unchanged; Save Worker row.'
+  setup_description: 'A compact service table contains two expanded rows, “Gateway” and “Worker”. Each row has two presets-only Ant Design swatch pickers: “Text color” and “Badge color”. Both rows also include a row-local “Save” button. The layout is dense and the triggers are small. Only Worker → Badge color should change.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: 'The row-and-field combination creates a two-dimensional disambiguation problem: the agent must keep track of both the correct row and the correct swatch field before hitting the matching Save button.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The swatch itself is easy once found, but the table-cell carrier makes finding and saving the right row difficult.
+  success_trigger:
+    human_readable:
+    - 'The committed Worker-row Badge color equals #eb2f96.'
+    - Gateway remains unchanged.
+    - The Worker-row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#eb2f96'
+        saved: true
+        non_target_instances_must_remain:
+          Gateway: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-worker-row
+      require_correct_instance: true
+      target_instance_label_or_id: Worker / Badge color
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Worker Text color instead of Badge color.
+  - Editing Gateway.
+  - Clicking Save in the wrong row.
+  - Selecting a nearby magenta-like swatch incorrectly.
+  expected_interaction_path:
+  - Find the Worker row.
+  - Open Worker Badge color.
+  - 'Select #eb2f96.'
+  - Click Save in the Worker row.
+  notes: Check row-scoped state, not global swatch equality anywhere on the page.
+- id: color_swatch_picker-antd-v2-T05
+  name: Extended palette scroll inside map drawer
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Map marker styling” drawer. In the Marker color swatch picker, find and select Teal Deep (#0f766e), then click “Save marker styling”. The task will finish automatically when done.
+  ui_copy: Map marker styling → Marker color = Teal Deep (#0f766e); Save marker styling.
+  setup_description: An off-center drawer opens when “Map marker styling” is clicked. Inside it is one presets-only Ant Design swatch picker labeled “Marker color”. Its popover contains four preset groups and enough swatches that the popover itself becomes scrollable; Teal Deep (#0f766e) is in the lowest extended group and is not visible without scrolling inside the popover. A footer button “Save marker styling” commits the value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - overlay_model
+    - confirmation_model
+    factor_rationale: This keeps the core interaction discrete but adds a real internal-scroll burden inside the swatch popover, plus drawer-level confirmation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The key failure mode is not knowing that the popover itself must be scrolled before the swatch can be selected and saved.
+  success_trigger:
+    human_readable:
+    - 'The committed Marker color equals #0f766e.'
+    - The drawer “Save marker styling” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#0f766e'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save marker styling
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page but not the swatch popover.
+  - 'Selecting a nearby teal but not #0f766e.'
+  - Leaving the drawer without saving.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Marker color.
+  - Scroll inside the popover to the extended group.
+  - 'Select #0f766e and click “Save marker styling”.'
+  notes: Track popover internal scroll visibility and committed marker token.
+- id: color_swatch_picker-antd-v2-T06
+  name: Border swatch by grayscale sample in modal
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit card chrome” dialog. Set only the Border swatch picker so that it matches Sample B exactly, leave Fill unchanged, and click “Apply chrome”. The task will finish automatically when done.
+  ui_copy: Edit card chrome → Border should match Sample B; Fill unchanged; Apply chrome.
+  setup_description: A modal dialog contains two presets-only Ant Design swatch pickers, “Fill” and “Border”, plus a live preview card and a small static reference swatch labeled “Sample B”. The grayscale swatches in the popover are visually close to one another. The dialog footer has “Cancel” and “Apply chrome”.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - instances
+    factor_rationale: The target is given visually, not textually, and the nested modal-plus-popover structure increases the cost of picking the wrong grayscale swatch or editing the wrong field.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 5
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This task is a good swatch-family pressure test because the hard part is exact visual discrimination among near-neighbor grays under layered commit semantics.
+  success_trigger:
+    human_readable:
+    - The committed Border color matches Sample B exactly.
+    - Fill remains unchanged.
+    - The “Apply chrome” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: sample-b
+        saved: true
+        non_target_instances_must_remain:
+          Fill: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply chrome
+      require_correct_instance: true
+      target_instance_label_or_id: Border
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing a neighboring gray instead of Sample B.
+  - Changing Fill instead of Border.
+  - Leaving the dialog without applying.
+  expected_interaction_path:
+  - Open the dialog.
+  - Open Border.
+  - Select the swatch matching Sample B.
+  - Click “Apply chrome”.
+  notes: Compare Border against the canonical color stored on Sample B.
+- id: color_swatch_picker-antd-v2-T07
+  name: 'High-contrast token panel: neutral secondary only'
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the token panel, set only Secondary accent to Light Gray (#d9d9d9), leave Primary accent unchanged, and click “Save tokens”. The task will finish automatically when done.
+  ui_copy: 'Token panel → Secondary accent = #d9d9d9; Primary unchanged; Save tokens.'
+  setup_description: A high-contrast settings panel contains two presets-only Ant Design swatch pickers labeled “Primary accent” and “Secondary accent”. The neutral swatch group contains several similar grays. A small Save button at the bottom commits both token values.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - theme
+    - confirmation_model
+    factor_rationale: The field choice is simple, but the high-contrast neutral palette and two-instance layout create enough ambiguity that the task still measures grounded swatch selection rather than raw clicking.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The swatches are discrete, but the local panel and close grays make the exact target easy to miss.
+  success_trigger:
+    human_readable:
+    - 'The committed Secondary accent equals #d9d9d9.'
+    - Primary accent remains unchanged.
+    - The “Save tokens” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#d9d9d9'
+        saved: true
+        non_target_instances_must_remain:
+          Primary accent: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save tokens
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary accent
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting another gray.
+  - Changing Primary accent.
+  - Not clicking “Save tokens”.
+  expected_interaction_path:
+  - Open Secondary accent.
+  - 'Select #d9d9d9.'
+  - Click “Save tokens”.
+  notes: Use row labels to bind the correct instance.
+- id: color_swatch_picker-antd-v2-T08
+  name: Series C palette match in four-instance dashboard
+  canonical_type: color_swatch_picker
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (presets-only via panelRender)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the series palette dashboard, set only Series C to match the Series C reference chip exactly, leave Series A, B, and D unchanged, and click “Apply palette”. The task will finish automatically when done.
+  ui_copy: Series palette dashboard → Series C should match its reference chip; other series unchanged; Apply palette.
+  setup_description: A cluttered dashboard panel contains four series rows, each with a presets-only Ant Design swatch trigger and a small reference chip. The blue and cyan swatches are deliberately close to one another. A single “Apply palette” button commits all four series colors.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - guidance
+    factor_rationale: This uses a genuinely discrete control but pushes difficulty upward through four-instance disambiguation and a visual reference among nearby blue-cyan alternatives.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The nearest-neighbor swatch interference is high, and the global Apply step penalizes wrong-instance exploration.
+  success_trigger:
+    human_readable:
+    - The committed Series C color matches the Series C reference chip exactly.
+    - Series A, B, and D remain unchanged.
+    - The “Apply palette” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: series-c-reference-chip
+        saved: true
+        non_target_instances_must_remain:
+          Series A: initial
+          Series B: initial
+          Series D: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply palette
+      require_correct_instance: true
+      target_instance_label_or_id: Series C
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the wrong blue/cyan swatch.
+  - Changing any non-target series.
+  - Not applying the palette.
+  expected_interaction_path:
+  - Find the Series C row.
+  - Open its swatch picker.
+  - Choose the exact matching swatch.
+  - Click “Apply palette”.
+  notes: Check all four committed series colors.
+- id: color_swatch_picker-mantine-v2-T09
+  name: Drawer pill fill with swatches-only input
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open the “Edit pill colors” drawer, set only Pill fill to Dark Indigo (#364fc7), leave Pill text unchanged, and click “Save pill colors”. The task will finish automatically when done.'
+  ui_copy: 'Edit pill colors → Pill fill = Dark Indigo (#364fc7); Pill text unchanged; Save pill colors.'
+  setup_description: 'A drawer opens from the right when “Edit pill colors” is clicked. Inside are two Mantine ColorInput fields labeled “Pill fill” and “Pill text”. Both are swatches-only: withPicker={false}, direct typing disabled, and the dropdown contains a fixed swatch grid with five swatches per row. A footer button “Save pill colors” commits the values.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: Disabling text entry removes the direct-input shortcut, so the remaining difficulty comes from sibling-instance disambiguation inside a nested drawer-plus-dropdown flow.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The drawer and dropdown make the interaction multi-step, while the swatch-only setup keeps the task grounded in real selection rather than typing.
+  success_trigger:
+    human_readable:
+    - 'The committed Pill fill equals #364fc7.'
+    - Pill text remains unchanged.
+    - The “Save pill colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#364fc7'
+        saved: true
+        non_target_instances_must_remain:
+          Pill text: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save pill colors
+      require_correct_instance: true
+      target_instance_label_or_id: Pill fill
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Pill text instead of Pill fill.
+  - Selecting a neighboring blue.
+  - Leaving the drawer without saving.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Pill fill.
+  - 'Select #364fc7.'
+  - Click “Save pill colors”.
+  notes: Use committed drawer state after close.
+- id: color_swatch_picker-mantine-v2-T10
+  name: Billing tag among four swatch fields
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the tag color panel, set only Billing tag so that it matches the Billing sample chip exactly, leave Ops, Docs, and QA unchanged, and click “Apply tag colors”. The task will finish automatically when done.
+  ui_copy: Tag color panel → Billing tag should match its sample chip; other tags unchanged; Apply tag colors.
+  setup_description: A compact settings panel contains four Mantine swatches-only ColorInput fields labeled Ops tag, Docs tag, Billing tag, and QA tag. Each row includes a small sample chip and the swatch dropdown uses a dense fixed palette. The panel footer has “Apply tag colors”. Only Billing tag is the target.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - guidance
+    factor_rationale: The task uses dense repeated rows and a visual reference chip so that the main pressure is wrong-row selection rather than simple swatch clicking.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Four similar rows in a dark compact panel create strong disambiguation load before the actual swatch choice even begins.
+  success_trigger:
+    human_readable:
+    - The committed Billing tag color matches the Billing sample chip exactly.
+    - Ops, Docs, and QA remain unchanged.
+    - The “Apply tag colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: billing-tag-sample
+        saved: true
+        non_target_instances_must_remain:
+          Ops tag: initial
+          Docs tag: initial
+          QA tag: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply tag colors
+      require_correct_instance: true
+      target_instance_label_or_id: Billing tag
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing any non-target row.
+  - Choosing a visually close but wrong swatch.
+  - Not applying the panel changes.
+  expected_interaction_path:
+  - Locate Billing tag.
+  - Open its swatch dropdown.
+  - Choose the swatch matching the sample.
+  - Click “Apply tag colors”.
+  notes: Check all four committed tag colors after apply.
+- id: color_swatch_picker-mantine-v2-T11
+  name: Modal banner background with border preserved
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open “Edit alert banner”. Set only Background to Orange (#fd7e14), leave Border unchanged, and click “Apply banner”. The task will finish automatically when done.'
+  ui_copy: 'Edit alert banner → Background = Orange (#fd7e14); Border unchanged; Apply banner.'
+  setup_description: A centered modal dialog contains two swatches-only Mantine ColorInput fields labeled “Border” and “Background”. The dropdown swatch grid contains several close warm colors. The dialog footer has “Cancel” and “Apply banner”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - instances
+    factor_rationale: The control itself is discrete, but the dialog makes the task draft-based and adds a wrong-field failure mode through the sibling Border picker.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This is a layered warm-swatch selection task with explicit commit and a preserved sibling field.
+  success_trigger:
+    human_readable:
+    - 'The committed Background value equals #fd7e14.'
+    - Border remains unchanged.
+    - The “Apply banner” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#fd7e14'
+        saved: true
+        non_target_instances_must_remain:
+          Border: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply banner
+      require_correct_instance: true
+      target_instance_label_or_id: Background
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the wrong warm swatch.
+  - Editing Border instead of Background.
+  - Not applying the banner changes.
+  expected_interaction_path:
+  - Open the dialog.
+  - Open Background.
+  - 'Choose #fd7e14.'
+  - Click “Apply banner”.
+  notes: Check committed banner background after dialog close.
+- id: color_swatch_picker-mantine-v2-T12
+  name: Billing accent row save in compact table
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: 'In the Billing row, set Accent to Grape (#7950f2), leave the Gateway row unchanged, and click “Save” in the Billing row. The task will finish automatically when done.'
+  ui_copy: 'Billing row → Accent = Grape (#7950f2); Gateway unchanged; Save Billing row.'
+  setup_description: A compact table contains rows for Gateway and Billing. Each row has a swatches-only Mantine ColorInput labeled “Accent” and a row-local Save button. The dropdown palette includes several purple and magenta swatches that look similar in the dark compact theme. Only the Billing row should change.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - theme
+    factor_rationale: The table-cell carrier and dark compact palette increase wrong-row and wrong-swatch mistakes even though the final state is just one exact discrete choice.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The task is hard because the row and swatch must both be correct in a visually compressed table layout.
+  success_trigger:
+    human_readable:
+    - 'The committed Billing-row Accent equals #7950f2.'
+    - Gateway remains unchanged.
+    - The Billing-row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#7950f2'
+        saved: true
+        non_target_instances_must_remain:
+          Gateway: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-billing-row
+      require_correct_instance: true
+      target_instance_label_or_id: Billing
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Gateway.
+  - Choosing the wrong purple/magenta.
+  - Clicking Save in the wrong row.
+  - Leaving Billing unchanged.
+  expected_interaction_path:
+  - Find the Billing row.
+  - Open its Accent dropdown.
+  - 'Select #7950f2.'
+  - Click Save in the Billing row.
+  notes: Use row title plus row-local save binding.
+- id: color_swatch_picker-mantine-v2-T13
+  name: Below-fold sidebar marker in long panel
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: 'Scroll to the Sidebar marker color field, select Teal (#12b886), and click “Save marker colors”. The task will finish automatically when done.'
+  ui_copy: 'Long panel → Sidebar marker color = Teal (#12b886); Save marker colors.'
+  setup_description: A long scrollable settings panel contains many non-target controls above the fold. Near the bottom is a swatches-only Mantine ColorInput labeled “Sidebar marker color”. The dropdown contains a dense multi-row swatch grid with four swatches per row. A footer button “Save marker colors” commits the selected swatch.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - clutter
+    - confirmation_model
+    factor_rationale: 'The value itself is easy to state, but the task forces two separate search phases: find the below-fold field, then find the target swatch inside a dense dropdown, before committing.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: This is a compact, search-heavy swatch task rather than a single obvious click.
+  success_trigger:
+    human_readable:
+    - 'The committed Sidebar marker color equals #12b886.'
+    - The “Save marker colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_color: '#12b886'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save marker colors
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling to the section but selecting the wrong green/cyan swatch.
+  - Leaving without saving.
+  - Changing a different field in the panel.
+  expected_interaction_path:
+  - Scroll the panel to Sidebar marker color.
+  - Open the dropdown.
+  - 'Select #12b886.'
+  - Click “Save marker colors”.
+  notes: Use committed marker color token; do not infer success from dropdown state.
+- id: color_swatch_picker-mantine-v2-T14
+  name: Secondary ring color by sample in dashboard
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the ring color dashboard, set only Secondary ring color so that it matches the Secondary sample chip exactly, leave Primary and Tertiary unchanged, and click “Apply ring colors”. The task will finish automatically when done.
+  ui_copy: Ring color dashboard → Secondary ring should match its sample chip; Primary/Tertiary unchanged; Apply ring colors.
+  setup_description: A dashboard panel contains three swatches-only Mantine ColorInput fields labeled Primary ring color, Secondary ring color, and Tertiary ring color. Each row includes a small sample chip. The swatch palette includes close red/pink/purple options. A panel button “Apply ring colors” commits the three values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: 'Three nearly identical rows and a visual target chip push this beyond a one-click swatch task: the agent has to keep the target row and the right near-neighbor hue aligned through the final apply.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The swatch options are close and the dashboard is busy, so the task separates perceptual swatch discrimination from pure DOM lookup.
+  success_trigger:
+    human_readable:
+    - The committed Secondary ring color matches the Secondary sample chip exactly.
+    - Primary and Tertiary remain unchanged.
+    - The “Apply ring colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: secondary-ring-sample
+        saved: true
+        non_target_instances_must_remain:
+          Primary ring color: initial
+          Tertiary ring color: initial
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply ring colors
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary ring color
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the wrong ring row.
+  - Choosing a close but wrong pink/purple swatch.
+  - Not applying the panel changes.
+  expected_interaction_path:
+  - Find Secondary ring color.
+  - Open the swatch dropdown.
+  - Select the exact sample match.
+  - Click “Apply ring colors”.
+  notes: Use the sample chip’s canonical color as the target.
+- id: color_swatch_picker-mantine-v2-T15
+  name: Toolbar selection chip in compact inline surface
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the compact toolbar surface, set Selection color so that it matches the toolbar sample chip exactly, then click “Apply toolbar colors”. The task will finish automatically when done.
+  ui_copy: Compact toolbar surface → Selection color should match the sample chip; Apply toolbar colors.
+  setup_description: A small inline toolbar surface is anchored near the top-left corner. It contains one swatches-only Mantine ColorInput labeled “Selection color”, a static sample chip, and an “Apply toolbar colors” button. The swatch dropdown is compact and shows many grays and muted blues in a dense grid.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - guidance
+    factor_rationale: 'This is intentionally a small edge-of-viewport swatch task, but it still requires at least three grounded actions: open, identify the exact sample match in a dense compact grid, and apply.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The corner placement and dense compact swatch grid make this intrinsically harder even without multiple instances.
+  success_trigger:
+    human_readable:
+    - The committed Selection color matches the toolbar sample chip exactly.
+    - The “Apply toolbar colors” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: toolbar-selection-sample
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply toolbar colors
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing the wrong muted gray/blue.
+  - Never applying the toolbar colors.
+  - Misclicking due to the corner placement.
+  expected_interaction_path:
+  - Open Selection color.
+  - Select the swatch that matches the sample.
+  - Click “Apply toolbar colors”.
+  notes: Check the committed toolbar selection token after apply.
+- id: color_swatch_picker-mantine-v2-T16
+  name: Avatar ring sample match in dark drawer
+  canonical_type: color_swatch_picker
+  implementation_source: mantine
+  implementation_variant: ColorInput_swatches_only
+  implementation_component: 'Mantine: ColorInput (withPicker={false}; disallowInput; swatches-only)'
+  task_template: confirm_cancel
+  secondary_template: match_reference
+  browsergym_goal: Open the “Edit avatar ring” drawer. Set the Avatar ring color so that it matches Sample C exactly, then click “Save ring color”. The task will finish automatically when done.
+  ui_copy: Edit avatar ring → Avatar ring color should match Sample C; Save ring color.
+  setup_description: A dark drawer contains one swatches-only Mantine ColorInput labeled “Avatar ring color”. A static reference swatch labeled “Sample C” sits to the right of the label. The swatch grid contains red, pink, purple, and blue distractors and closes only when a selection is made. The drawer footer has “Save ring color”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - guidance
+    - placement
+    factor_rationale: The task is a clean discrete visual-match problem, but the off-center drawer and nested dropdown are enough to make it a meaningful hard swatch benchmark rather than a toy click.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The options are close in hue and the drawer keeps the task multi-step without introducing irrelevant workflow complexity.
+  success_trigger:
+    human_readable:
+    - The committed Avatar ring color matches Sample C exactly.
+    - The drawer “Save ring color” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: sample-c
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save ring color
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing the wrong red/pink/purple swatch.
+  - Closing the drawer without saving.
+  - Leaving the ring color unchanged.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Avatar ring color.
+  - Choose the swatch matching Sample C.
+  - Click “Save ring color”.
+  notes: Compare against the canonical hex stored on Sample C.
+- id: alpha_slider-antd-v2-T01
+  name: 'Theme Tokens drawer: Header overlay only'
+  canonical_type: alpha_slider
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (alpha/opacity slider)'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open the “Theme Tokens” drawer. Set only Header overlay opacity to 88% (alpha 0.88, within ±0.01), leave Sidebar overlay unchanged, and click “Save”. The task will finish automatically when done.
+  ui_copy: Theme Tokens → Header overlay = 88%; Sidebar overlay unchanged; Save.
+  setup_description: A right-side drawer titled “Theme Tokens” contains two sections, “Header overlay” and “Sidebar overlay”. Each section has an Ant Design ColorPicker trigger that opens a popover with hue and opacity controls; the current text token outside the popover shows only the section label, not the numeric alpha. The drawer also contains unrelated spacing and radius fields. “Save” commits the drawer state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: 'This is the canonical layered-alpha task for the family: a nested drawer-plus-popover workflow, two similar sections, and a required Save step that distinguishes draft from committed opacity.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The numeric target is simple, but preserving the correct section through a nested overlay and explicit save is reliably hard.
+  success_trigger:
+    human_readable:
+    - The committed Header overlay alpha is 0.88 within ±0.01.
+    - Sidebar overlay remains unchanged.
+    - The drawer “Save” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.88
+        saved: true
+        non_target_instances_must_remain:
+          Sidebar overlay: initial
+      tolerance:
+        abs: 0.01
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Header overlay
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Sidebar overlay instead of Header overlay.
+  - Leaving Header overlay outside tolerance.
+  - Getting the draft value right but not clicking Save.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Header overlay.
+  - Adjust the opacity control to 88%.
+  - Click Save.
+  notes: Read committed alpha from app state after drawer close.
+- id: alpha_slider-antd-v2-T02
+  name: 'Tooltip Style dialog: background opacity with Apply'
+  canonical_type: alpha_slider
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (alpha/opacity slider)'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open the “Tooltip Style” dialog. Set only Tooltip background opacity to 70% (alpha 0.70, within ±0.015), leave Backdrop tint unchanged, and click “Apply”. The task will finish automatically when done.
+  ui_copy: Tooltip Style → Tooltip background = 70%; Backdrop unchanged; Apply.
+  setup_description: 'Clicking “Tooltip Style” opens a centered modal dialog with two Ant Design ColorPicker controls: “Tooltip background” and “Backdrop tint”. Each trigger opens a popover containing hue and opacity controls. The modal shows a live preview of the tooltip background only, but the committed page preview updates only after “Apply” is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - instances
+    factor_rationale: The alpha control is conceptually simple, but the modal draft state and sibling non-target control make forgotten-apply and wrong-instance errors common.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This task isolates draft-versus-committed alpha control inside a nested modal workflow.
+  success_trigger:
+    human_readable:
+    - The committed Tooltip background alpha is 0.70 within ±0.015.
+    - Backdrop tint remains unchanged.
+    - The modal “Apply” button has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.7
+        saved: true
+        non_target_instances_must_remain:
+          Backdrop tint: initial
+      tolerance:
+        abs: 0.015
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Tooltip background
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Backdrop tint instead of Tooltip background.
+  - Closing or cancelling the dialog without applying.
+  - Leaving Tooltip background outside tolerance.
+  expected_interaction_path:
+  - Open the dialog.
+  - Open Tooltip background.
+  - Adjust opacity to 70%.
+  - Click Apply.
+  notes: Check committed state outside the modal.
+- id: alpha_slider-antd-v2-T03
+  name: Secondary overlay among three dashboard cards
+  canonical_type: alpha_slider
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (alpha/opacity slider)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the dashboard card set, set only Secondary overlay opacity to 20% (alpha 0.20, within ±0.01). Leave Primary and Danger unchanged. The task will finish automatically when done.
+  ui_copy: Dashboard cards → Secondary overlay = 20%; Primary/Danger unchanged.
+  setup_description: A high-clutter dashboard panel contains three cards labeled Primary overlay, Secondary overlay, and Danger overlay. Each card has an Ant Design ColorPicker trigger that opens a popover with an opacity slider. The live preview chips update immediately and there is no extra save button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - placement
+    factor_rationale: This task strips away confirmation and leaves raw instance disambiguation in a noisy dashboard, which exposes whether the agent can keep row identity while manipulating the right opacity slider.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Without a save step, the burden shifts entirely onto choosing and manipulating the correct instance in a busy layout.
+  success_trigger:
+    human_readable:
+    - The final Secondary overlay alpha is 0.20 within ±0.01.
+    - Primary and Danger remain unchanged.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.2
+        auto_applied: true
+        non_target_instances_must_remain:
+          Primary overlay: initial
+          Danger overlay: initial
+      tolerance:
+        abs: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary overlay
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary or Danger.
+  - Leaving Secondary outside tolerance.
+  - Stopping after opening the wrong popover.
+  expected_interaction_path:
+  - Locate Secondary overlay.
+  - Open its picker.
+  - Adjust opacity to 20%.
+  notes: Check all three overlay alphas in the final live state.
+- id: alpha_slider-antd-v2-T04
+  name: 'Scroll panel: Watermark tint opacity'
+  canonical_type: alpha_slider
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (alpha/opacity slider)'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Scroll to the Watermark section. Set only Watermark tint opacity to 40% (alpha 0.40, within ±0.03), leave Highlight tint unchanged, and click “Save overlays”. The task will finish automatically when done.
+  ui_copy: Watermark section → Watermark tint = 40%; Highlight tint unchanged; Save overlays.
+  setup_description: A long right-side settings panel sits over a cluttered page. The “Watermark” section is below the fold. Inside that section are two Ant Design ColorPicker triggers labeled “Highlight tint” and “Watermark tint”. Opening either reveals a popover with hue and opacity controls. A section-local “Save overlays” button commits both values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: The main pressure is reaching the correct panel section first and then keeping the target instance straight through the section-local save step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: This is a clean layered alpha task where search and section-local confirmation dominate more than raw motor precision.
+  success_trigger:
+    human_readable:
+    - The committed Watermark tint alpha is 0.40 within ±0.015.
+    - Highlight tint remains unchanged.
+    - The “Save overlays” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.4
+        saved: true
+        non_target_instances_must_remain:
+          Highlight tint: initial
+      tolerance:
+        abs: 0.015
+      require_confirm: true
+      confirm_control: Save overlays
+      require_correct_instance: true
+      target_instance_label_or_id: Watermark tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling to the section but adjusting Highlight tint.
+  - Leaving Watermark tint outside tolerance.
+  - Not clicking Save overlays.
+  expected_interaction_path:
+  - Scroll to Watermark.
+  - Open Watermark tint.
+  - Adjust opacity to 40%.
+  - Click Save overlays.
+  notes: Bind the target to the Watermark row label, not DOM position.
+- id: alpha_slider-antd-v2-T05
+  name: Gateway row scrim opacity with row save
+  canonical_type: alpha_slider
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (alpha/opacity slider)'
+  task_template: table_operation
+  secondary_template: set_scalar
+  browsergym_goal: In the Gateway row, set Scrim opacity to 64% (alpha 0.64, within ±0.01), leave Billing unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  ui_copy: Gateway row → Scrim opacity = 64%; Billing unchanged; Save Gateway row.
+  setup_description: A compact dark table contains rows Gateway and Billing. Each row has one Ant Design ColorPicker trigger labeled “Scrim opacity”. Opening it reveals a popover with hue and opacity controls, but only the alpha channel is checked. Each row has its own small Save button.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: 'The challenge is row-level grounding: the correct alpha must be set in the correct row and committed with the matching row-local Save control.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Tiny row controls and local save semantics make this much harder than a single exposed alpha control.
+  success_trigger:
+    human_readable:
+    - The committed Gateway-row Scrim opacity is 0.64 within ±0.01.
+    - Billing remains unchanged.
+    - The Gateway-row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.64
+        saved: true
+        non_target_instances_must_remain:
+          Billing: initial
+      tolerance:
+        abs: 0.01
+      require_confirm: true
+      confirm_control: save-gateway-row
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Billing.
+  - Saving the wrong row.
+  - Leaving Gateway outside tolerance.
+  expected_interaction_path:
+  - Open Gateway row picker.
+  - Adjust opacity to 64%.
+  - Click Save in the Gateway row.
+  notes: Check row-scoped committed alpha values.
+- id: alpha_slider-antd-v2-T06
+  name: Corner trigger without numeric target readout
+  canonical_type: alpha_slider
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: ColorPicker (alpha/opacity slider)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the small corner card, adjust the Tooltip tint control until the Current chip matches the Target chip as closely as possible; the checker uses ±0.01 alpha. The task will finish automatically when done.
+  ui_copy: Corner card → Tooltip tint should match the Target chip.
+  setup_description: A small inline surface is anchored at the top-right corner and surrounded by unrelated toggles. It contains one small Ant Design ColorPicker trigger labeled “Tooltip tint”. The popover contains hue and opacity controls, but the target chip differs only by transparency and no numeric alpha text is shown. Changes auto-apply.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - guidance
+    factor_rationale: 'This is the high-target-acquisition slice for alpha: one small corner trigger, no numeric target, and a visual-only chip match without a confirmation fallback.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The task is intrinsically hard because the visual difference lives almost entirely in alpha and the control is tiny and corner-placed.
+  success_trigger:
+    human_readable:
+    - The final Tooltip tint alpha matches the Target chip within ±0.01.
+    - No extra confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: tooltip-alpha-target-chip
+        auto_applied: true
+      tolerance:
+        abs: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the chip visibly darker or lighter than the target.
+  - Never opening the small trigger.
+  - Adjusting hue instead of transparency.
+  expected_interaction_path:
+  - Open the Tooltip tint picker.
+  - Adjust the opacity until Current matches Target.
+  notes: Ignore hue drift only if the task setup fixes RGB; otherwise compare full rendered chip.
+- id: alpha_slider-mui-v2-T07
+  name: Reversed vertical slider in tokens drawer
+  canonical_type: alpha_slider
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Slider (vertical, reversed) + preview'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open the “Mask tokens” drawer. Set only Overlay opacity to 35% (alpha 0.35, within ±0.03), leave Shadow opacity unchanged, and click “Save tokens”. The task will finish automatically when done.
+  ui_copy: Mask tokens → Overlay opacity = 35%; Shadow unchanged; Save tokens.
+  setup_description: A right-side drawer titled “Mask tokens” contains two compact vertical MUI Sliders labeled “Overlay opacity” and “Shadow opacity”. The Overlay slider uses reversed orientation so lower opacity appears higher on the track. Each row has a live checkerboard preview. The drawer footer button “Save tokens” commits both values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: The slider itself is exposed, but reversing orientation inside an off-center drawer adds interaction-knowledge pressure and keeps the task from collapsing into a trivial scalar drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The reversed vertical mapping and sibling slider make this much harder than a standard exposed horizontal opacity slider.
+  success_trigger:
+    human_readable:
+    - The committed Overlay opacity is 0.35 within ±0.03.
+    - Shadow opacity remains unchanged.
+    - The “Save tokens” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.35
+        saved: true
+        non_target_instances_must_remain:
+          Shadow opacity: initial
+      tolerance:
+        abs: 0.03
+      require_confirm: true
+      confirm_control: Save tokens
+      require_correct_instance: true
+      target_instance_label_or_id: Overlay opacity
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Shadow instead of Overlay.
+  - Dragging the reversed slider in the wrong direction and leaving Overlay outside tolerance.
+  - Not clicking Save tokens.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust the reversed Overlay slider to 35%.
+  - Click Save tokens.
+  notes: Check committed opacity after drawer close; do not infer from thumb position alone.
+- id: alpha_slider-mui-v2-T08
+  name: Scroll to Heatmap opacity and match target chip
+  canonical_type: alpha_slider
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Slider + current/target preview chips'
+  task_template: scroll_find
+  secondary_template: match_reference
+  browsergym_goal: Scroll to the Overlays section and adjust Heatmap opacity until the Current chip matches the Target chip as closely as possible; the checker uses ±0.05 alpha. Leave the Blur slider alone. The task will finish automatically when done.
+  ui_copy: Overlays section → Heatmap opacity should match Target chip; Blur unchanged.
+  setup_description: 'A long MUI settings panel contains several sections above the fold. Near the bottom, the Overlays section contains two controls: a slider labeled “Heatmap opacity” with current and target preview chips, and a nearby non-target slider labeled “Blur”. No numeric alpha readout is shown for the target. Changes auto-apply.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: slider
+  design_intent:
+    active_factors:
+    - layout
+    - clutter
+    - guidance
+    factor_rationale: This shifts the alpha task toward scroll, search, and visual verification rather than explicit numeric entry, which is where the unit evidence suggests pixel agents still fail.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The slider is simple, but the hidden target section and visual-only target chip raise the overall burden considerably.
+  success_trigger:
+    human_readable:
+    - The final Heatmap opacity matches the Target chip within ±0.05 alpha.
+    - The Blur slider remains unchanged.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: heatmap-target-chip
+        non_target_instances_must_remain:
+          Blur: initial
+      tolerance:
+        abs: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting Blur instead of Heatmap opacity.
+  - Scrolling to the right section but leaving the chip outside tolerance.
+  - Stopping after scrolling without changing the slider.
+  expected_interaction_path:
+  - Scroll to Overlays.
+  - Adjust Heatmap opacity until Current matches Target.
+  - Leave Blur unchanged.
+  notes: Compute alpha from the slider state and compare against the target chip.
+- id: alpha_slider-mui-v2-T09
+  name: Selection mask among three dashboard sliders
+  canonical_type: alpha_slider
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: three Slider instances + previews'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dashboard mask panel, set only Selection mask opacity to 27% (alpha 0.27, within ±0.01), leave Grid mask and Focus mask unchanged, and click “Apply masks”. The task will finish automatically when done.
+  ui_copy: Dashboard mask panel → Selection mask = 27%; Grid/Focus unchanged; Apply masks.
+  setup_description: A dashboard panel shows three compact MUI Slider rows labeled “Grid mask”, “Selection mask”, and “Focus mask”. Each row has a small live preview chip and the overall panel has high surrounding clutter from mini charts and metric badges. The panel footer button “Apply masks” commits all three values.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: slider
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: 'This is the exposed-slider analogue of the multi-picker dashboard tasks: the state is visible, but wrong-instance edits become expensive once a single Apply button commits all three.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The task uses a simple control but raises pressure through a cluttered multi-instance dashboard and a global apply step.
+  success_trigger:
+    human_readable:
+    - The committed Selection mask opacity is 0.27 within ±0.01.
+    - Grid mask and Focus mask remain unchanged.
+    - The “Apply masks” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.27
+        saved: true
+        non_target_instances_must_remain:
+          Grid mask: initial
+          Focus mask: initial
+      tolerance:
+        abs: 0.01
+      require_confirm: true
+      confirm_control: Apply masks
+      require_correct_instance: true
+      target_instance_label_or_id: Selection mask
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Grid mask or Focus mask.
+  - Leaving Selection mask outside tolerance.
+  - Not clicking Apply masks.
+  expected_interaction_path:
+  - Find Selection mask.
+  - Adjust the slider to 27%.
+  - Click Apply masks.
+  notes: Check all three committed slider values after apply.
+- id: alpha_slider-mui-v2-T10
+  name: Gateway row panel scrim in compact table
+  canonical_type: alpha_slider
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Slider in table row'
+  task_template: table_operation
+  secondary_template: set_scalar
+  browsergym_goal: In the Gateway row, set Panel scrim opacity to 52% (alpha 0.52, within ±0.01), leave the Billing row unchanged, and click “Apply” in the Gateway row. The task will finish automatically when done.
+  ui_copy: Gateway row → Panel scrim = 52%; Billing unchanged; Apply Gateway row.
+  setup_description: A compact dark table contains expanded rows for Gateway and Billing. Each row has one small horizontal MUI Slider labeled “Panel scrim opacity”, a tiny value label that appears only while dragging, and a row-local Apply button. The Billing row is a distractor and must remain unchanged.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: This is a small-target table-cell alpha task where the local Apply step matters as much as the drag precision, especially for pixel-like agents near the viewport edge.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The small row slider is physically demanding and the row-local Apply preserves the task’s grounded structure.
+  success_trigger:
+    human_readable:
+    - The committed Gateway-row Panel scrim opacity is 0.52 within ±0.01.
+    - Billing remains unchanged.
+    - The Gateway-row Apply control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.52
+        saved: true
+        non_target_instances_must_remain:
+          Billing: initial
+      tolerance:
+        abs: 0.01
+      require_confirm: true
+      confirm_control: apply-gateway-row
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Billing.
+  - Applying the wrong row.
+  - Leaving Gateway outside tolerance.
+  expected_interaction_path:
+  - Adjust Gateway row Panel scrim to 52%.
+  - Click Apply in the Gateway row.
+  notes: Use row label plus committed state for verification.
+- id: alpha_slider-mui-v2-T11
+  name: 'Dark modal: visual scrim match on compact slider'
+  canonical_type: alpha_slider
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Slider + current/target scrim previews'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit modal scrim”. Adjust the Scrim opacity slider until the Current scrim matches the Target scrim as closely as possible; the checker uses ±0.03 alpha. Then click “Save scrim”. The task will finish automatically when done.
+  ui_copy: Edit modal scrim → Current scrim should match Target scrim; Save scrim.
+  setup_description: A dark modal dialog contains one compact MUI Slider labeled “Scrim opacity” and two large checkerboard previews labeled Current and Target. No numeric target is shown. The dialog footer contains “Cancel” and “Save scrim”. Draft slider movement updates Current immediately; the committed page scrim updates only after save.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - scale
+    factor_rationale: This keeps the control itself simple but removes the numeric crutch, so the task becomes visual alpha matching with a draft-versus-committed modal boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The current-vs-target preview setup makes this a good observability-heavy alpha task without adding unrelated workflow baggage.
+  success_trigger:
+    human_readable:
+    - The committed Scrim opacity matches the Target preview within ±0.03 alpha.
+    - The modal “Save scrim” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: scrim-target-preview
+        saved: true
+      tolerance:
+        abs: 0.03
+      require_confirm: true
+      confirm_control: Save scrim
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the modal without saving.
+  - Leaving the Current preview darker or lighter than the target beyond tolerance.
+  - Changing unrelated controls.
+  expected_interaction_path:
+  - Open the dialog.
+  - Adjust the Scrim opacity slider until Current matches Target.
+  - Click Save scrim.
+  notes: Compare committed scrim alpha after modal close.
+- id: alpha_slider-mantine-v2-T12
+  name: 'Drawer AlphaSlider: Watermark only'
+  canonical_type: alpha_slider
+  implementation_source: mantine
+  implementation_variant: AlphaSlider
+  implementation_component: 'Mantine: AlphaSlider'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open the “Overlay drawer”. Set only Watermark tint opacity to 37% (alpha 0.37, within ±0.03), leave Tooltip tint unchanged, and click “Save overlay drawer”. The task will finish automatically when done.
+  ui_copy: Overlay drawer → Watermark tint = 37%; Tooltip tint unchanged; Save overlay drawer.
+  setup_description: A right-side drawer contains two Mantine AlphaSlider rows labeled “Watermark tint” and “Tooltip tint”. Each row has a checkerboard preview chip and no exact numeric target besides the instruction. The drawer footer button “Save overlay drawer” commits both values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: 'This is the exposed-alpha counterpart to the nested color-picker tasks: the control is simpler, so difficulty is raised through duplicate rows and a drawer-level save requirement.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The standalone AlphaSlider is clean, but the duplicate-row drawer structure still creates grounded difficulty.
+  success_trigger:
+    human_readable:
+    - The committed Watermark tint alpha is 0.37 within ±0.03.
+    - Tooltip tint remains unchanged.
+    - The “Save overlay drawer” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.37
+        saved: true
+        non_target_instances_must_remain:
+          Tooltip tint: initial
+      tolerance:
+        abs: 0.03
+      require_confirm: true
+      confirm_control: Save overlay drawer
+      require_correct_instance: true
+      target_instance_label_or_id: Watermark tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Tooltip tint instead of Watermark tint.
+  - Leaving Watermark outside tolerance.
+  - Not clicking Save overlay drawer.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust Watermark tint to 37%.
+  - Click Save overlay drawer.
+  notes: Check committed drawer state after close.
+- id: alpha_slider-mantine-v2-T13
+  name: Secondary overlay among four visible AlphaSliders
+  canonical_type: alpha_slider
+  implementation_source: mantine
+  implementation_variant: AlphaSlider
+  implementation_component: 'Mantine: AlphaSlider'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the overlay dashboard, set only Secondary overlay opacity to 61% (alpha 0.61, within ±0.03), leave Primary, Tertiary, and Neutral unchanged, and click “Apply overlays”. The task will finish automatically when done.
+  ui_copy: Overlay dashboard → Secondary overlay = 61%; other overlays unchanged; Apply overlays.
+  setup_description: A cluttered dashboard panel displays four Mantine AlphaSlider rows labeled Primary overlay, Secondary overlay, Tertiary overlay, and Neutral overlay. All four sliders are visible at once with small preview chips. A panel button “Apply overlays” commits the current values.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The control is exposed, but four simultaneously visible sliders in a cluttered dashboard still create a high wrong-instance burden that only resolves after Apply.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is the strongest duplicate-instance AlphaSlider slice in the packet.
+  success_trigger:
+    human_readable:
+    - The committed Secondary overlay alpha is 0.61 within ±0.03.
+    - Primary, Tertiary, and Neutral remain unchanged.
+    - The “Apply overlays” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.61
+        saved: true
+        non_target_instances_must_remain:
+          Primary overlay: initial
+          Tertiary overlay: initial
+          Neutral overlay: initial
+      tolerance:
+        abs: 0.03
+      require_confirm: true
+      confirm_control: Apply overlays
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary overlay
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing any non-target slider.
+  - Leaving Secondary outside tolerance.
+  - Not applying overlays.
+  expected_interaction_path:
+  - Find Secondary overlay.
+  - Adjust it to 61%.
+  - Click Apply overlays.
+  notes: Check all four committed alphas.
+- id: alpha_slider-mantine-v2-T14
+  name: Selection tint alpha inside rgba ColorPicker
+  canonical_type: alpha_slider
+  implementation_source: mantine
+  implementation_variant: ColorPicker_rgba
+  implementation_component: 'Mantine: ColorPicker (rgba)'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: In the selection styling panel, reduce only the Selection tint alpha to 0.55 (55%) within ±0.03 while keeping the RGB channels unchanged, leave Background tint unchanged, and click “Save selection styling”. The task will finish automatically when done.
+  ui_copy: Selection styling → Selection tint alpha = 0.55 with RGB unchanged; Background tint unchanged; Save selection styling.
+  setup_description: A compact settings panel contains two inline Mantine ColorPickers in rgba format labeled “Selection tint” and “Background tint”. Because the format is rgba, hue, saturation, and alpha controls are all visible. The current Selection tint RGB is already correct; only alpha should change. A panel button “Save selection styling” commits the values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - precision_surface
+    factor_rationale: The hard part is distinguishing the alpha sub-control from the hue and saturation controls while preserving the correct RGB and the non-target picker in a dense panel.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: 'This is the unit’s pure interaction-knowledge alpha task: the control is visible, but it is easy to drag the wrong sub-control or the wrong picker.'
+  success_trigger:
+    human_readable:
+    - The committed Selection tint alpha is 0.55 within ±0.03.
+    - The Selection tint RGB channels remain unchanged.
+    - Background tint remains unchanged.
+    - The “Save selection styling” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.55
+        base_rgb_must_remain:
+          r: 28
+          g: 126
+          b: 214
+        saved: true
+        non_target_instances_must_remain:
+          Background tint: initial
+      tolerance:
+        abs: 0.03
+        rgba_max_abs_channel_error: 0
+      require_confirm: true
+      confirm_control: Save selection styling
+      require_correct_instance: true
+      target_instance_label_or_id: Selection tint
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting hue or saturation instead of only alpha.
+  - Changing Background tint.
+  - Leaving alpha outside tolerance.
+  - Not saving.
+  expected_interaction_path:
+  - Locate Selection tint.
+  - Adjust only its alpha control to 55%.
+  - Click Save selection styling.
+  notes: Read both alpha and RGB in the committed state.
+- id: alpha_slider-mantine-v2-T15
+  name: 'Nested scroll: map halo opacity below fold'
+  canonical_type: alpha_slider
+  implementation_source: mantine
+  implementation_variant: AlphaSlider
+  implementation_component: 'Mantine: AlphaSlider'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Scroll to the “Map halo opacity” control. Set it to 40% (alpha 0.40, within ±0.015), leave the nearby Blur control unchanged, and click “Save map effects”. The task will finish automatically when done.
+  ui_copy: Map effects → Map halo opacity = 40%; Blur unchanged; Save map effects.
+  setup_description: A long nested-scroll settings page places the “Map halo opacity” AlphaSlider below the fold. The same section also contains a non-target Blur slider. The layout is compact and the control sits near the bottom-right edge of the panel. A “Save map effects” button commits the section values.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: slider
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - placement
+    - confirmation_model
+    factor_rationale: 'This is the scroll-and-commit alpha slice: the control is simple once found, but the right panel must be scrolled correctly and the nearby Blur control must be ignored.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The visual burden comes from search and edge-of-panel acquisition, not from a complex control structure.
+  success_trigger:
+    human_readable:
+    - The committed Map halo opacity is 0.40 within ±0.03.
+    - The nearby Blur control remains unchanged.
+    - The “Save map effects” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        alpha: 0.4
+        saved: true
+        non_target_instances_must_remain:
+          Blur: initial
+      tolerance:
+        abs: 0.03
+      require_confirm: true
+      confirm_control: Save map effects
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping after scrolling without changing the slider.
+  - Changing Blur instead of Map halo opacity.
+  - Leaving opacity outside tolerance.
+  - Not clicking Save map effects.
+  expected_interaction_path:
+  - Scroll to Map halo opacity.
+  - Adjust the AlphaSlider to 40%.
+  - Click Save map effects.
+  notes: Check the saved section state, not just the visible thumb.
+- id: alpha_slider-mantine-v2-T16
+  name: Dark modal scrim visual match
+  canonical_type: alpha_slider
+  implementation_source: mantine
+  implementation_variant: AlphaSlider
+  implementation_component: 'Mantine: AlphaSlider'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit scrim”. Adjust the Scrim opacity AlphaSlider until the Current scrim matches the Target scrim as closely as possible; the checker uses ±0.03 alpha. Then click “Save scrim”. The task will finish automatically when done.
+  ui_copy: Edit scrim → Current scrim should match Target scrim; Save scrim.
+  setup_description: A dark modal dialog shows one Mantine AlphaSlider labeled “Scrim opacity” and two checkerboard previews labeled Current and Target. No numeric target is shown. The slider is compact and there is no second non-target opacity control in the dialog. The footer contains “Cancel” and “Save scrim”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - theme
+    factor_rationale: 'This is the visually guided Mantine alpha task: the target is semantic rather than numeric, and the modal save step forces a final verification rather than a transient preview match.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The control is singular, but visual-only alpha matching in a dark modal is still a clean hard task for the family.
+  success_trigger:
+    human_readable:
+    - The committed Scrim opacity matches the Target preview within ±0.03 alpha.
+    - The modal “Save scrim” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_swatch_id: mantine-scrim-target
+        saved: true
+      tolerance:
+        abs: 0.03
+      require_confirm: true
+      confirm_control: Save scrim
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the dialog without saving.
+  - Leaving the Current scrim lighter or darker than the target beyond tolerance.
+  - Adjusting unrelated controls instead of the AlphaSlider.
+  expected_interaction_path:
+  - Open the dialog.
+  - Adjust the AlphaSlider until Current matches Target.
+  - Click Save scrim.
+  notes: Compare the committed scrim alpha after the dialog closes.

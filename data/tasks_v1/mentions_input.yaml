@@ -1,0 +1,2221 @@
+- id: mentions_input-antd-T01
+  name: 'Chat composer: greet Ava'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Message field, create a mention for Ava Chen by selecting her from the @ suggestions. The Message field should end up as exactly: "Hi @Ava Chen". The task will finish automatically when done.'
+  ui_copy: 'Message: Type @ to mention a teammate. Goal: "Hi @Ava Chen"'
+  setup_description: |-
+    You are on a simple “Chat composer” card centered in the viewport.
+
+    - Target component: an Ant Design **Mentions** input (single instance) labeled **Message**.
+    - The Mentions input is a multiline textarea with a placeholder: “Type @ to mention a teammate”.
+    - When you type **@**, a suggestions dropdown appears under the caret (Mentions popup).
+    - Suggestions list (short, 6 items) shows full names:
+      - Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim
+    - Selecting a suggestion inserts a mention token into the textarea (the inserted text includes the leading “@”).
+    - Below the field there is a small read-only line “Detected mentions: …” that updates when a suggestion is selected.
+    - Initial state: the Message field is empty; no popup is open.
+
+    No other interactive elements are on the card (no submit button, no extra fields).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single instance with a short suggestion list; the main challenge is opening the dropdown and selecting the correct option.
+  success_trigger:
+    human_readable:
+    - 'The only Mentions input on the page (Message) must contain the exact text: "Hi @Ava Chen" (whitespace-normalized).'
+    - 'The selected mentions list for this input must be exactly: [Ava Chen].'
+    - No other characters (including trailing punctuation) may be present.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Hi @Ava Chen
+        mentions:
+        - id: ava
+          label: Ava Chen
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Text is correct but Ava Chen was not inserted via the suggestions list (no mention-selection event recorded).
+  - A different person is mentioned (e.g., @Olivia Kim).
+  - Extra text is present (e.g., "Hi @Ava Chen!" or an extra space at the beginning).
+  expected_interaction_path:
+  - Click into Message → type "Hi " → type "@" → click "Ava Chen" in the dropdown → verify text/Detected mentions.
+  notes: 'Checker hint: for AntD Mentions, record selections via onSelect and expose a hidden JSON array of selected mention ids/labels for the checker.'
+- id: mentions_input-antd-T02
+  name: 'Issue comment: FYI Noah'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the Comment field, mention Noah Patel by selecting him from the @ suggestions, and make the Comment exactly: "FYI @Noah Patel, please review." The task will finish automatically when done.'
+  ui_copy: 'Comment (supports @mentions). Target: FYI @Noah Patel, please review.'
+  setup_description: |-
+    You are on an “Issue comment” card centered in the viewport.
+
+    - Target component: an Ant Design **Mentions** input (single instance) labeled **Comment**.
+    - The Mentions input is multiline and supports mentioning teammates with **@**.
+    - When you type **@**, a suggestions dropdown opens below the caret.
+    - Suggestions list (8 items): Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks.
+    - Selecting a suggestion inserts it into the text (e.g., “@Noah Patel”) and updates a read-only “Detected mentions” line below the field.
+    - Initial state: the Comment field is empty.
+
+    No other fields are required; there is a non-functional “Post” button shown as a distractor but success does not depend on clicking it.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires entering a short sentence with one mention and basic punctuation; suggestions list is still small and unambiguous.
+  success_trigger:
+    human_readable:
+    - 'The Comment Mentions input must contain exactly: "FYI @Noah Patel, please review." (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Noah Patel].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: FYI @Noah Patel, please review.
+        mentions:
+        - id: noah
+          label: Noah Patel
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing "@Noah Patel" manually without selecting from suggestions.
+  - Mentioning the wrong person or adding additional mentions.
+  - Missing comma or period, or any extra characters.
+  - Clicking the Post button without having the correct Comment text.
+  expected_interaction_path:
+  - Click Comment → type "FYI " → type "@" and select Noah Patel → type ", please review." → verify Detected mentions.
+  notes: Include data-testid on the Mentions textarea and on each option for stable selection/scroll instrumentation.
+- id: mentions_input-antd-T03
+  name: Clear an existing announcement
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions (allowClear enabled)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Announcement field so it becomes empty (no text and no mentions). The task will finish automatically when done.
+  ui_copy: Announcement (supports @mentions) — clear it completely.
+  setup_description: |-
+    You are on a “Draft announcement” card.
+
+    - Target component: a single Ant Design **Mentions** input labeled **Announcement**.
+    - The component is configured with **allowClear** (a clear “x” icon appears inside the input when it has content).
+    - Suggestions open when typing **@**; suggestions list includes: Ava Chen, Maya Rivera, Liam Ortiz, Emma Johnson.
+    - Initial state: the Announcement field already contains the text:
+      "Reminder: @Maya Rivera is on call today."
+      The mention was inserted previously (Detected mentions shows: Maya Rivera).
+    - The @ suggestions dropdown is currently closed.
+
+    No other controls are required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Clearing is straightforward with a visible clear control; success is an unambiguous empty state.
+  success_trigger:
+    human_readable:
+    - The Announcement Mentions input must be completely empty after clearing (text is an empty string after whitespace normalization).
+    - Detected mentions must be empty (no selected mentions).
+    - The clear action must apply to the Announcement field (the only Mentions input).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: ''
+        mentions: []
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving a single space/newline behind in the textarea.
+  - Deleting only part of the text but leaving the mention intact.
+  - Opening the @ suggestions dropdown without clearing the content.
+  expected_interaction_path:
+  - Click clear (x) icon in the Announcement field (or select-all → Backspace) → verify field is empty and Detected mentions shows none.
+  notes: AntD Mentions supports allowClear; ensure the clear icon is keyboard-accessible and has an aria-label like 'Clear'.
+- id: mentions_input-antd-T04
+  name: Open the @ suggestions dropdown
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the @ mention suggestions in the Message field (type '@' so the dropdown appears), but do not select anyone. Leave the dropdown open. The task will finish automatically when done.
+  ui_copy: 'Message: Type @ to open suggestions (do not select).'
+  setup_description: |-
+    You are on a minimal “Mention picker” card.
+
+    - Target component: a single Ant Design **Mentions** input labeled **Message**.
+    - The textarea is empty and focused state is not active initially.
+    - When you type the trigger character **@**, the component opens a suggestions dropdown (Mentions popup) with 10 people.
+    - The dropdown shows at least these options: Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks, Isabella Garcia, Priya Singh.
+    - No selection has been made yet; “Detected mentions” reads “(none)”.
+
+    There are no other fields. The goal is specifically about opening (and keeping open) the Mentions suggestions overlay.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Only requires triggering the dropdown; no selection is needed, but the agent must avoid accidentally choosing an option.
+  success_trigger:
+    human_readable:
+    - The Message Mentions suggestions dropdown must be open/visible.
+    - The active trigger must be '@' with the current query text equal to just '@' (no additional filter characters).
+    - No mention should be inserted into the Message field (Detected mentions remains empty).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        suggestions_open: true
+        active_trigger: '@'
+        query_text: '@'
+        mentions: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing '@a' (or any other filter text) instead of leaving the query as just '@'.
+  - Selecting a person from the list (which would insert a mention).
+  - Opening a different overlay (none exist) or leaving the suggestions dropdown closed.
+  expected_interaction_path:
+  - Click into Message → type '@' → confirm dropdown is open and no selection inserted.
+  notes: 'Checker hint: treat the Mentions popup visibility (aria-expanded / popup element present) as the overlay-open signal.'
+- id: mentions_input-antd-T05
+  name: 'Compact reviewer: search and select Maya'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions (autoSize, compact spacing)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Reviewer field, type ''@ma'' to search, then select Maya Rivera from the suggestions so the field becomes exactly: "@Maya Rivera". The task will finish automatically when done.'
+  ui_copy: 'Reviewer (compact): set to @Maya Rivera.'
+  setup_description: |-
+    You are on a compact-density “Reviewer assignment” card.
+
+    - Theme: light; Spacing: **compact** (reduced padding and tighter line height).
+    - Target component: a single Ant Design **Mentions** input labeled **Reviewer**.
+    - The Mentions input is configured as a single-line autoSize (minRows=1) and is visually smaller due to compact spacing.
+    - Typing **@** opens a suggestions dropdown. The list is moderately sized (12 options) and includes some similar prefixes:
+      - Maya Rivera, Max Wu, Mia Davis, Emma Johnson, Ethan Brooks, Noah Patel, Olivia Kim, Sophia Nguyen, Ava Chen, Daniel Park, Priya Singh, Carlos Reyes
+    - The dropdown filters as you continue typing after '@' (e.g., '@ma' narrows to Maya/Max).
+    - Initial state: Reviewer field is empty; no dropdown open.
+
+    No other fields are present.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Compact density makes targets tighter and the '@ma' query yields multiple similar options, increasing selection interference.
+  success_trigger:
+    human_readable:
+    - 'Reviewer field text must be exactly: "@Maya Rivera" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Maya Rivera] (selected from the dropdown).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: '@Maya Rivera'
+        mentions:
+        - id: maya
+          label: Maya Rivera
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Max Wu instead of Maya Rivera (both match '@ma').
+  - Leaving filter text like '@ma' without selecting a suggestion.
+  - Typing the correct text manually without a recorded selection event.
+  expected_interaction_path:
+  - Click Reviewer → type '@ma' → choose 'Maya Rivera' from filtered list → verify final text.
+  notes: AntD Mentions filtering can be customized via filterOption; keep default filtering so '@ma' matches both Maya and Max.
+- id: mentions_input-antd-T06
+  name: 'Internal note: add two mentions'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions (2 instances in a form)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Internal note field (not Customer reply), mention Ava Chen and Liam Ortiz by selecting them from the @ suggestions, and make the field exactly: "Looping in @Ava Chen and @Liam Ortiz." The task will finish automatically when done.'
+  ui_copy: 'Support ticket form: Fill Internal note with "Looping in @Ava Chen and @Liam Ortiz."'
+  setup_description: |-
+    You are in a “Support ticket reply” form section (light theme, comfortable spacing).
+
+    Layout:
+    - A form card contains several standard fields (Subject text input, Priority select, a non-functional “Send” button). These are **distractors** and are not required for success.
+    - In the middle of the form there are **two** Ant Design **Mentions** inputs of the same type:
+
+    Instances (E6=2):
+    1) **Customer reply** (Mentions) — labeled “Customer reply”
+    2) **Internal note** (Mentions) — labeled “Internal note”
+
+    Mentions behavior:
+    - Both fields support **@** mentions with a dropdown suggestions popup.
+    - Suggestions list (shared): Ava Chen, Liam Ortiz, Noah Patel, Maya Rivera, Priya Singh, Ethan Brooks.
+    - Each field has its own “Detected mentions” line directly underneath it.
+
+    Initial state:
+    - Customer reply contains existing text: “Thanks for reaching out.” (no mentions).
+    - Internal note is empty and has no mentions.
+
+    Target: **Internal note**.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two similar Mentions instances require careful disambiguation, and inserting multiple mentions increases the chance of partial completion.
+  success_trigger:
+    human_readable:
+    - Only the **Internal note** Mentions input must be modified.
+    - 'Internal note text must equal exactly: "Looping in @Ava Chen and @Liam Ortiz." (whitespace-normalized).'
+    - 'Internal note detected mentions must be exactly: [Ava Chen, Liam Ortiz] (both selected from dropdown).'
+    - Customer reply text/mentions must remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Looping in @Ava Chen and @Liam Ortiz.
+        mentions:
+        - id: ava
+          label: Ava Chen
+        - id: liam
+          label: Liam Ortiz
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Internal note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the correct sentence in Customer reply instead of Internal note.
+  - Only one of the two mentions is inserted, or the wrong person is mentioned.
+  - Correct visible text is present but mentions were typed manually without dropdown selection events.
+  - Customer reply content is altered.
+  expected_interaction_path:
+  - Click Internal note → type "Looping in " → '@' select Ava Chen → type " and " → '@' select Liam Ortiz → type "." → verify Customer reply unchanged.
+  notes: 'Instrumentation: give each instance a stable label/aria-describedby for the checker to map ''Internal note'' vs ''Customer reply''.'
+- id: mentions_input-antd-T07
+  name: 'Dark theme: match reference (Assign/CC)'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Message field match the Reference preview exactly, including the @mentions. Select the mentioned people from the suggestions. The task will finish automatically when done.
+  ui_copy: Reference preview shown. Match it in Message.
+  setup_description: |-
+    You are on a dark-theme “Copy the reference” card.
+
+    - Target component: one Ant Design **Mentions** input labeled **Message**.
+    - Typing **@** opens the suggestions dropdown (8 options): Emma Johnson, Noah Patel, Ava Chen, Maya Rivera, Liam Ortiz, Olivia Kim, Sophia Nguyen, Ethan Brooks.
+    - To the right of the input, there is a read-only **Reference preview** panel that shows the desired message as a chat bubble.
+      - The reference bubble visually highlights mentions (e.g., a subtle pill background), but the agent must reproduce the same content in the Mentions input.
+    - Initial state: Message is empty; no dropdown open.
+
+    No other interactive elements appear.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires copying punctuation-heavy text from a visual reference in dark theme while correctly inserting two mentions from the dropdown.
+  success_trigger:
+    human_readable:
+    - 'Message text must match the reference message exactly: "Assign to @Emma Johnson; CC @Noah Patel." (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Emma Johnson, Noah Patel] with both inserted via suggestions.'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF_ASSIGN_CC_01
+        text: Assign to @Emma Johnson; CC @Noah Patel.
+        mentions:
+        - id: emma
+          label: Emma Johnson
+        - id: noah
+          label: Noah Patel
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using a comma instead of a semicolon, or missing the period at the end.
+  - Mentioning the wrong person or only one person.
+  - Typing the '@Name' strings without selecting from the dropdown (no mention events).
+  expected_interaction_path:
+  - Look at Reference preview → click Message → type "Assign to " → '@' select Emma Johnson → type "; CC " → '@' select Noah Patel → type "." → compare to reference.
+  notes: Reference preview should also expose an offscreen aria-label with the exact reference text for accessibility-tree agents (but keep guidance=visual by default).
+- id: mentions_input-antd-T08
+  name: 'Bottom-right small: find Zoë in long list'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions (placement=top, compact+small)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Quick note field, type ''@z'' to filter, then select Zoë Zimmerman from the suggestions so the field becomes exactly: "@Zoë Zimmerman". The task will finish automatically when done.'
+  ui_copy: 'Quick note: set to @Zoë Zimmerman.'
+  setup_description: |-
+    You are on a small card anchored to the **bottom-right** of the viewport (think “floating quick note”).
+
+    - Target component: a single Ant Design **Mentions** input labeled **Quick note**.
+    - Scale: **small**; Spacing: **compact** (the textarea and dropdown items are smaller than default).
+    - The Mentions popup is configured with `placement="top"` so the dropdown opens upward (because the card is near the bottom of the screen).
+    - Suggestions list is long (about 40 people) and scrolls inside the popup. Many names start with similar letters.
+      - The list includes multiple “Z…” entries such as: Zoe Zimmer, Zora Khan, Zane Miller, Zelia Costa, and **Zoë Zimmerman**.
+    - Typing after '@' filters the list, but typing just '@z' still leaves enough “Z…” options that scrolling may be required.
+    - Initial state: Quick note is empty; no dropdown open.
+
+    No other interactive elements are present.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small/compact styling reduces target size, the dropdown opens upward near the viewport edge, and a long, scrollable list with similar Z-names increases selection difficulty.
+  success_trigger:
+    human_readable:
+    - 'Quick note text must be exactly: "@Zoë Zimmerman" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Zoë Zimmerman] and must come from selecting the dropdown option.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: '@Zoë Zimmerman'
+        mentions:
+        - id: zoe
+          label: Zoë Zimmerman
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Zoe Zimmer (similar name) instead of Zoë Zimmerman.
+  - Leaving the text as '@z' without selecting a person.
+  - Selecting the correct person but ending with extra text/newlines.
+  expected_interaction_path:
+  - Click Quick note → type '@z' → scroll dropdown if needed → click 'Zoë Zimmerman' → verify text equals '@Zoë Zimmerman'.
+  notes: Use onPopupScroll (AntD Mentions) to instrument dropdown scroll position for debugging. Mentions supports placement and allowClear per docs.
+- id: mentions_input-antd-T09
+  name: 'Dashboard note: insert mention in the middle'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Note field, insert a mention for Noah Patel between "ask" and "to" by selecting him from the @ suggestions. The Note must become exactly: "Please ask @Noah Patel to review this." The task will finish automatically when done.'
+  ui_copy: 'Task note: Fix the gap by mentioning Noah Patel.'
+  setup_description: |-
+    You are on a lightweight dashboard page with multiple cards (medium clutter).
+
+    Cards on the dashboard:
+    - “KPI Summary” card (static numbers)
+    - “Recent activity” list (static)
+    - “Task note” card (this contains the target component)
+    - A couple of icon buttons in the header (non-functional distractors)
+
+    Target component:
+    - In the “Task note” card, there is a single Ant Design **Mentions** input labeled **Note**.
+    - The Mentions input supports @mentions with a dropdown list: Noah Patel, Ava Chen, Priya Singh, Liam Ortiz.
+    - Initial state: the Note field already contains the sentence with a deliberate gap:
+      "Please ask  to review this."
+      (There are two spaces between “ask” and “to”.)
+    - No dropdown is open initially. Detected mentions is empty.
+
+    Goal requires inserting the mention into the gap, not appending it at the end.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires precise caret placement in existing text within a cluttered dashboard, then selecting the correct mention without leaving extra spaces.
+  success_trigger:
+    human_readable:
+    - 'The Note Mentions input must equal exactly: "Please ask @Noah Patel to review this." (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Noah Patel].'
+    - The mention must appear between the words “ask” and “to” (i.e., not appended elsewhere).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Please ask @Noah Patel to review this.
+        mentions:
+        - id: noah
+          label: Noah Patel
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Mention is inserted but in the wrong location (e.g., at the end of the sentence).
+  - The gap remains double-spaced (e.g., "ask  @Noah Patel to"), leaving extra whitespace.
+  - Noah Patel is typed as plain text without selecting from suggestions.
+  - A different person is mentioned.
+  expected_interaction_path:
+  - Click between 'ask' and 'to' in the Note text → type '@' → select Noah Patel → delete any extra space if needed → verify sentence matches exactly.
+  notes: 'Checker hint: compare the final string after normalizing whitespace, but still enforce that there is exactly one space around the inserted mention.'
+- id: mentions_input-antd-T10
+  name: 'Settings panel: escalation note with three mentions'
+  canonical_type: mentions_input
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Mentions (3 instances)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Escalation note field (not the other two), add mentions for Ava Chen, Ethan Brooks, and Isabella Garcia by selecting them from the @ suggestions, and make the field exactly: "Escalating to @Ava Chen, @Ethan Brooks, and @Isabella Garcia." The task will finish automatically when done.'
+  ui_copy: Escalation note target sentence shown; fill the Escalation note field.
+  setup_description: |-
+    You are on a “Notification routing” settings panel anchored near the **top-left** of the viewport (low clutter).
+
+    Panel contents (distractors):
+    - A couple of toggles (Email alerts, Slack alerts)
+    - A read-only “Team” select showing “Support”
+    - A non-functional “Save settings” button
+
+    Target components (E6=3):
+    There are **three** Ant Design **Mentions** inputs, each with its own label and helper text:
+    1) **Public update**
+    2) **Internal update**
+    3) **Escalation note**  ← target instance
+
+    Mentions behavior:
+    - All three support @mentions with a dropdown list (about 12 people): Ava Chen, Ethan Brooks, Isabella Garcia, Noah Patel, Maya Rivera, Liam Ortiz, Olivia Kim, Sophia Nguyen, Priya Singh, Daniel Park, Carlos Reyes, Jun Ito.
+    - Selecting an option inserts “@Full Name” into the textarea and updates “Detected mentions”.
+
+    Guidance (mixed):
+    - Above the inputs, a small “Target mentions” strip shows **three visual chips**: “Ava Chen”, “Ethan Brooks”, “Isabella Garcia”.
+    - The exact sentence to enter is also written in the instruction text.
+
+    Initial state:
+    - Public update contains “(none)”
+    - Internal update contains “(none)”
+    - Escalation note is empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Multiple similar instances in a settings panel require careful disambiguation, and the final sentence demands precise punctuation plus three correct mention insertions.
+  success_trigger:
+    human_readable:
+    - Only the Escalation note Mentions input must be changed.
+    - 'Escalation note text must equal exactly: "Escalating to @Ava Chen, @Ethan Brooks, and @Isabella Garcia." (whitespace-normalized).'
+    - 'Escalation note detected mentions must be exactly: [Ava Chen, Ethan Brooks, Isabella Garcia] in that order.'
+    - Public update and Internal update must remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Escalating to @Ava Chen, @Ethan Brooks, and @Isabella Garcia.
+        mentions:
+        - id: ava
+          label: Ava Chen
+        - id: ethan
+          label: Ethan Brooks
+        - id: isabella
+          label: Isabella Garcia
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Escalation note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the sentence into Public update or Internal update instead of Escalation note.
+  - Missing the Oxford comma before "and" or missing the final period.
+  - Correct visible text but one or more mentions were typed manually (no selection event).
+  - Mentions are in the wrong order or one is missing.
+  expected_interaction_path:
+  - Locate Escalation note → type "Escalating to " → '@' select Ava Chen → type ", " → '@' select Ethan Brooks → type ", and " → '@' select Isabella Garcia → type "." → verify other fields unchanged.
+  notes: Provide data-testid per instance (e.g., mentions-public, mentions-internal, mentions-escalation) so the checker can enforce correct-instance requirements.
+- id: mentions_input-mui-T01
+  name: 'MUI comment: greet Ava'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField (multiline) + Popper + MenuList (composite mentions)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Comment field, mention Ava Chen by selecting her from the @ suggestions, and make the field exactly: "Hi @Ava Chen". The task will finish automatically when done.'
+  ui_copy: 'Comment (supports @mentions). Target: Hi @Ava Chen'
+  setup_description: |-
+    You are on a centered “Comment” card built with Material UI.
+
+    - Target component: a **composite mentions input** implemented using:
+      - MUI **TextField** (multiline) as the text entry
+      - An anchored MUI **Popper** that renders a **Menu/List** of suggestions when '@' is typed
+    - The field label is **Comment** and the placeholder says “Type @ to mention”.
+    - When the caret is in the field and you type **@**, the Popper opens below the field, listing 6 teammates:
+      - Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim
+    - Clicking a suggestion inserts a mention token “@Full Name” into the text.
+    - A small helper line under the TextField reads “Detected mentions: …” and updates based on selections.
+    - Initial state: Comment is empty; Popper is closed.
+
+    No other interactive elements exist.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single field with a short Popper list; basic mention insertion.
+  success_trigger:
+    human_readable:
+    - 'Comment field text must be exactly: "Hi @Ava Chen" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Ava Chen].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Hi @Ava Chen
+        mentions:
+        - id: ava
+          label: Ava Chen
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing "@Ava Chen" manually without selecting from the Popper list.
+  - Selecting a different teammate or leaving extra punctuation.
+  - Leaving the Popper open with no insertion.
+  expected_interaction_path:
+  - Click Comment TextField → type "Hi " → type '@' → click 'Ava Chen' in Popper list → verify text and Detected mentions.
+  notes: 'Composite implementation note: built from MUI TextField and Popper primitives; see MUI TextField and Popper docs.'
+- id: mentions_input-mui-T02
+  name: 'MUI update: thank Maya'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper (composite mentions)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the Update field, mention Maya Rivera by selecting her from the @ suggestions, and make the field exactly: "Thanks @Maya Rivera!" The task will finish automatically when done.'
+  ui_copy: 'Update: Thanks @Maya Rivera!'
+  setup_description: |-
+    You are on a “Release notes” card.
+
+    - Target component: one composite mentions input (MUI TextField multiline + Popper suggestions) labeled **Update**.
+    - Typing **@** opens a Popper suggestions list with 8 people:
+      Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks.
+    - Selecting an option inserts “@Full Name” at the caret and updates the “Detected mentions” helper text.
+    - Initial state: Update is empty.
+
+    A grey, non-interactive preview box on the right shows “This is only a preview” (distractor).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single mention plus a short sentence; low ambiguity in the suggestions list.
+  success_trigger:
+    human_readable:
+    - 'Update field text must be exactly: "Thanks @Maya Rivera!" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Maya Rivera].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Thanks @Maya Rivera!
+        mentions:
+        - id: maya
+          label: Maya Rivera
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing the exclamation mark or adding extra punctuation.
+  - Mentioning the wrong teammate or adding additional mentions.
+  - Typing '@Maya Rivera' without selecting from Popper.
+  expected_interaction_path:
+  - Click Update → type "Thanks " → '@' select Maya Rivera → type "!" → verify helper line.
+  notes: Ensure Popper menu options are keyboard-navigable for accessibility (ArrowDown/Enter).
+- id: mentions_input-mui-T03
+  name: 'MUI draft: clear all content'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper (composite mentions, clear adornment)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Draft field so it becomes empty (no text and no mentions). The task will finish automatically when done.
+  ui_copy: 'Draft: clear it completely.'
+  setup_description: |-
+    You are on a “Clear the draft” card.
+
+    - Target component: one composite mentions input labeled **Draft** (MUI TextField multiline).
+    - The Draft field has a visible **clear** icon button inside the input on the right (an InputAdornment with an “X”).
+    - Initial state: Draft contains:
+      "Ping @Liam Ortiz about the regression"
+      and the helper line shows “Detected mentions: Liam Ortiz”.
+    - The Popper suggestions dropdown is closed.
+
+    No other components are required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A visible clear control provides a direct path to the empty state; success is a simple state check.
+  success_trigger:
+    human_readable:
+    - Draft field must be empty (text == "" after whitespace normalization).
+    - Detected mentions must be empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: ''
+        mentions: []
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any character behind (including whitespace/newline).
+  - Removing only part of the text while leaving the mention.
+  - Opening the Popper list but not clearing.
+  expected_interaction_path:
+  - Click the clear (X) icon in Draft (or select-all → Delete) → confirm empty and helper shows no mentions.
+  notes: For the composite, ensure the clear icon has aria-label='Clear' and is included in tab order.
+- id: mentions_input-mui-T04
+  name: 'Bug triage: assign to Sophia'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper/Menu (composite mentions)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Assignee field, type ''@so'' to search, then select Sophia Nguyen from the suggestions so the field becomes exactly: "@Sophia Nguyen". The task will finish automatically when done.'
+  ui_copy: 'Assignee: @Sophia Nguyen'
+  setup_description: |-
+    You are in a “Bug triage” form section (low clutter).
+
+    Form fields (distractors):
+    - Title (read-only text input, already filled)
+    - Severity (select)
+    - A non-functional “Create” button
+
+    Target component:
+    - A composite mentions input labeled **Assignee** (MUI TextField multiline but visually single-line).
+    - Typing **@** opens a Popper with a scrollable list of about 15 people.
+    - The list includes similar “So…” names, e.g., Sofia Navarro and **Sophia Nguyen**.
+    - The Popper filters as you type after '@'.
+
+    Initial state:
+    - Assignee field is empty.
+    - Popper is closed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Filtering yields multiple similar options and the task appears within a form with mild distractors, raising selection interference.
+  success_trigger:
+    human_readable:
+    - 'Assignee field must equal exactly: "@Sophia Nguyen" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Sophia Nguyen].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: '@Sophia Nguyen'
+        mentions:
+        - id: sophia
+          label: Sophia Nguyen
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Sofia Navarro instead of Sophia Nguyen.
+  - Leaving the field as '@so' without selecting a suggestion.
+  - Typing the full text manually without selection.
+  expected_interaction_path:
+  - Click Assignee → type '@so' → choose 'Sophia Nguyen' from filtered Popper list → verify field equals '@Sophia Nguyen'.
+  notes: Use stable data attributes for Popper options to support checker disambiguation among similar 'So...' names.
+- id: mentions_input-mui-T05
+  name: 'Tickets table: open suggestions in the correct row'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField (table-cell) + Popper/Menu (composite mentions)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: 'In the Note field for Ticket #102 (not Ticket #101), type ''@'' so the mention suggestions dropdown opens. Do not select anyone—just leave the dropdown open. The task will finish automatically when done.'
+  ui_copy: 'Tickets table: open @ suggestions in Ticket #102 Note.'
+  setup_description: |-
+    You are looking at a small “Tickets” table (medium clutter because the table has several columns).
+
+    Table:
+    - 2 rows: **Ticket #101** and **Ticket #102**
+    - Columns: ID (static), Status (chip), Owner (static), **Note** (this is the target column)
+
+    Target components (E6=2):
+    - Each row’s **Note** cell contains a composite mentions input (MUI TextField styled to fit in a table cell).
+    - Both Note inputs support typing **@** to open a Popper suggestions dropdown.
+    - Suggestions list (10 options) includes: Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks, Isabella Garcia, Priya Singh.
+
+    Initial state:
+    - Both Note fields are empty and no Popper is open.
+
+    Goal focuses on opening the suggestions overlay in the correct row without selecting anyone.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Small table-cell inputs and multiple similar instances create disambiguation pressure; the agent must open the correct Popper without accidentally selecting an option.
+  success_trigger:
+    human_readable:
+    - 'In the **Ticket #102 – Note** mentions input, the suggestions Popper must be open/visible.'
+    - The query must be exactly '@' (no additional filter characters).
+    - 'No mention should be inserted into Ticket #102’s Note (Detected mentions stays empty).'
+    - 'Ticket #101’s Note must remain untouched (still empty and no open Popper for that row).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        suggestions_open: true
+        active_trigger: '@'
+        query_text: '@'
+        mentions: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'Ticket #102 – Note'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - 'Opening the Popper in Ticket #101’s Note instead of Ticket #102’s Note.'
+  - Selecting any person (which inserts a mention).
+  - Typing additional characters such as '@a' so the query is not exactly '@'.
+  expected_interaction_path:
+  - 'Click inside Ticket #102 Note cell → type ''@'' → ensure Popper opens for that cell and no selection is made.'
+  notes: 'Checker implementation: scope Popper ownership by anchoring element id (e.g., data-owner=''ticket-102-note'') to prevent counting the wrong row''s overlay.'
+- id: mentions_input-mui-T06
+  name: 'Public comment: CC two teammates'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper (2 instances)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Public comment field (not Internal comment), mention Ava Chen and Priya Singh by selecting them from the @ suggestions, and make the field exactly: "CC @Ava Chen and @Priya Singh". The task will finish automatically when done.'
+  ui_copy: 'Public comment: CC @Ava Chen and @Priya Singh'
+  setup_description: |-
+    You are on a “Two-part comment” card with two similar inputs.
+
+    Target components (E6=2):
+    - **Public comment** — composite mentions input (MUI TextField + Popper)
+    - **Internal comment** — composite mentions input (MUI TextField + Popper)
+
+    Both:
+    - Support @mentions via a Popper dropdown.
+    - Share the same 9-person list: Ava Chen, Priya Singh, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks.
+    - Show their own “Detected mentions” helper line.
+
+    Initial state:
+    - Public comment is empty.
+    - Internal comment already contains: “Internal only: working on a fix.” (no mentions).
+
+    Goal targets the Public comment field only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Multiple instances require correct targeting and the agent must complete two mention insertions without affecting the other field.
+  success_trigger:
+    human_readable:
+    - 'Public comment text must be exactly: "CC @Ava Chen and @Priya Singh" (whitespace-normalized).'
+    - 'Public comment detected mentions must be exactly: [Ava Chen, Priya Singh].'
+    - Internal comment must remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: CC @Ava Chen and @Priya Singh
+        mentions:
+        - id: ava
+          label: Ava Chen
+        - id: priya
+          label: Priya Singh
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Public comment
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the text into Internal comment instead of Public comment.
+  - Only one mention is inserted or the wrong teammate is selected.
+  - Typing the names manually without using the Popper selection.
+  - Changing Internal comment.
+  expected_interaction_path:
+  - Click Public comment → type "CC " → '@' select Ava Chen → type " and " → '@' select Priya Singh → verify Internal comment unchanged.
+  notes: For MUI composite, consider rendering each mention as a styled chip/span with data-mention-id to help the checker validate mention insertion even if text matches.
+- id: mentions_input-mui-T07
+  name: 'Dark theme: match reference with two mentions'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper (composite mentions)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Message field match the Reference exactly, including the @mentions. Select the mentioned people from the suggestions. The task will finish automatically when done.
+  ui_copy: Reference shown (dark theme). Match it in Message.
+  setup_description: |-
+    You are on a dark-theme “Copy this message” card built with MUI.
+
+    - Target component: a composite mentions input labeled **Message** (MUI TextField multiline).
+    - Typing **@** opens a Popper suggestions list (8 options): Emma Johnson, Ethan Brooks, Liam Ortiz, Noah Patel, Ava Chen, Maya Rivera, Olivia Kim, Sophia Nguyen.
+    - Right next to the input there is a **Reference** area:
+      - A visual chat bubble showing the desired sentence with highlighted mentions (visual).
+      - Under the bubble, a small monospace line shows the exact text (mixed guidance).
+
+    Initial state: Message is empty; Popper closed.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Mixed guidance reduces ambiguity, but exact punctuation (em dash) and two correct mentions are required in a dark theme.
+  success_trigger:
+    human_readable:
+    - 'Message must match the reference exactly: "Reviewed by @Emma Johnson — ping @Ethan Brooks if blocked." (whitespace-normalized, dash preserved).'
+    - 'Detected mentions must be exactly: [Emma Johnson, Ethan Brooks].'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF_REVIEW_PING_01
+        text: Reviewed by @Emma Johnson — ping @Ethan Brooks if blocked.
+        mentions:
+        - id: emma
+          label: Emma Johnson
+        - id: ethan
+          label: Ethan Brooks
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing the em dash (—) with a hyphen (-) or omitting it.
+  - Mentioning the wrong person or only one person.
+  - Typing '@Emma Johnson' as plain text without selecting from Popper.
+  expected_interaction_path:
+  - Read reference → click Message → type "Reviewed by " → '@' select Emma Johnson → type " — ping " → '@' select Ethan Brooks → type " if blocked." → verify matches.
+  notes: If using typography for the monospace reference line, ensure it is non-editable and not focusable.
+- id: mentions_input-mui-T08
+  name: 'Top-right small: pick Fatima from a long list'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper/Menu (small+compact)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Quick ping field, type ''@f'' to filter, then select Fatima Al-Sayed from the suggestions so the field becomes exactly: "@Fatima Al-Sayed". The task will finish automatically when done.'
+  ui_copy: 'Quick ping: @Fatima Al-Sayed'
+  setup_description: |-
+    You are on a small “Quick mention” card anchored in the **top-right** of the viewport.
+
+    - Target component: one composite mentions input labeled **Quick ping** (MUI TextField).
+    - Scale: **small** and spacing **compact** (smaller padding and smaller Popper items).
+    - Typing **@** opens a Popper dropdown that is **scrollable** and contains ~35 people.
+    - Several names start with “Fa…”, e.g., Farah Ali, Fabian Costa, and **Fatima Al-Sayed**.
+    - Typing after '@' filters the list, but using a short query like '@f' still leaves many results, so scrolling may be necessary.
+
+    Initial state: Quick ping is empty; no Popper is open.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small/compact UI reduces target sizes and a long, scrollable Popper list with many similar prefixes increases search and selection difficulty.
+  success_trigger:
+    human_readable:
+    - 'Quick ping text must be exactly: "@Fatima Al-Sayed" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Fatima Al-Sayed].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: '@Fatima Al-Sayed'
+        mentions:
+        - id: fatima
+          label: Fatima Al-Sayed
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Farah Ali (similar prefix) instead of Fatima Al-Sayed.
+  - Leaving text as '@f' or '@fa' without selecting.
+  - Extra whitespace/newline after the mention.
+  expected_interaction_path:
+  - Click Quick ping → type '@f' (or '@fa') → scroll Popper if needed → click 'Fatima Al-Sayed' → verify final text.
+  notes: For long lists, ensure Popper uses a scroll container with a consistent role (e.g., role='listbox') for accessibility-tree evaluation.
+- id: mentions_input-mui-T09
+  name: 'Confusable names: Ann vs Anna vs Anne'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper/Menu (composite mentions)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Checklist note field, insert a mention for Ann Lee (not Anna or Anne) by selecting Ann Lee from the @ suggestions, and make the text exactly: "Please check with @Ann Lee before merging." The task will finish automatically when done.'
+  ui_copy: 'Checklist note: insert @Ann Lee in the blank.'
+  setup_description: |-
+    You are on a centered “Merge checklist” card.
+
+    - Target component: one composite mentions input labeled **Checklist note**.
+    - The suggestions Popper opens on **@** and contains a short but highly confusable set of names:
+      - Ann Lee
+      - Anna Lee
+      - Anne Lee
+      - (plus a few others: Ava Chen, Noah Patel)
+    - Each suggestion shows the full name; the three options differ by only one letter.
+
+    Initial state:
+    - Checklist note already contains the sentence with a blank gap:
+      "Please check with  before merging."
+      (There are two spaces between “with” and “before”.)
+    - Detected mentions is empty.
+
+    Goal: insert the correct Ann/Anna/Anne mention into the gap.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The dropdown options are extremely confusable (Ann/Anna/Anne) and the mention must be inserted into a specific gap in existing text.
+  success_trigger:
+    human_readable:
+    - 'Checklist note must become exactly: "Please check with @Ann Lee before merging." (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Ann Lee] (not Anna or Anne).'
+    - The mention must be inserted between “with” and “before”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Please check with @Ann Lee before merging.
+        mentions:
+        - id: ann
+          label: Ann Lee
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Anna Lee or Anne Lee (wrong option).
+  - Placing the mention at the end of the sentence instead of in the gap.
+  - Leaving extra spaces around the inserted mention.
+  - Typing '@Ann Lee' manually without selection.
+  expected_interaction_path:
+  - Click between 'with' and 'before' → type '@' → carefully click the 'Ann Lee' option (not Anna/Anne) → clean up spacing → verify final sentence.
+  notes: If possible, render secondary identifiers (e.g., handles) in the Popper list to make the task realistically solvable while still confusable.
+- id: mentions_input-mui-T10
+  name: 'Incident dashboard: match resolution summary'
+  canonical_type: mentions_input
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField + Popper/Menu (3 instances in dashboard)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Resolution summary field (not the other two), make the text match the Reference summary exactly, including the @mentions. Select the mentioned people from the suggestions. The task will finish automatically when done.
+  ui_copy: 'Incident dashboard: Fill Resolution summary to match the reference.'
+  setup_description: |-
+    You are on a busy “Incident dashboard” (high clutter).
+
+    Dashboard elements (distractors):
+    - Left sidebar with nav items (non-functional)
+    - Header with search box and 3 icon buttons
+    - Multiple cards: “Timeline”, “Metrics”, “Participants” (static lists), etc.
+
+    Target components (E6=3):
+    There are **three** composite mentions inputs (MUI TextField + Popper) on different cards:
+    1) **Public reply**
+    2) **Internal note**
+    3) **Resolution summary**  ← target instance
+
+    Each input:
+    - Supports @mentions with the same suggestions list (about 12 people): Ava Chen, Maya Rivera, Priya Singh, Noah Patel, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks, Isabella Garcia, Daniel Park, Carlos Reyes.
+    - Shows “Detected mentions” below it.
+
+    Guidance (mixed):
+    - On the right side of the dashboard there is a “Reference summary” panel that shows the exact sentence to copy:
+      - It is displayed visually as a paragraph, and also as a selectable plain-text line under it.
+
+    Initial state:
+    - Public reply has some placeholder text (not to be changed).
+    - Internal note has placeholder (not to be changed).
+    - Resolution summary is empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: High clutter plus three similar instances drives disambiguation difficulty, while the target message requires three correctly inserted mentions and exact punctuation.
+  success_trigger:
+    human_readable:
+    - Only the Resolution summary input must be changed.
+    - 'Resolution summary text must match the reference exactly: "Resolved with help from @Ava Chen, @Maya Rivera, and @Priya Singh." (whitespace-normalized).'
+    - 'Resolution summary detected mentions must be exactly: [Ava Chen, Maya Rivera, Priya Singh] in order.'
+    - Public reply and Internal note must remain unchanged.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF_RESOLUTION_01
+        text: Resolved with help from @Ava Chen, @Maya Rivera, and @Priya Singh.
+        mentions:
+        - id: ava
+          label: Ava Chen
+        - id: maya
+          label: Maya Rivera
+        - id: priya
+          label: Priya Singh
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Resolution summary
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the correct sentence into Public reply or Internal note instead of Resolution summary.
+  - Missing one mention or changing punctuation (missing comma or period).
+  - Mentions are typed manually without Popper selection events.
+  - Resolution summary contains extra words (e.g., 'ASAP') not in reference.
+  expected_interaction_path:
+  - Locate Resolution summary card → type text and insert 3 mentions via Popper selection → compare to reference panel → verify other inputs unchanged.
+  notes: For robust checking, snapshot the initial values of the non-target instances and assert they remain unchanged.
+- id: mentions_input-mantine-T01
+  name: 'Mantine chat: greet Ava'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover + Combobox (composite mentions)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Message field, mention Ava Chen by selecting her from the @ suggestions, and make the field exactly: "Hi @Ava Chen". The task will finish automatically when done.'
+  ui_copy: 'Message: Hi @Ava Chen'
+  setup_description: |-
+    You are on a centered “Chat message” card built with Mantine.
+
+    - Target component: a **composite mentions input** implemented with Mantine primitives:
+      - Mantine **Textarea** for text entry
+      - Mantine **Popover** for the dropdown container
+      - Mantine **Combobox** (or Autocomplete-like list) for suggestion options
+    - The field label is **Message** and the placeholder says “Type @ to mention”.
+    - When you type **@**, a Popover opens under the textarea with 6 suggestions:
+      Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim.
+    - Selecting an option inserts “@Full Name” into the text and updates a helper line “Detected mentions: …”.
+    - Initial state: Message is empty; Popover closed.
+
+    No other interactive elements exist.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single instance with a short suggestion list; straightforward mention insertion.
+  success_trigger:
+    human_readable:
+    - 'Message text must be exactly: "Hi @Ava Chen" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Ava Chen].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Hi @Ava Chen
+        mentions:
+        - id: ava
+          label: Ava Chen
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the mention as plain text without selecting from the Popover list.
+  - Selecting the wrong person or leaving extra punctuation.
+  expected_interaction_path:
+  - Click Message textarea → type "Hi " → type '@' → click 'Ava Chen' → verify helper line.
+  notes: Mantine Autocomplete is built on top of Combobox, and Popover can be used to position dropdowns; composite mention input should leverage these primitives.
+- id: mentions_input-mantine-T02
+  name: 'Mantine update: thank Noah'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (composite mentions)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the Update field, mention Noah Patel by selecting him from the @ suggestions, and make the field exactly: "Thanks @Noah Patel!" The task will finish automatically when done.'
+  ui_copy: 'Update: Thanks @Noah Patel!'
+  setup_description: |-
+    You are on a “Status update” card.
+
+    - Target component: one composite mentions input labeled **Update** (Mantine Textarea + Popover suggestions).
+    - Typing **@** opens the suggestions Popover with 8 people:
+      Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks.
+    - Selecting a suggestion inserts the mention and updates “Detected mentions”.
+
+    Initial state: Update is empty; no Popover open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: A single mention in a short sentence with a small list of options.
+  success_trigger:
+    human_readable:
+    - 'Update text must be exactly: "Thanks @Noah Patel!" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Noah Patel].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Thanks @Noah Patel!
+        mentions:
+        - id: noah
+          label: Noah Patel
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing the exclamation mark or adding extra characters.
+  - Mentioning the wrong person or not selecting from suggestions.
+  expected_interaction_path:
+  - Click Update → type "Thanks " → '@' select Noah Patel → type "!" → verify mentions helper.
+  notes: Ensure the Popover dropdown uses withinPortal to avoid clipping in some layouts; common Mantine practice.
+- id: mentions_input-mantine-T03
+  name: 'Mantine message: clear existing mention'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (composite mentions) + Clear control'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the Message field so it becomes empty (no text and no mentions). The task will finish automatically when done.
+  ui_copy: 'Message: clear it completely.'
+  setup_description: |-
+    You are on a “Clear message” card.
+
+    - Target component: one composite mentions input labeled **Message** (Mantine Textarea).
+    - A small **Clear** button sits below the textarea (this button only clears the Message field).
+    - Mentions suggestions open in a Popover when typing '@'.
+    - Initial state: Message contains:
+      "Please sync with @Emma Johnson today"
+      and “Detected mentions” shows Emma Johnson.
+
+    No other interactive elements are relevant.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Direct clear control provides a simple path to an empty, easily checkable state.
+  success_trigger:
+    human_readable:
+    - Message must be empty after clearing (text == "" after whitespace normalization).
+    - Detected mentions must be empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: ''
+        mentions: []
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clearing only part of the text and leaving the mention.
+  - Leaving a trailing space/newline.
+  - Opening suggestions without clearing.
+  expected_interaction_path:
+  - Click Clear button (or select-all → Backspace) → verify textarea empty and helper shows no mentions.
+  notes: Clear control should be associated with the textarea via aria-controls for assistive tech.
+- id: mentions_input-mantine-T04
+  name: 'Compact reviewer: search Maya'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover + Combobox (compact spacing)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Reviewer field, type ''@ma'' to search, then select Maya Rivera from the suggestions so the field becomes exactly: "@Maya Rivera". The task will finish automatically when done.'
+  ui_copy: 'Reviewer (compact): @Maya Rivera'
+  setup_description: |-
+    You are on a compact-density “Reviewer” card built with Mantine.
+
+    - Target component: one composite mentions input labeled **Reviewer** (Mantine Textarea styled as a compact single-line input).
+    - Spacing: **compact** (tight padding and smaller line-height).
+    - Typing **@** opens a Popover with a list of 12 people, including similar prefixes:
+      - Maya Rivera, Max Wu, Mia Davis, Emma Johnson, Ethan Brooks, Noah Patel, Olivia Kim, Sophia Nguyen, Ava Chen, Daniel Park, Priya Singh, Carlos Reyes.
+    - The list filters as you type after '@'.
+
+    Initial state: Reviewer is empty; Popover closed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Compact styling reduces target size and the '@ma' query returns multiple similar options, increasing choice interference.
+  success_trigger:
+    human_readable:
+    - 'Reviewer must equal exactly: "@Maya Rivera" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Maya Rivera].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: '@Maya Rivera'
+        mentions:
+        - id: maya
+          label: Maya Rivera
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Max Wu instead of Maya Rivera.
+  - Leaving the query as '@ma' without selection.
+  - Typing the final text without using the dropdown.
+  expected_interaction_path:
+  - Click Reviewer → type '@ma' → select Maya Rivera from filtered list → verify final value.
+  notes: Mantine Combobox supports marking active options via data attributes; expose these for debugging.
+- id: mentions_input-mantine-T05
+  name: 'Settings panel: internal note with two mentions'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (2 instances)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Internal note field (not Public message), mention Liam Ortiz and Olivia Kim by selecting them from the @ suggestions, and make the field exactly: "Loop in @Liam Ortiz and @Olivia Kim." The task will finish automatically when done.'
+  ui_copy: 'Internal note: Loop in @Liam Ortiz and @Olivia Kim.'
+  setup_description: |-
+    You are on a “Notification template” settings panel (low clutter).
+
+    Panel includes a few toggles (distractors) and two message fields:
+
+    Target components (E6=2):
+    1) **Public message** — composite mentions input (Mantine Textarea + Popover suggestions)
+    2) **Internal note** — composite mentions input (Mantine Textarea + Popover suggestions)  ← target instance
+
+    Mentions behavior:
+    - Typing '@' opens a Popover list (9 people): Liam Ortiz, Olivia Kim, Ava Chen, Noah Patel, Maya Rivera, Emma Johnson, Sophia Nguyen, Ethan Brooks, Priya Singh.
+    - Selecting inserts “@Full Name” and updates “Detected mentions”.
+
+    Initial state:
+    - Public message already contains: “We’re looking into this.” (no mentions).
+    - Internal note is empty.
+
+    Goal targets Internal note only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two similar instances plus multiple mention insertions increase disambiguation and partial-completion risk.
+  success_trigger:
+    human_readable:
+    - Only the Internal note field must be updated.
+    - 'Internal note text must equal exactly: "Loop in @Liam Ortiz and @Olivia Kim." (whitespace-normalized).'
+    - 'Internal note detected mentions must be exactly: [Liam Ortiz, Olivia Kim].'
+    - Public message must remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Loop in @Liam Ortiz and @Olivia Kim.
+        mentions:
+        - id: liam
+          label: Liam Ortiz
+        - id: olivia
+          label: Olivia Kim
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Internal note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the sentence into Public message instead of Internal note.
+  - Missing the period at the end.
+  - Only one mention is inserted.
+  - Mentions typed manually without selection.
+  expected_interaction_path:
+  - Click Internal note → type "Loop in " → '@' select Liam Ortiz → type " and " → '@' select Olivia Kim → type "." → verify Public message unchanged.
+  notes: If using Mantine Popover within a settings layout, ensure the dropdown is not clipped by overflow containers (use withinPortal if needed).
+- id: mentions_input-mantine-T06
+  name: 'Dark theme: match reference (pairing request)'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (composite mentions)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Message field match the Reference preview exactly, including the @mentions. Select the mentioned people from the suggestions. The task will finish automatically when done.
+  ui_copy: Reference preview shown (dark). Match it in Message.
+  setup_description: |-
+    You are on a dark-theme “Match the preview” card built with Mantine.
+
+    - Target component: one composite mentions input labeled **Message** (Mantine Textarea).
+    - Typing '@' opens a Popover suggestions list (8 people): Maya Rivera, Liam Ortiz, Ava Chen, Noah Patel, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks.
+    - A **Reference preview** panel is displayed next to the textarea as a dark chat bubble with highlighted mentions.
+      - The reference is shown visually; the agent must reproduce it in the Message input.
+    - Initial state: Message is empty; Popover closed.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Visual reference in dark theme requires careful copying and correct insertion of two mentions with exact punctuation.
+  success_trigger:
+    human_readable:
+    - 'Message must match the reference exactly: "Please ask @Maya Rivera to pair with @Liam Ortiz." (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Maya Rivera, Liam Ortiz].'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF_PAIRING_01
+        text: Please ask @Maya Rivera to pair with @Liam Ortiz.
+        mentions:
+        - id: maya
+          label: Maya Rivera
+        - id: liam
+          label: Liam Ortiz
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving out one of the mentions.
+  - Different wording or punctuation than the reference.
+  - Typing the '@Name' strings without selecting from suggestions.
+  expected_interaction_path:
+  - Look at reference bubble → click Message → type words and insert 2 mentions via Popover selection → ensure final period present.
+  notes: To keep guidance=visual, avoid rendering the reference as an editable text input; render as static text with visual mention highlighting.
+- id: mentions_input-mantine-T07
+  name: 'Bottom-left small: pick Jun from long list'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (small, long list)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the Quick note field, type ''@j'' to filter, then select Jun Ito from the suggestions so the field becomes exactly: "@Jun Ito". The task will finish automatically when done.'
+  ui_copy: 'Quick note: @Jun Ito'
+  setup_description: |-
+    You are on a small “Quick note” card anchored to the **bottom-left** of the viewport.
+
+    - Target component: one composite mentions input labeled **Quick note** (Mantine Textarea).
+    - Scale: **small** (smaller textarea height and smaller dropdown items).
+    - Typing '@' opens a Popover dropdown that contains a **long list** (~40 people) inside a scroll area.
+    - The list contains multiple “Ju…” / “Jo…” names such as Julia Stone, Jordan Lee, and **Jun Ito**.
+    - Typing after '@' filters, but using '@j' still leaves many results, so you may need to scroll within the dropdown.
+
+    Initial state: Quick note is empty; dropdown closed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small targets near the viewport edge plus a long, scrollable list with similar prefixes increase the difficulty of acquiring the correct option.
+  success_trigger:
+    human_readable:
+    - 'Quick note must equal exactly: "@Jun Ito" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Jun Ito].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: '@Jun Ito'
+        mentions:
+        - id: jun
+          label: Jun Ito
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Julia Stone or Jordan Lee instead of Jun Ito.
+  - Leaving the field as '@j' without selection.
+  - Extra trailing spaces/newlines after the mention.
+  expected_interaction_path:
+  - Click Quick note → type '@j' → scroll dropdown if needed → select 'Jun Ito' → verify final text.
+  notes: Mantine Popover positioning near viewport edges should flip/shift automatically; verify it remains reachable for pixel-only agents.
+- id: mentions_input-mantine-T08
+  name: 'Drawer flow: FYI Carlos'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Drawer + Textarea + Popover/Combobox (composite mentions)'
+  task_template: enter_text
+  secondary_template: open_overlay
+  browsergym_goal: 'Open the Edit update drawer, then in the Update message field mention Carlos Reyes by selecting him from the @ suggestions, and make the field exactly: "FYI @Carlos Reyes". The task will finish automatically when done.'
+  ui_copy: 'Edit update drawer: set Update message to FYI @Carlos Reyes'
+  setup_description: |-
+    You start on a simple page with a single action button and a side drawer flow.
+
+    Step to access the component:
+    - There is a button labeled **Edit update**. Clicking it opens a **drawer** from the right side of the screen.
+
+    Inside the drawer (target area):
+    - Target component: one composite mentions input labeled **Update message** (Mantine Textarea).
+    - Typing '@' opens a Popover dropdown anchored to the textarea (still within the drawer).
+    - Suggestions list (10 people): Carlos Reyes, Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks, Priya Singh.
+    - There is also a “Save” button and a “Close” icon in the drawer header — these are distractors; success does **not** require clicking Save.
+
+    Initial state:
+    - Drawer is initially closed.
+    - When opened, Update message is empty and has no mentions.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires a drawer interaction step before the component is reachable and then a mention selection inside a nested overlay (Popover within drawer).
+  success_trigger:
+    human_readable:
+    - The drawer must be open (so the Update message field is accessible).
+    - 'Update message text must be exactly: "FYI @Carlos Reyes" (whitespace-normalized).'
+    - 'Detected mentions must be exactly: [Carlos Reyes].'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: FYI @Carlos Reyes
+        mentions:
+        - id: carlos
+          label: Carlos Reyes
+        container_open: true
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the text in some other field (e.g., Title) and leaving Update message empty.
+  - Mentioning the wrong person or typing without selecting from suggestions.
+  - Closing the drawer before the Update message has the correct content.
+  expected_interaction_path:
+  - Click 'Edit update' → in drawer click Update message → type "FYI " → '@' select Carlos Reyes → verify helper line and keep drawer open.
+  notes: Secondary_template is 'open_overlay' because the drawer is an overlay flow; however primary success is still the mentions input state.
+- id: mentions_input-mantine-T09
+  name: 'Dashboard: postmortem note with two mentions'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (3 instances in dashboard)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Postmortem note field (not the other two), mention Isabella Garcia and Daniel Park by selecting them from the @ suggestions, and make the field exactly: "Follow up with @Isabella Garcia and @Daniel Park." The task will finish automatically when done.'
+  ui_copy: 'Incident follow-up dashboard: Fill Postmortem note.'
+  setup_description: |-
+    You are on a busy “Incident follow-up” dashboard (high clutter).
+
+    Distractors:
+    - Sidebar navigation, header actions, several non-interactive metric cards, a long activity feed.
+
+    Target components (E6=3):
+    There are three composite mentions inputs (Mantine Textarea + Popover suggestions) placed in different cards:
+    1) **Customer reply**
+    2) **Internal note**
+    3) **Postmortem note**  ← target instance
+
+    All three:
+    - Support '@' mention suggestions with a shared list (12 people):
+      Isabella Garcia, Daniel Park, Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim, Sophia Nguyen, Ethan Brooks, Priya Singh, Carlos Reyes.
+    - Have their own “Detected mentions” helper line.
+
+    Initial state:
+    - Customer reply contains a short placeholder sentence.
+    - Internal note contains another placeholder sentence.
+    - Postmortem note is empty.
+
+    Goal targets Postmortem note only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: High clutter plus multiple similar instances increases disambiguation load, and inserting two mentions with exact punctuation raises precision demands.
+  success_trigger:
+    human_readable:
+    - Only Postmortem note must be changed.
+    - 'Postmortem note text must be exactly: "Follow up with @Isabella Garcia and @Daniel Park." (whitespace-normalized).'
+    - 'Postmortem note detected mentions must be exactly: [Isabella Garcia, Daniel Park].'
+    - Customer reply and Internal note must remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        text: Follow up with @Isabella Garcia and @Daniel Park.
+        mentions:
+        - id: isabella
+          label: Isabella Garcia
+        - id: daniel
+          label: Daniel Park
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Postmortem note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Customer reply or Internal note instead of Postmortem note.
+  - Leaving out one of the mentions, or mentioning the wrong person.
+  - Typing the names without selecting from the suggestion Popover.
+  - Altering punctuation (missing final period).
+  expected_interaction_path:
+  - Find Postmortem note card among clutter → type "Follow up with " → '@' select Isabella Garcia → type " and " → '@' select Daniel Park → type "." → verify other inputs unchanged.
+  notes: Add a consistent heading/aria-label for each card so agents can disambiguate instances via the accessibility tree.
+- id: mentions_input-mantine-T10
+  name: 'Top-left form: match two-line announcement'
+  canonical_type: mentions_input
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Textarea + Popover/Combobox (composite mentions)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Announcement text field, make the text match the Sample announcement exactly (including the line break) and select the mentioned people from the @ suggestions. The task will finish automatically when done.
+  ui_copy: 'Announcement text: match the sample (two lines).'
+  setup_description: |-
+    You are on a “Slack announcement” form section positioned near the **top-left** of the viewport (low clutter).
+
+    Form context (distractors):
+    - Channel (select, read-only)
+    - Send at (date/time, disabled)
+    - A non-functional “Send” button
+
+    Target component:
+    - One composite mentions input labeled **Announcement text** (Mantine Textarea).
+    - Typing '@' opens a Popover suggestions list: Ava Chen, Noah Patel, Maya Rivera, Liam Ortiz, Emma Johnson, Olivia Kim.
+    - Selecting from the list inserts “@Full Name” and updates “Detected mentions”.
+
+    Guidance (mixed):
+    - On the right, a “Sample announcement” panel shows the exact text to copy:
+      - visually in a message bubble
+      - and as a plain-text sample with line breaks preserved
+
+    Initial state: Announcement text is empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires copying a multi-line reference exactly and inserting three mentions with precise punctuation and line breaks.
+  success_trigger:
+    human_readable:
+    - Announcement text must match the sample exactly, including the line break between the two lines.
+    - |-
+      Expected text (with newline):
+        Great work @Ava Chen!
+        Thanks @Noah Patel and @Maya Rivera.
+    - 'Detected mentions must be exactly: [Ava Chen, Noah Patel, Maya Rivera].'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: REF_SLACK_ANNOUNCE_01
+        text: |-
+          Great work @Ava Chen!
+          Thanks @Noah Patel and @Maya Rivera.
+        mentions:
+        - id: ava
+          label: Ava Chen
+        - id: noah
+          label: Noah Patel
+        - id: maya
+          label: Maya Rivera
+      tolerance:
+        normalize_line_endings: true
+        ignore_trailing_whitespace: true
+        require_mention_selection_event: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing the newline with a space (single-line message).
+  - Missing one of the mentions or mentioning someone else.
+  - Typing the '@Name' strings without selecting from suggestions.
+  - Extra trailing punctuation or extra whitespace on either line.
+  expected_interaction_path:
+  - Use sample panel → click Announcement text → type first line and insert Ava mention → press Enter for newline → type second line and insert Noah + Maya mentions → verify line break and mentions list.
+  notes: For checker robustness, normalize CRLF vs LF line endings but keep the newline as semantically significant.

@@ -1,0 +1,1866 @@
+- id: menubar-antd-T01
+  name: Activate Reports tab (top navigation)
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (mode=''horizontal'')'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the top menu bar, select “Reports” so it becomes the active tab. The task will finish automatically
+    when done.
+  ui_copy: 'Top menu bar: Home · Projects · Reports · Settings · Help (Reports should be active)'
+  setup_description: |
+    Layout: isolated_card, centered in the viewport.
+    A header-style card contains an Ant Design horizontal Menu with five items: Home, Projects, Reports, Settings, Help.
+    - Spacing mode: comfortable; component scale: default.
+    - Behavior: clicking an item sets it as the active item (highlight + aria-current).
+    - Initial state: “Home” is active.
+    - No submenus in this task; no extra clutter elements.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single click on a clearly labeled, top-level item with immediate visible highlight feedback.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Reports”.
+    - No other menubar instance is considered (only one exists).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Reports
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - “Projects”, “Settings”, “Help”, or “Home” is active instead of “Reports”.
+  - A submenu is opened but “Reports” is not active.
+  expected_interaction_path: Click “Reports” in the horizontal menu.
+  notes: 'Instrumentation: expose activeKey/selectedKeys from AntD Menu or detect aria-current / selected class on the “Reports”
+    item.'
+- id: menubar-antd-T02
+  name: Choose Help → Keyboard shortcuts
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (mode=''horizontal'') with SubMenu'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Help” menu in the top menu bar and click “Keyboard shortcuts”. The task will finish automatically
+    when done.
+  ui_copy: 'Help menu contains: Documentation, Keyboard shortcuts, Contact support'
+  setup_description: |
+    Layout: isolated_card, centered.
+    The header card contains an Ant Design horizontal Menu with items: Home, Projects, Reports, Settings, and a SubMenu labeled “Help”.
+    - Clicking “Help” opens a dropdown submenu directly under the menubar.
+    - Submenu items (in order): Documentation, Keyboard shortcuts, Contact support.
+    - Initial state: “Home” active; no menus open.
+    - Selecting a submenu item highlights it as the current selection and closes the dropdown.
+    - No other clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: One submenu layer with three clearly named options; selection is immediately reflected by highlight/state.
+  success_trigger:
+    human_readable:
+    - The selected menu path is Help → Keyboard shortcuts (the leaf item is selected).
+    - If the menu closes after selection, that is acceptable as long as the selection state is correct.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Help
+        - Keyboard shortcuts
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Help menu is opened but no submenu item is selected.
+  - A different Help submenu item (Documentation/Contact support) is selected.
+  - A different top-level menu is opened or selected.
+  expected_interaction_path: Click “Help” → click “Keyboard shortcuts”.
+  notes: 'Checker: read AntD Menu selectedKeys and the parent SubMenu key to reconstruct selected_path.'
+- id: menubar-antd-T03
+  name: Turn on View → Show grid
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (mode=''horizontal'') with SubMenu + checkable Menu.Items'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the top menu bar, open “View” and turn ON “Show grid”. The task will finish automatically when done.
+  ui_copy: 'View menu: Show grid [toggle], Show rulers [toggle], Snap to guides [toggle]'
+  setup_description: |
+    Layout: form_section (a mock “Editor settings” section) with a header menubar at the top of the section.
+    - The Ant Design horizontal Menu includes: File, Edit, View (SubMenu), Help.
+    - Opening “View” reveals a dropdown with three checkable items:
+        • Show grid (initially OFF)
+        • Show rulers (initially ON)
+        • Snap to guides (initially OFF)
+    - Each checkable item shows a checkmark indicator when ON.
+    - Clutter (low): below the menubar there is a read-only form preview (Title input, Description textarea) but it does not affect success.
+    - Feedback: toggling updates the checkmark immediately; no Apply button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires opening a submenu and toggling a single labeled option with immediate visible checkmark feedback.
+  success_trigger:
+    human_readable:
+    - The toggle state for “Show grid” is ON.
+    - Other toggles may remain in their initial states.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        toggle_states:
+          Show grid: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - “Show grid” remains OFF.
+  - The agent toggles a different option (e.g., turns OFF “Show rulers”) without turning ON “Show grid”.
+  - The View menu is opened but no toggle state changes.
+  expected_interaction_path: Click “View” → click “Show grid” once to enable it.
+  notes: 'Checker: represent toggle_states by reading checked indicators associated with each menu item label.'
+- id: menubar-antd-T04
+  name: Open Tools menu (leave it open)
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (mode=''horizontal'') with SubMenu (open state)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the “Tools” menu in the top menu bar so its dropdown is visible. Do not select any item. The task
+    will finish automatically when done.
+  ui_copy: 'Tools menu dropdown should be open (items: Import…, Export…, Extensions)'
+  setup_description: |
+    Layout: isolated_card anchored at the top-left of the viewport (placement=top_left).
+    The card contains an Ant Design horizontal Menu with items: Dashboard, Tools (SubMenu), Account.
+    - Tools dropdown items: Import…, Export…, Extensions.
+    - Interaction: Tools opens on click (triggerSubMenuAction='click') for predictability.
+    - Initial state: no dropdown is open; Dashboard is the active item.
+    - No clutter elements.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Only requires opening a single dropdown; success is visible via the open menu panel.
+  success_trigger:
+    human_readable:
+    - The Tools submenu dropdown is open/expanded (open_path includes “Tools”).
+    - No specific menu item needs to be selected.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open_path:
+        - Tools
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different dropdown is open instead of Tools.
+  - The Tools dropdown opens but then closes before the final state is checked.
+  - An item inside Tools is selected (selection is not required).
+  expected_interaction_path: Click “Tools” once to open the dropdown and stop.
+  notes: 'Checker: consider submenu open if the dropdown element for Tools is mounted and visible (e.g., aria-expanded=true
+    on the Tools trigger).'
+- id: menubar-antd-T05
+  name: File → Export → CSV
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (horizontal) with nested SubMenu'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the top menu bar, open “File”, then go to “Export”, and choose “CSV”. The task will finish automatically
+    when done.
+  ui_copy: 'File > Export submenu includes: CSV, Excel, PDF'
+  setup_description: |
+    Layout: isolated_card, centered.
+    Ant Design horizontal Menu with top-level items: File (SubMenu), Edit (SubMenu), View (SubMenu), Help (SubMenu).
+    - File dropdown items: New…, Open…, Export (SubMenu), Exit.
+    - Export submenu (second level) items: CSV, Excel, PDF.
+    - Interaction: submenus open on click (triggerSubMenuAction='click') to reduce accidental hover.
+    - Initial state: no menus open; active tab is “File” NOT selected (Home-like default is outside the menubar and ignored).
+    - No clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires navigating a two-level submenu path and selecting the correct leaf among similar export formats.
+  success_trigger:
+    human_readable:
+    - The selected menu path is File → Export → CSV.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - File
+        - Export
+        - CSV
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different export format (Excel or PDF).
+  - Opening File and Export but not clicking any leaf item.
+  - Choosing an item under a different top-level menu (Edit/View/Help).
+  expected_interaction_path: Click File → click Export → click CSV.
+  notes: 'Checker: reconstruct selected_path from the last activated leaf and its ancestor submenu keys.'
+- id: menubar-antd-T06
+  name: Go to Settings section (dark theme header)
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (mode=''horizontal'') in Layout.Header'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Using the top menu bar, go to “Settings”. The task will finish automatically when done.
+  ui_copy: 'Top menu bar (dark): Overview · Billing · Settings · Help'
+  setup_description: |
+    Layout: isolated_card, centered.
+    Theme: dark; spacing: comfortable; component scale: default.
+    The card contains an Ant Design horizontal Menu with items: Overview, Billing, Settings, Help.
+    - Clicking an item changes the active menu key (highlight/underline + aria-current).
+    - Initial state: “Overview” is active.
+    - No other interactive clutter; the goal is purely to activate the correct menubar item in dark theme.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Simple top-level selection in a dark-themed menubar; difficulty is primarily contrast/visual robustness
+      rather than multi-step interaction.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Settings”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Settings
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - “Overview”, “Billing”, or “Help” is active instead of “Settings”.
+  - Opening a dropdown (if any) without making “Settings” active.
+  expected_interaction_path: Click “Settings” in the header menu.
+  notes: 'Checker: use selectedKeys/activeKey from the Menu or CSS selected state; ignore any changes in the settings form
+    below.'
+- id: menubar-antd-T07
+  name: Select Integrations from an overflowed menubar
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (horizontal) with responsive overflow'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the top menu bar, select “Integrations”. If it’s not visible, use the menubar’s overflow (“More”) to
+    find it. The task will finish automatically when done.
+  ui_copy: Top menu bar has many items; some may be under “More”
+  setup_description: |
+    Layout: isolated_card, centered, but the menubar container is intentionally narrow to force horizontal overflow.
+    - Spacing: compact (reduced padding between items).
+    - Ant Design horizontal Menu contains many top-level items (e.g., Overview, Projects, Teams, Analytics, Reports, Billing, Settings, Integrations, Help).
+    - When there is not enough horizontal space, AntD moves trailing items into an overflow submenu labeled “More” (overflowedIndicator).
+    - Initial state: “Overview” is active; “Integrations” is NOT visible in the top row (it is inside “More”).
+    - No other clutter; focus is on locating and selecting the hidden item.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires recognizing overflow behavior and finding a hidden target among many similarly styled top-level
+      items.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Integrations”, even if it is reached via the “More” overflow menu.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Integrations
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening “More” but not selecting “Integrations”.
+  - Selecting a neighboring item in the overflow list (e.g., Settings or Help).
+  - Scrolling the page (if possible) without changing the menubar active item to “Integrations”.
+  expected_interaction_path: Click “More” → click “Integrations” → verify it becomes active.
+  notes: 'Checker: treat “More” as a menubar-internal overflow; active_item should reflect the selected logical item, not
+    the overflow container.'
+- id: menubar-antd-T08
+  name: 'Secondary menubar: Help → About'
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (horizontal) with SubMenu (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: There are two menu bars on the page. In the menu bar labeled “Secondary (Preview)”, open “Help” and click
+    “About”. The task will finish automatically when done.
+  ui_copy: 'Menubar labels: Primary (Header) and Secondary (Preview). Use Secondary (Preview).'
+  setup_description: |
+    Layout: isolated_card, centered.
+    Two Ant Design horizontal menubars are visible one above the other, each with a label directly above it:
+    1) “Primary (Header)” menubar
+    2) “Secondary (Preview)” menubar   ← target instance
+    Both menubars have similar top-level items and a Help submenu.
+    - Secondary (Preview) Help submenu items: Documentation, About (target), Report a bug.
+    - Primary (Header) Help submenu items: Documentation, Release notes, Contact.
+    - Initial state: both menubars have “Home” active; no dropdowns open.
+    - There are no other page controls; the challenge is choosing the correct labeled menubar instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The core challenge is selecting the correct menubar instance; both contain similar menu structures and
+      the wrong instance change must not count.
+  success_trigger:
+    human_readable:
+    - In the menubar instance labeled “Secondary (Preview)”, the selected path is Help → About.
+    - Changes to the “Primary (Header)” menubar do not count.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Help
+        - About
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary (Preview)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Help → About selected in the Primary (Header) menubar instead of Secondary (Preview).
+  - Opening Help in Secondary (Preview) but selecting a different item (Documentation/Report a bug).
+  - Selecting About anywhere outside the menubar (e.g., in page content).
+  expected_interaction_path: Locate the “Secondary (Preview)” label → click Help → click About.
+  notes: 'Instrumentation: assign stable IDs to each menubar root (e.g., data-testid=''menubar-primary'', ''menubar-secondary'')
+    and ensure checker reads selection per instance.'
+- id: menubar-antd-T09
+  name: Match the shield icon menu (Security)
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (horizontal) with icons'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Look at the small reference icon labeled “Target icon” on the page (a shield). In the top menu bar, click
+    the menu item that uses the same shield icon (“Security”). The task will finish automatically when done.
+  ui_copy: 'Target icon: [shield]. Click the “Security” menu item (shield icon).'
+  setup_description: |
+    Layout: isolated_card placed in the bottom-right of the viewport (placement=bottom_right).
+    The card contains an Ant Design horizontal Menu where each item has a left icon:
+    - Overview (home icon)
+    - Activity (pulse icon)
+    - Security (shield icon)   ← target
+    - Integrations (plug icon)
+    - Help (question icon)
+    Guidance (mixed): above the menubar is a small “Target icon” swatch showing the shield icon.
+    - Initial state: Overview is active.
+    - No submenus; clicking an item makes it active.
+    - Icons are visually similar in size and weight; label text is present but the task references both the icon and the label.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires matching a visual reference icon among multiple icon-labeled items and operating in a corner placement.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Security”.
+    - The active item’s icon matches the reference (shield).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Security
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking a different icon item (Overview/Activity/Integrations/Help).
+  - Only hovering the Security item without activating/selecting it.
+  - Activating Security in a non-menubar control (if present).
+  expected_interaction_path: Find the shield reference → click “Security” in the menubar.
+  notes: 'Checker: verify active item label “Security”; optionally verify its icon slot/testid matches the reference icon
+    id.'
+- id: menubar-antd-T10
+  name: Admin → Permissions → Role templates (hover submenus, dark+compact)
+  canonical_type: menubar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Menu (horizontal) with multi-level SubMenu (hover trigger)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the top menu bar, open “Admin”, then open “Permissions”, and click “Role templates”. The task will finish
+    automatically when done.
+  ui_copy: Admin menu contains a nested Permissions submenu; choose Role templates
+  setup_description: |
+    Layout: isolated_card, centered.
+    Theme: dark. Spacing: compact (reduced padding and smaller hit areas).
+    The Ant Design horizontal Menu includes top-level items: Dashboard, Admin (SubMenu), Help.
+    - Admin dropdown (level 1) items: Users, Teams, Permissions (SubMenu), Audit log.
+    - Permissions submenu (level 2) items: Roles, Role templates (target), API scopes.
+    - Interaction: submenus use the common “hover to open” behavior (triggerSubMenuAction='hover') so the second-level submenu opens when the pointer moves over “Permissions”.
+    - Initial state: Dashboard is active; no dropdowns open.
+    - No other clutter; difficulty comes from compact spacing + hover-driven multi-level layering.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Compact dark menubar with hover-triggered nested submenus increases pointer control demands and overlay
+      layering complexity.
+  success_trigger:
+    human_readable:
+    - The selected menu path is Admin → Permissions → Role templates.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Admin
+        - Permissions
+        - Role templates
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Roles or API scopes instead of Role templates.
+  - Opening Admin but never opening Permissions submenu (partial path).
+  - Opening Permissions submenu but not clicking Role templates before menus close.
+  expected_interaction_path: Hover/click Admin to open → hover Permissions to open nested submenu → click Role templates.
+  notes: 'Checker: selected_path should be derived from the activated leaf. Also log whether hover events were needed for
+    analysis of action-space robustness.'
+- id: menubar-mui-T01
+  name: Go to Analytics (AppBar buttons)
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar + Toolbar + Button (menubar composite)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Using the top app menu bar, go to “Analytics”. The task will finish automatically when done.
+  ui_copy: 'App menu bar: Home · Projects · Analytics · Settings'
+  setup_description: |
+    Layout: isolated_card, centered.
+    A mock application header is built with MUI AppBar and Toolbar. Inside the Toolbar are four text buttons acting as a menubar:
+    Home, Projects, Analytics, Settings.
+    - Clicking a button sets it as the active section (visual underline + aria-current on the active button).
+    - Initial state: Home is active.
+    - No dropdown menus in this task; no additional clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single click on a clearly labeled header button with immediate active-state feedback.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Analytics”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Analytics
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Home/Projects/Settings is active instead of Analytics.
+  - Opening any popover menu (not required) without activating Analytics.
+  expected_interaction_path: Click “Analytics” in the AppBar.
+  notes: 'Instrumentation: treat the Toolbar button group as a menubar instance (data-testid=''menubar-main''); determine
+    active_item via aria-current or selected styling.'
+- id: menubar-mui-T02
+  name: Account → Profile
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar + Toolbar + Button + Menu + MenuItem'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Look at the small “Target icon” on the page (a person silhouette). In the top app menu bar, open “Account”
+    and click the menu item with that icon (“Profile”). The task will finish automatically when done.
+  ui_copy: 'Target icon: [person]. Account menu items: Profile (person), Billing (card), Sign out (door).'
+  setup_description: |
+    Layout: isolated_card, centered.
+    The header is built with MUI AppBar/Toolbar. The menubar has buttons: Dashboard, Reports, Account (dropdown).
+    Guidance (mixed): above the menubar is a small “Target icon” chip showing a person silhouette.
+    - Clicking “Account” opens a MUI Menu popover anchored below the button.
+    - Menu items include left icons:
+        • Profile (person icon)   ← target
+        • Billing (credit-card icon)
+        • Sign out (door/exit icon)
+    - Initial state: Dashboard is active; no menu open.
+    - Selecting a menu item closes the popover and sets the selected_path (Account → <item>).
+    - No other clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening a dropdown and matching the target by icon+label among a small set of visually similar
+      menu items.
+  success_trigger:
+    human_readable:
+    - The selected menu path is Account → Profile.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Account
+        - Profile
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Account menu opened but no item selected.
+  - Selecting Billing or Sign out instead of Profile.
+  - Clicking a non-menubar Profile link in page content (if present).
+  expected_interaction_path: Click Account → click Profile.
+  notes: 'Checker: track last activated MenuItem under the Account button; optionally verify the selected item''s icon id
+    matches the reference icon.'
+- id: menubar-mui-T03
+  name: Turn OFF View → Dense mode
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar/Toolbar + Button + Menu (checkable MenuItems)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Open the “View” menu in the top app menu bar and turn OFF “Dense mode”. The task will finish automatically
+    when done.
+  ui_copy: 'View menu: Dense mode [ON], Show line numbers [OFF], Wrap text [ON]'
+  setup_description: |
+    Layout: isolated_card, centered.
+    MUI AppBar/Toolbar menubar with buttons: File, Edit, View (dropdown), Help.
+    - Clicking “View” opens a MUI Menu popover.
+    - Inside the View menu are three checkable items with a checkbox indicator on the left:
+        • Dense mode (initially ON)   ← target is to turn it OFF
+        • Show line numbers (initially OFF)
+        • Wrap text (initially ON)
+    - Toggling an item updates its checkbox indicator immediately; no Apply button.
+    - Initial state: no menus open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single toggle within a small dropdown; requires noticing checkbox state and changing it once.
+  success_trigger:
+    human_readable:
+    - The toggle state for “Dense mode” is OFF.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        toggle_states:
+          Dense mode: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dense mode remains ON.
+  - Toggling other items without turning OFF Dense mode.
+  - Closing the menu without changing the toggle state.
+  expected_interaction_path: Click View → click Dense mode to uncheck it.
+  notes: 'Checker: read checkbox/aria-checked state for the Dense mode MenuItem.'
+- id: menubar-mui-T04
+  name: Open Tools menu (popover visible, top-right placement)
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar/Toolbar + Button + Menu'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the “Tools” menu in the top app menu bar so its dropdown is visible. Do not select any item. The task
+    will finish automatically when done.
+  ui_copy: 'Tools menu dropdown should be open (items: Import, Export, Extensions)'
+  setup_description: |
+    Layout: isolated_card placed near the top-right of the viewport (placement=top_right).
+    The card contains a compact app header built with MUI AppBar/Toolbar.
+    - Menubar buttons: Tools (dropdown), View (dropdown), Help (dropdown).
+    - Tools dropdown items: Import, Export, Extensions.
+    - Initial state: no dropdown is open.
+    - Feedback: opening Tools renders a Popover/Menu panel anchored under the Tools button.
+    - No clutter elements.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Still a single-step disclosure, but corner placement can affect target acquisition and visibility of the
+      anchored popover.
+  success_trigger:
+    human_readable:
+    - The Tools dropdown menu is open/visible (open_path includes “Tools”).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open_path:
+        - Tools
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different dropdown (View/Help) is open instead of Tools.
+  - Tools menu opens and then closes before the check occurs.
+  - Selecting an item inside Tools (not required).
+  expected_interaction_path: Click Tools and stop when the menu is open.
+  notes: 'Checker: open if aria-expanded=true on Tools trigger and the Menu popover is visible.'
+- id: menubar-mui-T05
+  name: Match star icon (Favorites)
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar + Toolbar + IconButton/TextButton (menubar composite)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Look at the “Target icon” shown on the page (a star). In the top app menu bar, click the menu item with
+    the same star icon (“Favorites”). The task will finish automatically when done.
+  ui_copy: 'Target icon: ★. Click Favorites (★) in the app menu bar.'
+  setup_description: |
+    Layout: isolated_card, centered.
+    A MUI AppBar/Toolbar menubar includes mixed icon+text buttons:
+    - Home (house icon)
+    - Favorites (star icon)   ← target
+    - Notifications (bell icon)
+    - Settings (gear icon)
+    Above the menubar, a small reference chip labeled “Target icon” displays the star icon.
+    - Initial state: Home is active.
+    - Clicking a button sets it active (underline + aria-current).
+    - No dropdown menus; focus is icon matching and correct activation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires matching a visual reference icon among similar icon+label buttons and activating the correct one.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Favorites”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Favorites
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking another icon button (Notifications/Settings/Home).
+  - Only opening hover tooltips without activating Favorites.
+  - Activating Favorites outside the menubar (if a sidebar also contains it).
+  expected_interaction_path: Find the star reference → click Favorites in the toolbar.
+  notes: 'Checker: active_item via aria-current on the Favorites button; optionally verify icon id matches reference.'
+- id: menubar-mui-T06
+  name: Reports → Monthly summary (dashboard clutter)
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar/Toolbar + Button + Menu + MenuItem'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the top app menu bar, open “Reports” and select “Monthly summary”. The task will finish automatically
+    when done.
+  ui_copy: 'Reports menu: Daily report, Weekly report, Monthly summary, Custom report…'
+  setup_description: |
+    Layout: dashboard.
+    The page shows a busy analytics dashboard with charts and filters. A sticky MUI AppBar at the top contains the menubar.
+    - Menubar buttons: Overview, Reports (dropdown), Alerts (dropdown), Account (dropdown).
+    - Reports dropdown items: Daily report, Weekly report, Monthly summary (target), Custom report….
+    - Initial state: Overview is active; no menus open.
+    - Clutter (medium): the dashboard shows filter chips, a date range picker, and chart cards below the header (not required for success).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Popover selection is straightforward, but dashboard clutter increases the chance of mis-clicks and distractor
+      interaction.
+  success_trigger:
+    human_readable:
+    - The selected menu path is Reports → Monthly summary.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Reports
+        - Monthly summary
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Daily report, Weekly report, or Custom report… instead of Monthly summary.
+  - Opening Reports menu but closing it without selection.
+  - Interacting with dashboard filters/charts without changing the menubar selection.
+  expected_interaction_path: Click Reports → click Monthly summary.
+  notes: 'Checker: record the last clicked MenuItem under Reports as selected_path.'
+- id: menubar-mui-T07
+  name: 'Main header only: go to Settings (two menubars)'
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar/Toolbar (two instances) + Buttons'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: There are two app menu bars on the page. In the one labeled “Main header”, click “Settings”. The task will
+    finish automatically when done.
+  ui_copy: 'Two app headers: Main header and Preview header. Use Main header → Settings.'
+  setup_description: |
+    Layout: isolated_card, centered.
+    Two separate MUI AppBar/Toolbar headers are rendered inside the card, each with a label above it:
+    1) “Main header” (target)
+    2) “Preview header”
+    Both headers contain the same buttons: Home, Settings, Help.
+    - Initial state: Home is active in both headers.
+    - Only the menubar instance labeled “Main header” should be modified for success.
+    - No other interactive clutter in the card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two highly similar headers require careful instance disambiguation; otherwise the interaction is simple.
+  success_trigger:
+    human_readable:
+    - In the menubar instance labeled “Main header”, the active item is “Settings”.
+    - Changing the Preview header does not count.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Settings
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Main header
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Settings in the Preview header instead of the Main header.
+  - Opening Help or another item in either header.
+  - Scrolling or interacting with settings toggles without activating Settings in Main header.
+  expected_interaction_path: Locate “Main header” label → click its Settings button.
+  notes: 'Instrumentation: data-testid=''menubar-main'' and ''menubar-preview''; checker must read active state per instance.'
+- id: menubar-mui-T08
+  name: Overflow “More” → Integrations (dark, small)
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar/Toolbar + IconButton (More) + Menu'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the top app menu bar, select “Integrations”. If it is not visible, open the “More” (three dots) overflow
+    menu to find it. The task will finish automatically when done.
+  ui_copy: Some header items are hidden under More (⋮). Select Integrations.
+  setup_description: |
+    Layout: isolated_card, centered.
+    Theme: dark. Component scale: small (shorter AppBar height and smaller button hit areas).
+    The MUI AppBar menubar contains many buttons; when space is limited, extra buttons are moved into an overflow IconButton with a vertical “More” (⋮) icon.
+    - Visible buttons include: Home, Projects, Reports, Settings.
+    - Hidden under “More” menu: Integrations (target), Developer tools, Help.
+    - Initial state: Home is active; overflow menu is closed.
+    - Clicking “More” opens a MUI Menu listing the hidden items.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small targets in dark theme plus overflow discovery (More menu) increases acquisition difficulty and option
+      search load.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Integrations”, regardless of whether it was reached via overflow.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Integrations
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening More but selecting Developer tools or Help instead of Integrations.
+  - Integrations is never activated (Home/Projects/Reports/Settings remains active).
+  - Clicking elsewhere closes the menu without selecting Integrations.
+  expected_interaction_path: Click More (⋮) → click Integrations → verify Integrations becomes active.
+  notes: 'Checker: active_item should be the logical destination (Integrations), not the overflow control. Instrument overflow
+    IconButton with a stable label.'
+- id: menubar-mui-T09
+  name: 'View settings: enable Show rulers and click Apply'
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: AppBar/Toolbar + Button + Menu (custom content with Apply/Cancel)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open “View settings” in the top app menu bar, turn ON “Show rulers”, then click “Apply”. The task will
+    finish automatically when done.
+  ui_copy: 'View settings menu: Show grid, Show rulers, Wrap text. Buttons: Apply, Cancel.'
+  setup_description: |
+    Layout: settings_panel.
+    A MUI AppBar at the top contains a menubar button labeled “View settings”.
+    Clicking it opens a wide dropdown panel (implemented as a MUI Menu with custom content):
+    - Three toggle rows with checkboxes:
+        • Show grid (initially ON)
+        • Show rulers (initially OFF)  ← target
+        • Wrap text (initially ON)
+    - At the bottom-right of the dropdown are two buttons: “Apply” (primary) and “Cancel”.
+    Important behavior:
+    - Toggling checkboxes changes a “Pending changes” state shown in the panel, but the committed menubar view_state only updates after pressing “Apply”.
+    - Pressing “Cancel” discards pending changes and restores previous committed states.
+    Initial state: committed Show rulers = OFF; dropdown closed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires distinguishing pending vs committed state and pressing an explicit Apply control; missing Apply
+      must not count as success.
+  success_trigger:
+    human_readable:
+    - The committed toggle state for “Show rulers” is ON.
+    - The change is only counted after clicking “Apply” in the View settings dropdown.
+    - 'Optional: the dropdown may close after Apply; either open or closed is acceptable as long as committed state is updated.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_toggle_states:
+          Show rulers: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Show rulers is toggled ON in the UI but Apply is not clicked (pending only).
+  - Clicking Cancel after toggling (committed state remains OFF).
+  - Toggling a different option (Show grid/Wrap text) without committing Show rulers ON.
+  expected_interaction_path: Click View settings → toggle Show rulers ON → click Apply.
+  notes: Checker must read the committed state (not the transient checkbox state) — e.g., from a stored state variable or
+    from a committed label outside the dropdown.
+- id: menubar-mui-T10
+  name: File → Export → PDF (nested popovers)
+  canonical_type: menubar
+  implementation_source: mui
+  implementation_variant: composite_nested
+  implementation_component: 'MUI: AppBar/Toolbar + Menu + MenuList/MenuItem (nested popovers, composite)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the top app menu bar, open “File”, then open “Export”, and click “PDF”. The task will finish automatically
+    when done.
+  ui_copy: File menu contains an Export submenu with PDF/CSV options
+  setup_description: |
+    Layout: isolated_card, centered.
+    The header is built from MUI AppBar/Toolbar. The menubar includes a “File” button that opens a Menu popover.
+    Inside the File menu:
+    - Items: New, Open…, Export ▶, Close
+    - “Export” is implemented as a nested submenu: hovering or focusing “Export” opens a second Menu popover to the right.
+    Export submenu items: PDF (target), CSV.
+    Interaction details:
+    - First-level popover opens on click of “File”.
+    - Second-level submenu opens when the pointer moves over “Export” (or by clicking the “Export” row, depending on implementation).
+    - Selecting a leaf closes popovers and records the selected_path.
+    Initial state: no menus open.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Nested popovers require stable pointer control to keep both menus open while selecting the correct leaf
+      item.
+  success_trigger:
+    human_readable:
+    - The selected menu path is File → Export → PDF.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - File
+        - Export
+        - PDF
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting CSV instead of PDF.
+  - Opening File but not opening Export submenu (partial path).
+  - Export submenu opens but closes before selecting PDF.
+  expected_interaction_path: Click File → open Export submenu → click PDF.
+  notes: This task intentionally uses a composite nested-menu pattern built from MUI primitives (no single native menubar
+    component). Instrument each submenu popover with stable testids for open-state tracking.
+- id: menubar-mantine-T01
+  name: Activate Overview (header links)
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + Group + Buttons/Links (menubar composite)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the top menu bar, select “Overview” so it becomes the active section. The task will finish automatically
+    when done.
+  ui_copy: 'Top menu bar: Overview · Activity · Settings · Help'
+  setup_description: |
+    Layout: isolated_card, centered.
+    A Mantine AppShell-like header is rendered inside a card. The menubar is a Group of clickable header links:
+    Overview, Activity, Settings, Help.
+    - Clicking a link sets it active (underline + aria-current on the active link).
+    - Initial state: Activity is active (so Overview is not already selected).
+    - No dropdown menus; no clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single click on a clearly labeled header link with immediate active-state feedback.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Overview”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Overview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Activity/Settings/Help remains active instead of Overview.
+  - Clicking an unrelated “Overview” control outside the header.
+  expected_interaction_path: Click “Overview” in the header.
+  notes: 'Checker: read aria-current or active class on the Overview header link.'
+- id: menubar-mantine-T02
+  name: Help → Documentation
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + Menu (dropdown) + Menu.Item'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Help” menu in the top menu bar and click “Documentation”. The task will finish automatically
+    when done.
+  ui_copy: 'Help menu items: Documentation, Keyboard shortcuts, Contact support'
+  setup_description: |
+    Layout: isolated_card, centered.
+    The header uses Mantine primitives: a Group of targets, including a Menu labeled “Help”.
+    - Clicking the Help target opens a Mantine Menu dropdown beneath it.
+    - Dropdown items: Documentation (target), Keyboard shortcuts, Contact support.
+    - Initial state: no dropdown open; Overview is active.
+    - Selecting an item closes the dropdown and records the selected_path (Help → <item>).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single dropdown selection with a small set of distinct options.
+  success_trigger:
+    human_readable:
+    - The selected menu path is Help → Documentation.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Help
+        - Documentation
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Help dropdown opens but no item is selected.
+  - Selecting Keyboard shortcuts or Contact support instead of Documentation.
+  - Clicking a Documentation link elsewhere on the page.
+  expected_interaction_path: Click Help → click Documentation.
+  notes: 'Checker: track last activated Menu.Item under Help.'
+- id: menubar-mantine-T03
+  name: Turn ON View → Show sidebar
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu (dropdown) with checkable items'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the top menu bar, open “View” and turn ON “Show sidebar”. The task will finish automatically when done.
+  ui_copy: 'View menu: Show sidebar [OFF], Compact list [ON], Show status bar [OFF]'
+  setup_description: |
+    Layout: isolated_card, centered.
+    Header menubar includes Menu targets: View, Help, and a few direct links.
+    - Clicking “View” opens a Mantine Menu dropdown with three checkable items:
+        • Show sidebar (initially OFF)  ← target
+        • Compact list (initially ON)
+        • Show status bar (initially OFF)
+    - Each item displays a check indicator when enabled.
+    - Initial state: dropdown closed; some unrelated header link is active.
+    - No other clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires opening a dropdown and toggling one labeled option with immediate check indicator feedback.
+  success_trigger:
+    human_readable:
+    - The toggle state for “Show sidebar” is ON.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        toggle_states:
+          Show sidebar: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Show sidebar remains OFF.
+  - Toggling Compact list or Show status bar without enabling Show sidebar.
+  - Closing the dropdown without changing the toggle.
+  expected_interaction_path: Click View → click Show sidebar to enable it.
+  notes: 'Checker: read aria-checked or internal state for the Show sidebar item.'
+- id: menubar-mantine-T04
+  name: Open Projects menu (leave dropdown open)
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu (trigger=''click'') in AppShell.Header'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the “Projects” menu in the top menu bar so its dropdown is visible. Do not select any item. The task
+    will finish automatically when done.
+  ui_copy: 'Projects menu dropdown should be open (items: All projects, Starred, Archived)'
+  setup_description: |
+    Layout: isolated_card, centered.
+    The menubar is a Mantine AppShell.Header-like row containing a Menu labeled “Projects”.
+    - Clicking “Projects” opens a Mantine Menu dropdown.
+    - Items: All projects, Starred, Archived.
+    - Initial state: dropdown closed; Overview link active.
+    - No additional clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Simple disclosure task, but requires leaving the correct dropdown open as the terminal state.
+  success_trigger:
+    human_readable:
+    - The Projects dropdown is open/visible (open_path includes “Projects”).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        open_path:
+        - Projects
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Projects dropdown is closed at the end.
+  - A different menu dropdown is opened instead.
+  - Selecting an item inside Projects (not required).
+  expected_interaction_path: Click Projects once to open the dropdown and stop.
+  notes: 'Checker: open if the dropdown element is mounted and visible; use aria-expanded on the target button if available.'
+- id: menubar-mantine-T05
+  name: Navigate to Billing (form section clutter)
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + Anchor/Buttons (menubar composite)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Using the top menu bar, go to “Billing”. The task will finish automatically when done.
+  ui_copy: 'Top menu bar: Overview · Billing · Usage · Settings (Billing should be active)'
+  setup_description: |
+    Layout: form_section.
+    A “Subscription” form section has a header row implemented with Mantine components (AppShell.Header-like styling).
+    - Menubar links: Overview, Billing, Usage, Settings.
+    - Initial state: Overview is active.
+    - Clicking a link switches the active state and swaps a read-only preview panel below (not required for success).
+    - Clutter (low): the form section includes a couple of disabled inputs and a “Save” button below the header.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Straightforward tab-like navigation, with mild distraction from nearby form controls.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Billing”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Billing
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Overview/Usage/Settings remains active instead of Billing.
+  - Clicking the “Save” button or interacting with form inputs without activating Billing.
+  expected_interaction_path: Click “Billing” in the header links.
+  notes: 'Checker: active link styling/aria-current indicates active_item.'
+- id: menubar-mantine-T06
+  name: Match bell icon menu (Alerts) at bottom-left
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + Buttons with icons'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Look at the “Target icon” shown on the page (a bell). In the top menu bar, click the menu item with the
+    same bell icon (“Alerts”). The task will finish automatically when done.
+  ui_copy: 'Target icon: 🔔. Click Alerts (🔔) in the header menu bar.'
+  setup_description: |
+    Layout: isolated_card positioned in the bottom-left of the viewport (placement=bottom_left).
+    The card shows a Mantine-styled header row with icon+label items:
+    - Inbox (mail icon)
+    - Alerts (bell icon)   ← target
+    - Tasks (checklist icon)
+    - Settings (gear icon)
+    Above the header is a small “Target icon” chip showing the bell icon.
+    - Initial state: Inbox is active.
+    - Clicking an item sets it active (underline + aria-current).
+    - No dropdown menus.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Visual icon matching plus corner placement increases acquisition and disambiguation demands compared to
+      pure text tabs.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Alerts”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Alerts
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Inbox/Tasks/Settings remains active instead of Alerts.
+  - Hovering or focusing Alerts without activating it.
+  - Clicking a bell icon elsewhere on the page (if any).
+  expected_interaction_path: Find the bell reference → click Alerts in the header.
+  notes: 'Checker: active_item derived from aria-current or active class on Alerts; optional icon-id match for analysis.'
+- id: menubar-mantine-T07
+  name: Horizontal scroll header to reach Integrations (compact, small)
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + ScrollArea (horizontal) + Buttons'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the top menu bar, select “Integrations”. If you don’t see it, scroll the menu bar horizontally to find
+    it. The task will finish automatically when done.
+  ui_copy: Header menu is scrollable; Integrations is off-screen to the right
+  setup_description: |
+    Layout: isolated_card, centered.
+    Spacing: compact. Scale: small.
+    The menubar is a horizontally scrollable header row (implemented with Mantine ScrollArea in the header).
+    - Many header items are present: Overview, Projects, Teams, Analytics, Reports, Billing, Settings, Integrations (target), Help.
+    - Due to limited width and small scale, the header shows only the first few items at load; Integrations starts off-screen to the right.
+    - The menu bar itself scrolls horizontally (not the page).
+    - Initial state: Overview active.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires performing horizontal scrolling within the header to reveal an off-screen target, with smaller
+      click targets in compact mode.
+  success_trigger:
+    human_readable:
+    - The menubar’s active item is “Integrations”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        active_item: Integrations
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the header, leaving Integrations unreachable.
+  - Selecting a nearby item (Settings/Help) instead of Integrations.
+  - Revealing Integrations but not activating it.
+  expected_interaction_path: Scroll the header row to the right → click Integrations.
+  notes: 'Checker: active_item based on header item state. Instrument scroll container for analysis (did the agent scroll
+    the correct element?).'
+- id: menubar-mantine-T08
+  name: 'Preview header: Help → About (two menubars)'
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + Menu (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: There are two menu bars on the page. In the menu bar labeled “Preview header”, open “Help” and click “About”.
+    The task will finish automatically when done.
+  ui_copy: 'Two headers: Main header and Preview header. Use Preview header → Help → About.'
+  setup_description: |
+    Layout: isolated_card, centered.
+    Two Mantine-styled headers are visible inside the card, each with a label:
+    1) “Main header”
+    2) “Preview header”   ← target instance
+    Each header has a Help dropdown implemented with Mantine Menu.
+    - Preview header Help items: Documentation, About (target), Keyboard shortcuts.
+    - Main header Help items: Documentation, Release notes, Contact support.
+    - Initial state: both dropdowns closed.
+    - No other page controls; only the correct header instance matters.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two similar header instances with overlapping labels make correct instance selection the primary challenge.
+  success_trigger:
+    human_readable:
+    - In the menubar labeled “Preview header”, the selected path is Help → About.
+    - Selections in the Main header do not count.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Help
+        - About
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Preview header
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Help → About selected in Main header instead of Preview header.
+  - Selecting a different Preview header Help item (Documentation/Keyboard shortcuts).
+  - Opening Help but not selecting About.
+  expected_interaction_path: Locate Preview header → click Help → click About.
+  notes: 'Instrumentation: stable ids per header instance (menubar-main, menubar-preview) are required for the checker.'
+- id: menubar-mantine-T09
+  name: 'Editor header: enable Show line numbers and Save (3 instances)'
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu (custom dropdown with Save/Cancel) across multiple headers'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: There are three menu bars on the page. In the one labeled “Editor header”, open “View settings”, turn ON
+    “Show line numbers”, then click “Save”. The task will finish automatically when done.
+  ui_copy: 'Headers: Main header, Editor header, Preview header. Use Editor header → View settings → Show line numbers → Save.'
+  setup_description: |
+    Layout: drawer_flow.
+    The page simulates an editor opened in a side drawer. Three separate header/menubar instances exist, each with a label:
+    1) Main header (top of page)
+    2) Editor header (top of the drawer)   ← target instance
+    3) Preview header (inside a preview panel)
+    Each header has a dropdown labeled “View settings” implemented with Mantine Menu, but the contents differ.
+    - Editor header View settings dropdown contains:
+        • Show line numbers (initially OFF)  ← target
+        • Wrap lines (initially ON)
+        • Highlight active line (initially OFF)
+      and action buttons at the bottom: “Save” and “Cancel”.
+    Behavior:
+    - Toggling options changes pending state; only “Save” commits the changes for that header.
+    - “Cancel” discards pending changes.
+    Initial state: committed Show line numbers = OFF in Editor header; dropdown closed.
+    There are no additional interactive controls outside the menubars (clutter=none).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: High disambiguation (three similar headers) plus a pending-vs-committed state that requires an explicit
+      Save action.
+  success_trigger:
+    human_readable:
+    - In the menubar labeled “Editor header”, the committed toggle state “Show line numbers” is ON.
+    - The change is only counted after clicking “Save” in the Editor header dropdown.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        committed_toggle_states:
+          Show line numbers: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Editor header
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Turning ON Show line numbers but not clicking Save (pending only).
+  - Clicking Cancel after changing the toggle (committed remains OFF).
+  - Completing the steps in Main header or Preview header instead of Editor header.
+  - Saving but toggling the wrong option (e.g., Wrap lines) while Show line numbers remains OFF.
+  expected_interaction_path: Locate Editor header → open View settings → toggle Show line numbers ON → click Save.
+  notes: Checker must index state by header instance id; require_correct_instance should bind to the Editor header root.
+- id: menubar-mantine-T10
+  name: Admin → API keys (dark dashboard, high clutter)
+  canonical_type: menubar
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: AppShell.Header + right-aligned Menu (Admin) + Menu.Item'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the top menu bar, open “Admin” and click “API keys”. The task will finish automatically when done.
+  ui_copy: 'Admin menu items: Users, Permissions, API keys, Audit log'
+  setup_description: |
+    Layout: dashboard with a sticky header.
+    Theme: light.
+    The top header is built with Mantine AppShell.Header. It contains:
+    - Left: app logo and a few header links (Overview, Reports).
+    - Center: a search input (distractor).
+    - Right: an “Admin” Menu target (dropdown) next to a user avatar menu and notification button (distractors).
+    Admin dropdown items: Users, Permissions, API keys (target), Audit log.
+    - Initial state: Overview active; no dropdown open.
+    - Clutter (high): multiple clickable controls in the header (search input, avatar menu, notifications) plus dashboard widgets below.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: High header clutter and right-aligned controls increase the chance of hitting distractors while opening
+      the correct menu and selecting the target item.
+  success_trigger:
+    human_readable:
+    - The selected menu path is Admin → API keys.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_path:
+        - Admin
+        - API keys
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the user avatar menu or notifications instead of Admin.
+  - Selecting Users, Permissions, or Audit log instead of API keys.
+  - Typing in the search input without selecting Admin → API keys.
+  expected_interaction_path: Click Admin → click API keys.
+  notes: 'Checker: selection should be tied to the Admin dropdown; instrument right-side controls with distinct labels to
+    measure distractor clicks.'

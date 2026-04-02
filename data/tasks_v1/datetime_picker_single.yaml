@@ -1,0 +1,1925 @@
+- id: datetime_picker_single-antd-T01
+  name: AntD basic set datetime (OK confirm)
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the “Meeting date & time” field to February 5, 2026 at 2:30 PM, then click OK to confirm. The task will finish automatically when done.
+  ui_copy: Set the “Meeting date & time” field to February 5, 2026 at 2:30 PM, then click OK to confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered on the page (no other panels).
+    Component: one Ant Design DatePicker configured with showTime (hours+minutes), allowClear enabled.
+    Label above the input: “Meeting date & time”. Placeholder: “Select date and time”.
+    Behavior: clicking the input opens a popover with a month calendar and a time selector. The picker shows an “OK” confirm button (needConfirm=true).
+    Initial state: empty (no datetime selected). No validation constraints.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single default-sized picker with clear text label and visible input value; requires one popover interaction and an OK confirmation.
+  success_trigger:
+    human_readable:
+    - The AntD DatePicker labeled “Meeting date & time” has committed value 2026-02-05 14:30 (local time).
+    - The selection is confirmed via the picker’s OK button (needConfirm).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-05T14:30:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Meeting date & time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing a different field (not applicable here, but must still be checked by label).
+  - Selecting the correct date but leaving the time at a different value.
+  - Setting the correct datetime in the panel but not clicking OK (value not committed).
+  - Typing a datetime that is close but not exactly 2026-02-05 14:30.
+  expected_interaction_path:
+  - Click the “Meeting date & time” input to open the picker popover.
+  - Pick Feb 5, 2026 in the calendar.
+  - Set the time to 2:30 PM in the time selector.
+  - Click OK to commit.
+  notes: |-
+    Instrumentation: expose a stable selector for the input (e.g., data-testid="dt-meeting") and for the OK button in the popover.
+    Checker: read the committed input value/state, not the transient highlighted cell before OK.
+- id: datetime_picker_single-antd-T02
+  name: AntD typed datetime in fixed format
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the “Recorded at” field, enter 2026-02-10 09:15 (24-hour time) and commit the value. The task will finish automatically when done.
+  ui_copy: In the “Recorded at” field, enter 2026-02-10 09:15 (24-hour time) and commit the value. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one Ant Design DatePicker with showTime (hours+minutes). Display/input format is fixed to “YYYY-MM-DD HH:mm”.
+    Typing is enabled in the input; mask-format style segment editing is ON (arrow keys can move between segments).
+    Behavior: needConfirm=false (no OK button); value commits on Enter or blur once a valid datetime is present.
+    Initial state: empty. Under the field, helper text shows the required format: “Format: YYYY-MM-DD HH:mm”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Straightforward single field but requires exact formatted text entry and commit behavior without an explicit OK button.
+  success_trigger:
+    human_readable:
+    - The DatePicker labeled “Recorded at” has value 2026-02-10 09:15 (local time).
+    - No explicit OK is required; the committed input value must match.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-10T09:15:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Recorded at
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the right date but wrong minutes/hours (e.g., 09:05 or 21:15).
+  - Leaving the field in an invalid/partial state (e.g., only date, missing time).
+  - Correct digits typed but not committed (focus never leaves and value not accepted).
+  - Wrong format (slashes, missing leading zeros, or AM/PM text).
+  expected_interaction_path:
+  - Click the “Recorded at” input.
+  - 'Type: 2026-02-10 09:15.'
+  - Press Enter (or click outside) to commit.
+  notes: |-
+    Checker note: parse the input’s displayed value using the configured format “YYYY-MM-DD HH:mm”.
+    AX note: ensure the input has an accessible label association with “Recorded at”.
+- id: datetime_picker_single-antd-T03
+  name: AntD clear an existing datetime
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the “Reminder time” field so it has no date or time selected. The task will finish automatically when done.
+  ui_copy: Clear the “Reminder time” field so it has no date or time selected. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one Ant Design DatePicker with showTime. allowClear=true (a clear “x” icon appears when a value is present).
+    Initial state: the input is pre-filled with “2026-02-03 11:00”. needConfirm=false (clearing commits immediately).
+    No other DatePickers on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single field with built-in clear affordance; success is empty state.
+  success_trigger:
+    human_readable:
+    - The DatePicker labeled “Reminder time” is cleared (empty/null value).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Reminder time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the value to a different datetime instead of clearing it.
+  - Clearing but leaving partial text in the input.
+  - Clearing a different datetime picker (if present in future variants).
+  expected_interaction_path:
+  - Click the clear (×) icon in the “Reminder time” input, or select-all and delete.
+  - Ensure the input shows an empty placeholder.
+  notes: |-
+    Checker: treat empty string / null internal value as cleared. Reject “Invalid date” strings.
+- id: datetime_picker_single-antd-T04
+  name: AntD open the datetime picker overlay
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the date & time picker for “Publish time” so the calendar/time panel is visible, and do not change the value. The task will finish automatically when done.
+  ui_copy: Open the date & time picker for “Publish time” so the calendar/time panel is visible, and do not change the value. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered on the viewport.
+    Component: one Ant Design DatePicker with showTime. allowClear=true but initial value is empty.
+    Behavior: clicking the input opens a popover (calendar + time selector). needConfirm=false (no OK button required for selection), but this task only requires the overlay to be open.
+    Initial state: empty input; placeholder “Select publish time”.
+    No other interactive overlays on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Goal is purely to expose the popover; requires locating the input and triggering the correct overlay.
+  success_trigger:
+    human_readable:
+    - The DatePicker labeled “Publish time” has its picker popover open (calendar/time panel visible).
+    - The committed value remains empty (no accidental selection).
+    canonical_predicate:
+      predicate_type: overlay_open
+      target_state:
+        open: true
+        datetime_local: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Publish time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening a different popover (if any) instead of the “Publish time” picker.
+  - Changing the datetime value while opening the picker.
+  - Focusing the input without the picker panel actually being visible.
+  expected_interaction_path:
+  - Click the “Publish time” input (or its calendar icon) to open the picker popover.
+  - Stop once the panel is visible and the value is still empty.
+  notes: |-
+    Checker: use a stable popover root testid (e.g., data-testid="dt-publish-popover") tied to the Publish time input.
+    Also verify the bound value is still null/empty.
+- id: datetime_picker_single-antd-T05
+  name: AntD match a reference datetime in settings panel
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set “Maintenance window start” to match the reference badge shown in the panel, then click OK to confirm. The task will finish automatically when done.
+  ui_copy: Set “Maintenance window start” to match the reference badge shown in the panel, then click OK to confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel with a left “System Settings” nav and a main content area; the target field is in the main panel.
+    Clutter (low): a few unrelated toggles (Email alerts, Auto-update) and a plain text input (Hostname). None affect success.
+    Target component: one AntD DatePicker with showTime labeled “Maintenance window start”.
+    Guidance: a blue “Reference” badge above the field shows the desired datetime in human format: “Reference: Tue, Feb 17, 2026 · 10:00 AM”.
+    Behavior: needConfirm=true so the picker footer has an OK button. allowClear=true.
+    Initial state: currently set to “2026-02-17 09:00” (one hour off) to prevent no-op success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires using an on-screen reference plus confirming with OK in a mildly cluttered settings panel.
+  success_trigger:
+    human_readable:
+    - The DatePicker labeled “Maintenance window start” equals the reference badge datetime (Tue, Feb 17, 2026 10:00 AM).
+    - The value is committed by clicking OK.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_element_testid: ref-maintenance-start
+        reference_datetime_local: '2026-02-17T10:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Maintenance window start
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the value to 09:00 or 11:00 (near miss).
+  - Matching the date but not the time.
+  - Correct selection in the panel but forgetting to click OK (not committed).
+  - Using a different field in the settings panel (toggles/inputs).
+  expected_interaction_path:
+  - Read the datetime displayed in the Reference badge.
+  - Open the “Maintenance window start” picker.
+  - Select Feb 17, 2026 and set time to 10:00 AM.
+  - Click OK to confirm.
+  notes: |-
+    Instrumentation: add data-testid="ref-maintenance-start" to the reference badge and data-testid="dt-maintenance-start" to the input.
+    Checker can either parse reference badge text or use the known target datetime_local above.
+- id: datetime_picker_single-antd-T06
+  name: AntD set datetime on the correct instance (2 pickers)
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the “Availability” form, set the “End time” field to March 1, 2026 at 6:00 PM, then click OK to confirm. The task will finish automatically when done.
+  ui_copy: In the “Availability” form, set the “End time” field to March 1, 2026 at 6:00 PM, then click OK to confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout: form_section titled “Availability” centered in the viewport.
+    Spacing: comfortable; fields are stacked with clear labels.
+    Instances: 2 datetime pickers (same canonical type) on the page:
+      1) “Start time” (top)
+      2) “End time” (bottom)  ← TARGET
+    Both are AntD DatePicker with showTime and allowClear.
+    Behavior: needConfirm=true (OK button required to commit).
+    Initial state:
+      - Start time: “2026-03-01 09:00”
+      - End time: “2026-03-01 17:00” (currently wrong; must change to 18:00)
+    Clutter (low): a non-interactive hint text about office hours and one unrelated checkbox “Send invite email” (not required).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar DatePickers require correct-instance selection and OK confirmation; otherwise straightforward.
+  success_trigger:
+    human_readable:
+    - Only the “End time” DatePicker is updated to 2026-03-01 18:00 (local time).
+    - The new value is committed via OK.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-03-01T18:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: End time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Updating “Start time” instead of “End time”.
+  - Setting End time to 6:00 AM (AM/PM confusion).
+  - Selecting the correct datetime but not clicking OK to confirm.
+  - Leaving End time at 17:00 or any other value.
+  expected_interaction_path:
+  - Locate the “End time” field (second picker in the Availability section).
+  - Open its picker popover and set date to Mar 1, 2026.
+  - Adjust time to 6:00 PM.
+  - Click OK to commit.
+  notes: |-
+    Checker: ensure it reads the bound value for the End time instance specifically; do not accept changes to Start time.
+- id: datetime_picker_single-antd-T07
+  name: AntD navigate months/years to set far datetime
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Set the “Archive at” field to December 31, 2026 at 11:45 PM. The task will finish automatically when done.
+  ui_copy: Set the “Archive at” field to December 31, 2026 at 11:45 PM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one AntD DatePicker with showTime (hours+minutes), allowClear=true.
+    Behavior: needConfirm=false (no OK button); selection commits when a complete valid datetime is selected and the popover closes/loses focus.
+    Initial state: value is empty.
+    Interaction nuance: target date is far from the currently displayed month, so the user must navigate the calendar header (month/year controls) before selecting the day, then set the time to 23:45 (11:45 PM).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires calendar navigation across months/years and setting time, but no extra clutter or multiple instances.
+  success_trigger:
+    human_readable:
+    - The DatePicker labeled “Archive at” equals 2026-12-31 23:45 (local time).
+    - No OK click is required in this configuration (needConfirm=false).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-12-31T23:45:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archive at
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Dec 31 but leaving the time at the default (e.g., 00:00).
+  - Selecting 11:45 AM instead of 11:45 PM.
+  - Stopping at December 2025 or January 2027 (wrong year).
+  - Leaving the popover open with an uncommitted value.
+  expected_interaction_path:
+  - Open the “Archive at” picker.
+  - Navigate to December 2026 in the calendar header.
+  - Select Dec 31, 2026.
+  - Set time to 11:45 PM and close/blur to commit.
+  notes: |-
+    Checker: accept only the committed value; ignore temporary hover/active date cell before commit.
+- id: datetime_picker_single-antd-T08
+  name: AntD set datetime including seconds (dark theme)
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set “Video publish timestamp” to February 20, 2026 at 7:05:30 PM, then click OK to confirm. The task will finish automatically when done.
+  ui_copy: Set “Video publish timestamp” to February 20, 2026 at 7:05:30 PM, then click OK to confirm. The task will finish automatically when done.
+  setup_description: |-
+    Theme: dark mode.
+    Layout: isolated card centered.
+    Component: one AntD DatePicker with showTime enabled for hours, minutes, AND seconds (format like “YYYY-MM-DD HH:mm:ss”).
+    Behavior: needConfirm=true; an OK button must be clicked to commit the selection.
+    Initial state: “2026-02-20 19:05:00” (seconds currently 00, so the user must adjust seconds to 30).
+    Sub-controls: calendar for the date + a time panel that includes seconds selection.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires second-level precision and explicit confirmation, with reduced contrast in dark theme.
+  success_trigger:
+    human_readable:
+    - The DatePicker labeled “Video publish timestamp” is committed to 2026-02-20 19:05:30 (local time).
+    - OK was used to confirm the seconds-level time.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-20T19:05:30'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Video publish timestamp
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving seconds at 00 or any value other than 30.
+  - Setting 07:05:30 AM instead of PM.
+  - Selecting the correct datetime in the panel but not clicking OK.
+  - Changing the date (must remain Feb 20, 2026).
+  expected_interaction_path:
+  - Open the “Video publish timestamp” picker.
+  - Ensure the date is Feb 20, 2026 (keep as-is if already selected).
+  - In the time panel, set seconds to 30 while keeping 19:05.
+  - Click OK to commit.
+  notes: |-
+    Checker: store datetime with seconds; do not truncate to minute precision.
+    Implementation note: AntD DatePicker uses showTime to add time (and optional seconds) selection; confirmation is via OK when needConfirm is enabled.
+- id: datetime_picker_single-antd-T09
+  name: AntD small/compact dashboard with 3 instances
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: On the “Schedules” dashboard, set the “Backup schedule” datetime to 2026-03-15 06:05, then click OK to confirm. The task will finish automatically when done.
+  ui_copy: On the “Schedules” dashboard, set the “Backup schedule” datetime to 2026-03-15 06:05, then click OK to confirm. The task will finish automatically when done.
+  setup_description: |-
+    Theme: light. Spacing: compact. Scale: small (inputs and icons are reduced).
+    Layout: dashboard with three small cards in a row: Primary schedule, Backup schedule, Staging schedule.
+    Instances: 3 AntD DatePicker(showTime) inputs with identical styling:
+      - “Primary schedule” (left)
+      - “Backup schedule” (center)  ← TARGET
+      - “Staging schedule” (right)
+    Each picker uses format “YYYY-MM-DD HH:mm” and shows an OK confirm button (needConfirm=true).
+    Initial state:
+      - Primary: 2026-03-15 06:05 (already correct but NOT the target instance)
+      - Backup: 2026-03-15 06:00 (must change minutes to 05)
+      - Staging: 2026-03-15 06:05 (distractor correct value)
+    Clutter (medium): the dashboard also contains a small line chart and a “Refresh” button; they do nothing for success.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Three near-identical small pickers plus distractors create high disambiguation and target acquisition difficulty; requires OK confirmation.
+  success_trigger:
+    human_readable:
+    - Only the DatePicker labeled “Backup schedule” is committed to 2026-03-15 06:05.
+    - Other pickers may remain unchanged (even if they already show the target value).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-03-15T06:05:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Backup schedule
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Updating Primary or Staging instead of Backup.
+  - Leaving Backup at 06:00 (or changing the date).
+  - Setting 18:05 (6:05 PM) instead of 06:05.
+  - Selecting the right value but not clicking OK.
+  expected_interaction_path:
+  - Locate the center card labeled “Backup schedule”.
+  - Open its datetime picker and adjust minutes to 05 (keep date and hour).
+  - Click OK to commit.
+  notes: |-
+    Checker: must bind to the instance labeled “Backup schedule”; do not accept matches on other instances even if equal.
+    Instrumentation: add per-instance data-testid (dt-primary, dt-backup, dt-staging).
+- id: datetime_picker_single-antd-T10
+  name: AntD table-cell match reference with OK
+  canonical_type: datetime_picker_single
+  implementation_source: antd
+  implementation_variant: showTime
+  implementation_component: 'AntD: DatePicker (showTime)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the table, set the “Send at” value for Campaign A to match the “Preview send time” shown in the same row, then click OK to confirm. The task will finish automatically when done.
+  ui_copy: In the table, set the “Send at” value for Campaign A to match the “Preview send time” shown in the same row, then click OK to confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout: table_cell scene — a compact table is centered, with the editable cell anchored near the bottom-right of the viewport.
+    Clutter (high, realistic): table has multiple columns (Campaign name, Status, Owner, Preview send time, Send at, Hold until) and one non-functional “Filter” input above it.
+    Instances: 2 AntD DatePicker(showTime) editors in the row “Campaign A”:
+      - “Send at” (editable cell)  ← TARGET
+      - “Hold until” (editable cell) (distractor)
+    Guidance: the “Preview send time” column displays a pill: “Preview: Apr 1, 2026 · 9:00 AM”.
+    Behavior: clicking an editable datetime cell opens a popover with calendar+time; needConfirm=true so OK must be clicked.
+    Initial state (Campaign A):
+      - Preview send time: Apr 1, 2026 9:00 AM (reference)
+      - Send at: Apr 1, 2026 8:00 AM (must match reference)
+      - Hold until: Apr 1, 2026 9:00 AM (distractor already matches reference but NOT the target column)
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small table-cell targets with two similar editors plus a visual reference create high acquisition and disambiguation load; requires OK confirmation.
+  success_trigger:
+    human_readable:
+    - The “Send at” cell for Campaign A is committed to the same datetime as the Preview pill (2026-04-01 09:00).
+    - The “Hold until” cell does not count as success even if it matches the reference.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_element_testid: ref-preview-send
+        reference_datetime_local: '2026-04-01T09:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Campaign A / Send at
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing “Hold until” instead of “Send at”.
+  - Setting Send at to 08:00 or any value other than the preview time.
+  - Picking the right value but not clicking OK in the popover.
+  - Editing the wrong campaign row (if multiple rows exist).
+  expected_interaction_path:
+  - Find Campaign A’s row and the “Send at” cell.
+  - Click the cell to open the datetime picker popover.
+  - Set the value to match the Preview pill (Apr 1, 2026 9:00 AM).
+  - Click OK to commit.
+  notes: |-
+    Instrumentation: add stable testids for row (“row-campaign-a”), columns (“col-send-at”), and reference pill (“ref-preview-send”).
+    Checker should verify (row-id, column-id) instance pairing, not just any datetime picker on the page.
+- id: datetime_picker_single-mui-T01
+  name: MUI desktop basic set datetime
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the “Appointment” field to February 6, 2026 at 4:00 PM. The task will finish automatically when done.
+  ui_copy: Set the “Appointment” field to February 6, 2026 at 4:00 PM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one MUI X DesktopDateTimePicker with an input field and an icon button to open the picker.
+    Picker UI: opens in a popover (desktop variant) with calendar + time selection (hours/minutes).
+    Action bar: default desktop behavior (no explicit Cancel/OK buttons).
+    Initial state: empty; placeholder shows a datetime format like “MM/DD/YYYY hh:mm aa”.
+    No other date/time inputs on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single desktop picker with clear label; selecting date and time is sufficient without extra confirmation.
+  success_trigger:
+    human_readable:
+    - The DesktopDateTimePicker labeled “Appointment” has value 2026-02-06 16:00 (local time).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-06T16:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Appointment
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Feb 6 but leaving a different time.
+  - Selecting 4:00 AM instead of 4:00 PM.
+  - Leaving the value empty or partially edited.
+  expected_interaction_path:
+  - Open the “Appointment” picker popover.
+  - Select Feb 6, 2026 in the calendar.
+  - Select 4:00 PM in the time view (hours/minutes).
+  - Close the popover if needed; ensure the input shows the chosen value.
+  notes: |-
+    Implementation note: DesktopDateTimePicker renders views in a popover on desktop.
+    Instrumentation: add data-testid="dt-appointment" to the field for stable selection.
+- id: datetime_picker_single-mui-T02
+  name: MUI typed datetime in sectioned field
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DateTimePicker'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the “Logged at” field, enter 02/12/2026 08:45 AM and commit the value. The task will finish automatically when done.
+  ui_copy: In the “Logged at” field, enter 02/12/2026 08:45 AM and commit the value. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one MUI X DateTimePicker in desktop mode. The text field uses section-based editing (month/day/year/hour/minute/AM-PM).
+    Hint text below the field: “Tip: Press Enter to start editing, then type.” (mirrors MUI docs behavior).
+    No action bar buttons; committing is done by finishing a valid value and blurring the field.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires exact formatted entry into a sectioned datetime field, but in a clean single-instance scene.
+  success_trigger:
+    human_readable:
+    - The DateTimePicker labeled “Logged at” equals 2026-02-12 08:45 AM (local time).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-12T08:45:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Logged at
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering 08:45 but leaving PM selected (20:45).
+  - Typing the correct digits but leaving an incomplete/invalid value.
+  - Using a different date format (e.g., 2026-02-12) that is not accepted by the field.
+  expected_interaction_path:
+  - Click the “Logged at” field.
+  - Press Enter to start editing sections (if required).
+  - Type 02/12/2026 08:45 AM and blur to commit.
+  notes: |-
+    Checker: parse the committed value from the component state (not the raw text while editing).
+    AX note: ensure the label “Logged at” is programmatically associated with the input.
+- id: datetime_picker_single-mui-T03
+  name: MUI open picker overlay (desktop)
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the date & time picker for “Start time” so the picker UI is visible, and do not change the value. The task will finish automatically when done.
+  ui_copy: Open the date & time picker for “Start time” so the picker UI is visible, and do not change the value. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one MUI X DesktopDateTimePicker labeled “Start time”.
+    Picker UI: opens in a popover attached to the field.
+    Initial state: empty value; placeholder shows “MM/DD/YYYY hh:mm aa”.
+    This task ends when the picker popover is open for the correct field and the value is still empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Only requires opening the correct picker overlay; no selection or confirmation.
+  success_trigger:
+    human_readable:
+    - The “Start time” picker popover is open (calendar/time UI visible).
+    - The committed value remains empty.
+    canonical_predicate:
+      predicate_type: overlay_open
+      target_state:
+        open: true
+        datetime_local: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Start time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Focusing the field without opening the popover.
+  - Opening a different picker (if any).
+  - Accidentally selecting a date/time while opening.
+  expected_interaction_path:
+  - Click the “Start time” field or its open-picker icon.
+  - Stop once the popover is visible and value unchanged.
+  notes: |-
+    Checker: detect popover open state via MUI pickers portal root tied to the “Start time” field.
+- id: datetime_picker_single-mui-T04
+  name: MUI mobile modal with OK/Cancel
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: mobile
+  implementation_component: 'MUI X: MobileDateTimePicker'
+  task_template: confirm_cancel
+  secondary_template: open_and_select
+  browsergym_goal: Set the “Delivery window start” field to February 18, 2026 at 3:30 PM, then click OK to apply. The task will finish automatically when done.
+  ui_copy: Set the “Delivery window start” field to February 18, 2026 at 3:30 PM, then click OK to apply. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: MUI X MobileDateTimePicker labeled “Delivery window start” (forced mobile variant).
+    Picker UI: opens in a modal dialog (not a popover). Date and time are selected in a step-based flow (date → time), with an action bar at the bottom.
+    Action bar: includes “Cancel” and “OK” (accept). The value is only committed when OK is pressed.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Mobile modal introduces deeper layering and an explicit OK confirmation step compared to desktop defaults.
+  success_trigger:
+    human_readable:
+    - The MobileDateTimePicker labeled “Delivery window start” is committed to 2026-02-18 15:30.
+    - OK (accept) is required to apply the value.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-18T15:30:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Delivery window start
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the right date/time but pressing Cancel or closing without OK.
+  - Leaving the modal on the date step without selecting time.
+  - Setting 3:30 AM instead of PM.
+  expected_interaction_path:
+  - Open the picker (field click).
+  - Select Feb 18, 2026; proceed to the time step if prompted (Next).
+  - Set time to 3:30 PM.
+  - Click OK to accept and close.
+  notes: |-
+    Implementation note: MUI mobile variant renders in a modal and uses an action bar; default mobile action bar includes Cancel/Accept actions unless customized.
+- id: datetime_picker_single-mui-T05
+  name: MUI clear using action bar
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the “Scheduled run” field so it becomes empty. The task will finish automatically when done.
+  ui_copy: Clear the “Scheduled run” field so it becomes empty. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered (no other form fields).
+    Component: one MUI X DesktopDateTimePicker labeled “Scheduled run”.
+    Configuration: picker action bar is enabled and shows a “Clear” action (actionBar.actions includes 'clear').
+    Initial state: value is set to “02/05/2026 09:00 AM”.
+    Behavior: using the Clear action resets the value to empty and closes the picker; no extra OK is required after clearing.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Involves opening the picker and using a specific action-bar control to clear, within a small form with mild distractors.
+  success_trigger:
+    human_readable:
+    - The DateTimePicker labeled “Scheduled run” is empty/null after the clear action.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Scheduled run
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing to another datetime instead of clearing.
+  - Clearing a different input in the form section.
+  - Leaving invalid text like “––/––/––––” instead of a true empty/null value.
+  expected_interaction_path:
+  - Open the “Scheduled run” picker.
+  - Click the “Clear” action in the action bar (or use the field clear icon if present).
+  - Verify the field is empty.
+  notes: |-
+    Checker: treat empty picker value as null; do not accept placeholder characters as a valid datetime.
+- id: datetime_picker_single-mui-T06
+  name: MUI match reference card datetime
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set “Next sync time” to match the time shown on the “Reference” card. The task will finish automatically when done.
+  ui_copy: Set “Next sync time” to match the time shown on the “Reference” card. The task will finish automatically when done.
+  setup_description: |-
+    Layout: dashboard with a small “Status” header, a reference card, and the target field beneath.
+    Guidance (visual): a prominent card labeled “Reference” shows the target datetime as large text:
+      “Fri, Feb 27, 2026 — 3:00 PM”
+    Target component: one MUI X DesktopDateTimePicker labeled “Next sync time”.
+    Initial state: field currently shows “02/27/2026 02:00 PM” (one hour early).
+    No OK/Cancel actions (default desktop). Selection commits when a valid value is set.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires extracting a datetime from a visual reference element and applying it to the picker; otherwise standard desktop interaction.
+  success_trigger:
+    human_readable:
+    - The “Next sync time” value matches the Reference card datetime (2026-02-27 15:00).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_element_testid: ref-next-sync
+        reference_datetime_local: '2026-02-27T15:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Next sync time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Copying only the date but leaving the old time.
+  - Setting 03:00 AM instead of PM.
+  - Changing some other control on the dashboard (not relevant).
+  expected_interaction_path:
+  - Read the datetime displayed on the Reference card.
+  - Open the “Next sync time” picker.
+  - Set the date/time to Feb 27, 2026 3:00 PM.
+  notes: |-
+    Instrumentation: add data-testid="ref-next-sync" to the Reference card timestamp text.
+- id: datetime_picker_single-mui-T07
+  name: MUI scroll year list to reach far year
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Set the “Contract renewal” field to July 4, 2036 at 10:00 AM. The task will finish automatically when done.
+  ui_copy: Set the “Contract renewal” field to July 4, 2036 at 10:00 AM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one MUI X DesktopDateTimePicker labeled “Contract renewal”.
+    Interaction nuance: the target year (2036) is far from the default year, so the user must open the year selection UI and scroll to find 2036 before choosing the month/day.
+    Time selection: standard hours/minutes (no seconds). No explicit OK on desktop.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires scrolling within the year-selection control to reach a far year, then completing date+time selection.
+  success_trigger:
+    human_readable:
+    - The “Contract renewal” picker value equals 2036-07-04 10:00 AM.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2036-07-04T10:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Contract renewal
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the correct day/month but wrong year (e.g., 2026).
+  - Selecting 10:00 PM instead of 10:00 AM.
+  - Leaving the picker in a partially selected state (year changed but date not picked).
+  expected_interaction_path:
+  - Open the “Contract renewal” picker.
+  - Switch to year selection and scroll until 2036 is visible; select 2036.
+  - Select July 4, then set time to 10:00 AM.
+  notes: |-
+    Checker: compare full datetime including year; do not accept only-date matches.
+- id: datetime_picker_single-mui-T08
+  name: MUI dark compact two-instance end datetime with OK
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the “Release window” settings, set the “End datetime” field to March 5, 2026 at 11:55 PM, then click OK to apply. The task will finish automatically when done.
+  ui_copy: In the “Release window” settings, set the “End datetime” field to March 5, 2026 at 11:55 PM, then click OK to apply. The task will finish automatically when done.
+  setup_description: |-
+    Theme: dark mode. Spacing: compact.
+    Layout: settings_panel with a vertical nav on the left and a dense “Release window” section on the right.
+    Instances: 2 MUI X DesktopDateTimePickers stacked closely:
+      - “Start datetime”
+      - “End datetime”  ← TARGET
+    Clutter (medium): several toggles (Enable notifications, Auto-rollout), a numeric input (Max users), and a Save button (not required).
+    Picker configuration: desktop popover, but an action bar is enabled with Cancel + OK (accept). closeOnSelect=false so OK is required to commit.
+    Initial state:
+      - Start datetime: 03/05/2026 10:00 PM
+      - End datetime: 03/05/2026 11:00 PM (must change minutes to 55 and commit)
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Dark + compact layout with two similar instances and an explicit OK commit step increases both disambiguation and feedback complexity.
+  success_trigger:
+    human_readable:
+    - Only the “End datetime” picker is committed to 2026-03-05 23:55.
+    - OK/accept is required (closeOnSelect=false).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-03-05T23:59:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: End datetime
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Start datetime instead of End datetime.
+  - Leaving End datetime at 11:00 PM or setting 11:59 AM.
+  - Selecting 23:59 but not pressing OK to accept.
+  - Interacting with the Save button without changing the picker (Save is irrelevant).
+  expected_interaction_path:
+  - Locate the “End datetime” field.
+  - Open its picker, adjust time to 11:59 PM (keep date Mar 5, 2026).
+  - Click OK to accept.
+  notes: |-
+    Instrumentation: add per-field testids (dt-start, dt-end). Checker must bind to “End datetime”.
+    This task intentionally uses a non-default desktop action bar to force an explicit accept step.
+- id: datetime_picker_single-mui-T09
+  name: MUI small field with seconds (typed)
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DateTimePicker'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the “Audit timestamp” field, enter 02/22/2026 07:05:30 PM (including seconds) and commit the value. The task will finish automatically when done.
+  ui_copy: In the “Audit timestamp” field, enter 02/22/2026 07:05:30 PM (including seconds) and commit the value. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card anchored near the bottom-right of the viewport.
+    Scale: small (reduced font size and smaller input height).
+    Component: one MUI X DateTimePicker in desktop mode configured to include seconds (views include 'seconds'; field format shows hh:mm:ss).
+    Editing: section-based field supports seconds as a separate editable segment.
+    Initial state: empty; placeholder looks like “MM/DD/YYYY hh:mm:ss aa”.
+    No action bar buttons; commit happens on valid value + blur.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Seconds-level precision combined with small-scale targets and sectioned editing raises both precision and acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The “Audit timestamp” picker equals 02/22/2026 07:05:30 PM exactly (local time).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-22T19:05:30'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Audit timestamp
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the correct date/time but omitting seconds (defaults to :00).
+  - Entering 07:05:30 AM instead of PM.
+  - Partial edit where seconds are correct but minutes/hours differ.
+  - Leaving the field in an invalid state that displays placeholder characters.
+  expected_interaction_path:
+  - Click the “Audit timestamp” field and start editing (Enter if needed).
+  - 'Type the full datetime including seconds: 02/22/2026 07:05:30 PM.'
+  - Blur the field to commit.
+  notes: |-
+    Checker: must compare seconds; do not round/truncate.
+    Implementation note: configure the picker to include seconds (views include 'seconds') and a seconds segment in the field.
+- id: datetime_picker_single-mui-T10
+  name: MUI table-cell edit with explicit OK
+  canonical_type: datetime_picker_single
+  implementation_source: mui
+  implementation_variant: desktop
+  implementation_component: 'MUI X: DesktopDateTimePicker'
+  task_template: confirm_cancel
+  secondary_template: open_and_select
+  browsergym_goal: In the table, update the “Expires at” value for the “Plan Pro” row to May 1, 2026 at 12:00 PM, then click OK to apply. The task will finish automatically when done.
+  ui_copy: In the table, update the “Expires at” value for the “Plan Pro” row to May 1, 2026 at 12:00 PM, then click OK to apply. The task will finish automatically when done.
+  setup_description: |-
+    Layout: table_cell scene with a compact billing table.
+    Clutter (high): table includes columns (Plan, Price, Seats, Expires at, Notes) and a top toolbar with Search + Export buttons (not required).
+    Instances: 2 MUI X DesktopDateTimePicker editors, one per row:
+      - Row “Plan Basic” → Expires at (distractor)
+      - Row “Plan Pro” → Expires at  ← TARGET
+    Editing behavior: clicking the Expires at cell opens a popover picker. An action bar is shown with “Cancel” and “OK”; OK is required to commit (closeOnSelect=false).
+    Initial state:
+      - Plan Basic Expires at: 05/01/2026 12:00 PM (already matches target but wrong row)
+      - Plan Pro Expires at: 05/01/2026 11:00 AM (must change to 12:00 PM and press OK)
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Table-cell editing with two similar instances creates high disambiguation and small-target acquisition; explicit OK commit adds feedback complexity.
+  success_trigger:
+    human_readable:
+    - The “Expires at” cell in the “Plan Pro” row is committed to 2026-05-01 12:00 PM.
+    - OK must be clicked to accept changes for that cell.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-05-01T12:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Plan Pro / Expires at
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Plan Basic row instead of Plan Pro.
+  - Changing the cell but not clicking OK (value not committed).
+  - Setting 12:00 AM instead of 12:00 PM.
+  - Changing other toolbar controls (Search/Export) without setting the datetime.
+  expected_interaction_path:
+  - Find the Plan Pro row and click its “Expires at” cell.
+  - In the picker, set time to 12:00 PM (keep date May 1, 2026).
+  - Click OK to apply.
+  notes: |-
+    Instrumentation: row ids (row-basic, row-pro) + cell ids (cell-expires-at) recommended.
+    Checker must verify row+column scoping for the instance.
+- id: datetime_picker_single-mantine-T01
+  name: Mantine basic set datetime (popover)
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the “Event date & time” field to February 7, 2026 at 10:00 AM. The task will finish automatically when done.
+  ui_copy: Set the “Event date & time” field to February 7, 2026 at 10:00 AM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one Mantine DateTimePicker input labeled “Event date & time”.
+    Dropdown behavior: default popover dropdown (dropdownType=popover). Clicking the input opens a calendar with an embedded time picker.
+    Sub-controls: calendar month navigation + time controls for hours/minutes.
+    Initial state: empty; placeholder “Pick date and time”.
+    No other date/time inputs on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single default Mantine DateTimePicker with visible input; selecting date and time completes the task without extra confirmation.
+  success_trigger:
+    human_readable:
+    - The Mantine DateTimePicker labeled “Event date & time” equals 2026-02-07 10:00 AM (local time).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-07T10:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Event date & time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Feb 7 but leaving a different time.
+  - Selecting 10:00 PM instead of AM.
+  - Leaving the value empty/partial.
+  expected_interaction_path:
+  - Click the “Event date & time” input to open the dropdown.
+  - Select Feb 7, 2026 in the calendar.
+  - Set time to 10:00 AM using the time controls.
+  - Ensure the input displays the chosen datetime.
+  notes: |-
+    Instrumentation: add data-testid="dt-event" to the input; dropdown portal/root can be linked to this id.
+- id: datetime_picker_single-mantine-T02
+  name: Mantine choose a labeled preset
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: For “Launch slot”, open the picker and select the preset labeled “General availability”. The task will finish automatically when done.
+  ui_copy: For “Launch slot”, open the picker and select the preset labeled “General availability”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one Mantine DateTimePicker labeled “Launch slot”.
+    Configuration: the picker has a Presets section (a vertical list of buttons) inside the dropdown.
+    Presets (explicit, non-relative):
+      - “Internal test” → 2026-03-10 08:00
+      - “Release candidate” → 2026-03-10 09:00
+      - “General availability” → 2026-03-10 10:00  ← TARGET PRESET
+      - “Rollback window” → 2026-03-10 11:00
+    Initial state: empty. Selecting a preset immediately sets the datetime value in the input (no separate Apply).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Selecting a clearly labeled preset is low precision and low depth; the value becomes visible in the input immediately.
+  success_trigger:
+    human_readable:
+    - The “Launch slot” DateTimePicker equals the preset value for “General availability” (2026-03-10 10:00).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        selected_preset_label: General availability
+        datetime_local: '2026-03-10T10:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Launch slot
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different preset with a nearby time (e.g., Release candidate at 09:00).
+  - Typing a value instead of using the preset (still acceptable only if it matches exactly).
+  - Leaving the picker empty.
+  expected_interaction_path:
+  - Open the “Launch slot” picker dropdown.
+  - Click the preset button “General availability”.
+  - Verify the input shows 2026-03-10 10:00.
+  notes: |-
+    Checker: may either verify the final datetime value or verify the active preset selection (if exposed).
+- id: datetime_picker_single-mantine-T03
+  name: Mantine clear an existing datetime
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the “Snooze until” field so it has no date or time selected. The task will finish automatically when done.
+  ui_copy: Clear the “Snooze until” field so it has no date or time selected. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one Mantine DateTimePicker labeled “Snooze until”.
+    Configuration: clearable=true (shows a clear icon inside the input when a value is set).
+    Initial state: pre-filled with “2026-02-04 07:30”.
+    Behavior: clearing immediately sets the component value to null/empty (no confirm).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Clearable input makes reset direct; success is an empty state.
+  success_trigger:
+    human_readable:
+    - The “Snooze until” DateTimePicker is cleared (null/empty).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Snooze until
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting a different datetime instead of clearing.
+  - Leaving partial text in the input.
+  expected_interaction_path:
+  - Click the clear icon in the “Snooze until” input (or delete the value).
+  - Ensure the placeholder is visible and value is empty.
+  notes: |-
+    Checker: null internal value counts as cleared; reject placeholder dashes as a datetime.
+- id: datetime_picker_single-mantine-T04
+  name: Mantine modal dropdown set datetime
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: modal
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the “Lock time” field to March 3, 2026 at 6:15 PM. The task will finish automatically when done.
+  ui_copy: Set the “Lock time” field to March 3, 2026 at 6:15 PM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: Mantine DateTimePicker labeled “Lock time”.
+    Variant: dropdownType=modal (picker opens in a modal overlay instead of a popover).
+    Within the modal: calendar for date selection and time controls for hours/minutes; closing the modal (outside click or close button) leaves the chosen value in the field.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Modal dropdown increases overlay depth and requires interacting within a larger layered surface.
+  success_trigger:
+    human_readable:
+    - The “Lock time” DateTimePicker equals 2026-03-03 18:15.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-03-03T18:15:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Lock time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting March 3 but leaving the default time (e.g., 00:00).
+  - Selecting 6:15 AM instead of PM.
+  - Closing the modal without setting a valid complete datetime.
+  expected_interaction_path:
+  - Open the “Lock time” picker (modal).
+  - Select Mar 3, 2026 in the calendar.
+  - Set time to 6:15 PM and close the modal if needed.
+  notes: |-
+    Implementation note: Mantine DateTimePicker supports dropdownType='modal' for modal-based selection.
+- id: datetime_picker_single-mantine-T05
+  name: Mantine match reference with two instances
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Maintenance window” section, set “Window start” to match the reference badge shown above it. The task will finish automatically when done.
+  ui_copy: In the “Maintenance window” section, set “Window start” to match the reference badge shown above it. The task will finish automatically when done.
+  setup_description: |-
+    Layout: form_section titled “Maintenance window”.
+    Instances: 2 Mantine DateTimePicker inputs:
+      - “Window start”  ← TARGET
+      - “Window end” (distractor)
+    Guidance (mixed): a small badge above “Window start” reads: “Reference: Mon, Mar 9, 2026 · 9:00 AM”.
+    Initial state:
+      - Window start: 2026-03-09 08:00 (one hour early)
+      - Window end: 2026-03-09 09:00 (distractor already matches reference but wrong field)
+    Clutter (low): one toggle “Notify users” and a text area “Notes” (not required). Dropdown type is default popover.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two similar instances plus a visual reference creates moderate disambiguation; otherwise standard popover interaction.
+  success_trigger:
+    human_readable:
+    - The “Window start” value matches the reference badge datetime (2026-03-09 09:00).
+    - The “Window end” field does not count even if it matches.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_element_testid: ref-window-start
+        reference_datetime_local: '2026-03-09T09:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Window start
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Updating Window end instead of Window start.
+  - Matching the date but leaving the wrong time.
+  - AM/PM confusion (9:00 PM).
+  expected_interaction_path:
+  - Read the Reference badge above Window start.
+  - Open the Window start picker and set it to Mar 9, 2026 9:00 AM.
+  notes: |-
+    Instrumentation: add data-testid="ref-window-start" to the reference badge and per-field ids (dt-window-start, dt-window-end).
+- id: datetime_picker_single-mantine-T06
+  name: Mantine typed datetime with custom valueFormat
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the “Reschedule to” field, enter “15 Mar 2026 06:05 PM” exactly and commit it. The task will finish automatically when done.
+  ui_copy: In the “Reschedule to” field, enter “15 Mar 2026 06:05 PM” exactly and commit it. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: one Mantine DateTimePicker labeled “Reschedule to”.
+    Configuration: valueFormat is set to “DD MMM YYYY hh:mm A” (e.g., “15 Mar 2026 06:05 PM”) and the input accepts typing.
+    A helper line under the field shows: “Required format: DD MMM YYYY hh:mm A”.
+    Initial state: empty. Dropdown type is popover, but the task can be completed by typing.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Exact formatted entry is required; otherwise a simple single-instance field.
+  success_trigger:
+    human_readable:
+    - The “Reschedule to” DateTimePicker equals 2026-03-15 18:05 (local time).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-03-15T18:05:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Reschedule to
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering 06:05 AM instead of PM.
+  - Wrong format (e.g., 03/15/2026) if not accepted.
+  - Partial entry (missing year or minutes).
+  expected_interaction_path:
+  - Click the “Reschedule to” input.
+  - 'Type: 15 Mar 2026 06:05 PM.'
+  - Commit by pressing Enter or blurring the field.
+  notes: |-
+    Checker: parse according to the configured valueFormat; reject locale-dependent alternatives.
+- id: datetime_picker_single-mantine-T07
+  name: Mantine seconds precision in dark theme
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set “Audit at” to February 28, 2026 at 11:59:45 PM (including seconds). The task will finish automatically when done.
+  ui_copy: Set “Audit at” to February 28, 2026 at 11:59:45 PM (including seconds). The task will finish automatically when done.
+  setup_description: |-
+    Theme: dark mode.
+    Layout: isolated card centered.
+    Component: one Mantine DateTimePicker labeled “Audit at”.
+    Configuration: withSeconds=true so the time selector includes seconds; input displays seconds as part of the value.
+    Dropdown type: popover.
+    Initial state: “2026-02-28 23:59:00” (seconds currently 00; must set to 45).
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Second-level precision in dark theme increases precision and acquisition demands despite a simple layout.
+  success_trigger:
+    human_readable:
+    - The “Audit at” DateTimePicker equals 2026-02-28 23:59:45 exactly (local time).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-02-28T23:59:45'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Audit at
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving seconds at 00 or setting a nearby second (e.g., :40 or :50).
+  - Setting 11:59:45 AM instead of PM.
+  - Changing the date away from Feb 28, 2026.
+  expected_interaction_path:
+  - Open the “Audit at” dropdown.
+  - Keep the date at Feb 28, 2026 (select it if needed).
+  - Adjust seconds to 45 while keeping 23:59.
+  - Close the dropdown if needed and verify the input value.
+  notes: |-
+    Checker: must compare seconds; do not round.
+    Implementation note: Mantine DateTimePicker supports withSeconds and presets/clearable/dropdownType options.
+- id: datetime_picker_single-mantine-T08
+  name: Mantine compact small far-year navigation
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Set the “Retention cutoff” field to January 1, 2027 at 12:00 AM. The task will finish automatically when done.
+  ui_copy: Set the “Retention cutoff” field to January 1, 2027 at 12:00 AM. The task will finish automatically when done.
+  setup_description: |-
+    Theme: light. Spacing: compact. Scale: small.
+    Layout: isolated card centered, but the picker input is small and tightly spaced.
+    Component: one Mantine DateTimePicker labeled “Retention cutoff”.
+    Interaction nuance: the target year (2027) is not near the current year, so the user must use the calendar header controls to switch years and scroll/select 2031 before choosing Jan 1.
+    Time: must be exactly 12:00 AM (00:00).
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Small/compact UI plus far-year navigation increases target acquisition and depth compared to baseline.
+  success_trigger:
+    human_readable:
+    - The “Retention cutoff” DateTimePicker equals 2027-01-01 00:00.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2031-01-01T00:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Retention cutoff
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Jan 1 but in the wrong year (e.g., 2026).
+  - Setting 12:00 PM instead of 12:00 AM.
+  - Only changing the year but not picking the date/day.
+  expected_interaction_path:
+  - Open the “Retention cutoff” picker dropdown.
+  - Use the month/year header to navigate to year 2031 (scroll if necessary).
+  - Select January 1 and set time to 12:00 AM.
+  notes: |-
+    Checker: must include year and time; reject date-only matches.
+- id: datetime_picker_single-mantine-T09
+  name: Mantine dashboard 3 instances disambiguation
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: On the dashboard, set the “Backup window” datetime to April 12, 2026 at 2:20 PM. The task will finish automatically when done.
+  ui_copy: On the dashboard, set the “Backup window” datetime to April 12, 2026 at 2:20 PM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: dashboard with three side-by-side cards; the whole cluster is positioned toward the bottom-left of the viewport.
+    Instances: 3 Mantine DateTimePicker inputs (same component) with labels:
+      - “Primary window”
+      - “Backup window”  ← TARGET
+      - “Staging window”
+    Clutter (medium): each card also contains a small status chip and a non-functional “Details” link.
+    Initial state:
+      - Primary window: 2026-04-12 14:20 (already correct, distractor)
+      - Backup window: 2026-04-12 14:00 (must change minutes to 20)
+      - Staging window: 2026-04-12 14:20 (distractor correct)
+    Dropdown type: popover; no confirm/apply button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Three similar instances with overlapping values create high disambiguation; user must adjust the correct one.
+  success_trigger:
+    human_readable:
+    - Only the “Backup window” DateTimePicker equals 2026-04-12 14:20.
+    - Other windows do not count even if they already show the target value.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-04-12T14:20:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Backup window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Primary or Staging instead of Backup.
+  - Leaving Backup at 14:00 or setting 02:20 AM/PM incorrectly.
+  - Changing the date away from Apr 12, 2026.
+  expected_interaction_path:
+  - Locate the card labeled “Backup window”.
+  - Open its picker dropdown and adjust minutes to 20 (keep date and hour).
+  - Verify the input shows 2:20 PM on Apr 12, 2026.
+  notes: |-
+    Instrumentation: stable per-card testids recommended: dt-primary-window, dt-backup-window, dt-staging-window.
+- id: datetime_picker_single-mantine-T10
+  name: Mantine drawer flow set datetime
+  canonical_type: datetime_picker_single
+  implementation_source: mantine
+  implementation_variant: popover
+  implementation_component: 'Mantine: DateTimePicker'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the “Edit blackout” drawer and set “Blackout starts” to May 20, 2026 at 1:00 PM. The task will finish automatically when done.
+  ui_copy: Open the “Edit blackout” drawer and set “Blackout starts” to May 20, 2026 at 1:00 PM. The task will finish automatically when done.
+  setup_description: |-
+    Layout: drawer_flow. The main page shows a “Blackout rules” card with a button “Edit blackout”.
+    When “Edit blackout” is clicked, a right-side drawer slides in. The target field is inside the drawer near the top.
+    Target component: one Mantine DateTimePicker labeled “Blackout starts” inside the drawer (default popover dropdown).
+    Clutter (low): the drawer also contains a toggle “Enabled”, a textarea “Reason”, and buttons “Save” and “Cancel” at the bottom (not required for success).
+    Initial state: Blackout starts is set to “May 20, 2026 12:00 PM” (must change to 1:00 PM).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires entering a drawer flow before interacting with the picker, increasing layering and context switching.
+  success_trigger:
+    human_readable:
+    - The DateTimePicker labeled “Blackout starts” equals 2026-05-20 13:00.
+    - Drawer Save/Cancel buttons are not required; only the picker value matters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        datetime_local: '2026-05-20T13:00:00'
+      tolerance:
+        seconds: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Blackout starts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the drawer toggle or text area without setting the datetime.
+  - Leaving the time at 12:00 PM or setting 1:00 AM.
+  - Editing a different datetime field if present in the drawer.
+  expected_interaction_path:
+  - Click “Edit blackout” to open the drawer.
+  - Open the “Blackout starts” picker and set May 20, 2026 1:00 PM.
+  notes: |-
+    Checker: only validate the picker’s bound value; do not depend on clicking Save.
+    Instrumentation: data-testid for the drawer open button and the drawer-root helps agents; value testid for dt-blackout-starts.

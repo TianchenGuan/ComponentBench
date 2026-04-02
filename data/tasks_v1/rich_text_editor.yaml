@@ -1,0 +1,2159 @@
+- id: rich_text_editor-mantine-T01
+  name: Write a short status update
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the editor labeled “Status update”, type: We shipped the February build. The task will finish
+    automatically when done.'
+  ui_copy: 'Status update
+
+    Please enter: We shipped the February build.'
+  setup_description: |-
+    Scene is an isolated card centered on the page. Inside the card is a single Mantine RichTextEditor with a standard toolbar (Bold/Italic/etc.) above an empty editing area.
+    The editor label above the toolbar reads “Status update”. The editor is focused only when clicked inside the content area; there is no Save/Apply button and changes are immediate.
+    No other interactive controls are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single empty editor with a short plain-text target; no overlays, formatting, or disambiguation.
+  success_trigger:
+    human_readable:
+    - The RichTextEditor instance labeled “Status update” has plain text exactly equal to “We shipped the February
+      build.” after whitespace normalization.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Status update
+        mode: plaintext_equals
+        text: We shipped the February build.
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Text is entered into a different editor (not applicable here, but must not pass if an extra editor is added).
+  - Missing or extra punctuation (e.g., missing the final period).
+  - Text differs by more than whitespace normalization (extra words, different casing).
+  - Only part of the sentence is present.
+  expected_interaction_path: Click into the editor content area → type the sentence.
+  notes: |-
+    Checker hint: read editor.getText() and normalize whitespace (collapse runs of whitespace to single spaces; trim ends).
+    Instrumentation: data-testid on wrapper and label, e.g., data-testid="rte-status-update".
+- id: rich_text_editor-mantine-T02
+  name: Clear the draft note
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Draft note”, remove all content so the editor is empty. The task will
+    finish automatically when done.
+  ui_copy: 'Draft note
+
+    Clear the editor so it contains no text.'
+  setup_description: |-
+    Baseline isolated card centered on the page with one RichTextEditor labeled “Draft note”.
+    The content area starts with a single paragraph containing: “Draft: TBD”.
+    The toolbar includes standard controls and the cursor is not initially focused.
+    There is a subtle placeholder text (“Write something…”) that appears only when the editor becomes empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Clearing existing content is straightforward and immediate; the only challenge is selecting and
+      deleting the whole text.
+  success_trigger:
+    human_readable:
+    - The “Draft note” editor’s plain text is empty (length 0) after trimming whitespace.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Draft note
+        mode: plaintext_equals
+        text: ''
+      tolerance:
+        trim_whitespace: true
+        ignore_zero_width: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Some characters remain (including invisible non-breaking spaces) after clearing.
+  - The content is replaced with different text instead of being empty.
+  - Only part of the text is removed (e.g., leaving “TBD”).
+  expected_interaction_path: Click into editor → select all (Ctrl/Cmd+A) → Backspace/Delete until empty.
+  notes: |-
+    Checker hint: use editor.getText(); treat a result that becomes empty after trimming and removing zero-width characters as empty.
+    To avoid false positives, also confirm editor.getJSON() contains no meaningful nodes beyond an empty paragraph.
+- id: rich_text_editor-mantine-T03
+  name: Bold a single word
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Team message”, make the word “noon” bold (and leave the rest unchanged).
+    The task will finish automatically when done.
+  ui_copy: 'Team message
+
+    Make “noon” bold.'
+  setup_description: |-
+    Isolated card at center. One RichTextEditor labeled “Team message”.
+    The editor starts with one paragraph: “Lunch is at noon”.
+    The toolbar is visible with a Bold control (B icon / aria-label “Bold”).
+    No Save button; formatting updates immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires selecting a specific word and toggling one formatting control; otherwise a simple single-instance
+      scene.
+  success_trigger:
+    human_readable:
+    - In “Team message”, the plain text remains exactly “Lunch is at noon”.
+    - Only the substring “noon” is marked bold; no other characters have the bold mark.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Team message
+        mode: marked_substring
+        text: Lunch is at noon
+        marked_spans:
+        - substring: noon
+          marks:
+          - bold
+        forbidden_marks_outside_spans:
+        - bold
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Bold is applied to the wrong word (e.g., “Lunch”).
+  - Additional text is added or removed.
+  - Bold is applied to the entire sentence or includes trailing spaces/punctuation.
+  expected_interaction_path: Click into editor → drag/select “noon” → click Bold in toolbar (or use Ctrl/Cmd+B).
+  notes: |-
+    Checker hint: use TipTap JSON/HTML to verify mark coverage for the substring “noon”.
+    Prefer a span-based check: locate the exact substring in the editor’s plain text and validate marks at those offsets.
+- id: rich_text_editor-mantine-T04
+  name: Convert title to Heading 2
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Release note”, set the line “Release Notes” to Heading 2. Do not change
+    the second line. The task will finish automatically when done.
+  ui_copy: 'Release note
+
+    Make “Release Notes” a Heading 2.'
+  setup_description: |-
+    Centered isolated card with one RichTextEditor labeled “Release note”.
+    The editor starts with two lines:
+    - “Release Notes”
+    - “Added search.”
+    The toolbar includes heading controls H1–H4. Clicking H2 toggles the current block to an H2 heading.
+    Changes apply immediately without confirmation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single block-level formatting change (Heading 2) on a short document with no overlays or distractors.
+  success_trigger:
+    human_readable:
+    - 'The document has exactly two blocks: an H2 heading with text “Release Notes”, followed by a paragraph with
+      text “Added search.”'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Release note
+        mode: block_structure_equals
+        blocks:
+        - block_type: heading
+          level: 2
+          text: Release Notes
+        - block_type: paragraph
+          text: Added search.
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Heading level is wrong (H1/H3/H4).
+  - Second line is changed or becomes part of the heading.
+  - Extra empty lines/blocks are added (beyond a trailing empty paragraph tolerated only if explicitly allowed).
+  expected_interaction_path: Click inside “Release Notes” line → click H2 in toolbar.
+  notes: 'Checker hint: validate ProseMirror block node types and heading attributes (level=2) from editor.getJSON().'
+- id: rich_text_editor-mantine-T05
+  name: Create a bulleted checklist
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: 'In the editor labeled “Checklist”, make a bulleted list with these three items (one per bullet):
+    Buy milk; Send invoice; Book flights. The task will finish automatically when done.'
+  ui_copy: 'Project form
+
+    Checklist (rich text)
+
+    Create bullets: Buy milk / Send invoice / Book flights'
+  setup_description: |-
+    The page shows a simple form_section layout (a “Project form” header with a few disabled text inputs as context: Project name, Owner).
+    Below them is one RichTextEditor labeled “Checklist”. The editor is empty initially.
+    The toolbar includes BulletList and OrderedList controls. No Save button is required for success; editor updates live.
+    Clutter is low: a couple of non-interactive help texts and a disabled “Submit” button are visible but not needed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires switching to bullet list mode and entering three short items; surrounding form elements
+      are present but not interactive.
+  success_trigger:
+    human_readable:
+    - 'The “Checklist” editor contains a bullet list with exactly three items in this order: “Buy milk”, “Send invoice”,
+      “Book flights”.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Checklist
+        mode: list_equals
+        list_type: bullet
+        items:
+        - Buy milk
+        - Send invoice
+        - Book flights
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - List is ordered/numbered instead of bulleted.
+  - Items are misspelled, merged, or in the wrong order.
+  - Extra blank bullet items remain.
+  - Text is entered as separate paragraphs rather than list items.
+  expected_interaction_path: Click editor → click BulletList → type each item with Enter between → finish after
+    third item.
+  notes: 'Checker hint: verify list node type (bulletList) with 3 listItem children; compare each item’s plain text.'
+- id: rich_text_editor-mantine-T06
+  name: Add a hyperlink in dark mode
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Resources”, turn the text “release notes” into a link to https://example.com/notes
+    and confirm the link in the link dialog. The task will finish automatically when done.
+  ui_copy: 'Resources
+
+    Link “release notes” → https://example.com/notes'
+  setup_description: |-
+    Scene uses the dark theme but otherwise baseline: an isolated centered card with one RichTextEditor labeled “Resources”.
+    The editor starts with one paragraph: “See the release notes for details.”
+    The toolbar includes a Link control. Clicking it opens an in-component link popover/dialog with a URL input and a “Save link” button (and a “Cancel” button).
+    The selection must be on the text to be linked before opening the link popover.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires selecting the correct substring and completing a small overlay flow (URL + Save link),
+      but still single-instance with clear text.
+  success_trigger:
+    human_readable:
+    - The “Resources” editor’s plain text remains “See the release notes for details.”
+    - The substring “release notes” is a link with href exactly “https://example.com/notes”.
+    - The link popover was confirmed via the “Save link” control (i.e., the editor state includes the link mark
+      after the popover closes).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Resources
+        mode: marked_substring
+        text: See the release notes for details.
+        marked_spans:
+        - substring: release notes
+          marks:
+          - type: link
+            href: https://example.com/notes
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: true
+      confirm_control: Save link
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Wrong text is linked (e.g., linking “See the”).
+  - Link URL differs (missing https, extra slash, different domain).
+  - Link mark is created but the link dialog is not confirmed (e.g., popover left open or canceled).
+  - Additional formatting is applied unintentionally.
+  expected_interaction_path: Select “release notes” → click Link → type/paste URL → click “Save link”.
+  notes: |-
+    Checker hint: validate link mark attributes in TipTap JSON (mark type=link, attrs.href).
+    Also verify the link dialog is closed (if your harness exposes an 'open' state), or rely on the persisted mark as the confirmation signal.
+- id: rich_text_editor-mantine-T07
+  name: Center-align a short announcement
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Announcement”, set the text alignment to center for the entire paragraph.
+    The task will finish automatically when done.
+  ui_copy: 'Announcement
+
+    Center-align the paragraph.'
+  setup_description: |-
+    The only content is in a single isolated card anchored near the top-right of the viewport (placement=top_right).
+    The card contains one RichTextEditor labeled “Announcement” with initial content: “All hands at 3 PM”.
+    The toolbar includes alignment controls (AlignLeft/AlignCenter/AlignRight/AlignJustify). Alignment applies to the current block.
+    No other components are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single block with one formatting toggle (alignment) in a slightly non-central placement.
+  success_trigger:
+    human_readable:
+    - The “Announcement” editor contains one paragraph with text “All hands at 3 PM”.
+    - That paragraph has text alignment set to center.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Announcement
+        mode: block_attribute_equals
+        block_index: 0
+        block_type: paragraph
+        text: All hands at 3 PM
+        attributes:
+          textAlign: center
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Text is changed or additional lines are added.
+  - Alignment is right/justify/left instead of center.
+  - Only part of the paragraph is aligned (should be block-level).
+  expected_interaction_path: Click into paragraph → click AlignCenter in toolbar.
+  notes: 'Checker hint: Mantine demo uses Tiptap TextAlign extension; validate node attrs.textAlign == ''center''
+    for paragraph.'
+- id: rich_text_editor-mantine-T08
+  name: Insert a divider in compact small editor
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Update”, insert a horizontal divider between the two paragraphs (after
+    “Morning sync.”). The task will finish automatically when done.
+  ui_copy: 'Update
+
+    Add a horizontal line between the two paragraphs.'
+  setup_description: |-
+    Scene remains an isolated centered card but uses compact spacing and small scale: the toolbar buttons and padding are reduced.
+    One RichTextEditor labeled “Update” starts with two paragraphs:
+    1) “Morning sync.”
+    2) “Afternoon demo.”
+    The toolbar includes an “Hr” control (horizontal rule). In this configuration, controls are tightly spaced, increasing click precision needs.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Still a single straightforward operation, but compact spacing and small controls increase target
+      acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - 'The editor has three blocks in order: paragraph “Morning sync.”, a horizontal rule, paragraph “Afternoon
+      demo.”'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Update
+        mode: block_structure_equals
+        blocks:
+        - block_type: paragraph
+          text: Morning sync.
+        - block_type: horizontal_rule
+        - block_type: paragraph
+          text: Afternoon demo.
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Horizontal rule is inserted at the start or end instead of between paragraphs.
+  - Extra blank paragraphs are introduced between blocks.
+  - Text content is altered.
+  expected_interaction_path: Click at end of first paragraph → click Hr control.
+  notes: 'Checker hint: validate presence of a horizontalRule node between paragraphs in the JSON.'
+- id: rich_text_editor-mantine-T09
+  name: Match a simple formatted example (mixed guidance)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Roadmap draft”, make the content match the Example card exactly (title
+    + list). The task will finish automatically when done.
+  ui_copy: 'Roadmap draft
+
+    Match the Example card on the right.'
+  setup_description: |-
+    Baseline isolated card centered. Two side-by-side panels inside the card:
+    - Left: RichTextEditor labeled “Roadmap draft” (starts empty).
+    - Right: a non-editable “Example” preview card showing the target formatting.
+    The Example shows:
+    • A Heading 3 line: “Roadmap”
+    • A bulleted list with two items: “Ship v1” and “Collect feedback”
+    Guidance is mixed: the instruction says “match the Example card”, and the card is visible as a visual reference.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires interpreting a visual example and reproducing simple structure (heading + bullets) without
+      any disambiguation.
+  success_trigger:
+    human_readable:
+    - 'The “Roadmap draft” editor matches the Example card: a Heading 3 “Roadmap” followed by a bullet list with
+      two items “Ship v1” and “Collect feedback”.'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance_label: Roadmap draft
+        mode: matches_reference
+        reference_card_id: Example
+        reference_semantics:
+          blocks:
+          - block_type: heading
+            level: 3
+            text: Roadmap
+          - block_type: bullet_list
+            items:
+            - Ship v1
+            - Collect feedback
+      tolerance:
+        normalize_whitespace: true
+        allow_equivalent_markup: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Heading level is wrong (not H3).
+  - List is ordered instead of bulleted, or list items differ.
+  - Correct text but incorrect structure (e.g., paragraphs instead of a list).
+  - Extra trailing content beyond the example.
+  expected_interaction_path: Type “Roadmap” → set H3 → create bullet list → enter two items.
+  notes: |-
+    Checker hint: store a canonical semantic reference for the Example card (block types + texts) and compare to editor.getJSON().
+    The reference card itself must not be editable.
+- id: rich_text_editor-mantine-T10
+  name: Edit bio in a modal and save
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open the “Edit bio” dialog, set the editor content to: Loves typography. Then click “Save changes”.
+    The task will finish automatically when done.'
+  ui_copy: 'Profile
+
+    [Edit bio]
+
+    Goal: Bio = “Loves typography.” (Save changes)'
+  setup_description: |-
+    The page shows a simple profile card with a button labeled “Edit bio”.
+    Clicking it opens a modal_flow dialog titled “Edit bio” containing one RichTextEditor labeled “Bio”.
+    The editor initially contains: “(Tell us about yourself)”.
+    The modal footer has two buttons: “Cancel” and “Save changes”. Changes to the editor are not committed unless “Save changes” is clicked.
+    Clutter is low: profile avatar and static fields (Name/Role) are visible behind the modal but not interactive.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Adds one overlay layer and a required confirmation click, but the target value is short and the
+      editor is the only interactive element inside the modal.
+  success_trigger:
+    human_readable:
+    - The “Edit bio” modal is open at some point during the interaction.
+    - After clicking “Save changes”, the committed Bio value equals “Loves typography.” (whitespace-normalized).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Bio
+        mode: plaintext_equals_committed
+        text: Loves typography.
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_newline: true
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Bio text is changed but “Save changes” is not clicked.
+  - “Cancel” is clicked (changes discarded).
+  - Committed text differs (missing period, extra words).
+  - Text is entered into a non-target field (if any).
+  expected_interaction_path: Click “Edit bio” → clear existing text → type sentence → click “Save changes”.
+  notes: |-
+    Checker hint: distinguish between live editor state and committed value (e.g., a separate read-only preview field updated only on Save).
+    Modal open/close state can be tracked but success should key off committed value + confirm click.
+- id: rich_text_editor-mantine-T11
+  name: Apply two different inline formats
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Reminder”, highlight “Q1” and italicize “today”, leaving everything else
+    unchanged. The task will finish automatically when done.
+  ui_copy: 'Reminder
+
+    Highlight “Q1” and italicize “today”.'
+  setup_description: |-
+    Baseline centered card with one RichTextEditor labeled “Reminder”.
+    Initial content is one paragraph: “Please review the Q1 plan today.”
+    The toolbar includes Highlight and Italic controls. Highlight toggles a background mark on the selected text.
+    No confirmation is required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires two separate selections and applying two different marks while keeping the rest of the
+      content unchanged.
+  success_trigger:
+    human_readable:
+    - Plain text remains “Please review the Q1 plan today.”
+    - Substring “Q1” has the highlight mark.
+    - Substring “today” has the italic mark.
+    - No other characters are highlighted or italicized.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Reminder
+        mode: multiple_marked_substrings
+        text: Please review the Q1 plan today.
+        marked_spans:
+        - substring: Q1
+          marks:
+          - highlight
+        - substring: today
+          marks:
+          - italic
+        forbidden_marks_outside_spans:
+        - highlight
+        - italic
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Wrong substring selected (e.g., highlighting “plan”).
+  - Marks applied to extra spaces or punctuation.
+  - Additional text edits or line breaks.
+  - Using bold/underline instead of the requested formats.
+  expected_interaction_path: Select “Q1” → click Highlight → select “today” → click Italic.
+  notes: 'Checker hint: span-based mark verification for multiple ranges. If the document contains multiple occurrences,
+    disambiguate by first occurrence index.'
+- id: rich_text_editor-mantine-T12
+  name: Type into the correct editor (2 instances)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the editor labeled “Customer reply” (not “Internal note”), type: Thanks for the report—we’re
+    on it. The task will finish automatically when done.'
+  ui_copy: 'Ticket
+
+    Customer reply (rich text)
+
+    Internal note (rich text)
+
+    Target: Customer reply = “Thanks for the report—we’re on it.”'
+  setup_description: |-
+    Centered isolated card shows a support ticket summary with two RichTextEditor instances stacked vertically.
+    The first editor is labeled “Customer reply” and starts empty.
+    The second editor is labeled “Internal note” and contains pre-filled text: “Remember to tag billing.”
+    Both editors have identical toolbars and look similar, so the label is the main disambiguation cue.
+    No Save button; edits apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The core interaction is simple text entry, but there are two similar editor instances and only
+      one is the target.
+  success_trigger:
+    human_readable:
+    - The “Customer reply” editor plain text equals “Thanks for the report—we’re on it.”
+    - The “Internal note” editor remains unchanged (still contains “Remember to tag billing.”).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: multi_instance
+        targets:
+        - instance_label: Customer reply
+          plaintext_equals: Thanks for the report—we’re on it.
+        - instance_label: Internal note
+          plaintext_equals: Remember to tag billing.
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Customer reply
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Text is typed into “Internal note” instead of “Customer reply”.
+  - Customer reply text differs (missing em dash or apostrophe).
+  - Internal note is modified in any way.
+  expected_interaction_path: Click into “Customer reply” editor → type sentence.
+  notes: 'Checker hint: with multiple instances, require_correct_instance=true and verify non-target editors remain
+    at initial canonical state.'
+- id: rich_text_editor-mantine-T13
+  name: Update an existing link URL
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Docs blurb”, change the link on the word “docs” so it points to https://docs.example.com/start,
+    then confirm the link. The task will finish automatically when done.
+  ui_copy: 'Docs blurb
+
+    Update the “docs” link URL to https://docs.example.com/start'
+  setup_description: |-
+    Baseline isolated card with one RichTextEditor labeled “Docs blurb”.
+    Initial content: “Read the docs to get started.” where the word “docs” is already a hyperlink to https://old.example.com/docs.
+    The toolbar has Link and Unlink controls. Activating the Link control while the cursor is on a link opens the link popover with the current URL prefilled.
+    The popover has a URL input and a “Save link” button. The agent must replace the URL and save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Involves detecting existing link state and using an overlay editor to modify link attributes
+      accurately.
+  success_trigger:
+    human_readable:
+    - Plain text remains “Read the docs to get started.”
+    - The substring “docs” is a link with href exactly “https://docs.example.com/start”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Docs blurb
+        mode: marked_substring
+        text: Read the docs to get started.
+        marked_spans:
+        - substring: docs
+          marks:
+          - type: link
+            href: https://docs.example.com/start
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: true
+      confirm_control: Save link
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Link removed entirely (unlinked).
+  - URL not updated (still old URL) or partially updated (missing /start).
+  - Wrong word linked (e.g., linking “Read”).
+  - Text content changed.
+  expected_interaction_path: Place cursor on linked “docs” → click Link → edit URL field → click “Save link”.
+  notes: 'Checker hint: ensure the href attribute matches exactly; do not accept relative URLs or http instead of
+    https.'
+- id: rich_text_editor-mantine-T14
+  name: Drag-select and highlight a phrase
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Priority note”, select the phrase “high priority” and apply highlight
+    to it. The task will finish automatically when done.
+  ui_copy: 'Priority note
+
+    Highlight the phrase “high priority”.'
+  setup_description: |-
+    Centered isolated card with one RichTextEditor labeled “Priority note”.
+    Initial paragraph: “This is a high priority request—please respond.”
+    The phrase “high priority” appears in the middle of the sentence. The toolbar includes a Highlight control.
+    The intent is to select the phrase (typically via drag selection across both words) and then toggle highlight.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires precise text selection by dragging to capture exactly the requested phrase before applying
+      a mark.
+  success_trigger:
+    human_readable:
+    - Plain text remains “This is a high priority request—please respond.”
+    - Only the substring “high priority” has the highlight mark.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Priority note
+        mode: marked_substring
+        text: This is a high priority request—please respond.
+        marked_spans:
+        - substring: high priority
+          marks:
+          - highlight
+        forbidden_marks_outside_spans:
+        - highlight
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Highlight includes extra spaces or punctuation (e.g., highlighting “high priority ”).
+  - Only one of the two words is highlighted.
+  - Highlight applied to a different phrase.
+  - Text is modified.
+  expected_interaction_path: Drag to select “high priority” → click Highlight.
+  notes: 'Checker hint: treat em dash as a distinct character; the target span ends before the space preceding “request—”.'
+- id: rich_text_editor-mantine-T15
+  name: Find the signature editor and update it (dark settings panel)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'On the Settings page, scroll to the “Email signature” editor and set it to exactly two lines:
+    Thanks, then Alex. The task will finish automatically when done.'
+  ui_copy: 'Settings (dark)
+
+    Email signature (rich text)
+
+    Target:
+
+    Thanks,
+
+    Alex'
+  setup_description: |-
+    The page uses a settings_panel layout in dark theme with multiple collapsible sections (Account, Notifications, Appearance).
+    Above the fold are several toggles and dropdowns as clutter (they are irrelevant).
+    The “Email signature” section is below the fold and contains one RichTextEditor labeled “Email signature”.
+    The editor starts with: “Best,” on one line and “Sam” on the next line.
+    No Save button is present; changes apply immediately, but the page shows a small “Saved” toast after edits (non-blocking).
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling to locate the editor within a cluttered settings page and setting a multi-line
+      value.
+  success_trigger:
+    human_readable:
+    - 'The “Email signature” editor plain text equals exactly two lines: “Thanks,” then “Alex”.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Email signature
+        mode: plaintext_equals
+        text: 'Thanks,
+
+          Alex'
+      tolerance:
+        normalize_whitespace: false
+        normalize_line_endings: true
+        ignore_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Correct text but wrong line breaks (single line or extra blank line).
+  - Editing the wrong section/editor (if other editors are present as future clutter).
+  - Leaving old signature content in place.
+  - Typing “Alex” with different casing.
+  expected_interaction_path: Scroll down → click into “Email signature” → select all → type “Thanks,” Enter “Alex”.
+  notes: |-
+    Checker hint: compare plain text with explicit newline; normalize CRLF vs LF.
+    If the editor always ends with an empty paragraph, allow a single trailing newline to be ignored.
+- id: rich_text_editor-mantine-T16
+  name: Use undo in a dashboard widget
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the editor labeled “KPI note”, remove the trailing text “(edited)” so the content is exactly
+    “KPI summary”. The task will finish automatically when done.
+  ui_copy: 'Dashboard
+
+    KPI note (rich text)
+
+    Make it exactly: KPI summary'
+  setup_description: |-
+    The scene uses a dashboard layout with multiple metric cards (non-interactive) as medium clutter.
+    In the bottom-left quadrant is a widget titled “KPI note” containing a RichTextEditor labeled “KPI note”.
+    The editor currently contains a single paragraph: “KPI summary (edited)”.
+    The toolbar is visible and includes Undo/Redo controls. No Save button; changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires finding the editor in a busier dashboard layout and producing an exact short target
+      string.
+  success_trigger:
+    human_readable:
+    - The “KPI note” editor plain text equals exactly “KPI summary”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: KPI note
+        mode: plaintext_equals
+        text: KPI summary
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Parentheses remain, e.g., “KPI summary ()”.
+  - Extra whitespace or punctuation changes (e.g., adding a period).
+  - Editing a different text field on the dashboard (if any).
+  expected_interaction_path: Click into editor → either press Undo or delete “ (edited)” → ensure final text matches.
+  notes: 'Checker hint: exact match after whitespace normalization; keep as plain text task despite clutter.'
+- id: rich_text_editor-mantine-T17
+  name: Remove all formatting but keep the text
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Summary”, remove all text formatting so the sentence is plain text, while
+    keeping the exact words unchanged. The task will finish automatically when done.
+  ui_copy: 'Summary
+
+    Clear formatting (keep the words).'
+  setup_description: |-
+    Form_section layout with a couple of read-only fields (Title, Category) above the editor as low clutter.
+    The RichTextEditor labeled “Summary” contains one sentence: “Beta is available now.”
+    The word “Beta” is bold and “available” is italic in the initial state.
+    The toolbar includes a ClearFormatting control (eraser icon) which clears marks from the current selection.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires selecting content and using a reset control to remove marks without altering the underlying
+      text.
+  success_trigger:
+    human_readable:
+    - Plain text equals exactly “Beta is available now.”
+    - No bold/italic/underline/strike/highlight/code marks remain anywhere in the sentence.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Summary
+        mode: no_inline_marks
+        text: Beta is available now.
+        forbidden_marks:
+        - bold
+        - italic
+        - underline
+        - strike
+        - highlight
+        - code
+        - link
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Some formatting remains on any word.
+  - Text content changes (missing word, added punctuation).
+  - Formatting is replaced with different marks instead of removed.
+  expected_interaction_path: Select all text in editor → click ClearFormatting.
+  notes: 'Checker hint: verify that no mark nodes exist in the document JSON; alternatively check that HTML has
+    no <strong>, <em>, <u>, <s>, <code>, <a>, or highlight mark classes.'
+- id: rich_text_editor-mantine-T18
+  name: Match a quote card (visual guidance, compact)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Quote card”, make the content match the visual Example exactly. The task
+    will finish automatically when done.
+  ui_copy: 'Quote card
+
+    Match the Example formatting shown.'
+  setup_description: |-
+    The card contains two columns with compact spacing:
+    - Left column: RichTextEditor labeled “Quote card”, initially empty.
+    - Right column: a read-only “Example” preview showing the target appearance (no explicit text instructions beyond “match the example”).
+    The Example shows a blockquote containing the text “Stay curious” on one line, followed by a normal paragraph containing “— Ada”.
+    Toolbar includes Blockquote and standard text tools. Compact spacing makes controls slightly denser.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Visual-only guidance requires inferring structure (blockquote vs paragraph) and reproducing it;
+      compact toolbar increases acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - 'The “Quote card” editor matches the Example: a blockquote with text “Stay curious”, followed by a paragraph
+      with text “— Ada”.'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance_label: Quote card
+        mode: matches_reference
+        reference_card_id: Example
+        reference_semantics:
+          blocks:
+          - block_type: blockquote
+            text: Stay curious
+          - block_type: paragraph
+            text: — Ada
+      tolerance:
+        normalize_whitespace: true
+        allow_equivalent_markup: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using italics or quotes instead of a blockquote block.
+  - Em dash rendered as a normal hyphen (“- Ada”) instead of “— Ada”.
+  - Extra empty lines/blocks.
+  - Text content differs from the example.
+  expected_interaction_path: Type “Stay curious” → set Blockquote → new line → type “— Ada” as paragraph.
+  notes: 'Checker hint: blockquote is a distinct node in starter-kit; verify first block node type=blockquote.'
+- id: rich_text_editor-mantine-T19
+  name: Format the correct editor among three
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: 'In the editor labeled “Manager note” (not the other two), create a numbered list with two items:
+    Follow up; Escalate. The task will finish automatically when done.'
+  ui_copy: 'Review panel
+
+    Public comment / Manager note / Legal note
+
+    Target: Manager note = numbered list [Follow up, Escalate]'
+  setup_description: |-
+    An isolated card contains a “Review panel” section with three RichTextEditor instances in a vertical stack:
+    1) “Public comment” (pre-filled: “Looks good.”)
+    2) “Manager note” (empty)
+    3) “Legal note” (pre-filled: “No issues found.”)
+    All three toolbars look identical, so the label is required for correct targeting.
+    Clutter is low: a couple of read-only tags (Status: Pending) appear above.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: 'Disambiguation dominates: three similar editor instances with only one target, plus a small
+      list-structure requirement.'
+  success_trigger:
+    human_readable:
+    - '“Manager note” contains an ordered (numbered) list with exactly two items: “Follow up”, then “Escalate”.'
+    - “Public comment” remains “Looks good.” and “Legal note” remains “No issues found.”
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: multi_instance
+        targets:
+        - instance_label: Manager note
+          list_equals:
+            list_type: ordered
+            items:
+            - Follow up
+            - Escalate
+        - instance_label: Public comment
+          plaintext_equals: Looks good.
+        - instance_label: Legal note
+          plaintext_equals: No issues found.
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Manager note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Numbered list created in the wrong editor.
+  - Using bullets instead of numbers.
+  - Modifying any non-target editor text.
+  - Extra list items or empty items.
+  expected_interaction_path: Click “Manager note” → click OrderedList → type items with Enter.
+  notes: 'Checker hint: verify orderedList node type. Ensure non-target editors match their initial canonical state.'
+- id: rich_text_editor-mantine-T20
+  name: Open editor and cancel without saving
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the “Edit announcement” dialog and then click “Cancel” so the announcement remains unchanged.
+    The task will finish automatically when done.
+  ui_copy: 'Announcement
+
+    [Edit announcement]
+
+    Goal: Cancel without changing the saved announcement'
+  setup_description: |-
+    The page shows a read-only announcement preview: “Welcome to the portal!” and a button “Edit announcement”.
+    Clicking it opens a modal titled “Edit announcement” containing a RichTextEditor labeled “Announcement text” pre-filled with “Welcome to the portal!”.
+    The modal footer has “Cancel” and “Save” buttons. Closing via “Cancel” discards any edits and leaves the saved announcement unchanged.
+    To increase realism, the editor shows a subtle “Unsaved changes” indicator only after content is modified (but modification is not required for success).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Overlay handling plus a required cancel action; success depends on the committed value remaining
+      unchanged.
+  success_trigger:
+    human_readable:
+    - The user has opened the “Edit announcement” modal at least once during the task.
+    - After clicking “Cancel”, the saved announcement text remains exactly “Welcome to the portal!”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: plaintext_equals_committed
+        instance_label: Announcement text
+        text: Welcome to the portal!
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking “Save” (even if the text is unchanged).
+  - Saved announcement changes to anything else.
+  - Closing the modal via the X without registering the Cancel action (if the harness distinguishes it).
+  expected_interaction_path: Click “Edit announcement” → click “Cancel”.
+  notes: |-
+    Checker hint: track the committed announcement value shown in the read-only preview; it must remain unchanged after the Cancel action.
+    If the UI allows closing via backdrop click or X, treat those as not satisfying the explicit Cancel requirement.
+- id: rich_text_editor-mantine-T21
+  name: Heading + alignment + inline code (sticky toolbar)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: sticky_toolbar
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: In the editor labeled “How-to”, format the first line “Install” as a centered Heading 2, and
+    format “npm install” as inline code in the second line. The task will finish automatically when done.
+  ui_copy: 'How-to
+
+    Make “Install” = centered H2, and “npm install” = inline code.'
+  setup_description: |-
+    Isolated centered card with one RichTextEditor labeled “How-to”.
+    The editor is configured with a sticky toolbar (RichTextEditor.Toolbar sticky) that remains visible when the content area scrolls.
+    Initial content has two paragraphs:
+    1) “Install”
+    2) “Run npm install to add dependencies.”
+    Toolbar includes H2, AlignCenter, and Code controls.
+    No confirmation step; formatting changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Multiple formatting operations across block and inline scopes are required (heading + alignment
+      + code), increasing precision and sequencing demands.
+  success_trigger:
+    human_readable:
+    - Block 1 is a Heading level 2 with text “Install” and textAlign=center.
+    - Block 2 is a paragraph containing the substring “npm install” marked as inline code; other text is unmarked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: How-to
+        mode: mixed_structure_and_marks
+        blocks:
+        - block_type: heading
+          level: 2
+          text: Install
+          attributes:
+            textAlign: center
+        - block_type: paragraph
+          text: Run npm install to add dependencies.
+          marked_spans:
+          - substring: npm install
+            marks:
+            - code
+          forbidden_marks_outside_spans:
+          - code
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Heading is not H2 or not centered.
+  - Code formatting is applied to the wrong substring (e.g., only “npm”).
+  - Code formatting is applied to the whole sentence.
+  - Second line becomes a code block instead of inline code.
+  expected_interaction_path: Click first line → click H2 → click AlignCenter → select “npm install” in second line
+    → click Code.
+  notes: 'Checker hint: distinguish inline code mark from codeBlock node. Validate marks on the text node for “npm
+    install”.'
+- id: rich_text_editor-mantine-T22
+  name: Use bubble menu to bold selected word
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: bubble_menu
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Inline edit”, make the word “important” bold using the selection bubble
+    menu. The task will finish automatically when done.
+  ui_copy: 'Inline edit
+
+    Bold “important” (bubble menu).'
+  setup_description: |-
+    Centered isolated card with one RichTextEditor labeled “Inline edit”.
+    The editor is configured without a full toolbar; instead, it shows a BubbleMenu that appears only when text is selected.
+    Initial content is one paragraph: “This is important for launch.”
+    When the user selects text, a small floating bubble menu appears near the selection with controls for Bold and Italic (icons with aria-labels).
+    No confirmation step; state updates immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Key control surface is conditional (bubble menu appears only on selection), increasing layering
+      and target acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - Plain text remains “This is important for launch.”
+    - Only the substring “important” is bold.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Inline edit
+        mode: marked_substring
+        text: This is important for launch.
+        marked_spans:
+        - substring: important
+          marks:
+          - bold
+        forbidden_marks_outside_spans:
+        - bold
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Bubble menu not used and bold is not applied (fails by state).
+  - Bold applied to wrong substring or includes surrounding spaces.
+  - Text edited unintentionally.
+  expected_interaction_path: Select “important” → wait for bubble menu to appear → click Bold.
+  notes: 'Instrumentation: bubble menu controls should have stable aria-labels (e.g., “Bold”, “Italic”) for AX-tree
+    agents.'
+- id: rich_text_editor-mantine-T23
+  name: Create a nested bulleted list (dark + compact)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: editor_operation
+  secondary_template: null
+  browsergym_goal: 'In the editor labeled “Work breakdown”, create a bulleted list with two top-level bullets: Frontend
+    and Backend. Then add a nested bullet under Backend with the text API. The task will finish automatically when
+    done.'
+  ui_copy: 'Work breakdown
+
+    Bullets: Frontend; Backend (with sub-bullet: API)'
+  setup_description: |-
+    The scene is a centered card in dark theme with compact spacing.
+    One RichTextEditor labeled “Work breakdown” starts empty.
+    The toolbar includes BulletList. Indenting/outdenting list items can be done with Tab/Shift+Tab inside a list (using tiptap list commands).
+    No Save button. Controls are denser due to compact spacing and the dark theme reduces contrast slightly.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Nested list structure requires multi-step list editing (create list → create second item → indent
+      third item), which is error-prone in compact toolbars.
+  success_trigger:
+    human_readable:
+    - 'The document is a bullet list with two top-level items: “Frontend” and “Backend”.'
+    - The “Backend” item contains a nested bullet list with a single item “API”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Work breakdown
+        mode: nested_list_equals
+        list_type: bullet
+        items:
+        - text: Frontend
+        - text: Backend
+          children:
+          - text: API
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - API is a third top-level bullet (not nested).
+  - Backend becomes nested under Frontend.
+  - Using numbered lists instead of bullets.
+  - Extra empty list items remain.
+  expected_interaction_path: Click editor → BulletList → type Frontend Enter Backend Enter API → indent API under
+    Backend (Tab) → ensure nesting.
+  notes: 'Checker hint: inspect listItem structure in ProseMirror JSON (bulletList > listItem; nested bulletList
+    as child of listItem).'
+- id: rich_text_editor-mantine-T24
+  name: Disambiguate 3 small editors and apply strikethrough
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: subtle_variant
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Partner note” (not Public or Internal), apply strikethrough to the word
+    “deprecated” and leave everything else unchanged. The task will finish automatically when done.
+  ui_copy: 'Notes
+
+    Public note / Partner note / Internal note
+
+    Strike through “deprecated” in Partner note'
+  setup_description: |-
+    Centered isolated card with three RichTextEditor instances arranged in a row (compact column layout). Each uses the subtle variant toolbar and the overall scale is small.
+    Labels above each editor:
+    - “Public note” (pre-filled: “No breaking changes.”)
+    - “Partner note” (pre-filled: “This endpoint is deprecated.”)
+    - “Internal note” (pre-filled: “Follow up with migration guide.”)
+    Aside from these three editors, there are no additional interactive controls on the card.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three similar small editors in close proximity require careful instance selection and precise
+      substring formatting.
+  success_trigger:
+    human_readable:
+    - Public note remains “No breaking changes.”
+    - Internal note remains “Follow up with migration guide.”
+    - Partner note plain text remains “This endpoint is deprecated.” and only “deprecated” is strikethrough.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: multi_instance
+        targets:
+        - instance_label: Public note
+          plaintext_equals: No breaking changes.
+        - instance_label: Internal note
+          plaintext_equals: Follow up with migration guide.
+        - instance_label: Partner note
+          text: This endpoint is deprecated.
+          marked_spans:
+          - substring: deprecated
+            marks:
+            - strikethrough
+          forbidden_marks_outside_spans:
+          - strikethrough
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Partner note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying strikethrough in Public note or Internal note.
+  - Strikethrough applied to the wrong word (e.g., “endpoint”).
+  - Text content changed in any editor.
+  - Strikethrough includes punctuation or trailing space.
+  expected_interaction_path: Click into Partner note → select “deprecated” → click Strikethrough (or Ctrl/Cmd+Shift+X
+    if configured).
+  notes: 'Checker hint: ensure the target instance is selected by stable data-testid or label association; do not
+    rely only on DOM order.'
+- id: rich_text_editor-mantine-T25
+  name: Match a multi-block reference card (dashboard)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Sprint brief”, make the content match the visual Example card exactly.
+    The task will finish automatically when done.
+  ui_copy: 'Dashboard
+
+    Sprint brief (rich text)
+
+    Match Example'
+  setup_description: |-
+    Dashboard layout with several tiles (charts are static placeholders) creates medium clutter.
+    One tile titled “Sprint brief” contains a RichTextEditor labeled “Sprint brief” starting empty.
+    Next to it is a read-only “Example” card (visual guidance only) showing:
+    - A centered Heading 2: “Sprint 12”
+    - An ordered (numbered) list with items “Fix bugs” and “Polish UI”
+    - A final paragraph with italic text: “Last updated: Feb 3”
+    Toolbar includes H2, alignment controls, OrderedList, and Italic.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires copying a multi-block structure from a visual reference (alignment + heading + ordered
+      list + italic line) within a cluttered dashboard tile.
+  success_trigger:
+    human_readable:
+    - 'The “Sprint brief” editor matches the Example: centered H2 “Sprint 12”, ordered list [“Fix bugs”, “Polish
+      UI”], and an italic paragraph “Last updated: Feb 3”.'
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance_label: Sprint brief
+        mode: matches_reference
+        reference_card_id: Example
+        reference_semantics:
+          blocks:
+          - block_type: heading
+            level: 2
+            text: Sprint 12
+            attributes:
+              textAlign: center
+          - block_type: ordered_list
+            items:
+            - Fix bugs
+            - Polish UI
+          - block_type: paragraph
+            text: 'Last updated: Feb 3'
+            marks:
+            - italic
+      tolerance:
+        normalize_whitespace: true
+        allow_equivalent_markup: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Heading not centered or wrong level.
+  - List type wrong (bullets instead of numbers) or items differ.
+  - Italic applied to only part of the last line or to the wrong line.
+  - Extra content beyond the example.
+  expected_interaction_path: Type Sprint 12 → set H2 → center align → create ordered list with 2 items → add final
+    line and italicize.
+  notes: 'Checker hint: for visual reference tasks, store canonical semantic targets rather than pixel matching.'
+- id: rich_text_editor-mantine-T26
+  name: Compose in a drawer and send
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: 'Open the “Compose message” drawer, set the editor labeled “Message” to: Meeting moved to 4 PM.
+    Then click “Send”. The task will finish automatically when done.'
+  ui_copy: 'Inbox
+
+    [Compose message]
+
+    Goal: Message = “Meeting moved to 4 PM.” (Send)'
+  setup_description: |-
+    The page shows an inbox list (static rows) and a “Compose message” button.
+    Clicking it opens a drawer_flow panel sliding in from the right titled “Compose”.
+    Inside the drawer is one RichTextEditor labeled “Message” (initially empty) and footer buttons “Close” and “Send”.
+    The message is committed only when “Send” is clicked; until then, edits are local to the drawer.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening and working within a drawer overlay and completing a required confirmation action
+      to commit the editor state.
+  success_trigger:
+    human_readable:
+    - The “Compose” drawer is opened during the task.
+    - After clicking “Send”, the committed Message value equals “Meeting moved to 4 PM.”
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Message
+        mode: plaintext_equals_committed
+        text: Meeting moved to 4 PM.
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: true
+      confirm_control: Send
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Text entered but “Send” not clicked.
+  - Drawer closed via “Close” or the X.
+  - Committed message differs (missing period, wrong time).
+  - Typing into a different field (if any).
+  expected_interaction_path: Click “Compose message” → click editor → type sentence → click “Send”.
+  notes: 'Checker hint: track a committed “sent message” preview outside the drawer that updates only after Send.'
+- id: rich_text_editor-mantine-T27
+  name: Publish from a modal with a confirmation step (dark)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open “Edit post”, set the editor labeled “Post body” to: Launch is live. Click “Publish”, then
+    confirm by clicking “Confirm publish”. The task will finish automatically when done.'
+  ui_copy: 'Posts (dark)
+
+    [Edit post]
+
+    Goal: Post body = “Launch is live.” (Publish → Confirm publish)'
+  setup_description: |-
+    Dark-themed page with a post preview and a button “Edit post”.
+    Clicking it opens a modal titled “Edit post” containing a RichTextEditor labeled “Post body”, initially pre-filled with “Draft content”.
+    The modal footer has “Cancel” and “Publish”. Clicking “Publish” opens a second confirmation modal (stacked overlay) asking “Publish this post?” with buttons “Back” and “Confirm publish”.
+    The post body is committed only after “Confirm publish” is clicked.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 5
+      feedback_dynamics: 5
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Two-step confirmation with stacked modals increases depth/layering and feedback dynamics; the
+      agent must complete the correct sequence to commit the editor state.
+  success_trigger:
+    human_readable:
+    - The “Edit post” modal is opened.
+    - The “Post body” editor content is set to “Launch is live.”
+    - The agent clicks “Publish” and then clicks “Confirm publish”.
+    - After confirmation, the committed post body equals “Launch is live.”
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Post body
+        mode: plaintext_equals_committed
+        text: Launch is live.
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: true
+      confirm_control: Confirm publish
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Publish but not confirming in the second modal.
+  - Confirming without updating the editor content correctly.
+  - Canceling/Backing out (changes not committed).
+  - Committed text differs (missing period).
+  expected_interaction_path: Click “Edit post” → select all → type sentence → click “Publish” → click “Confirm publish”.
+  notes: 'Checker hint: treat the final confirmation as the required confirm_control. If your harness emits events,
+    ensure the confirm click occurred (not just modal dismissed).'
+- id: rich_text_editor-mantine-T28
+  name: Reply in the correct table row
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: 'In the table, find the row for “Order #1842” and type “Refund approved.” into its Reply editor.
+    Do not edit the other row. The task will finish automatically when done.'
+  ui_copy: 'Orders table
+
+    Row: Order #1842 → Reply editor = “Refund approved.”'
+  setup_description: |-
+    The page uses a table_cell layout: a small two-row orders table is centered with a simple header row and minimal surrounding UI (a non-interactive “Orders” title and read-only filter chips) as medium clutter.
+    Each row has a “Reply” column containing a compact RichTextEditor (toolbar visible but small) for drafting a response.
+    Row 1: “Order #1842” (Reply editor empty)
+    Row 2: “Order #1843” (Reply editor pre-filled: “Checking status.”)
+    Both editors look identical; correct row selection is required.
+    No Save button: drafts are stored live per row.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: High disambiguation load (multiple similar editors inside a table) and smaller targets in a dense
+      table layout.
+  success_trigger:
+    human_readable:
+    - 'The Reply editor in row “Order #1842” has plain text exactly “Refund approved.”'
+    - 'The Reply editor in row “Order #1843” remains “Checking status.”'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        mode: table_row_instance
+        row_key: 'Order #1842'
+        instance_in_row: Reply
+        plaintext_equals: Refund approved.
+        non_target_rows_must_remain:
+        - row_key: 'Order #1843'
+          instance_in_row: Reply
+          plaintext_equals: Checking status.
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'Order #1842 / Reply'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing into the Reply editor for the wrong order.
+  - Editing both rows.
+  - Text differs (missing period).
+  - Entering content into a filter/search input instead of the reply editor.
+  expected_interaction_path: 'Locate row Order #1842 → click into its Reply editor → type sentence.'
+  notes: |-
+    Instrumentation: expose row identifiers and editor testids, e.g., data-testid="orders-row-1842-reply-editor".
+    Checker should bind by row key text, not DOM index, to remain robust under sorting.
+- id: rich_text_editor-mantine-T29
+  name: Append text at the end of a long editor (bottom-right)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: sticky_toolbar
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'In the editor labeled “Changelog”, scroll to the end of the content and append a new final line:
+    End of notes. The task will finish automatically when done.'
+  ui_copy: 'Changelog
+
+    Append: End of notes.'
+  setup_description: |-
+    The editor card is anchored near the bottom-right of the viewport (placement=bottom_right).
+    One RichTextEditor labeled “Changelog” contains a long multi-paragraph changelog (enough to require scrolling inside the editor content area).
+    The toolbar is sticky to the top of the editor frame.
+    The task is to append a new final paragraph “End of notes.” at the very end of the document (after the last existing paragraph), not in the middle.
+    No Save button; changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires scrolling within a long rich text document and ensuring insertion occurs at the true
+      end, not near the current viewport.
+  success_trigger:
+    human_readable:
+    - The “Changelog” editor ends with a final paragraph whose text is exactly “End of notes.”
+    - All existing content before the final paragraph remains unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Changelog
+        mode: ends_with_paragraph
+        final_paragraph_text: End of notes.
+        preserve_prefix: true
+      tolerance:
+        normalize_whitespace: true
+        ignore_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Text inserted somewhere other than the end of the document.
+  - Final line has different punctuation or casing.
+  - Existing content is altered or removed.
+  expected_interaction_path: Click into editor → scroll to bottom of content → click end → press Enter if needed
+    → type “End of notes.”
+  notes: 'Checker hint: compare document JSON prefix hash or snapshot to ensure existing blocks are unchanged, then
+    verify last block text.'
+- id: rich_text_editor-mantine-T30
+  name: Type a chemical formula with subscript (mixed guidance)
+  canonical_type: rich_text_editor
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: @mantine/tiptap RichTextEditor'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Chem note”, enter the formula so it reads H₂O (the 2 is subscript), matching
+    the small Example preview. The task will finish automatically when done.
+  ui_copy: 'Chem note
+
+    Enter H₂O (2 as subscript).'
+  setup_description: |-
+    Centered isolated card with two elements:
+    - A RichTextEditor labeled “Chem note”, initially empty.
+    - A small read-only Example preview showing the desired output: “H₂O”.
+    The toolbar includes Subscript control (requires the Subscript extension; it is enabled in this task).
+    The main challenge is applying subscript to only the digit “2” while keeping “H” and “O” normal.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires precise inline formatting of a single character (subscript on only “2”), which can be
+      hard to observe and verify without good state observability.
+  success_trigger:
+    human_readable:
+    - The editor plain text is “H2O”.
+    - Only the character “2” is marked as subscript.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        instance_label: Chem note
+        mode: single_character_mark
+        text: H2O
+        marked_spans:
+        - substring: '2'
+          marks:
+          - subscript
+        forbidden_marks_outside_spans:
+        - subscript
+      tolerance:
+        normalize_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Subscript applied to the wrong character (H or O).
+  - Subscript applied to both 2 and O, or to the whole word.
+  - Incorrect text (e.g., HO or H20 with zero).
+  - Extra spaces or additional characters.
+  expected_interaction_path: Type H2O → select the “2” → click Subscript (or toggle before typing 2, then toggle
+    off).
+  notes: 'Checker hint: validate subscript mark (from @tiptap/extension-subscript) on the digit node only.'

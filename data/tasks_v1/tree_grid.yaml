@@ -1,0 +1,1958 @@
+- id: tree_grid-antd-T01
+  name: Select API Gateway row
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data via children) + rowSelection (highlight on row click)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, select the row “API Gateway” (it is nested under “Platform”). The task will finish automatically when done.
+  ui_copy: Select “API Gateway” under “Platform” in the Service Catalog tree grid.
+  setup_description: |-
+    Layout: isolated card centered on the page.
+    Component: an Ant Design Table configured as a tree table (hierarchical rows via a `children` field). The first column is “Service”, followed by “Owner”, “Status”, and “Last updated”.
+    Interaction: each parent row has a small expand/collapse caret at the start of the “Service” cell; clicking a row highlights it as the current selection.
+    Initial state: all top-level groups (Platform, Finance, Marketing, Operations, People) are collapsed; no row is selected.
+    Distractors: none besides the table header and a non-interactive help caption under the card title.
+    Feedback: the selected row is highlighted and the breadcrumb text above the table updates to “Selected: <path>”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single selection with clear highlight feedback; only one expansion step is typically needed to reveal the target.
+  success_trigger:
+    human_readable:
+    - The Service Catalog tree grid has exactly one selected row.
+    - 'The selected row’s hierarchical path equals: Platform → API Gateway.'
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Platform
+        - API Gateway
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - A different row is selected (e.g., “Auth Service” or a parent like “Platform”).
+  - No row is selected.
+  - The correct row is visible but not actually selected (no highlight / breadcrumb not updated).
+  expected_interaction_path:
+  - Expand “Platform” using the caret.
+  - Click the “API Gateway” row to select it.
+  notes: 'Instrumentation: expose a stable row id and computed row path (e.g., data-row-path=''Platform/API Gateway'') and a selectedRowPath state for the checker.'
+- id: tree_grid-antd-T02
+  name: Expand Finance group only
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with expandable rows'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, expand “Finance” so its children are visible, and leave the other top-level groups collapsed. The task will finish automatically when done.
+  ui_copy: Expand “Finance” in the Service Catalog tree grid (only Finance should be expanded).
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: Ant Design tree table with top-level groups Platform, Finance, Marketing, Operations, People.
+    Interaction: clicking the caret next to a group name expands/collapses that group in place.
+    Initial state: all top-level groups are collapsed; no filters; no row selection.
+    Distractors: the table has sortable headers, but sorting is not required.
+    Feedback: expanded groups show indented child rows and the caret rotates downward.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single expand action on an obvious affordance; success is visually obvious because children appear.
+  success_trigger:
+    human_readable:
+    - Expanded row paths include Finance.
+    - No other top-level group is expanded (Platform, Marketing, Operations, People remain collapsed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        expanded_row_paths:
+        - - Finance
+        expanded_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Finance is still collapsed.
+  - Finance is expanded but one or more other top-level groups are also expanded.
+  - A child row is selected but Finance is not expanded (selection alone is not sufficient).
+  expected_interaction_path:
+  - Click the caret next to “Finance”.
+  - Verify Finance children are visible and other groups remain collapsed.
+  notes: Checker should read expanded row keys from Table expandable state (e.g., expandedRowKeys) and map keys to canonical row paths.
+- id: tree_grid-antd-T03
+  name: Select Billing and Invoicing
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) + rowSelection (checkbox)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Service Catalog tree grid, select exactly these two rows: “Billing” and “Invoicing” (both under “Finance”). The task will finish automatically when done.'
+  ui_copy: Select “Billing” and “Invoicing” (under Finance) in the Service Catalog tree grid.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: Ant Design tree table with checkbox row selection enabled (a selection checkbox column appears at the far left).
+    Hierarchy: Finance contains several child services including Billing, Invoicing, and Payments.
+    Initial state: all groups collapsed; no rows selected.
+    Interaction: checkboxes toggle selection per row; selecting children does not automatically select the parent.
+    Feedback: selected rows show checked boxes and a “Selected (2)” counter appears above the table.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Only two targets and clear checkbox feedback; minor hierarchy navigation to reveal both rows.
+  success_trigger:
+    human_readable:
+    - The selected row set contains Billing and Invoicing.
+    - No other rows are selected.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_row_paths:
+        - - Finance
+          - Billing
+        - - Finance
+          - Invoicing
+        selected_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one of the two rows is selected.
+  - Additional rows are selected (e.g., Payments or the Finance parent).
+  - The correct rows were selected and then deselected (final state must match exactly).
+  expected_interaction_path:
+  - Expand “Finance”.
+  - Check the boxes for “Billing” and “Invoicing”.
+  - Ensure no other checkboxes are checked.
+  notes: AntD rowSelection exposes selectedRowKeys; store a canonical rowPath for each key so the checker can compare sets.
+- id: tree_grid-antd-T04
+  name: Sort by Last updated (newest first)
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with sortable columns'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, sort the table by “Last updated” so the newest dates appear first. The task will finish automatically when done.
+  ui_copy: Sort the Service Catalog by “Last updated” (newest first).
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: Ant Design tree table with sortable column headers. “Last updated” shows dates like “Jan 12, 2026”.
+    Initial state: no active sort (neutral sort indicator on all headers); groups are collapsed.
+    Interaction: clicking the “Last updated” header cycles sort state (none → ascending → descending).
+    Feedback: the sort caret indicator on the header updates and the visible rows re-order accordingly within the current expanded scope.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single header target and immediate visual feedback; no deep hierarchy or disambiguation.
+  success_trigger:
+    human_readable:
+    - The active sort model is set to column “Last updated” in descending order.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort_model:
+        - column: Last updated
+          direction: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Sorting is applied to a different column.
+  - “Last updated” is sorted ascending (oldest first).
+  - No active sort is applied.
+  expected_interaction_path:
+  - Click “Last updated” until the descending sort indicator is shown.
+  notes: Checker can read Table’s sorter state (e.g., from controlled columns sorter) or infer from aria-sort on header cells.
+- id: tree_grid-antd-T05
+  name: Select a row in the Archived Projects grid
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) rendered twice (two instances) with row selection'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the “Archived Projects” tree grid (not the Active Projects one), select the row “Q2 Launch” under “Marketing → Campaigns”. The task will finish automatically when done.
+  ui_copy: 'Archived Projects: select “Marketing → Campaigns → Q2 Launch”.'
+  setup_description: |-
+    Layout: form_section with two stacked cards.
+    Top card: “Active Projects” tree grid (AntD Table). Bottom card: “Archived Projects” tree grid (AntD Table). Both use the same column set and tree affordances.
+    Instances: 2 tree grids are visible at once; each card has a bold title directly above its table.
+    Interaction: rows can be selected by clicking; parent rows expand via the caret in the first column.
+    Initial state: Active Projects has “Platform → Auth Service” pre-selected (blue highlight). Archived Projects has no selection and all groups collapsed.
+    Distractors: the form section includes a non-interactive summary paragraph and two disabled toggle switches above the cards.
+    Feedback: each table has its own “Selected:” breadcrumb line scoped to that instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Two nearly identical tables require careful instance disambiguation; the target is nested two levels deep.
+  success_trigger:
+    human_readable:
+    - In the “Archived Projects” tree grid, the selected row path equals Marketing → Campaigns → Q2 Launch.
+    - Selection in the “Active Projects” grid is not used for success.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Marketing
+        - Campaigns
+        - Q2 Launch
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archived Projects
+      terminal_condition: true
+  negative_cases:
+  - The correct row is selected in the Active Projects grid instead of Archived Projects.
+  - A different archived row is selected (e.g., “Q1 Launch”).
+  - Only a parent row is selected (Marketing or Campaigns) but not “Q2 Launch”.
+  expected_interaction_path:
+  - Scroll the page slightly if needed so the Archived Projects card is fully visible.
+  - 'In Archived Projects: expand Marketing, then expand Campaigns.'
+  - Click “Q2 Launch” to select.
+  notes: 'Instrumentation: tag each grid root with data-component-instance=''Active Projects''/''Archived Projects'' and expose per-instance selection state.'
+- id: tree_grid-antd-T06
+  name: Filter Status to Blocked (confirm required)
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with column filters (filter dropdown + OK/Reset)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, filter the “Status” column to show only “Blocked” items, and confirm the filter in the dropdown. The task will finish automatically when done.
+  ui_copy: Filter Status = Blocked in the Service Catalog table and confirm.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: Ant Design tree table with a “Status” column that has a filter icon in the header. Status values include Active, Paused, and Blocked.
+    Interaction: clicking the filter icon opens a small dropdown overlay with checkbox options and two buttons at the bottom: “OK” and “Reset”.
+    Initial state: no filters are applied; all groups are collapsed; no row selection.
+    Confirm behavior: selecting a checkbox in the dropdown does not apply the filter until “OK” is clicked.
+    Feedback: after confirming, the Status header shows an active filter indicator and non-matching rows disappear.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires operating a header filter overlay and remembering to confirm; options are moderately confusable.
+  success_trigger:
+    human_readable:
+    - 'The Status column filter is applied with the single allowed value: Blocked.'
+    - The filter application has been confirmed (i.e., the table’s active filter model includes Status=Blocked).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filter_model:
+        - column: Status
+          operator: in
+          value:
+          - Blocked
+        filter_model_match: exact
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Blocked is checked in the dropdown but “OK” was not clicked (filter not applied).
+  - A different Status filter is applied (Active/Paused) or multiple statuses are selected.
+  - A filter is applied on another column instead of Status.
+  expected_interaction_path:
+  - Click the Status header filter icon.
+  - Check “Blocked”.
+  - Click “OK” in the dropdown to apply.
+  notes: Checker can read controlled filteredValue for the Status column, or derive from internal filter state if exposed.
+- id: tree_grid-antd-T07
+  name: Select row matching the reference preview
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with single-row selection'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Look at the reference preview and select the same row in the Service Catalog tree grid. The reference indicates “Marketing → Campaigns → Q2 Launch”. The task will finish automatically when done.
+  ui_copy: 'Match the reference preview: select “Marketing → Campaigns → Q2 Launch”.'
+  setup_description: |-
+    Layout: isolated card anchored near the top-right of the viewport.
+    Component: Ant Design tree table labeled “Service Catalog”.
+    Guidance: a small non-interactive reference panel is placed to the left of the table. It shows a miniature tree breadcrumb with the target row highlighted (visual emphasis), but does not provide a clickable shortcut.
+    Interaction: expand/collapse via carets; select a row by clicking it.
+    Initial state: all groups collapsed; no selection.
+    Distractors: the reference panel also shows two other non-highlighted example paths to increase visual confusability.
+    Feedback: selected row highlight + a “Selected:” breadcrumb above the table.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires mapping a visual reference to the correct nested row; moderate depth and sibling confusability.
+  success_trigger:
+    human_readable:
+    - The selected row path equals Marketing → Campaigns → Q2 Launch.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-path-1
+        selected_row_path:
+        - Marketing
+        - Campaigns
+        - Q2 Launch
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting a different campaign (e.g., Q1 Launch).
+  - Selecting only “Marketing” or “Campaigns” without selecting the leaf row.
+  - Selecting any row that is not the highlighted reference target.
+  expected_interaction_path:
+  - Read the highlighted path in the reference preview.
+  - Expand Marketing, then Campaigns.
+  - Click Q2 Launch to select.
+  notes: Reference panel should expose a canonical reference_id and target path for the checker; this task uses guidance=visual.
+- id: tree_grid-antd-T08
+  name: Deep select in Operations data center tree (scroll, dark compact)
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with fixed-height scroll container'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, find and select the row “UPS Battery” under “Operations → Data Centers → US-East → Rack 12”. The task will finish automatically when done.
+  ui_copy: Select “Operations → Data Centers → US-East → Rack 12 → UPS Battery”.
+  setup_description: |-
+    Layout: isolated card positioned near the bottom-right of the viewport.
+    Theme & density: dark theme with compact spacing; the table is rendered at a small scale, so row height and caret targets are smaller than default.
+    Component: Ant Design tree table with a fixed header and a scrollable body (about 10 visible rows at a time).
+    Hierarchy depth: Operations → Data Centers → (region) → (rack) → (asset). US-East contains many racks, so “Rack 12” is not initially visible.
+    Initial state: top-level groups collapsed; no selection.
+    Interaction: expand via carets; scroll within the table body to reach lower rows; select by clicking the leaf row.
+    Feedback: selected row highlight and breadcrumb update; expanded branches remain open as you scroll.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small targets plus deep hierarchy and in-table scrolling increase acquisition difficulty and layering depth.
+  success_trigger:
+    human_readable:
+    - The selected row path equals Operations → Data Centers → US-East → Rack 12 → UPS Battery.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Operations
+        - Data Centers
+        - US-East
+        - Rack 12
+        - UPS Battery
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting a sibling asset in Rack 12 (e.g., “Cooling Unit”) instead of “UPS Battery”.
+  - Selecting the rack row but not the asset row.
+  - Selecting the correct asset under a different region (e.g., US-West).
+  expected_interaction_path:
+  - Expand Operations → Data Centers → US-East.
+  - Scroll in the table body until Rack 12 is visible.
+  - Expand Rack 12 and click UPS Battery.
+  notes: Ensure the checker reads the selected row key/path even when the row is virtualized/offscreen.
+- id: tree_grid-antd-T09
+  name: Reset filters, selection, and expansions to default
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with rowSelection + column filter dropdown'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: 'Reset the Service Catalog tree grid to its default state: clear all selected rows, remove the active “Owner” filter, and collapse all expanded groups. The task will finish automatically when done.'
+  ui_copy: Reset the Service Catalog table (no selection, no Owner filter, all groups collapsed).
+  setup_description: |-
+    Layout: dashboard with a left navigation rail and a main content area; the tree grid sits in the main panel.
+    Clutter: medium (there are other cards below the table and a sidebar menu), but only the Service Catalog table state matters.
+    Component: Ant Design tree table with row selection (checkboxes) and an “Owner” column that has a filter dropdown.
+    Initial state (non-default):
+      - Expanded: Platform and Finance are expanded.
+      - Selected rows: “Platform → Auth Service” and “Finance → Billing” are selected.
+      - Active filter: Owner is filtered to “Priya Singh” (filter indicator is shown on the Owner column).
+    Interaction: deselect rows by unchecking; collapse groups via carets; open the Owner filter dropdown and use “Reset” then “OK” to clear and apply.
+    Feedback: selection counter and breadcrumb update; filter indicator disappears once cleared and confirmed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple coupled sub-states (selection, filters, expansion) must all be cleared; filter reset requires an explicit confirm step.
+  success_trigger:
+    human_readable:
+    - No rows are selected in the Service Catalog tree grid.
+    - No column filters are active (Owner filter cleared).
+    - No groups are expanded (all top-level rows are collapsed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_row_paths: []
+        filter_model: []
+        expanded_row_paths: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Some rows remain selected (even if filters/expansions are cleared).
+  - Owner filter is cleared in the dropdown UI but not confirmed with “OK”.
+  - At least one group remains expanded (e.g., Platform still open).
+  expected_interaction_path:
+  - Uncheck the selected rows’ checkboxes to clear selection.
+  - Collapse expanded groups (Platform, Finance).
+  - Open Owner filter dropdown → click Reset → click OK.
+  notes: Checker should verify all three sub-states. For AntD filters, ensure the post-confirm filteredValue is empty.
+- id: tree_grid-antd-T10
+  name: Edit Annual Budget cell with currency formatting
+  canonical_type: tree_grid
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (tree data) with inline editable cell'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the “Annual Budget” tree grid, set the Budget for “Operations → Data Centers → EU-West → Rack 7” to “$12,500”. The task will finish automatically when done.
+  ui_copy: 'Annual Budget table: set EU-West / Rack 7 Budget to $12,500.'
+  setup_description: |-
+    Layout: settings_panel with two side-by-side cards.
+    Instances: 2 tree grids are visible—left card “Monthly Budget” and right card “Annual Budget”. Both are tree tables with the same hierarchy, but different Budget values.
+    Component: Ant Design tree table; the “Budget” column cells are inline-editable. Activating edit mode shows a text input inside the cell.
+    Initial state: Monthly Budget has some cells in edit-disabled state (grey), Annual Budget is editable. All groups are collapsed. The EU-West branch is not expanded.
+    Formatting rule (shown as helper text under the table): Budget must include a dollar sign and comma separators (example: $1,200).
+    Interaction: expand Operations → Data Centers → EU-West; click the Rack 7 Budget cell to enter edit mode; type the formatted value; commit by pressing Enter or clicking outside the cell.
+    Feedback: on successful commit, the cell displays the formatted currency string and a small “Saved” checkmark appears briefly in the cell.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires editing a specific cell in the correct of two similar tables, navigating a deep path, and entering a strict currency format.
+  success_trigger:
+    human_readable:
+    - In the “Annual Budget” tree grid, the Budget cell for path Operations → Data Centers → EU-West → Rack 7 equals $12,500 (canonical numeric value 12500).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        edited_cell:
+          row_path:
+          - Operations
+          - Data Centers
+          - EU-West
+          - Rack 7
+          column: Budget
+          display_value: $12,500
+          canonical_value: 12500
+          format: currency_usd
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Annual Budget
+      terminal_condition: true
+  negative_cases:
+  - Budget is changed in the Monthly Budget table instead of Annual Budget.
+  - Value is close but incorrectly formatted (e.g., “12500”, “$12500”, or “$12.500”).
+  - Edit is not committed (cell remains in edit mode or reverts on blur).
+  - Wrong row edited (e.g., EU-West / Rack 8).
+  expected_interaction_path:
+  - 'In the Annual Budget card: expand Operations → Data Centers → EU-West.'
+  - Locate Rack 7 and click its Budget cell.
+  - Type $12,500 and press Enter (or click outside) to commit.
+  notes: 'Instrumentation: expose a stable rowPath+column key for the edited cell and a committedValue; checker should ignore transient input text while editing.'
+- id: tree_grid-mui-T01
+  name: Select API Gateway row (MUI DataGridPro)
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro with tree data (treeData + grouping column)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, select the row “API Gateway” under “Platform”. The task will finish automatically when done.
+  ui_copy: Select “API Gateway” (under Platform) in the Service Catalog grid.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: MUI X DataGridPro configured for tree data. The first (grouping) column shows the hierarchy with indentation and expand/collapse chevrons.
+    Columns: Service, Owner, Status, Last updated.
+    Initial state: all top-level nodes collapsed; no row selected; toolbar is hidden.
+    Interaction: expand Platform using the chevron; select a row by clicking anywhere on the row.
+    Feedback: selected row is highlighted and the status line above the grid shows “Selected: <path>”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Straightforward single-row selection with clear highlight; only one small expansion action is needed.
+  success_trigger:
+    human_readable:
+    - The selected row path equals Platform → API Gateway.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Platform
+        - API Gateway
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting a different Platform child (e.g., Auth Service).
+  - Selecting the Platform parent row only.
+  - No row is selected.
+  expected_interaction_path:
+  - Expand Platform via the grouping column chevron.
+  - Click the API Gateway row to select.
+  notes: Checker should read DataGrid selection model (rowSelectionModel) and map the selected row id to its canonical tree path.
+- id: tree_grid-mui-T02
+  name: Expand Finance only (MUI tree data)
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro with tree data'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, expand “Finance” so its children are visible, and keep the other top-level nodes collapsed. The task will finish automatically when done.
+  ui_copy: Expand Finance only in the Service Catalog grid.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: MUI X DataGridPro in tree data mode with top-level nodes Platform, Finance, Marketing, Operations, People.
+    Interaction: each parent node has an expand/collapse chevron in the grouping column.
+    Initial state: all top-level nodes collapsed; no selection; no filters.
+    Feedback: when Finance is expanded, its child rows appear indented beneath it; expanded nodes retain an ‘expanded’ chevron state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single disclosure action on a clear affordance with immediate visual result.
+  success_trigger:
+    human_readable:
+    - Expanded node set is exactly {Finance} at the top level.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        expanded_row_paths:
+        - - Finance
+        expanded_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Finance remains collapsed.
+  - Finance is expanded but other top-level nodes are expanded too.
+  - A row is selected but expansion state does not match the requirement.
+  expected_interaction_path:
+  - Click the Finance expand chevron.
+  - Ensure no other top-level nodes are expanded.
+  notes: Expose expanded row ids/paths from the DataGrid tree data state for checking.
+- id: tree_grid-mui-T03
+  name: Quick filter then select Invoicing
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro with tree data + toolbar quick filter'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Use the grid’s quick search to filter for “invoic” (a prefix of “Invoicing”), then select the row “Invoicing” under “Finance”. The task will finish automatically when done.
+  ui_copy: Quick search “invoic”, then select “Finance → Invoicing”.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: MUI X DataGridPro (tree data) with the built-in toolbar enabled (showToolbar). The toolbar contains an expandable Quick Filter search field.
+    Initial state: no quick filter text; all nodes collapsed; no selection.
+    Interaction: click the Quick Filter field in the toolbar, type text; the grid filters rows across multiple columns and keeps matching rows.
+    After filtering: the Finance node can still be expanded to reveal the Invoicing row if it is not directly visible.
+    Feedback: the row count indicator in the footer changes as filtering applies; selected row highlights on click.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Short query in a dedicated search field with immediate filtering feedback; then single row selection.
+  success_trigger:
+    human_readable:
+    - The grid quick filter text equals “invoice”.
+    - The selected row path equals Finance → Invoicing.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        quick_filter_text: invoice
+        selected_row_path:
+        - Finance
+        - Invoicing
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting the correct row without setting the quick filter to “invoice”.
+  - Quick filter text is set but a different row is selected.
+  - Quick filter includes extra terms (e.g., “invoice service”) if the UI treats it as multiple tokens and changes results.
+  expected_interaction_path:
+  - Open the toolbar Quick Filter field.
+  - Type invoice.
+  - Expand Finance if needed and click Invoicing.
+  notes: Checker should read DataGrid filterModel.quickFilterValues (or equivalent) and normalize to a single string for this task.
+- id: tree_grid-mui-T04
+  name: Select Billing, Payments, and Invoicing (checkboxes)
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro with tree data + checkbox row selection'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Service Catalog tree grid, select exactly these three rows under “Finance”: “Billing”, “Payments”, and “Invoicing”. The task will finish automatically when done.'
+  ui_copy: Select Finance → Billing, Payments, and Invoicing (exactly these three).
+  setup_description: |-
+    Layout: isolated card centered.
+    Component: MUI X DataGridPro in tree data mode with checkbox selection enabled (a checkbox column appears at the far left).
+    Hierarchy: Finance contains multiple child rows including Billing, Payments, and Invoicing.
+    Initial state: all nodes collapsed; no rows selected.
+    Interaction: expand Finance, then click the checkboxes for the required rows. Clicking a row body does not toggle the checkbox in this configuration.
+    Feedback: selected count appears in the footer; selected rows show checked boxes.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Three required selections under one parent with checkbox targets; moderate risk of selecting an extra sibling.
+  success_trigger:
+    human_readable:
+    - Selected row set equals exactly {Finance/Billing, Finance/Payments, Finance/Invoicing}.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_row_paths:
+        - - Finance
+          - Billing
+        - - Finance
+          - Payments
+        - - Finance
+          - Invoicing
+        selected_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Any extra row is selected (including selecting the Finance parent).
+  - Only a subset of the three rows is selected.
+  - Rows are selected via highlight but checkboxes are not checked (if the grid distinguishes).
+  expected_interaction_path:
+  - Expand Finance.
+  - Check Billing, Payments, Invoicing.
+  - Verify only these three are selected.
+  notes: Use DataGrid rowSelectionModel in controlled mode; expose selected row ids and map to canonical paths.
+- id: tree_grid-mui-T05
+  name: Filter Status to Blocked using filter panel
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro with tree data + filtering UI'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, apply a filter so that Status is “Blocked”. The task will finish automatically when done.
+  ui_copy: 'Apply filter: Status = Blocked.'
+  setup_description: |-
+    Layout: settings_panel.
+    Component: MUI X DataGridPro (tree data) with the toolbar enabled. The toolbar includes a “Filters” button that opens the grid’s filter panel.
+    Initial state: no filters; nodes collapsed; no selection.
+    Interaction: open the Filters panel, add a filter on the Status column, and set the value to Blocked (from a dropdown of status values).
+    Overlay layering: the filter panel appears as an anchored popover over the grid; controls inside include Column, Operator, and Value.
+    Feedback: once set, the filter chips/indicators show an active filter and the row count changes.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires navigating a popover panel with multiple fields (column/operator/value) and verifying the filter is active.
+  success_trigger:
+    human_readable:
+    - 'The grid filter model contains exactly one filter: Status equals Blocked.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filter_model:
+        - column: Status
+          operator: equals
+          value: Blocked
+        filter_model_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - A filter is applied to a different column.
+  - Status filter is set to a different value (Active/Paused).
+  - Multiple filters are added (even if one is correct).
+  expected_interaction_path:
+  - Click the toolbar Filters button.
+  - 'Add a filter: Column=Status, Operator=equals, Value=Blocked.'
+  - Close the panel if needed.
+  notes: Checker reads DataGrid filterModel.items; for stability, use column field keys rather than header labels.
+- id: tree_grid-mui-T06
+  name: Match reference and select Onboarding row
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro with tree data + row selection'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the reference example and select the same row in the Service Catalog tree grid. The reference points to “People → HR → Onboarding”. The task will finish automatically when done.
+  ui_copy: 'Reference target: select People → HR → Onboarding.'
+  setup_description: |-
+    Layout: isolated card anchored near the top-left of the viewport.
+    Component: MUI X DataGridPro with tree data.
+    Guidance: a reference box above the grid shows (1) a breadcrumb text “People / HR / Onboarding” and (2) a small visual thumbnail with the target row highlighted in yellow. Both are read-only.
+    Initial state: People node collapsed; no selection.
+    Interaction: expand People, then expand HR, then click the Onboarding row.
+    Feedback: selected row highlight; a ‘Selected’ breadcrumb line below the reference updates.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires mapping reference to the correct branch and navigating a two-level expansion; moderate confusability with similar HR items.
+  success_trigger:
+    human_readable:
+    - The selected row path equals People → HR → Onboarding.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-path-hr-onboarding
+        selected_row_path:
+        - People
+        - HR
+        - Onboarding
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting “Offboarding” instead of “Onboarding”.
+  - Selecting the HR parent row only.
+  - Selecting any row outside the People/HR branch.
+  expected_interaction_path:
+  - Use the reference to identify the target path.
+  - Expand People and HR.
+  - Click Onboarding.
+  notes: Reference id should be stable for automatic checking; this task covers guidance=mixed.
+- id: tree_grid-mui-T07
+  name: Scroll to find Rack 21 and select Cooling Unit (compact)
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro tree data with virtualized scrolling'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, select “Cooling Unit” under “Operations → Data Centers → US-West → Rack 21”. The task will finish automatically when done.
+  ui_copy: Select Operations → Data Centers → US-West → Rack 21 → Cooling Unit.
+  setup_description: |-
+    Layout: isolated card centered.
+    Density: compact spacing mode; rows are shorter and the grouping chevrons are smaller.
+    Component: MUI X DataGridPro with tree data and a fixed-height viewport (virtualized rows).
+    Hierarchy: Operations → Data Centers → US-West contains many racks (Rack 1–Rack 40). Only a portion is visible; Rack 21 is below the fold.
+    Initial state: top-level nodes collapsed; no selection.
+    Interaction: expand Operations → Data Centers → US-West; scroll within the grid to find Rack 21; expand Rack 21; select Cooling Unit.
+    Feedback: row highlight and breadcrumb line.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Virtualized scrolling plus compact targets and a multi-level path create moderate-to-high acquisition and depth demands.
+  success_trigger:
+    human_readable:
+    - Selected row path equals Operations → Data Centers → US-West → Rack 21 → Cooling Unit.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Operations
+        - Data Centers
+        - US-West
+        - Rack 21
+        - Cooling Unit
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting a different rack’s Cooling Unit.
+  - Selecting Rack 21 but not the Cooling Unit leaf.
+  - Selecting an asset in US-East instead of US-West.
+  expected_interaction_path:
+  - Expand Operations → Data Centers → US-West.
+  - Scroll inside the grid until Rack 21 appears.
+  - Expand Rack 21 and click Cooling Unit.
+  notes: Ensure the checker can resolve selection for virtualized rows; use stable row ids.
+- id: tree_grid-mui-T08
+  name: 'Production grid: select two Platform services (instances=2)'
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro tree data rendered twice (two instances) with checkbox selection'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the “Production Environment” tree grid (not Staging), select exactly these two rows under “Platform”: “API Gateway” and “Auth Service”. The task will finish automatically when done.'
+  ui_copy: 'Production Environment: select Platform → API Gateway and Platform → Auth Service (exactly two).'
+  setup_description: |-
+    Layout: dashboard with two equal-width panels.
+    Left panel: “Staging Environment” tree grid (DataGridPro). Right panel: “Production Environment” tree grid (DataGridPro).
+    Instances: 2 grids with identical hierarchy and columns; each has its own toolbar and selection model.
+    Interaction: checkboxSelection is enabled in both grids.
+    Initial state: Staging has one row pre-selected (“Finance → Billing”). Production has no selection; all nodes collapsed.
+    Clutter: medium—there is a KPI strip above the grids and a notifications card below, but only the grids matter.
+    Feedback: each grid shows its own selected count in its footer.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: High disambiguation load with two near-identical grids plus precise set selection (exactly two rows) in the correct instance.
+  success_trigger:
+    human_readable:
+    - In the Production Environment grid, the selected row set equals exactly {Platform/API Gateway, Platform/Auth Service}.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_row_paths:
+        - - Platform
+          - API Gateway
+        - - Platform
+          - Auth Service
+        selected_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Production Environment
+      terminal_condition: true
+  negative_cases:
+  - Selecting the two rows in the Staging grid instead of Production.
+  - Selecting only one of the required rows in Production.
+  - Selecting any extra row in Production (including the Platform parent).
+  expected_interaction_path:
+  - 'In the Production Environment grid: expand Platform.'
+  - Check API Gateway and Auth Service.
+  - Confirm only these two are selected in Production.
+  notes: 'Instrumentation: mark each grid root with data-instance=''Staging Environment''/''Production Environment''.'
+- id: tree_grid-mui-T09
+  name: Edit Quota to 1,024 (dark, small)
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro tree data with editable cells'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, set the Quota value for “Platform → API Gateway” to “1,024”. Make sure the value is saved in the cell. The task will finish automatically when done.
+  ui_copy: Set Platform → API Gateway Quota to 1,024.
+  setup_description: |-
+    Layout: isolated card centered.
+    Theme & scale: dark theme; small scale (reduced row height and smaller font).
+    Component: MUI X DataGridPro with tree data. The “Quota” column is editable (numeric).
+    Initial state: all nodes collapsed; no filters; no selection. API Gateway currently shows Quota “512”.
+    Interaction: expand Platform, click the API Gateway row’s Quota cell to focus it, press Enter to edit (or double-click), type the new value, and press Enter to commit.
+    Formatting requirement: the helper text above the grid states “Use comma grouping for thousands (e.g., 1,024)”.
+    Feedback: after commit, the cell exits edit mode and shows the formatted number.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires precise formatted numeric entry and correct edit/commit mechanics in a small dark UI.
+  success_trigger:
+    human_readable:
+    - The Quota cell for Platform → API Gateway equals display value “1,024” (canonical integer 1024).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        edited_cell:
+          row_path:
+          - Platform
+          - API Gateway
+          column: Quota
+          display_value: 1,024
+          canonical_value: 1024
+          format: integer_grouped
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Value is entered without comma grouping (e.g., “1024”) if the UI keeps it unformatted.
+  - Edit is not committed (cell remains in edit mode or reverts).
+  - Quota is edited on a different row (e.g., Auth Service).
+  expected_interaction_path:
+  - Expand Platform.
+  - Enter edit mode on the API Gateway Quota cell.
+  - Type 1,024 and commit the edit (Enter).
+  notes: Checker should use the committed cell value (not the transient edit buffer). If the grid normalizes input, compare canonical_value=1024 and require display_value to match.
+- id: tree_grid-mui-T10
+  name: Reset grid state (clear quick filter, filters, selection, collapse all)
+  canonical_type: tree_grid
+  implementation_source: mui
+  implementation_variant: x-data-grid-pro
+  implementation_component: 'MUI X: DataGridPro tree data with toolbar (quick filter + filters)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: 'Reset the Service Catalog tree grid to default: clear the quick search text, remove all filters, clear any selected rows, and collapse all expanded nodes. The task will finish automatically when done.'
+  ui_copy: Reset the Service Catalog grid to default (no filters, no quick search, no selection, all collapsed).
+  setup_description: |-
+    Layout: settings_panel with the grid in the main pane.
+    Component: MUI X DataGridPro with tree data and toolbar enabled (Quick Filter + Filters panel).
+    Initial state (non-default):
+      - Quick Filter text is set to “auth”.
+      - A column filter is active: Status equals Active.
+      - Expanded nodes: Platform is expanded.
+      - Selection: “Platform → Auth Service” is selected (row highlight).
+    Interaction: clear Quick Filter using the input’s clear (×) control or by deleting the text; open the Filters UI and remove the filter; unselect the row; collapse Platform.
+    Feedback: filter indicators disappear, quick filter field becomes empty, selection highlight is removed, and no children are shown when nodes are collapsed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple independent sub-states must all be cleared, and some controls are in an overlay panel.
+  success_trigger:
+    human_readable:
+    - Quick filter text is empty.
+    - Filter model is empty (no active column filters).
+    - No rows are selected.
+    - No nodes are expanded.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        quick_filter_text: ''
+        filter_model: []
+        selected_row_paths: []
+        expanded_row_paths: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Quick filter is cleared but the Status filter remains active.
+  - Filters are cleared but a row is still selected.
+  - Platform remains expanded (children still visible).
+  - Any non-empty quick filter text remains.
+  expected_interaction_path:
+  - Clear the Quick Filter text.
+  - Remove the Status filter via the Filters UI.
+  - Unselect the selected row (click again or clear selection).
+  - Collapse Platform.
+  notes: Checker should compare normalized quick filter text and DataGrid filterModel + selection model + expanded state.
+- id: tree_grid-mantine-T01
+  name: Select API Gateway row (Mantine composite)
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, select the row “API Gateway” under “Platform”. The task will finish automatically when done.
+  ui_copy: Select “Platform → API Gateway” in the Service Catalog grid.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component (composite): a Mantine Table styled as a tree grid. The first column contains an expand/collapse chevron (ActionIcon) for parent rows and indentation for children; remaining columns show Owner, Status, and Last updated.
+    Selection: single-row selection is enabled; clicking a row highlights it.
+    Initial state: all top-level groups are collapsed; no row is selected.
+    Distractors: none; only a short read-only description below the card title.
+    Feedback: highlighted row + a small “Selected path:” text below the table.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple disclosure + single selection with clear highlight feedback in a low-clutter scene.
+  success_trigger:
+    human_readable:
+    - Selected row path equals Platform → API Gateway.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Platform
+        - API Gateway
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting the Platform parent row only.
+  - Selecting a different Platform child (Auth Service, Web Frontend).
+  - No row selected.
+  expected_interaction_path:
+  - Expand Platform using the chevron in the first column.
+  - Click API Gateway to select.
+  notes: Because Mantine has no native tree grid, implement a stable tree state store (expandedPaths, selectedRowId) and expose it for checking.
+- id: tree_grid-mantine-T02
+  name: Expand Finance group only (Mantine composite)
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid)'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, expand “Finance” so its children are visible, and keep the other top-level groups collapsed. The task will finish automatically when done.
+  ui_copy: Expand Finance only in the Service Catalog grid.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component (composite): Mantine Table with custom tree affordances. Each top-level row has a chevron button to expand/collapse.
+    Initial state: all top-level groups are collapsed; no selection; no filters.
+    Interaction: click the chevron for Finance; other groups should remain collapsed.
+    Feedback: Finance’s child rows appear indented directly beneath Finance and the chevron rotates.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single expand action with obvious visual feedback and no disambiguation.
+  success_trigger:
+    human_readable:
+    - Expanded row paths set is exactly {Finance}.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        expanded_row_paths:
+        - - Finance
+        expanded_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Finance is not expanded.
+  - Finance is expanded but at least one other top-level group is also expanded.
+  - Only selecting a Finance child row without expanding Finance.
+  expected_interaction_path:
+  - Click the Finance chevron to expand it.
+  - Verify other groups remain collapsed.
+  notes: Expose expandedPaths array from composite tree store.
+- id: tree_grid-mantine-T03
+  name: Select Billing and Invoicing (checkbox selection)
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the Service Catalog tree grid, select exactly these two rows under “Finance”: “Billing” and “Invoicing”. The task will finish automatically when done.'
+  ui_copy: Select Finance → Billing and Finance → Invoicing (exactly two).
+  setup_description: |-
+    Layout: isolated card centered.
+    Component (composite): Mantine Table tree grid with a leading checkbox column for multi-select.
+    Initial state: groups collapsed; no rows selected.
+    Interaction: expand Finance; check the boxes for Billing and Invoicing; do not select any other rows.
+    Feedback: a “Selected: N” badge appears in the table header; checked boxes remain visible when scrolling.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Two-item checkbox selection with clear feedback; limited depth and option count.
+  success_trigger:
+    human_readable:
+    - Selected row set equals exactly {Finance/Billing, Finance/Invoicing}.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_row_paths:
+        - - Finance
+          - Billing
+        - - Finance
+          - Invoicing
+        selected_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one of the two rows is selected.
+  - Any extra row is selected (including Payments or Finance parent).
+  - Rows are highlighted but checkboxes are not checked (if the UI separates these states).
+  expected_interaction_path:
+  - Expand Finance.
+  - Check Billing and Invoicing.
+  - Verify no other boxes are checked.
+  notes: Composite selection should be stored as a set of row ids; checker compares canonical row paths for stability.
+- id: tree_grid-mantine-T04
+  name: Search 'q2' then select Q2 Launch
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid) + header SearchInput (composite)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Use the search field in the Service Catalog tree grid to search for “q2”, then select the row “Q2 Launch” under “Marketing → Campaigns”. The task will finish automatically when done.
+  ui_copy: Search q2 in the grid, then select Marketing → Campaigns → Q2 Launch.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component (composite): Mantine Table tree grid with a small SearchInput embedded in the table header area (above the column headers) as part of the component wrapper.
+    Search behavior: typing filters visible rows by Service name (case-insensitive) and keeps ancestor rows visible for context.
+    Initial state: search field is empty; all groups collapsed; no selection.
+    Interaction: click into the search field, type q2; expand Marketing and Campaigns if needed; click the Q2 Launch row to select.
+    Feedback: a “Filtered results” count appears next to the search field; selected row highlight remains.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires using an in-component search field and then selecting the correct nested match among similar campaign rows.
+  success_trigger:
+    human_readable:
+    - Search query text equals “q2”.
+    - Selected row path equals Marketing → Campaigns → Q2 Launch.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        search_query_text: q2
+        selected_row_path:
+        - Marketing
+        - Campaigns
+        - Q2 Launch
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting Q2 Launch without setting the search query to exactly “q2”.
+  - Search query set but a different row is selected (e.g., Q1 Launch).
+  - Search query includes extra characters that change matching (e.g., “q2 ” with trailing spaces if the UI preserves them).
+  expected_interaction_path:
+  - Click search field → type q2.
+  - Expand Marketing → Campaigns if needed.
+  - Click Q2 Launch to select.
+  notes: Expose searchQueryText in component state. If the implementation trims whitespace, normalize before comparing.
+- id: tree_grid-mantine-T05
+  name: Select in EU Region grid (instances=3)
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the “EU Region” tree grid (not US Region or APAC Region), select the row “EU-West” under “Operations → Data Centers”. The task will finish automatically when done.
+  ui_copy: 'EU Region grid: select Operations → Data Centers → EU-West.'
+  setup_description: |-
+    Layout: form_section with three cards in a row.
+    Instances: 3 Mantine composite tree grids labeled “US Region”, “EU Region”, and “APAC Region”. Each card title is directly above its table.
+    Component: each grid shows the same hierarchy but with region-specific availability badges.
+    Initial state: all three grids start collapsed; US Region has a different row pre-selected (“Platform → Web Frontend”) to increase disambiguation pressure.
+    Interaction: in the EU Region grid, expand Operations and Data Centers, then click the EU-West row.
+    Clutter: low—there is a short paragraph above the row of cards and a disabled Save button below.
+    Feedback: each grid has its own selected-path readout inside the card footer.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Three similar instances require careful targeting; moderate hierarchy depth to reach the region row.
+  success_trigger:
+    human_readable:
+    - In the EU Region grid, selected row path equals Operations → Data Centers → EU-West.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        selected_row_path:
+        - Operations
+        - Data Centers
+        - EU-West
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: EU Region
+      terminal_condition: true
+  negative_cases:
+  - Selecting EU-West in the US Region or APAC Region grid.
+  - Selecting a different data center region (US-East, US-West) in EU Region.
+  - Selecting only the Data Centers parent row.
+  expected_interaction_path:
+  - Identify the EU Region card by its title.
+  - Expand Operations → Data Centers.
+  - Click EU-West to select.
+  notes: 'Instrumentation: data-instance per grid card; checker should ignore other instances’ selections.'
+- id: tree_grid-mantine-T06
+  name: Match reference preview and select Laptop Requests
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Look at the reference preview and select the same row in the Service Catalog tree grid. The reference indicates “People → IT → Laptop Requests”. The task will finish automatically when done.
+  ui_copy: 'Match the reference: select People → IT → Laptop Requests.'
+  setup_description: |-
+    Layout: isolated card anchored near the top-left of the viewport.
+    Component (composite): Mantine Table tree grid with expand/collapse chevrons and single-row selection.
+    Guidance: a reference preview panel sits above the table and shows the target row visually (a highlighted line with indentation) without naming the row in a clickable form.
+    Initial state: People node collapsed; no selection.
+    Distractors: the reference preview also shows a second non-highlighted path as a distractor.
+    Interaction: expand People, expand IT, then select Laptop Requests.
+    Feedback: selected highlight + selected-path readout.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Visual matching adds mapping effort; two-level expansion with similarly named IT items increases confusability.
+  success_trigger:
+    human_readable:
+    - Selected row path equals People → IT → Laptop Requests.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-path-it-laptop
+        selected_row_path:
+        - People
+        - IT
+        - Laptop Requests
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting a different IT row (e.g., “VPN Access”).
+  - Selecting IT parent row only.
+  - Selecting a row in the HR branch instead of IT.
+  expected_interaction_path:
+  - Interpret the highlighted row in the reference preview.
+  - Expand People → IT.
+  - Click Laptop Requests.
+  notes: Expose reference_id + target path for the checker; this task contributes to guidance=visual coverage.
+- id: tree_grid-mantine-T07
+  name: Select the highlighted target row from a visual reference (scroll + deep tree)
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Using the reference preview, find the highlighted target row in the Service Catalog tree grid and select it. The task will finish automatically when done.
+  ui_copy: Select the row that matches the highlighted reference preview.
+  setup_description: |-
+    Layout: isolated card centered.
+    Component (composite): Mantine Table tree grid inside a ScrollArea (fixed height; about 9 rows visible).
+    Guidance: a non-interactive reference preview card sits above the table and shows the target row highlighted inside a miniature tree snippet (visual-only guidance).
+    Hierarchy: the target is a deep leaf in Operations → Data Centers → US-West → Rack 21 → Cooling Unit. US-West contains many racks, so reaching Rack 21 requires scrolling inside the table area.
+    Initial state: all groups collapsed; no selection.
+    Interaction: expand/collapse via chevrons; scroll inside the ScrollArea; select by clicking the row.
+    Feedback: selection highlight + selected-path readout beneath the table.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Deep hierarchy and in-component scrolling combined with visual-only guidance significantly increase search and acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - Selected row path equals the reference target path (Operations → Data Centers → US-West → Rack 21 → Cooling Unit).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-deep-cooling-unit
+        selected_row_path:
+        - Operations
+        - Data Centers
+        - US-West
+        - Rack 21
+        - Cooling Unit
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selecting any row other than the highlighted reference target.
+  - Selecting Rack 21 but not the Cooling Unit leaf row.
+  - Selecting the correct label in a different branch (e.g., US-East).
+  expected_interaction_path:
+  - Inspect the reference preview to identify the target row label and its indentation context.
+  - Expand Operations → Data Centers → US-West.
+  - Scroll to Rack 21, expand it, and click Cooling Unit.
+  notes: This is the 4th visual/mixed guidance task in the suite. Expose reference_id and canonical target path in the page state for checking.
+- id: tree_grid-mantine-T08
+  name: 'Dark mode: edit Budget to $9,750 and click Save'
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid) with inline editable cell + Save button (composite)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the Service Catalog tree grid, change the Budget for “Operations → Data Centers → US-East → Rack 12” to “$9,750” and click “Save” for that edit. The task will finish automatically when done.
+  ui_copy: Set US-East / Rack 12 Budget to $9,750 and Save.
+  setup_description: |-
+    Layout: isolated card centered.
+    Theme & density: dark theme with compact spacing.
+    Component (composite): Mantine Table tree grid. The Budget column supports inline edit: clicking a Budget cell turns it into a text input and shows two small buttons on the right: “Save” and “Cancel”.
+    Initial state: Operations branch collapsed; Rack 12 Budget currently shows “$8,000”.
+    Formatting helper: a hint above the table says “Currency format: $9,750”.
+    Interaction: expand Operations → Data Centers → US-East; click the Rack 12 Budget cell; type $9,750; click Save.
+    Feedback: after Save, the input disappears, the cell shows the formatted value, and a toast “Budget saved” appears.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Strict currency formatting plus an explicit Save action and dark/compact presentation increase error risk and recovery cost.
+  success_trigger:
+    human_readable:
+    - Budget cell for Operations → Data Centers → US-East → Rack 12 equals display value “$9,750” (canonical numeric 9750).
+    - The edit is committed (Save was applied; cell is not in edit mode).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        edited_cell:
+          row_path:
+          - Operations
+          - Data Centers
+          - US-East
+          - Rack 12
+          column: Budget
+          display_value: $9,750
+          canonical_value: 9750
+          format: currency_usd
+        edit_mode: none
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Value entered but Save not clicked (still in edit mode).
+  - Value saved but formatted incorrectly (e.g., “$9750” or “9,750”).
+  - Budget edited on the wrong row (Rack 11 / Rack 13).
+  - Cancel clicked after entering the correct value.
+  expected_interaction_path:
+  - Expand Operations → Data Centers → US-East.
+  - Click Rack 12 Budget cell to edit.
+  - Type $9,750 and click Save.
+  notes: Expose an editMode flag and a committedValue for the edited cell; checker should ensure Save was applied.
+- id: tree_grid-mantine-T09
+  name: Reset search, selection, and expansions (small, bottom-right)
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid) + header SearchInput (composite)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: 'Reset the Service Catalog tree grid to default: clear the search field, clear all selected rows, and collapse all expanded groups. The task will finish automatically when done.'
+  ui_copy: Reset the grid (empty search, no selection, all collapsed).
+  setup_description: |-
+    Layout: isolated card anchored near the bottom-right of the viewport.
+    Scale: small (reduced padding and smaller typography).
+    Component (composite): Mantine Table tree grid with a SearchInput in the header.
+    Initial state (non-default):
+      - Search field contains “rack”.
+      - Expanded: Operations → Data Centers → US-East is expanded.
+      - Selected rows: “US-East → Rack 12” is selected.
+    Interaction: clear the SearchInput (using its clear button or deleting text), deselect the selected row, and collapse any expanded groups.
+    Feedback: when reset, no child rows are visible, search results count disappears, and no row is highlighted.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple sub-states must be cleared in a small, corner-placed UI where targets are harder to acquire.
+  success_trigger:
+    human_readable:
+    - Search query text is empty.
+    - No rows are selected.
+    - Expanded row paths list is empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        search_query_text: ''
+        selected_row_paths: []
+        expanded_row_paths: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Search is cleared but a row remains selected.
+  - Selection cleared but Operations remains expanded.
+  - Search text is not fully cleared (e.g., whitespace remains).
+  expected_interaction_path:
+  - Clear the search field.
+  - Collapse expanded nodes (US-East, Data Centers, Operations as needed).
+  - Ensure no rows remain selected.
+  notes: Normalize search text by trimming for comparison; expose expandedPaths and selectedRowIds.
+- id: tree_grid-mantine-T10
+  name: 'Drawer flow: select two write permissions (instances=2)'
+  canonical_type: tree_grid
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Collapse + ScrollArea (composite tree grid) inside Mantine Drawer (composite flow)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: Open the “Manage permissions” drawer. In the “Write permissions” tree grid, select exactly “Deploy” and “Rotate keys” under “Operations → Security”. The task will finish automatically when done.
+  ui_copy: 'Manage permissions: in Write permissions, select Operations → Security → Deploy and Rotate keys.'
+  setup_description: |-
+    Layout: drawer_flow.
+    Access: the page shows a single button “Manage permissions”. Clicking it opens a right-side Drawer containing the tree grids.
+    Inside the drawer: two stacked cards, each containing a composite tree grid:
+      - Card 1: “Read permissions” (instance A)
+      - Card 2: “Write permissions” (instance B)
+    Both grids use checkbox selection and a hierarchy with top-level categories Platform, Finance, Operations.
+    Target location: Operations → Security contains several leaf permissions including Deploy, Rotate keys, and View audit log.
+    Initial state: drawer is closed; when opened, both grids are collapsed; Read permissions has “View audit log” pre-selected to increase disambiguation pressure.
+    Clutter: low—drawer header with a close (×) button; no other interactive controls are required.
+    Feedback: each grid shows its own selected count badge.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Requires opening a drawer to reach the component and disambiguating between two similar permission grids while selecting an exact set.
+  success_trigger:
+    human_readable:
+    - In the Write permissions grid, the selected row set equals exactly {Operations/Security/Deploy, Operations/Security/Rotate keys}.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_row_paths:
+        - - Operations
+          - Security
+          - Deploy
+        - - Operations
+          - Security
+          - Rotate keys
+        selected_row_paths_match: exact
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Write permissions
+      terminal_condition: true
+  negative_cases:
+  - Selecting the permissions in the Read permissions grid instead of Write permissions.
+  - Selecting only one of the two required permissions.
+  - Selecting any extra permission (e.g., View audit log).
+  - Drawer is never opened (no interaction with the target grid).
+  expected_interaction_path:
+  - Click “Manage permissions” to open the drawer.
+  - 'In Write permissions: expand Operations → Security.'
+  - Check Deploy and Rotate keys; ensure only those two are selected.
+  notes: Mark the drawer container and each grid instance with stable instance ids. Checker should target the Write permissions instance only.

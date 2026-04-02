@@ -1,0 +1,2201 @@
+- id: file_dropzone-antd-T01
+  name: Upload resume PDF to Attachments (single file)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file “resume-alex-chen.pdf” to the “Attachments” drop area. The task will finish automatically when done.
+  ui_copy: Upload the file “resume-alex-chen.pdf” to the “Attachments” drop area.
+  setup_description: |-
+    A single isolated card is centered in the viewport (light theme, comfortable spacing, default scale).
+    The card title is “Job application” and it contains one AntD Upload.Dragger instance labeled “Attachments”.
+
+    The drop area shows the standard AntD dragger affordance (upload icon + “Click or drag file to this area to upload”).
+    Clicking anywhere inside the drop area opens an in-page “Sample files” picker (not an OS dialog) listing 3 files:
+    - resume-alex-chen.pdf
+    - avatar-green.png
+    - project-brief.txt
+
+    The Upload.Dragger is configured for a single file (maxCount=1), with auto-upload enabled.
+    After a file is chosen/dropped, an AntD upload list appears directly below the drop area with filename text, a progress indicator, and a final success state (“Uploaded” with a check icon). Each list item has a remove (×) icon.
+    Initial state: no file selected/uploaded. No other interactive UI is present on the page.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Large, central dropzone with a tiny candidate set; success is clearly visible as a filename in the upload list, with only a brief upload-progress wait.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Attachments” contains exactly one file: resume-alex-chen.pdf.'
+    - That file’s final status is “uploaded” (not uploading/error).
+    - No additional files are present in the Attachments upload list.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: resume-alex-chen.pdf
+          file_name: resume-alex-chen.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different file is uploaded (e.g., avatar-green.png or project-brief.txt).
+  - The correct file appears but is still in an “uploading/in progress” state.
+  - The correct file appears with an error/rejected status.
+  - More than one file is present in the upload list.
+  - A file is uploaded in the wrong dropzone instance (not applicable here, but must not be counted if the page is extended).
+  expected_interaction_path:
+  - Click the Attachments drop area to open the in-page picker (or drag the file if available).
+  - Select “resume-alex-chen.pdf”.
+  - Wait until the upload list shows the file as uploaded/success.
+  notes: |-
+    Instrumentation: expose a stable identifier for the Upload.Dragger instance label (“Attachments”) and for each upload list item status.
+    Checker should read canonical file_key from the internal file model (avoid relying on truncated UI text).
+- id: file_dropzone-antd-T02
+  name: Upload profile photo (PNG) with thumbnail preview
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file “avatar-green.png” to the “Profile photo” drop area. The task will finish automatically when done.
+  ui_copy: Upload the file “avatar-green.png” to the “Profile photo” drop area.
+  setup_description: |-
+    The page uses the baseline scene: a centered isolated card (light theme, comfortable spacing, default scale).
+    Inside the card there is one AntD Upload.Dragger labeled “Profile photo”.
+
+    The drop area is configured to accept images only (accept=image/*) and uses a picture-style upload list:
+    after upload, the list shows a small image thumbnail preview next to the filename and status.
+    Clicking the drop area opens an in-page “Sample files” picker listing 3 images:
+    - avatar-green.png
+    - avatar-blue.png
+    - id-card.jpg
+
+    Auto-upload is enabled and a short progress indicator appears before the final “uploaded” status.
+    Initial state: empty (no selected file). There are no extra buttons or other form fields.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Only a few visually similar image choices; the target file name is explicitly given and the final state is visible via filename + thumbnail in the upload list.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Profile photo” contains exactly one file: avatar-green.png.'
+    - The file status is “uploaded”.
+    - No other files are present in the Profile photo upload list.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: avatar-green.png
+          file_name: avatar-green.png
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading avatar-blue.png or id-card.jpg instead of avatar-green.png.
+  - The correct file is present but still uploading.
+  - The correct file is present but rejected/error (e.g., wrong MIME type handling).
+  - Multiple files present when maxCount=1.
+  - Uploading to a non-target dropzone instance (not applicable here).
+  expected_interaction_path:
+  - Click the Profile photo drop area to open the in-page picker.
+  - Choose “avatar-green.png”.
+  - Wait for the upload to finish and the list to show success.
+  notes: AntD picture-style upload list improves semantic observability via both filename and thumbnail; ensure the checker uses canonical file_key, not thumbnail URL.
+- id: file_dropzone-antd-T03
+  name: Upload two receipt PDFs (multi-select)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the files “invoice-1042.pdf” and “invoice-1043.pdf” to the “Receipts” drop area. The task will finish automatically when done.
+  ui_copy: Upload the files “invoice-1042.pdf” and “invoice-1043.pdf” to the “Receipts” drop area.
+  setup_description: |-
+    Baseline scene (light/comfortable/centered isolated card). One AntD Upload.Dragger instance is labeled “Receipts”.
+
+    The dropzone is configured for multiple files (multiple=true, maxCount=5) and accepts PDFs (accept=.pdf).
+    Clicking the drop area opens an in-page “Sample files” picker with checkboxes (multi-select) listing:
+    - invoice-1042.pdf
+    - invoice-1043.pdf
+    - receipt-sample.pdf
+
+    After selection, the AntD upload list shows one row per file with filename and per-item status/progress.
+    Initial state: no uploaded files.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Requires selecting an exact set of two files, but options are few and the upload list gives explicit filename feedback per item.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Receipts” contains exactly two files: invoice-1042.pdf and invoice-1043.pdf.'
+    - Both files have final status “uploaded”.
+    - No extra files are present in the Receipts list.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: invoice-1042.pdf
+          file_name: invoice-1042.pdf
+          required_status: uploaded
+        - file_key: invoice-1043.pdf
+          file_name: invoice-1043.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two target files is uploaded (partial completion).
+  - receipt-sample.pdf is uploaded instead of one of the targets.
+  - A target file is present but still uploading or error.
+  - Any extra file is present beyond the two targets.
+  - Files were uploaded in the wrong dropzone instance (not applicable here).
+  expected_interaction_path:
+  - Click the Receipts drop area to open the in-page picker.
+  - Select invoice-1042.pdf and invoice-1043.pdf (checkboxes) and confirm selection in the picker.
+  - Wait for both uploads to finish.
+  notes: Checker should treat file order as irrelevant (order_insensitive=true).
+- id: file_dropzone-antd-T04
+  name: Remove the pre-attached text file (empty the dropzone)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: Remove the file “project-brief.txt” from the “Supporting files” drop area so that no files remain there. The task will finish automatically when done.
+  ui_copy: Remove the file “project-brief.txt” from the “Supporting files” drop area so that no files remain there.
+  setup_description: |-
+    Baseline scene: one centered isolated card (light theme, comfortable spacing).
+    The card contains one AntD Upload.Dragger labeled “Supporting files” (multiple=false).
+
+    Initial state: the upload list already contains exactly one successfully uploaded item:
+    - project-brief.txt (status: uploaded)
+
+    The list item shows the filename and a remove (×) icon. Clicking remove immediately removes the item (no confirmation for this task).
+    The drop area remains visible above the list for adding new files, but adding files is not required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Only one visible file needs removal; the remove affordance is directly adjacent to the filename and the empty state is obvious.
+  success_trigger:
+    human_readable:
+    - The dropzone labeled “Supporting files” has an empty file list (no selected/uploaded files).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files: []
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - project-brief.txt remains present in the file list.
+  - A different file is removed while project-brief.txt remains (if additional files are added).
+  - The file shows an intermediate removing/loading state but is not actually removed.
+  - Files were removed from the wrong dropzone instance (not applicable here).
+  expected_interaction_path:
+  - Locate the upload list under Supporting files.
+  - Click the remove (×) icon on project-brief.txt.
+  - Verify the list is empty.
+  notes: For robustness, ensure the checker distinguishes between hidden list items vs true removal from component state.
+- id: file_dropzone-antd-T05
+  name: Replace an existing W-9 PDF (maxCount=1)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: In the “W-9 form” drop area, replace “w9-2025.pdf” with “w9-2026.pdf”. The task will finish automatically when done.
+  ui_copy: 'Replace the W-9 form: w9-2025.pdf → w9-2026.pdf'
+  setup_description: |-
+    The page is a small “Vendor onboarding” form section (light theme, comfortable spacing) with several non-target fields
+    (company name text input, address text input, and a disabled “Save” button). These fields are distractors and are not required.
+
+    The target component is one AntD Upload.Dragger labeled “W-9 form”, configured as a single-file uploader (maxCount=1, accept=.pdf).
+    Initial state: the upload list already contains:
+    - w9-2025.pdf (status: uploaded)
+
+    The file row includes a remove icon and a prominent inline action link “Replace file”.
+    Clicking the drop area or “Replace file” opens the in-page “Sample files” picker listing:
+    - w9-2025.pdf
+    - w9-2026.pdf
+    - w8ben.pdf
+
+    Selecting a file replaces the existing item (the list should end with exactly one uploaded PDF).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Similar filenames increase confusion and the task requires a precise end state (exactly one correct file) within a busier form section.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “W-9 form” contains exactly one file: w9-2026.pdf.'
+    - The file status is “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: w9-2026.pdf
+          file_name: w9-2026.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - w9-2025.pdf remains as the uploaded file.
+  - w8ben.pdf is uploaded instead.
+  - Both files are present (should not happen with maxCount=1, but must not count as success).
+  - The correct file is present but not uploaded (still uploading/error).
+  - The user modifies a non-target field but does not replace the file (should not count).
+  expected_interaction_path:
+  - Locate the W-9 form Upload.Dragger and its existing file row.
+  - Click “Replace file” (or click the drop area) to open the in-page picker.
+  - Select w9-2026.pdf and wait for uploaded status.
+  notes: If using AntD’s onRemove/beforeUpload hooks, ensure replacement updates the canonical file_key deterministically.
+- id: file_dropzone-antd-T06
+  name: Upload verification document in a two-dropzone modal
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: In the upload dialog, add “id-card.jpg” to the “Verification document” drop area (not the Profile photo one). The task will finish automatically when done.
+  ui_copy: 'Upload dialog: Add id-card.jpg to Verification document'
+  setup_description: |-
+    A modal dialog is open on page load (modal_flow layout) against a dimmed background (light theme overall).
+    The modal title is “Identity verification” and it contains TWO AntD Upload.Dragger instances stacked vertically:
+
+    1) “Profile photo” (accept=image/*, maxCount=1) — currently empty
+    2) “Verification document” (accept=image/*,.pdf, maxCount=1) — currently empty  ← TARGET
+
+    Each drop area shows the standard AntD dragger affordance. Clicking a drop area opens an in-page “Sample files” picker.
+    The picker lists 4 files:
+    - id-card.jpg
+    - utility-bill.pdf
+    - avatar-green.png
+    - avatar-blue.png
+
+    Auto-upload is enabled; after selection, the chosen file appears in that dropzone’s upload list with a success indicator.
+    The background page has no other interactables beyond the modal (the modal must remain open; no “Save” is required).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 3
+    justification: Requires selecting the correct dropzone among two similar instances inside a modal, with standard upload feedback but higher disambiguation demand.
+  success_trigger:
+    human_readable:
+    - Only the dropzone labeled “Verification document” is modified.
+    - 'The “Verification document” dropzone contains exactly one file: id-card.jpg, with status “uploaded”.'
+    - The “Profile photo” dropzone remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: id-card.jpg
+          file_name: id-card.jpg
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Verification document
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - id-card.jpg is uploaded to “Profile photo” instead of “Verification document”.
+  - A different file (utility-bill.pdf or an avatar image) is uploaded to the target dropzone.
+  - The correct file is present but still uploading or error.
+  - Both dropzones contain files when only the target should.
+  - The modal is closed without uploading (should not count).
+  expected_interaction_path:
+  - In the modal, locate the ‘Verification document’ drop area.
+  - Click it to open the in-page picker (or drop the file).
+  - Choose id-card.jpg and wait for uploaded status in that instance’s list.
+  notes: Checker must bind the predicate to the correct instance (label text or stable data-testid) and also verify the non-target instance remains unchanged.
+- id: file_dropzone-antd-T07
+  name: Drag a logo SVG into the dropzone (dark theme, corner placement)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Drag and drop the file tile “logo.svg” into the “Brand assets” drop area. The task will finish automatically when done.
+  ui_copy: Drag logo.svg into Brand assets
+  setup_description: |-
+    The UI is rendered in dark theme and the main card is anchored to the bottom-right of the viewport (placement=bottom_right).
+    Spacing is comfortable and the dropzone is default size.
+
+    Inside the card there is one AntD Upload.Dragger labeled “Brand assets” (accept=.svg,.png, multiple=false).
+    Below the drop area is a small “File tray” strip (part of the test harness) containing 3 draggable file tiles:
+    - logo.svg   ← TARGET
+    - logo-old.svg
+    - brand-guidelines.pdf
+
+    Each tile shows a file-type icon and the filename. The intended interaction is to drag a tile and drop it onto the dashed AntD dragger area.
+    On successful drop, the file appears in the AntD upload list with an upload progress line, then status “uploaded”.
+    Initial state: no files uploaded in Brand assets.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires a drag-and-drop gesture and accurate target acquisition in a corner-anchored layout; otherwise feedback is clear via filename in the upload list.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Brand assets” contains exactly one file: logo.svg.'
+    - The file status is “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: logo.svg
+          file_name: logo.svg
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dropping logo-old.svg or brand-guidelines.pdf instead of logo.svg.
+  - Dropping the correct tile but not onto the dropzone (no file appears in the list).
+  - The file appears but remains in uploading/error state.
+  - An extra file is present (should be single-file).
+  - Interacting with the tray without completing the drop.
+  expected_interaction_path:
+  - Locate the file tray under the dropzone.
+  - Click-and-drag the “logo.svg” tile onto the Brand assets dragger region.
+  - Wait for upload success status.
+  notes: 'Instrumentation: ensure draggable tiles set a deterministic file_key in the drop handler so the checker can match logo.svg reliably.'
+- id: file_dropzone-antd-T08
+  name: Scroll to Diagnostics and upload a specific log bundle (compact, small)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the “Diagnostics” section and upload “logs-2026-02-01.zip” to the “Diagnostic logs” drop area. The task will finish automatically when done.
+  ui_copy: 'Diagnostics: Upload logs-2026-02-01.zip to Diagnostic logs'
+  setup_description: |-
+    The page is a settings_panel with a scrollable main content area (light theme).
+    Spacing is compact and the component is rendered at small scale (smaller padding and typography than baseline).
+
+    Several settings sections appear above the fold (Network, Appearance, Privacy), each with toggles and dropdowns (distractors).
+    The target section “Diagnostics” is below the fold and is not initially visible without scrolling.
+
+    Inside “Diagnostics”, there is one AntD Upload.Dragger labeled “Diagnostic logs”.
+    It is configured to accept .zip files only (accept=.zip, multiple=false, maxCount=1) and uses auto-upload with a visible progress bar.
+
+    Clicking the drop area opens the in-page “Sample files” picker listing 4 zip files with similar names:
+    - logs-2026-01-31.zip
+    - logs-2026-02-01.zip   ← TARGET
+    - logs-2026-02-02.zip
+    - screenshots.zip
+
+    Initial state: no file uploaded. The scroll position starts at the top of the settings page.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 3
+    justification: Requires scrolling to find the target section, then selecting the correct zip among multiple similar filenames in a compact/small UI with more distractors.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Diagnostic logs” contains exactly one file: logs-2026-02-01.zip.'
+    - The file status is “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: logs-2026-02-01.zip
+          file_name: logs-2026-02-01.zip
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading a different zip (e.g., logs-2026-02-02.zip) due to filename similarity.
+  - The correct zip is selected but the file remains uploading.
+  - The correct zip is present but rejected/error.
+  - Uploading to an incorrect dropzone elsewhere in the settings (if any).
+  - Failing to scroll to the Diagnostics section (no upload performed).
+  expected_interaction_path:
+  - Scroll down the settings panel until the “Diagnostics” header is visible.
+  - Click the Diagnostic logs drop area to open the in-page picker.
+  - Select logs-2026-02-01.zip and wait for upload success.
+  notes: Checker should ensure the scroll_find requirement is not scored separately; success is still purely the dropzone state.
+- id: file_dropzone-antd-T09
+  name: Upload the banner that matches a reference preview (visual match)
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Upload the banner image that matches the reference preview to the “Banner image” drop area. The task will finish automatically when done.
+  ui_copy: Upload the banner image that matches the reference preview to the “Banner image” drop area.
+  setup_description: |-
+    A centered isolated card is shown (light theme, comfortable spacing, default scale).
+    The card is split into two columns:
+
+    - Left column: a “Reference preview” panel showing the target banner image (a small wide thumbnail).
+    - Right column: one AntD Upload.Dragger labeled “Banner image” (accept=image/png, maxCount=1).
+
+    Below the drop area is a grid of 4 candidate banner thumbnails (part of the test harness). Each thumbnail is labeled only with a neutral ID:
+    - banner-01.png
+    - banner-02.png
+    - banner-03.png   ← (this one visually matches the reference)
+    - banner-04.png
+
+    The intended interaction is to drag the correct thumbnail tile onto the AntD dragger area (or click the drop area to open the in-page picker showing the same 4 thumbnails).
+    Auto-upload is enabled; after selection, the upload list under “Banner image” shows a picture thumbnail, filename, and uploaded status.
+    Initial state: no file selected/uploaded.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The goal is specified visually, requiring the agent to compare thumbnails; multiple similar candidates increase interference and the correct outcome must be an exact file match.
+  success_trigger:
+    human_readable:
+    - The dropzone labeled “Banner image” contains exactly one file whose file_key is banner-03.png.
+    - That file has status “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: banner-03.png
+          file_name: banner-03.png
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading banner-01.png, banner-02.png, or banner-04.png instead of the one matching the reference.
+  - The correct banner file is present but still uploading.
+  - The correct banner file is present but rejected/error.
+  - Multiple files are present (should be maxCount=1).
+  - The agent interacts with the reference preview but does not upload a file.
+  expected_interaction_path:
+  - Compare the reference preview to the candidate banner thumbnails.
+  - Drag the matching candidate (banner-03.png) onto the Banner image drop area (or select it in the in-page picker).
+  - Wait for the uploaded status.
+  notes: To preserve the ‘visual match’ intent, keep candidate labels non-semantic (banner-01…04) so filename reading does not trivially solve the task.
+- id: file_dropzone-antd-T10
+  name: Cancel a removal confirmation so the file stays attached
+  canonical_type: file_dropzone
+  implementation_source: antd
+  implementation_variant: dragger
+  implementation_component: 'AntD: Upload.Dragger'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the “Signed contract” drop area, try to remove “contract-signed.pdf” but click “Cancel” in the confirmation so the file stays attached. The task will finish automatically when done.
+  ui_copy: 'Signed contract: remove → Cancel (keep contract-signed.pdf attached)'
+  setup_description: |-
+    The page is a light-theme form section titled “Contract submission” (comfortable spacing).
+    Two AntD Upload.Dragger instances are shown one after another:
+
+    - “Signed contract”  ← TARGET instance
+    - “Appendix (optional)”
+
+    Initial state:
+    - The “Signed contract” upload list already contains contract-signed.pdf (status: uploaded).
+    - The “Appendix (optional)” list is empty.
+
+    In the “Signed contract” upload list, clicking the remove (×) icon opens an AntD Popconfirm anchored to the list item.
+    The Popconfirm text reads “Remove this file?” with two buttons: “Remove” and “Cancel”.
+    Clicking “Cancel” closes the popover and keeps the file in place.
+    No other form controls are required for success; the only meaningful interaction is canceling the removal confirmation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: Requires correctly targeting the remove icon in the right instance, handling a transient confirmation popover, and selecting ‘Cancel’ without changing the final file state.
+  success_trigger:
+    human_readable:
+    - A remove confirmation for contract-signed.pdf in the “Signed contract” instance was opened and cancelled (Cancel clicked at least once).
+    - The “Signed contract” dropzone still contains contract-signed.pdf with status “uploaded”.
+    - The “Appendix (optional)” dropzone remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: contract-signed.pdf
+          file_name: contract-signed.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Signed contract
+      terminal_condition: task ends when predicate holds
+      required_interaction_events:
+      - remove_confirmation_cancelled
+  negative_cases:
+  - Clicking “Remove” instead of “Cancel” (file disappears).
+  - Canceling a confirmation in the wrong dropzone instance (Appendix) if a file is added there.
+  - Never opening the confirmation popover (task must not auto-succeed without the cancel event).
+  - The file remains but is in a non-uploaded/error state.
+  - Closing the popover by clicking outside without triggering the explicit Cancel event (should not count as success if event instrumentation requires Cancel).
+  expected_interaction_path:
+  - In the Signed contract upload list, click the remove (×) icon on contract-signed.pdf.
+  - In the Popconfirm, click “Cancel”.
+  - Verify the file is still listed as uploaded.
+  notes: |-
+    To prevent trivial success, add an instrumented event counter (e.g., window.__cb_events.remove_confirmation_cancelled++) when the Popconfirm Cancel button is clicked.
+    Checker should require that counter >= 1 in addition to the final file list state.
+- id: file_dropzone-mui-T01
+  name: Upload resume PDF in a MUI-styled dropzone card
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file “resume-alex-chen.pdf” to the “Upload resume” drop area. The task will finish automatically when done.
+  ui_copy: 'Upload resume: resume-alex-chen.pdf'
+  setup_description: |-
+    Baseline scene: a centered isolated card (light theme, comfortable spacing, default scale).
+    The dropzone implementation is a MUI Card with a dashed-border Paper area wired via react-dropzone (composite implementation).
+
+    The drop area is labeled “Upload resume” and contains helper text:
+    “Drag a file here, or click to choose from sample files”.
+    Clicking the drop area opens a small in-page MUI Dialog titled “Sample files” (not an OS dialog) with a simple list:
+    - resume-alex-chen.pdf   ← TARGET
+    - project-brief.txt
+    - avatar-green.png
+
+    After selection, the dialog closes and the chosen file appears below the drop area as a single MUI Chip with:
+    filename text + an “Uploaded” status label + a small remove (×) icon on the chip.
+    Initial state: no selected files.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Large drop target with a short file list; the final selected file is clearly rendered as a chip with filename text.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Upload resume” contains exactly one file: resume-alex-chen.pdf.'
+    - The file’s status is “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: resume-alex-chen.pdf
+          file_name: resume-alex-chen.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different file is selected/uploaded.
+  - The file is present but still uploading/error.
+  - More than one file is present (single-file configuration).
+  - Uploading into a non-target dropzone instance (not applicable here).
+  expected_interaction_path:
+  - Click the Upload resume drop area to open the Sample files dialog.
+  - Select resume-alex-chen.pdf.
+  - Confirm the chip shows the correct filename and uploaded status.
+  notes: 'Composite note: MUI has no official drag-and-drop file upload component; this task uses react-dropzone styled with MUI components.'
+- id: file_dropzone-mui-T02
+  name: Upload profile photo using mixed text + visual guidance
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file “avatar-blue.png” to the “Profile photo” drop area. The task will finish automatically when done.
+  ui_copy: 'Profile photo: upload avatar-blue.png (matches the preview)'
+  setup_description: |-
+    Baseline scene: centered isolated card, light theme, comfortable spacing.
+
+    The dropzone is a MUI-styled dashed Paper area labeled “Profile photo” (react-dropzone composite).
+    To the right of the dropzone label, a small “Desired preview” thumbnail is displayed showing the target avatar (a blue square avatar).
+    The page also shows the target filename in text (“avatar-blue.png”), making guidance mixed (text + visual).
+
+    Clicking the drop area opens an in-page MUI Dialog (“Sample files”) listing 3 images:
+    - avatar-blue.png   ← TARGET
+    - avatar-green.png
+    - id-card.jpg
+
+    After selection, the dropzone area shows an inline image preview and a chip row with the filename and “uploaded” status.
+    Initial state: empty (no selected files).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Only a few image choices and both filename and preview are available; the resulting state is easy to verify via filename chip and thumbnail.
+  success_trigger:
+    human_readable:
+    - 'The “Profile photo” dropzone contains exactly one file: avatar-blue.png.'
+    - The file status is “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: avatar-blue.png
+          file_name: avatar-blue.png
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading avatar-green.png or id-card.jpg.
+  - The correct file is present but uploading/error.
+  - Multiple files attached.
+  - Uploading to a different dropzone instance (not applicable).
+  expected_interaction_path:
+  - Click the Profile photo drop area to open the Sample files dialog.
+  - Select avatar-blue.png.
+  - Wait for the preview/chip to show uploaded status.
+  notes: Mixed guidance tasks allow analysis of whether agents rely on text labels vs visual previews.
+- id: file_dropzone-mui-T03
+  name: Clear all attachments using a Clear button
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear all files from the “Attachments” drop area so it becomes empty. The task will finish automatically when done.
+  ui_copy: 'Attachments: Clear all'
+  setup_description: |-
+    Baseline scene: centered isolated card, light theme, comfortable spacing, default scale.
+
+    The dropzone is a MUI Card section labeled “Attachments” (react-dropzone composite).
+    Under the dashed drop area, there is a file list rendered as MUI Chips and a small action row containing a “Clear” button.
+
+    Initial state: two uploaded files are already present as chips:
+    - project-brief.txt (uploaded)
+    - data_export.csv (uploaded)
+
+    Clicking the “Clear” button removes all chips at once and returns the dropzone to its empty state.
+    No confirmation dialog is used for this task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single explicit Clear control with immediate feedback; the empty state is visually obvious and easy to verify.
+  success_trigger:
+    human_readable:
+    - The dropzone labeled “Attachments” has no files (no chips/items listed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files: []
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - At least one file chip remains after attempting to clear.
+  - Only one chip is removed (partial clear).
+  - Files are cleared from a different component (not applicable here).
+  - The UI shows chips removed but the internal file list state still contains entries (checker must use canonical state).
+  expected_interaction_path:
+  - Locate the Attachments card.
+  - Click the “Clear” button under the file chips.
+  - Verify no chips remain.
+  notes: Make sure the Clear action is within the dropzone component boundary for attribution (component-level task).
+- id: file_dropzone-mui-T04
+  name: Drag a file tile into a top-left dropzone (MUI composite)
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Drag and drop the file tile “logo.svg” into the “Brand logo” drop area. The task will finish automatically when done.
+  ui_copy: 'Brand logo: drag logo.svg into the drop area'
+  setup_description: |-
+    The page is a small settings_panel section and the main dropzone card is positioned near the top-left of the viewport (placement=top_left).
+    Theme is light, spacing comfortable, scale default.
+
+    The target is a MUI-styled dashed Paper drop area labeled “Brand logo” (react-dropzone composite, accept=.svg, maxCount=1).
+    To support drag interaction, a compact “File tray” appears directly below the card with three draggable tiles:
+    - logo.svg   ← TARGET
+    - logo-mono.svg
+    - brand-guidelines.pdf
+
+    Dragging a tile over the drop area changes the border highlight (hover feedback).
+    On drop, the selected file is added and rendered as a single chip with filename and “uploaded” status.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Corner placement and a drag gesture increase target acquisition difficulty; however, the file set is small and feedback is explicit via the resulting filename chip.
+  success_trigger:
+    human_readable:
+    - 'The “Brand logo” dropzone contains exactly one file: logo.svg, with status “uploaded”.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: logo.svg
+          file_name: logo.svg
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dropping logo-mono.svg or brand-guidelines.pdf instead of logo.svg.
+  - Dropping the tile outside the dropzone so no file is added.
+  - The file appears but remains in uploading/error state.
+  - More than one file is present when maxCount=1.
+  expected_interaction_path:
+  - Locate the file tray beneath the Brand logo card.
+  - Drag the “logo.svg” tile onto the dashed drop area.
+  - Confirm the resulting chip shows logo.svg as uploaded.
+  notes: If drag is implemented via dataTransfer, ensure drag-start sets a deterministic file_key.
+- id: file_dropzone-mui-T05
+  name: Upload two specific gallery images in compact spacing
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the files “gallery-01.jpg” and “gallery-03.jpg” to the “Gallery images” drop area. The task will finish automatically when done.
+  ui_copy: 'Gallery images: add gallery-01.jpg and gallery-03.jpg'
+  setup_description: |-
+    The page is a centered isolated card in light theme but uses compact spacing (tighter padding and smaller gaps).
+    The dropzone is a MUI dashed Paper area labeled “Gallery images” (react-dropzone composite), configured for multiple image files (accept=image/*, maxFiles=5).
+
+    Clicking the drop area opens an in-page MUI Dialog (“Sample files”) with a compact checkbox list of candidate images:
+    - gallery-01.jpg   ← TARGET
+    - gallery-02.jpg
+    - gallery-03.jpg   ← TARGET
+    - gallery-04.jpg
+    - avatar-blue.png
+    - avatar-green.png
+
+    The dialog has an “Add selected” button. After adding, the dropzone shows a stacked list of image thumbnails with filenames and per-item “uploaded” badges.
+    Initial state: no images selected.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Multiple required targets and compact checkbox spacing raise interference and precision demands, but the component remains centered with clear filename feedback.
+  success_trigger:
+    human_readable:
+    - 'The “Gallery images” dropzone contains exactly two files: gallery-01.jpg and gallery-03.jpg.'
+    - Both files are in status “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: gallery-01.jpg
+          file_name: gallery-01.jpg
+          required_status: uploaded
+        - file_key: gallery-03.jpg
+          file_name: gallery-03.jpg
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two target images is attached (partial selection).
+  - A non-target image (gallery-02.jpg, gallery-04.jpg, or an avatar) is attached instead.
+  - Any extra image is attached beyond the two targets.
+  - A target image is present but not uploaded (uploading/error).
+  expected_interaction_path:
+  - Click the Gallery images drop area to open the dialog.
+  - Tick gallery-01.jpg and gallery-03.jpg and click “Add selected”.
+  - Verify both appear as uploaded in the list.
+  notes: Compact spacing is intended to stress target acquisition on checkboxes without adding unrelated clutter.
+- id: file_dropzone-mui-T06
+  name: Remove one specific receipt from a populated list
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: In the “Receipts” drop area, remove “invoice-1043.pdf” and keep the other files. The task will finish automatically when done.
+  ui_copy: 'Receipts: remove invoice-1043.pdf only'
+  setup_description: |-
+    The page is a light-theme form_section with moderate clutter: there are several read-only expense fields (amount, date, merchant) and the target upload card.
+    Spacing is comfortable, scale default.
+
+    The target component is a MUI-styled dropzone labeled “Receipts” (react-dropzone composite, multiple=true).
+    Initial state: three files are already attached and shown in a vertical MUI List under the drop area:
+    - invoice-1042.pdf (uploaded)
+    - invoice-1043.pdf (uploaded)  ← TARGET for removal
+    - receipt-sample.pdf (uploaded)
+
+    Each list row has a trailing trash/delete icon button.
+    Clicking the delete icon removes that single file row immediately and shows a brief Snackbar (“Removed …”).
+    The task requires removing only the specified file while leaving the other two intact.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Must precisely identify and remove the correct row in a small list with similar filenames, within a busier form context.
+  success_trigger:
+    human_readable:
+    - 'The “Receipts” dropzone contains exactly two files: invoice-1042.pdf and receipt-sample.pdf.'
+    - invoice-1043.pdf is not present.
+    - Remaining files have status “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: invoice-1042.pdf
+          file_name: invoice-1042.pdf
+          required_status: uploaded
+        - file_key: receipt-sample.pdf
+          file_name: receipt-sample.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - invoice-1043.pdf is still present after the action.
+  - invoice-1042.pdf is removed instead of invoice-1043.pdf.
+  - All files are cleared (over-deletion).
+  - A remaining file is left in an error/non-uploaded state.
+  expected_interaction_path:
+  - Find the Receipts file list under the drop area.
+  - Click the delete icon for invoice-1043.pdf.
+  - Verify only invoice-1042.pdf and receipt-sample.pdf remain.
+  notes: Checker should match by canonical file_key, not by row index, since order can change after deletions.
+- id: file_dropzone-mui-T07
+  name: Upload ID back image to the correct instance (two dropzones)
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload “id-back.jpg” to the “ID back” drop area (leave “ID front” empty). The task will finish automatically when done.
+  ui_copy: 'Identity upload: add id-back.jpg to ID back'
+  setup_description: |-
+    A centered isolated card (light theme, comfortable spacing) contains two MUI-styled dropzones arranged in a two-column grid:
+
+    - Left: “ID front”
+    - Right: “ID back”  ← TARGET
+
+    Both are react-dropzone composites with accept=image/* and maxCount=1.
+    Clicking inside either drop area opens the same in-page “Sample files” dialog listing:
+    - id-front.jpg
+    - id-back.jpg   ← TARGET
+    - selfie.jpg
+
+    After selection, the chosen dropzone shows an image thumbnail and a chip with filename + uploaded status.
+    Initial state: both instances are empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two very similar dropzone instances increase disambiguation load; the rest is straightforward with clear file-name feedback.
+  success_trigger:
+    human_readable:
+    - 'Only the “ID back” dropzone contains id-back.jpg (status: uploaded).'
+    - The “ID front” dropzone remains empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: id-back.jpg
+          file_name: id-back.jpg
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: ID back
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - id-back.jpg is uploaded to “ID front”.
+  - id-front.jpg or selfie.jpg is uploaded to “ID back”.
+  - Both dropzones contain files.
+  - The correct file is present but not uploaded (uploading/error).
+  expected_interaction_path:
+  - Locate the right-side “ID back” drop area.
+  - Open the sample file dialog from that instance and select id-back.jpg.
+  - Verify the right instance shows the uploaded chip/thumbnail and the left remains empty.
+  notes: Checker must bind to the target instance label; do not accept a state where the correct file is in the wrong instance.
+- id: file_dropzone-mui-T08
+  name: Match and upload the correct screenshot in a cluttered dashboard
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Upload the screenshot image that matches the reference preview to the “Upload screenshot” drop area. The task will finish automatically when done.
+  ui_copy: Upload the screenshot that matches the reference preview
+  setup_description: |-
+    The page is a light-theme dashboard with high clutter: multiple statistic cards, charts, and filter buttons are visible.
+    The target upload widget is one MUI-styled dropzone card labeled “Upload screenshot” located in the bottom-left region of the dashboard.
+
+    Within the upload card, a small “Reference preview” thumbnail is shown (target screenshot).
+    Under it, the dashed drop area supports drag/drop and click-to-open a “Sample files” dialog.
+    A candidate grid (part of the harness) shows 4 small screenshot thumbnails with neutral filenames:
+    - screenshot-01.png
+    - screenshot-02.png
+    - screenshot-03.png   ← (this matches the reference preview)
+    - screenshot-04.png
+
+    The reference preview matches screenshot-03.png by visual appearance (not by name).
+    After selection, the upload card shows a chip row with the chosen filename and an “uploaded” badge.
+    Initial state: no file attached.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: High scene clutter and non-central placement increase acquisition difficulty, and the visual-only target requires comparing similar thumbnails.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Upload screenshot” contains exactly one file: screenshot-03.png (status: uploaded).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: screenshot-03.png
+          file_name: screenshot-03.png
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading screenshot-01.png, screenshot-02.png, or screenshot-04.png.
+  - Selecting the correct screenshot but leaving it in uploading/error state.
+  - Uploading to a different dropzone card if any exist (should not count).
+  - Multiple files attached in a single-file uploader.
+  expected_interaction_path:
+  - Locate the Upload screenshot card on the dashboard.
+  - Compare the reference preview to the candidate screenshot thumbnails.
+  - Select the matching candidate (screenshot-03.png) via drag/drop or the dialog and wait for uploaded status.
+  notes: Keep candidate filenames neutral to ensure the ‘match_reference’ intent remains primarily visual.
+- id: file_dropzone-mui-T09
+  name: Cancel the ‘Remove all’ confirmation in a dark-mode dialog
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the “Edit attachments” dialog, click “Remove all”, then choose “Cancel” so the attachments are not deleted. The task will finish automatically when done.
+  ui_copy: 'Edit attachments: Remove all → Cancel'
+  setup_description: |-
+    The UI is in dark theme. A modal dialog titled “Edit attachments” is open on load (modal_flow).
+    Inside the dialog is one MUI-styled dropzone section labeled “Attachments” (react-dropzone composite) with a file list.
+
+    Initial state: two files are already attached and shown as chips/list items:
+    - project-brief.txt (uploaded)
+    - data_export.csv (uploaded)
+
+    Above the list there is a destructive text button “Remove all”.
+    Clicking “Remove all” opens a confirmation dialog (second overlay layer) with message “Remove all attachments?”
+    and two buttons: “Remove” (destructive) and “Cancel”.
+
+    The task specifically requires clicking “Cancel”, which closes the confirmation and leaves the attachments unchanged.
+    No other dialog buttons (e.g., Save/Close) are required for success.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Two-layer modal confirmation flow with transient controls; the final file list is unchanged so instrumentation must verify the cancel interaction occurred.
+  success_trigger:
+    human_readable:
+    - The ‘Remove all’ confirmation was opened and ‘Cancel’ was clicked at least once.
+    - The Attachments dropzone still contains project-brief.txt and data_export.csv, both with status “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: project-brief.txt
+          file_name: project-brief.txt
+          required_status: uploaded
+        - file_key: data_export.csv
+          file_name: data_export.csv
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+      required_interaction_events:
+      - remove_all_cancelled
+  negative_cases:
+  - Clicking “Remove” instead of “Cancel” (files are deleted).
+  - Closing the confirmation without clicking Cancel (e.g., clicking backdrop) if Cancel click is required by instrumentation.
+  - Never opening the confirmation (task must not auto-succeed based only on the initial file list).
+  - Any file is missing or in non-uploaded/error state after the interaction.
+  expected_interaction_path:
+  - In the Edit attachments dialog, click “Remove all”.
+  - In the confirmation dialog, click “Cancel”.
+  - Verify both attachments remain listed as uploaded.
+  notes: Add a simple event counter for Cancel in the confirmation dialog (e.g., window.__cb_events.remove_all_cancelled) to prevent trivial completion.
+- id: file_dropzone-mui-T10
+  name: Upload the only valid CSV under size limit (error recovery)
+  canonical_type: file_dropzone
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: react-dropzone (useDropzone) + MUI Card/Paper (composite)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload “data_export.csv” to the “Data import” drop area. Only a small CSV is accepted. The task will finish automatically when done.
+  ui_copy: 'Data import: upload data_export.csv (CSV ≤ 1 MB)'
+  setup_description: |-
+    The page is a settings_panel positioned near the bottom-right of the viewport (placement=bottom_right).
+    It uses compact spacing and small scale to reduce target sizes and spacing.
+
+    The target is a MUI-styled dropzone labeled “Data import” (react-dropzone composite) with strict validation:
+    - Accepts CSV only (accept=.csv)
+    - Maximum file size: 1 MB
+
+    Clicking the drop area opens a “Sample files” dialog listing 3 similarly named options:
+    - data_export.csv (8 KB)               ← TARGET (valid)
+    - big_data_export.csv (2.5 MB)         (invalid: too large)
+    - data_export.xlsx (300 KB)            (invalid: wrong type)
+
+    If an invalid file is selected/dropped, the component shows inline error text under the drop area
+    (e.g., “File type not allowed” or “File is too large”) and the file is not added to the uploaded list (or is added with status “rejected”).
+    The task requires ending with exactly the valid CSV attached and uploaded, and no rejected/error items present.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Small/compact layout plus validation constraints and confusable filenames create a higher chance of rejection and require recovery to reach the exact accepted final state.
+  success_trigger:
+    human_readable:
+    - 'The “Data import” dropzone contains exactly one file: data_export.csv.'
+    - The file status is “uploaded”.
+    - No rejected/error files are present for this dropzone.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: data_export.csv
+          file_name: data_export.csv
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - big_data_export.csv is selected (too large).
+  - data_export.xlsx is selected (wrong type).
+  - A rejected/error item is present even if data_export.csv is also present.
+  - The correct file is present but not uploaded (still uploading).
+  - Multiple files are attached when only one should be present.
+  expected_interaction_path:
+  - Open the sample file dialog from the Data import drop area.
+  - Select data_export.csv and confirm.
+  - If an invalid file was selected first, remove/clear it and retry with the valid CSV.
+  - Verify the final state contains only data_export.csv uploaded.
+  notes: Checker should read the canonical accept/reject state from the component’s file model (status field), not from transient error toasts.
+- id: file_dropzone-mantine-T01
+  name: Upload a plain text note to Mantine Dropzone
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file “project-brief.txt” to the “Attach note” drop area. The task will finish automatically when done.
+  ui_copy: 'Attach note: upload project-brief.txt'
+  setup_description: |-
+    Baseline scene: a centered isolated card in light theme with comfortable spacing and default scale.
+    The card contains one Mantine Dropzone instance labeled “Attach note”.
+
+    The Dropzone displays the standard Mantine status messaging:
+    - Idle text: “Drag file here or click to select”
+    - Accept/Reject visual feedback when dragging a file over the zone
+
+    Configuration: accepts text files only (accept=text/plain, multiple=false, maxFiles=1) with a small size limit that all provided text files satisfy.
+    Clicking the dropzone opens an in-page “Sample files” picker listing:
+    - project-brief.txt   ← TARGET
+    - resume-alex-chen.pdf
+    - avatar-green.png
+
+    After selection, a simple file summary row appears under the Dropzone with filename text and status “uploaded”, plus a remove action icon.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single centered dropzone with a small file picker; the chosen filename is clearly listed under the component.
+  success_trigger:
+    human_readable:
+    - 'The dropzone labeled “Attach note” contains exactly one file: project-brief.txt (status: uploaded).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: project-brief.txt
+          file_name: project-brief.txt
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading a non-text file such as resume-alex-chen.pdf or avatar-green.png (should be rejected).
+  - The file is present but in rejected/error status.
+  - Multiple files attached when maxFiles=1.
+  - Uploading to the wrong dropzone instance (not applicable here).
+  expected_interaction_path:
+  - Click the Attach note dropzone to open the in-page picker.
+  - Select project-brief.txt.
+  - Wait for the uploaded status row to appear.
+  notes: Mantine Dropzone is based on react-dropzone; status messaging (Idle/Accept/Reject) can be used for richer feedback instrumentation.
+- id: file_dropzone-mantine-T02
+  name: Upload an image to Mantine Dropzone (profile photo)
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload the file “avatar-green.png” to the “Profile photo” drop area. The task will finish automatically when done.
+  ui_copy: 'Profile photo: upload avatar-green.png'
+  setup_description: |-
+    Baseline scene: centered isolated card, light theme, comfortable spacing.
+    One Mantine Dropzone instance is labeled “Profile photo”.
+
+    Configuration: accept=image/*, maxFiles=1. The Dropzone shows a large icon and helper text in Idle state.
+    Clicking opens an in-page “Sample files” picker listing:
+    - avatar-green.png   ← TARGET
+    - avatar-blue.png
+    - id-card.jpg
+
+    After the file is selected, the component renders a small preview thumbnail and a filename row under the dropzone with status “uploaded” and a remove action icon.
+    Initial state: empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Few image options and a large target area; preview + filename provide clear confirmation of state.
+  success_trigger:
+    human_readable:
+    - 'The “Profile photo” dropzone contains exactly one file: avatar-green.png (status: uploaded).'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: avatar-green.png
+          file_name: avatar-green.png
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading avatar-blue.png or id-card.jpg instead.
+  - The file is attached but rejected/error.
+  - Multiple files attached.
+  - File is still uploading (not finished).
+  expected_interaction_path:
+  - Open the in-page file picker from the Profile photo dropzone.
+  - Choose avatar-green.png.
+  - Wait for the uploaded preview/row.
+  notes: null
+- id: file_dropzone-mantine-T03
+  name: Remove the existing file from Mantine Dropzone
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: Remove “resume-alex-chen.pdf” from the “Documents” drop area so it becomes empty. The task will finish automatically when done.
+  ui_copy: 'Documents: remove resume-alex-chen.pdf'
+  setup_description: |-
+    Baseline scene: centered isolated card (light theme, comfortable spacing).
+    A single Mantine Dropzone labeled “Documents” is shown.
+
+    Initial state: one file is already attached and listed below the Dropzone:
+    - resume-alex-chen.pdf (status: uploaded)
+
+    The file row includes a small remove action (Mantine ActionIcon) aligned to the right.
+    Clicking remove immediately removes the file row and returns the dropzone to its empty state (no confirmation for this task).
+    The drop area remains available for adding files, but adding is not required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single visible remove control for a single file, with immediate and unambiguous empty-state feedback.
+  success_trigger:
+    human_readable:
+    - The “Documents” dropzone has no files attached (empty list).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files: []
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - resume-alex-chen.pdf remains listed.
+  - The UI hides the row but the internal file state still includes it.
+  - A different file is removed (if another is added) while resume-alex-chen.pdf remains.
+  - Removal is attempted but blocked by an error state.
+  expected_interaction_path:
+  - Locate the file row under Documents.
+  - Click the remove action icon on resume-alex-chen.pdf.
+  - Verify the file list is empty.
+  notes: Use data-testid on the file row and remove icon to reduce ambiguity for agents that rely on the accessibility tree.
+- id: file_dropzone-mantine-T04
+  name: Drag a specific PDF receipt into Mantine Dropzone (top-right form section)
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Drag and drop the file tile “invoice-1042.pdf” into the “Receipts” drop area. The task will finish automatically when done.
+  ui_copy: 'Receipts: drag invoice-1042.pdf into the dropzone'
+  setup_description: |-
+    The UI is a light-theme form_section anchored toward the top-right of the viewport (placement=top_right), with comfortable spacing and default scale.
+    The form shows several non-target fields (merchant selector, amount input, category dropdown) as realistic clutter, but they are not required.
+
+    The target component is a Mantine Dropzone labeled “Receipts” (accept=.pdf, maxFiles=3).
+    A compact “File tray” below the form provides draggable tiles for testing drag/drop:
+    - invoice-1042.pdf   ← TARGET
+    - invoice-1043.pdf
+    - receipt-sample.pdf
+
+    Dragging over the Dropzone triggers the Mantine Accept/Reject visual state.
+    On successful drop, the file appears in a list under the Dropzone with filename and “uploaded” status.
+    Initial state: empty (no receipts attached).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Drag-and-drop plus corner placement increases acquisition difficulty, and two similar invoice filenames add interference.
+  success_trigger:
+    human_readable:
+    - 'The “Receipts” dropzone contains exactly one file: invoice-1042.pdf with status “uploaded”.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: invoice-1042.pdf
+          file_name: invoice-1042.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - invoice-1043.pdf or receipt-sample.pdf is dropped instead.
+  - The tile is dropped outside the Dropzone so no file is added.
+  - The file is present but not uploaded (uploading/error).
+  - Multiple files are present when only one target should be attached.
+  expected_interaction_path:
+  - Find the File tray under the Receipts section.
+  - Drag invoice-1042.pdf tile onto the Receipts Dropzone.
+  - Wait for the file row to show uploaded.
+  notes: null
+- id: file_dropzone-mantine-T05
+  name: Clear all attached files in Mantine Dropzone
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear all files from the “Attachments” drop area so it becomes empty. The task will finish automatically when done.
+  ui_copy: 'Attachments: Clear all files'
+  setup_description: |-
+    A centered isolated card (light theme, comfortable spacing) contains one Mantine Dropzone labeled “Attachments”.
+    The Dropzone is configured for multiple files (maxFiles=5).
+
+    Initial state: two uploaded files are already attached and listed below the dropzone:
+    - project-brief.txt (uploaded)
+    - data_export.csv (uploaded)
+
+    Above the list, there is a small inline action button “Clear all”.
+    Clicking “Clear all” removes the entire list and returns the Dropzone to its empty state (no confirmation dialog in this task).
+    No other interactive UI is present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Although easy to execute, it tests a reset path that agents sometimes miss; the Clear all control is small compared to the dropzone target.
+  success_trigger:
+    human_readable:
+    - The “Attachments” dropzone has an empty file list (no attached files).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files: []
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - At least one file remains after clearing.
+  - Only one file is removed (partial clear).
+  - Files are removed from the wrong component (not applicable here).
+  - The list is visually cleared but internal state still contains entries.
+  expected_interaction_path:
+  - Locate the Clear all action above the file list.
+  - Click Clear all.
+  - Verify the list is empty.
+  notes: If the Clear all action is implemented outside the Dropzone subtree, add clear scoping/testids so the checker still attributes the state change to this component instance.
+- id: file_dropzone-mantine-T06
+  name: Upload to the correct Mantine Dropzone instance (ID back)
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload “id-back.jpg” to the “Back of ID” drop area (do not upload anything to “Front of ID”). The task will finish automatically when done.
+  ui_copy: 'ID upload: add id-back.jpg to Back of ID'
+  setup_description: |-
+    A centered isolated card (light theme, comfortable spacing) contains two Mantine Dropzone instances in a two-column grid:
+
+    - “Front of ID”
+    - “Back of ID”  ← TARGET
+
+    Both instances accept images only (accept=image/*, maxFiles=1).
+    Clicking either dropzone opens an in-page “Sample files” picker listing:
+    - id-front.jpg
+    - id-back.jpg   ← TARGET
+    - selfie.jpg
+
+    After selection, each instance shows a small preview and a file row under that particular dropzone.
+    Initial state: both instances are empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Disambiguating two similar instances is the main challenge; otherwise the outcome is clearly visible via per-instance file rows.
+  success_trigger:
+    human_readable:
+    - 'The “Back of ID” dropzone contains exactly one file: id-back.jpg with status “uploaded”.'
+    - The “Front of ID” dropzone is empty.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: id-back.jpg
+          file_name: id-back.jpg
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Back of ID
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - id-back.jpg is uploaded to the Front of ID instance.
+  - id-front.jpg or selfie.jpg is uploaded to Back of ID.
+  - Both dropzones contain files.
+  - The file is present but rejected/uploading/error.
+  expected_interaction_path:
+  - Identify the Back of ID dropzone instance.
+  - Open its picker and select id-back.jpg.
+  - Verify only the Back of ID instance shows the uploaded file.
+  notes: null
+- id: file_dropzone-mantine-T07
+  name: Scroll inside a drawer to upload a support bundle ZIP
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the “Support” drawer, scroll to the “Support bundle” section and upload “support-bundle-2026-02-01.zip” to the drop area. The task will finish automatically when done.
+  ui_copy: 'Support drawer: upload support-bundle-2026-02-01.zip'
+  setup_description: |-
+    A drawer is open from the right side of the screen (drawer_flow layout; placement=top_right anchor), on a light-theme page.
+    The drawer content is scrollable and starts at the top.
+
+    The drawer contains multiple sections (Account, Notifications, Privacy) with toggles and selects (distractors).
+    The target section “Support bundle” is near the bottom of the drawer and is not visible initially without scrolling the drawer.
+
+    In “Support bundle”, there is one Mantine Dropzone labeled “Upload support bundle” configured as:
+    accept=.zip, maxFiles=1, auto-upload with a short progress indicator.
+
+    Clicking the Dropzone opens an in-page picker listing 4 similar zip files:
+    - support-bundle-2026-01-31.zip
+    - support-bundle-2026-02-01.zip   ← TARGET
+    - support-bundle-2026-02-02.zip
+    - support-screenshots.zip
+
+    Initial state: empty; drawer scroll position at top.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 3
+    justification: Requires scrolling within a drawer to locate the component and choosing the correct zip among several similar options; upload completion must be observed.
+  success_trigger:
+    human_readable:
+    - 'The “Upload support bundle” dropzone contains exactly one file: support-bundle-2026-02-01.zip.'
+    - The file status is “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: support-bundle-2026-02-01.zip
+          file_name: support-bundle-2026-02-01.zip
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading the wrong zip (e.g., support-bundle-2026-02-02.zip).
+  - The correct zip is present but still uploading/error.
+  - The file is uploaded to a different dropzone (if any).
+  - Failing to scroll far enough to reach the Support bundle section.
+  expected_interaction_path:
+  - Scroll the right-side drawer until the Support bundle section is visible.
+  - Open the in-page picker from the Dropzone and select support-bundle-2026-02-01.zip.
+  - Wait for uploaded status.
+  notes: Ensure the drawer’s scroll container is distinct from the page scroll to test scroll_find robustness.
+- id: file_dropzone-mantine-T08
+  name: Upload matching banner from a tiny table-cell dropzone (visual)
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the table row for “Header banner”, upload the image that matches the reference thumbnail to the drop area. The task will finish automatically when done.
+  ui_copy: 'Header banner: upload the image that matches the reference'
+  setup_description: |-
+    The page is rendered as a table_cell layout: a small two-column table is centered on the page.
+    Theme is light, but spacing is compact and the table uses small scale (small cell padding and small controls).
+
+    Row label: “Header banner”.
+    - The left cell shows a “Reference” thumbnail (target banner preview).
+    - The right cell contains a small Mantine Dropzone (mini variant) used as the upload target.
+
+    The mini Dropzone supports click-to-open a small in-page picker popover with 4 candidate banner thumbnails:
+    - banner-A.png
+    - banner-B.png   ← (this one matches the reference)
+    - banner-C.png
+    - banner-D.png
+
+    Candidate filenames are neutral; selection should be made by matching the thumbnail visuals.
+    After selection, the Dropzone cell shows the chosen banner thumbnail and an “uploaded” badge.
+    Initial state: empty (no file attached).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small table-cell targets and compact spacing make acquisition difficult, and the visual reference requires careful thumbnail comparison among similar options.
+  success_trigger:
+    human_readable:
+    - 'The Header banner dropzone contains exactly one file: banner-B.png with status “uploaded”.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: banner-B.png
+          file_name: banner-B.png
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading banner-A.png, banner-C.png, or banner-D.png.
+  - The correct banner is selected but remains uploading/error.
+  - Multiple banners attached.
+  - Uploading in a different table row (if present).
+  expected_interaction_path:
+  - Locate the Header banner row and the mini dropzone cell.
+  - Open the candidate popover from the dropzone and choose the thumbnail matching the reference.
+  - Wait for the uploaded badge/thumbnail to appear in the cell.
+  notes: For table_cell tasks, ensure accessible names include the row label so agents can disambiguate the correct cell in the AX tree.
+- id: file_dropzone-mantine-T09
+  name: Cancel a Mantine confirmation modal to keep the file
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the “Documents” drop area, try to remove “passport.pdf” but click “Cancel” in the confirmation so the file stays attached. The task will finish automatically when done.
+  ui_copy: 'Documents: remove → Cancel (keep passport.pdf)'
+  setup_description: |-
+    The UI is rendered in dark theme and uses a modal_flow interaction.
+    A centered card contains one Mantine Dropzone labeled “Documents” (accept=.pdf, maxFiles=1).
+
+    Initial state: the file list under the Dropzone already contains:
+    - passport.pdf (status: uploaded)
+
+    The file row has a remove action icon. Clicking remove opens a Mantine Modal confirmation dialog with:
+    - Title: “Remove file?”
+    - Two buttons: “Remove” (destructive) and “Cancel”
+
+    The task requires choosing “Cancel” so that the modal closes and the file remains attached.
+    No other UI actions (save/close) are needed.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: Requires handling a transient modal confirmation and selecting the correct cancel control; the final state matches the initial state, so the checker must confirm the cancel interaction occurred.
+  success_trigger:
+    human_readable:
+    - A remove confirmation for passport.pdf was opened and cancelled (Cancel clicked at least once).
+    - The Documents dropzone still contains passport.pdf with status “uploaded”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: passport.pdf
+          file_name: passport.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+      required_interaction_events:
+      - remove_confirmation_cancelled
+  negative_cases:
+  - Clicking “Remove” instead of “Cancel”.
+  - Closing the modal without clicking Cancel if explicit Cancel is required by instrumentation.
+  - Never opening the confirmation modal (must not auto-succeed).
+  - passport.pdf is present but not uploaded/error.
+  expected_interaction_path:
+  - Click the remove icon on passport.pdf.
+  - In the confirmation modal, click “Cancel”.
+  - Verify passport.pdf remains listed.
+  notes: Add an event counter for Cancel clicks in the confirmation modal to avoid trivial success.
+- id: file_dropzone-mantine-T10
+  name: Upload the correct press kit PDF in a cluttered dashboard
+  canonical_type: file_dropzone
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Dropzone (@mantine/dropzone)'
+  task_template: file_upload
+  secondary_template: null
+  browsergym_goal: Upload “press-kit-2026.pdf” to the “Press kit” drop area. The task will finish automatically when done.
+  ui_copy: 'Press kit: upload press-kit-2026.pdf'
+  setup_description: |-
+    The page is a marketing dashboard (light theme, comfortable spacing) with high clutter: multiple cards show metrics, charts, and action buttons.
+    Among these cards is one “Press kit” card containing a Mantine Dropzone labeled “Press kit” (accept=.pdf, maxFiles=1).
+
+    The Dropzone is in its Idle state and supports click-to-open an in-page picker.
+    The picker lists several similarly named documents:
+    - press-kit-2025.pdf
+    - press-kit-2026.pdf   ← TARGET
+    - press-release-2026.pdf
+    - media-assets.zip
+
+    After selection, the Press kit card displays a single file row with filename and uploaded status.
+    Initial state: empty. No further “Save” button is required; attaching the correct file completes the task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 3
+    justification: High dashboard clutter and similar document names increase search and selection interference; the target must be exact and is easy to verify only after upload completes.
+  success_trigger:
+    human_readable:
+    - 'The “Press kit” dropzone contains exactly one file: press-kit-2026.pdf with status “uploaded”.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        files:
+        - file_key: press-kit-2026.pdf
+          file_name: press-kit-2026.pdf
+          required_status: uploaded
+        order_insensitive: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Uploading press-kit-2025.pdf or press-release-2026.pdf instead.
+  - Uploading media-assets.zip (wrong type).
+  - The correct file is present but uploading/error.
+  - Multiple files attached when maxFiles=1.
+  expected_interaction_path:
+  - Locate the Press kit card on the dashboard.
+  - Open the in-page picker from the Dropzone and select press-kit-2026.pdf.
+  - Wait for the file row to show uploaded.
+  notes: Dashboard clutter should be realistic (charts/buttons) and not obstruct the dropzone; ensure the Press kit card remains fully visible.

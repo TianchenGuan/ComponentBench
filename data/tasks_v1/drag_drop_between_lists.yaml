@@ -1,0 +1,2384 @@
+- id: drag_drop_between_lists-antd-T01
+  name: Assign one role via drag-and-drop
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Role Assignment card, drag the role 'Editor' from Available roles to Assigned roles. The task will
+    finish automatically when done.
+  ui_copy: Role Assignment — Drag roles between Available roles and Assigned roles. Move 'Editor' to Assigned roles.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Card centered in the viewport. The card title is 'Role Assignment'. Inside the card are two side-by-side panels with headers 'Available roles' (left) and 'Assigned roles' (right). Each panel contains an AntD List where each row is a draggable list item with a visible drag-handle icon on the left and the role name text. The component is inline (no modal/popover). There is a short helper text under the headers: 'Drag and drop to assign roles'. There is only 1 instance of this drag-and-drop component on the page.
+
+    Initial state:
+    - Available roles: Admin, Editor, Billing, Support
+    - Assigned roles: Viewer
+
+    No other interactive elements are present (no clutter). Moving an item updates the lists immediately (no Apply/Save).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single item move with large targets in a clean, single-instance layout and immediate feedback.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available roles:
+          - Admin
+          - Billing
+          - Support
+          Assigned roles:
+          - Viewer
+          - Editor
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging the wrong role (e.g., 'Support') to Assigned roles.
+  - Reordering within a list without moving 'Editor' to Assigned roles.
+  - Creating a duplicate (if the UI allows copy) instead of moving the original item.
+  - Leaving 'Editor' in Available roles.
+  expected_interaction_path: Drag the 'Editor' list item by its handle (or body) from the left list into the right list.
+  notes: 'Instrumentation: give each container a stable test id (e.g., data-testid=''dnd-container-available''/''dnd-container-assigned'')
+    and each item a stable id based on its role key. Checker reads DOM order within each container.'
+- id: drag_drop_between_lists-antd-T02
+  name: Pin a widget and place it first
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List (custom) using dnd-kit sortable + multiple containers'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Widget Pinning card, drag 'Q2 report' from Available widgets into Pinned widgets and place it at
+    the top of the Pinned widgets list. The task will finish automatically when done.
+  ui_copy: Widget Pinning — Drag items between Available widgets and Pinned widgets. Put 'Q2 report' at the top of Pinned
+    widgets.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=top_right, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is a single isolated Card anchored near the top-right of the viewport (not centered). The card title is 'Widget Pinning'. Two vertical lists are shown side-by-side: 'Available widgets' on the left and 'Pinned widgets' on the right. Each list is an AntD List with draggable rows. Each row shows a small drag handle icon, the widget name, and a subtle divider between items. The component is inline, with immediate re-render as you drag over drop targets.
+
+    Initial state:
+    - Available widgets (top to bottom): Revenue, Sessions, Q2 report
+    - Pinned widgets (top to bottom): Sales
+
+    No other page controls are present. There is no Save/Apply; the list order updates immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Requires not just moving an item between lists but also placing it in a specific position (top) with otherwise
+      simple UI.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available widgets:
+          - Revenue
+          - Sessions
+          Pinned widgets:
+          - Q2 report
+          - Sales
+        order_matters: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Placing 'Q2 report' into Pinned widgets but below 'Sales'.
+  - Moving the wrong widget into Pinned widgets.
+  - Leaving 'Q2 report' in Available widgets.
+  - Changing the order of Available widgets (e.g., swapping Revenue and Sessions) while failing to meet the target Pinned
+    order.
+  expected_interaction_path: Drag 'Q2 report' from the left list into the right list and drop it above 'Sales'.
+  notes: Checker should verify exact DOM order for both lists. Use a clear drop indicator (insertion line) to signal top placement.
+- id: drag_drop_between_lists-antd-T03
+  name: Enable a notification channel in a settings form
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Form + Card + List (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Notification Channels section, drag 'SMS' from Disabled channels to Enabled channels. The task will
+    finish automatically when done.
+  ui_copy: 'Notification Settings — Notification Channels: Enabled channels / Disabled channels. Move ''SMS'' to Enabled channels.'
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=form_section, placement=center, scale=default, instances=1, guidance=text, clutter=low.
+
+    Scene is a form section (not an isolated card) labeled 'Notification Settings' with several common controls above and below the target component. At the top of the section there is a Text Input labeled 'Sender name' and a Switch labeled 'Send weekly summary'. Midway down is a sub-card titled 'Notification Channels' containing the target drag-and-drop between-lists component. It displays two lists side-by-side with headers 'Enabled channels' (left) and 'Disabled channels' (right). List rows are draggable with a handle icon; rows have the channel name and a short description in smaller gray text.
+
+    Initial state:
+    - Enabled channels: Email, Push
+    - Disabled channels: SMS, Webhook
+
+    Clutter is low and realistic: the other form controls are not required for success and do not change the drag-and-drop component state. Dragging updates the lists immediately; there is no Apply/Save button.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 2
+    justification: Still a simple single-item move, but embedded among other form controls and copy that can distract and
+      increase disambiguation.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Enabled channels:
+          - Email
+          - Push
+          - SMS
+          Disabled channels:
+          - Webhook
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Webhook' instead of 'SMS' to Enabled channels.
+  - Dragging 'SMS' within Disabled channels without moving it to Enabled channels.
+  - Interacting with unrelated form controls (Sender name, weekly summary) but leaving the channel lists unchanged.
+  expected_interaction_path: Locate the 'Notification Channels' sub-card, then drag 'SMS' from the Disabled list into the
+    Enabled list.
+  notes: Add a visible label or aria-labelledby for the 'Notification Channels' container so the correct component can be
+    targeted reliably.
+- id: drag_drop_between_lists-antd-T04
+  name: Move a member in the correct list instance
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List (custom) using dnd-kit multiple containers (two instances)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Team A Members selector, drag 'Sam Rivera' from Unassigned to Assigned. The task will finish automatically
+    when done.
+  ui_copy: Team A Members / Team B Members — Drag people between Unassigned and Assigned. For Team A, assign 'Sam Rivera'.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=2, guidance=text, clutter=none.
+
+    Scene is an isolated card-style page with two separate sections stacked vertically: 'Team A Members' and 'Team B Members'. Each section contains its own instance of the same drag-and-drop between-lists component.
+
+    For each instance:
+    - Two lists appear side-by-side: 'Unassigned' (left) and 'Assigned' (right).
+    - Each person is a draggable AntD List row with a handle icon and their full name.
+    - Changes apply immediately (no Apply/Save).
+
+    Instance count: 2 (Team A Members, Team B Members). The task must operate on Team A.
+
+    Initial state:
+    Team A:
+    - Unassigned: Sam Rivera, Priya Shah
+    - Assigned: Alex Chen
+    Team B:
+    - Unassigned: Sam Rivera, Morgan Lee
+    - Assigned: Taylor Kim
+
+    No other clutter is present; the main challenge is selecting the correct instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Single drag operation, but requires disambiguating between two similar component instances (both include
+      'Sam Rivera').
+  success_trigger:
+    human_readable:
+    - Only the drag-and-drop component instance labeled 'Team A Members' is evaluated.
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Unassigned:
+          - Priya Shah
+          Assigned:
+          - Alex Chen
+          - Sam Rivera
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Team A Members
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Assigning 'Sam Rivera' in the Team B Members component instead of Team A.
+  - Moving a different person (e.g., Priya Shah) in Team A.
+  - Reordering people within Team A without moving Sam Rivera to Assigned.
+  expected_interaction_path: Scroll if needed to the 'Team A Members' section, then drag 'Sam Rivera' from Unassigned into
+    Assigned.
+  notes: 'Instrumentation: wrap each instance with a container labeled by a heading and/or data-testid like ''dnd-instance-team-a''
+    and ''dnd-instance-team-b''. The checker must scope to the target instance.'
+- id: drag_drop_between_lists-antd-T05
+  name: Reset a column chooser and apply
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List + Button (custom) using dnd-kit multiple containers + staged Apply'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Table Columns card, reset the lists back to the default columns and click Apply. The task will finish
+    automatically when done.
+  ui_copy: Table Columns — Visible columns / Hidden columns. Reset to defaults. Apply.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is a centered isolated Card titled 'Table Columns'. The card contains a dual-list drag-and-drop component for configuring a table:
+    - Left list header: 'Visible columns'
+    - Right list header: 'Hidden columns'
+    Each row is a draggable list item with a drag handle and the column name.
+
+    Sub-controls within the component:
+    - A text link 'Reset to defaults' in the card header area.
+    - A primary button 'Apply' at the bottom-right of the card.
+    - A small badge 'Not applied' appears after changes until Apply is clicked.
+
+    The component uses staged changes: dragging updates the on-screen draft lists immediately, but the committed state (used by the app) only updates after clicking Apply.
+
+    Initial (draft + committed) state is intentionally non-default:
+    - Visible columns (top to bottom): Name, Owner
+    - Hidden columns (top to bottom): Status, Tags, Notes
+
+    Default state after reset should be:
+    - Visible columns: Name, Status, Owner
+    - Hidden columns: Tags, Notes
+
+    No other clutter is present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires using an in-component reset control and then committing changes with Apply (staged feedback),
+      which adds extra steps and failure modes.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    - The changes are committed by clicking 'Apply'.
+    - The committed (post-Apply) state matches the default arrangement, not just the on-screen draft.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Visible columns:
+          - Name
+          - Status
+          - Owner
+          Hidden columns:
+          - Tags
+          - Notes
+        order_matters: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reaching the correct on-screen draft arrangement but not clicking Apply.
+  - Clicking Apply while the lists are not in the default arrangement.
+  - Resetting but then moving an extra column so the final state is not the default.
+  - Making changes in the wrong component instance (there is only one instance here, so this case is N/A).
+  expected_interaction_path: Click 'Reset to defaults' → verify lists update → click 'Apply'.
+  notes: 'Checker note: if the implementation has separate draft vs committed state, expose committed state via a data attribute
+    or hidden input after Apply (e.g., data-testid=''columns-committed-json'').'
+- id: drag_drop_between_lists-antd-T06
+  name: Scroll to find a metric and pin it
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List (scrollable) using dnd-kit multiple containers'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Metrics Pinning card, scroll the Available metrics list to find 'Customer Lifetime Value' and drag
+    it into Pinned metrics. The task will finish automatically when done.
+  ui_copy: Metrics Pinning — Available metrics (scroll) / Pinned metrics. Pin 'Customer Lifetime Value'.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is a centered isolated Card titled 'Metrics Pinning'. Two list containers are shown side-by-side:
+    - 'Available metrics' (left) is a fixed-height scrollable list with a visible scrollbar.
+    - 'Pinned metrics' (right) is a shorter list that can accept drops.
+    Each metric is a draggable AntD List row with a handle icon and metric name.
+
+    Initial state:
+    - Pinned metrics: Revenue
+    - Available metrics (alphabetical): Active users, Average order value, Bounce rate, Churn rate, Conversion rate, Customer Acquisition Cost, Customer Lifetime Value, Daily signups, Monthly recurring revenue, Net promoter score, New users, Orders, Page views, Refund rate, Sessions, Time on site.
+    The 'Available metrics' list shows only ~6 rows at a time, so 'Customer Lifetime Value' starts below the fold and requires scrolling within the list.
+
+    No search input is provided; the intended interaction is scrolling to locate the target item, then dragging it across to the Pinned list. Changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires intra-component scrolling to locate an off-screen item in a long, somewhat confusable list before
+      performing the drag between containers.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available metrics:
+          - Active users
+          - Average order value
+          - Bounce rate
+          - Churn rate
+          - Conversion rate
+          - Customer Acquisition Cost
+          - Daily signups
+          - Monthly recurring revenue
+          - Net promoter score
+          - New users
+          - Orders
+          - Page views
+          - Refund rate
+          - Sessions
+          - Time on site
+          Pinned metrics:
+          - Revenue
+          - Customer Lifetime Value
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging a different metric into Pinned metrics (e.g., 'Customer Acquisition Cost').
+  - Scrolling the page (outside the list) but not the 'Available metrics' list, leaving the target item undiscovered.
+  - Leaving 'Customer Lifetime Value' in Available metrics.
+  - Dragging 'Customer Lifetime Value' into Pinned metrics but dropping it outside the list so it snaps back.
+  expected_interaction_path: Scroll inside the 'Available metrics' list until 'Customer Lifetime Value' is visible → drag
+    it into 'Pinned metrics'.
+  notes: 'Checker implementation: represent each metric with a stable item id; for long lists, allow checker to verify membership
+    via ids rather than relying on visible text. If using virtualization, ensure off-screen items still have stable backing
+    state accessible to the checker.'
+- id: drag_drop_between_lists-antd-T07
+  name: Match Sprint list to a reference preview
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Card + List (custom) using dnd-kit multiple containers + reference preview'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Sprint Planning card, make the Sprint list match the Sprint Preview by dragging tasks between Backlog
+    and Sprint. The task will finish automatically when done.
+  ui_copy: Sprint Planning — Backlog / Sprint. Sprint Preview shows the desired Sprint tasks. Match Sprint to the preview.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=mixed, clutter=none.
+
+    Scene is a centered isolated Card titled 'Sprint Planning'. The main area contains the drag-and-drop between-lists component:
+    - Left list header: 'Backlog'
+    - Right list header: 'Sprint'
+    Items are draggable cards with a handle icon and the task title.
+
+    Guidance is mixed: a small side panel titled 'Sprint Preview' shows the target Sprint tasks as three compact chips, and a line of helper text says 'Match Sprint to the preview'.
+
+    Initial state:
+    - Backlog: Bugfix: login, UI polish, Refactor billing
+    - Sprint: API auth, Docs update
+
+    Target according to the preview:
+    - Sprint should contain: API auth, Bugfix: login, UI polish
+    (Docs update should be moved out of Sprint.)
+
+    No Apply/Save is required; changes are immediate. No other clutter is present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires multiple cross-list moves while using a visual/text reference to determine the correct final membership.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        containers:
+          Backlog:
+          - Refactor billing
+          - Docs update
+          Sprint:
+          - API auth
+          - 'Bugfix: login'
+          - UI polish
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving 'Docs update' in the Sprint list.
+  - Moving only one of the required tasks into Sprint (partial completion).
+  - Getting the right tasks but placing them in Backlog instead of Sprint.
+  - Matching the preview chips visually but with an incorrect list membership (e.g., wrong task with similar wording).
+  expected_interaction_path: 'Drag ''Bugfix: login'' and ''UI polish'' from Backlog to Sprint → drag ''Docs update'' from
+    Sprint to Backlog.'
+  notes: Checker should compare list membership by stable task ids; preview panel is for guidance only and is not itself interactive.
+- id: drag_drop_between_lists-antd-T08
+  name: Move an item with small drag handles (compact mode)
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Compact Card + List (custom) using dnd-kit; handle-only dragging'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Automation Rules card, drag 'High priority routing' from Inactive rules to Active rules. The task
+    will finish automatically when done.
+  ui_copy: Automation Rules — Inactive rules / Active rules. Activate 'High priority routing'.
+  setup_description: |-
+    Scene context: theme=light, spacing=compact, layout=isolated_card, placement=center, scale=small, instances=1, guidance=text, clutter=none.
+
+    Scene uses compact spacing and small component scale in an isolated Card centered in the viewport. The card title is 'Automation Rules'. Inside are two narrow list containers: 'Inactive rules' (left) and 'Active rules' (right).
+
+    Visual/interaction details that increase difficulty:
+    - Each rule is a dense AntD List row with reduced padding.
+    - Dragging is handle-only: a small grip icon is the only draggable region; clicking the text does not start drag.
+    - The drop indicator is a thin line between rows.
+
+    Initial state:
+    - Inactive rules: High priority routing, After-hours auto-reply
+    - Active rules: Spam filter
+
+    No other clutter or additional instances. Changes apply immediately (no Apply/Save).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Handle-only dragging with compact spacing and small scale makes target acquisition and drag initiation
+      error-prone even for a single move.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Inactive rules:
+          - After-hours auto-reply
+          Active rules:
+          - Spam filter
+          - High priority routing
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking the rule text (not the handle) and failing to start a drag.
+  - Dropping outside the Active rules list so the item snaps back to Inactive rules.
+  - Moving 'After-hours auto-reply' instead of 'High priority routing'.
+  - Reordering within Inactive rules without moving the target rule to Active rules.
+  expected_interaction_path: Grab the small handle for 'High priority routing' → drag over to Active rules → drop inside the
+    list.
+  notes: For instrumentation, expose handle elements with a distinct selector (e.g., data-testid='dnd-handle-<id>') to measure
+    handle size and spacing.
+- id: drag_drop_between_lists-antd-T09
+  name: Search then grant a permission in dark mode
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Dark Card + Input.Search + List (custom) using dnd-kit multiple containers'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Permissions card, use the search box in Available permissions to find 'Export reports' and drag
+    it into Granted permissions. The task will finish automatically when done.
+  ui_copy: Permissions — Available permissions (searchable) / Granted permissions. Grant 'Export reports'.
+  setup_description: |-
+    Scene context: theme=dark, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene uses a dark theme in a centered isolated Card titled 'Permissions'. The target component is a dual-list drag-and-drop selector with:
+    - Left panel: 'Available permissions' with a search input labeled 'Search permissions' at the top.
+    - Right panel: 'Granted permissions'.
+    Each permission is shown as a draggable List row with a small drag handle icon and the permission name.
+
+    Initial state:
+    - Granted permissions: View dashboard, Read analytics
+    - Available permissions (top to bottom): Create reports, Delete reports, Edit reports, Import data, Manage API keys, Manage users, Schedule reports, Share reports, View audit log, Export reports.
+    Only ~5 items are visible in the Available list at once; 'Export reports' starts near the bottom and is easiest to locate via search.
+
+    When you type in the search box, the Available list filters in place. Dragging updates lists immediately; no Apply/Save.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Combines within-component search filtering with drag between containers, under dark-theme contrast and
+      a moderately dense option list.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available permissions:
+          - Create reports
+          - Delete reports
+          - Edit reports
+          - Import data
+          - Manage API keys
+          - Manage users
+          - Schedule reports
+          - Share reports
+          - View audit log
+          Granted permissions:
+          - View dashboard
+          - Read analytics
+          - Export reports
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging the wrong permission (e.g., 'Import data') into Granted permissions.
+  - Filtering the list correctly but not completing the drag into Granted permissions.
+  - Leaving 'Export reports' in Available permissions (even if it was selected or highlighted).
+  - Dragging 'Export reports' but dropping outside Granted permissions so it returns to Available.
+  expected_interaction_path: Click the search box → type 'Export' (or similar) → drag 'Export reports' into Granted permissions.
+  notes: Checker should ignore the transient filtered view and evaluate the underlying container assignment state (granted
+    vs available).
+- id: drag_drop_between_lists-antd-T10
+  name: Match a visual widget layout in the correct instance and save
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Two Cards (two instances) + List (custom) using dnd-kit multiple containers + Save'
+  task_template: match_reference
+  secondary_template: open_and_select
+  browsergym_goal: In the Dashboard Layout card, make the Visible widgets list match the preview and click Save layout. The
+    task will finish automatically when done.
+  ui_copy: Layout Manager — Homepage Layout and Dashboard Layout. For Dashboard Layout, match Visible widgets to the preview
+    and Save layout.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=2, guidance=visual, clutter=none.
+
+    Scene is a centered isolated layout with TWO separate cards side-by-side, each containing a drag-and-drop between-lists component (instance count = 2).
+    Card 1 title: 'Homepage Layout' (distractor instance)
+    Card 2 title: 'Dashboard Layout' (target instance)
+
+    Within each card:
+    - Two lists: 'Available widgets' (left) and 'Visible widgets' (right)
+    - Draggable AntD List rows with a small handle icon and widget name
+    - A small visual 'Preview' box shows the desired Visible widgets order as stacked mini tiles (visual guidance)
+    - A primary button 'Save layout' commits changes for that card only
+    Changes appear immediately in the lists but are considered uncommitted until 'Save layout' is clicked.
+
+    Initial state for the TARGET 'Dashboard Layout' card:
+    - Available widgets (top to bottom): Revenue, Sessions, Top pages
+    - Visible widgets (top to bottom): Sales, Traffic
+    Dashboard preview indicates the target Visible widgets order (top to bottom): Revenue, Sales, Sessions.
+
+    The 'Homepage Layout' card has its own separate widget lists and Save button; modifying it must NOT count for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires selecting the correct instance among two similar cards, performing multiple cross-list moves with
+      exact ordering, then committing with a Save control.
+  success_trigger:
+    human_readable:
+    - Only the drag-and-drop component instance labeled 'Dashboard Layout' is evaluated.
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    - The changes are committed by clicking 'Save layout'.
+    - Only the 'Dashboard Layout' instance's committed state is checked; changes in 'Homepage Layout' are ignored.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        containers:
+          Available widgets:
+          - Top pages
+          - Traffic
+          Visible widgets:
+          - Revenue
+          - Sales
+          - Sessions
+        order_matters: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: true
+      target_instance_label_or_id: Dashboard Layout
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Making the correct Visible widgets order but not clicking 'Save layout'.
+  - Matching the preview in the Homepage Layout card instead of the Dashboard Layout card.
+  - Getting the correct set of Visible widgets but with the wrong order (e.g., Sales at top).
+  - Leaving an extra widget visible (e.g., 'Traffic') that is not in the preview.
+  expected_interaction_path: Work within 'Dashboard Layout' card → drag widgets between lists and reorder Visible list → click
+    'Save layout' in that card.
+  notes: 'Instrumentation: each card instance should have a stable instance id and its own committed-state store. Preview
+    box is non-interactive; checker should not rely on it.'
+- id: drag_drop_between_lists-mui-T01
+  name: Add one label to Selected
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Paper + List + ListItem (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Labels card, drag the label 'Urgent' from Available labels to Selected labels. The task will finish
+    automatically when done.
+  ui_copy: Labels — Available labels / Selected labels. Add 'Urgent' to Selected labels.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Paper card centered in the viewport with the title 'Labels'. Inside is a two-column drag-and-drop selector:
+    - Left list header: 'Available labels'
+    - Right list header: 'Selected labels'
+    Each label is a draggable MUI ListItem with a DragIndicator (handle) icon and the label text. The component is inline with immediate updates; no dialog, no Apply.
+
+    Initial state:
+    - Available labels: Bug, Feature, Urgent
+    - Selected labels: Needs review
+
+    There is only one instance and no other clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Simple single-item transfer with clear labels and immediate feedback in a single-instance, uncluttered
+      layout.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available labels:
+          - Bug
+          - Feature
+          Selected labels:
+          - Needs review
+          - Urgent
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Feature' instead of 'Urgent' to Selected labels.
+  - Leaving 'Urgent' in Available labels.
+  - Dropping outside the Selected list so the item returns to Available.
+  expected_interaction_path: Drag 'Urgent' from the Available list into the Selected list.
+  notes: Use aria-labels for both list containers (e.g., aria-label='Available labels') to improve accessibility-tree observability.
+- id: drag_drop_between_lists-mui-T02
+  name: Include a region from a corner-placed widget
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Paper + List (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Regions selector, drag 'APAC' from Excluded regions to Included regions. The task will finish automatically
+    when done.
+  ui_copy: Regions — Included regions / Excluded regions. Include 'APAC'.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=bottom_left, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is a small isolated Paper card positioned near the bottom-left of the viewport (not centered). The card title is 'Regions'. Inside are two lists side-by-side: 'Included regions' (left) and 'Excluded regions' (right). Each region is a draggable ListItem with a handle icon and the region code.
+
+    Initial state:
+    - Included regions: US, EU
+    - Excluded regions: APAC, LATAM
+
+    No other components appear on the page; updates are immediate with no Apply/Save.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Corner placement changes cursor travel but interaction remains a straightforward single transfer with clear
+      targets.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Included regions:
+          - US
+          - EU
+          - APAC
+          Excluded regions:
+          - LATAM
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving 'LATAM' instead of 'APAC'.
+  - Leaving 'APAC' in Excluded regions.
+  - Dropping 'APAC' outside the Included list so it snaps back.
+  expected_interaction_path: Drag 'APAC' from Excluded regions into Included regions.
+  notes: 'Placement robustness: ensure the component remains fully visible in small viewports when anchored bottom-left.'
+- id: drag_drop_between_lists-mui-T03
+  name: Match Selected tags to a visual chip preview
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Paper + List (custom) using dnd-kit multiple containers + visual chip preview'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Tag Picker card, make the Selected tags list match the chip preview by dragging tags between the
+    lists. The task will finish automatically when done.
+  ui_copy: Tag Picker — Available tags / Selected tags. Match Selected tags to the preview chips.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=visual, clutter=none.
+
+    Scene is an isolated Paper card centered in the viewport titled 'Tag Picker'. The target component shows two lists: 'Available tags' (left) and 'Selected tags' (right). Tags are draggable ListItems with a handle icon.
+
+    Visual guidance: Above the Selected tags list is a small 'Preview' area showing the desired selected tags as two MUI Chips (chips display the tag text). The instruction on the page says 'Match Selected tags to the preview'.
+
+    Initial state:
+    - Selected tags: Bug
+    - Available tags: Urgent, Docs, Feature
+    Preview chips show: Bug, Urgent
+
+    No Apply/Save button; changes are immediate.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Uses a visual reference (chip preview) rather than explicit text target, but only requires a single additional
+      item to be moved.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        containers:
+          Available tags:
+          - Docs
+          - Feature
+          Selected tags:
+          - Bug
+          - Urgent
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding 'Docs' instead of 'Urgent' to Selected tags.
+  - Leaving Selected tags not matching the preview (missing 'Urgent').
+  - Moving 'Bug' out of Selected tags.
+  expected_interaction_path: Drag 'Urgent' from Available tags into Selected tags.
+  notes: Preview chips should be non-interactive to avoid agents clicking them instead of moving list items.
+- id: drag_drop_between_lists-mui-T04
+  name: Activate a filter in the correct instance (two selectors)
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Two Papers + List (custom) using dnd-kit multiple containers (two instances)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Product Filters selector, drag 'Price' from Inactive filters to Active filters. The task will finish
+    automatically when done.
+  ui_copy: Filters — Product Filters and User Filters. For Product Filters, activate 'Price'.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=2, guidance=text, clutter=none.
+
+    Scene is a centered isolated layout with two separate Paper sections stacked vertically. Each section contains its own instance of the same drag-and-drop between-lists selector.
+
+    Instance 1 heading: 'Product Filters' (TARGET)
+    - Lists: 'Active filters' (left) and 'Inactive filters' (right)
+    - Draggable ListItems with DragIndicator handle and filter name
+
+    Instance 2 heading: 'User Filters' (DISTRACTOR)
+    - Same two lists and draggable item presentation
+
+    Initial state:
+    Product Filters:
+    - Active filters: Category
+    - Inactive filters: Price, Brand, Rating
+    User Filters:
+    - Active filters: Country
+    - Inactive filters: Price, Language
+
+    There is no Apply/Save; dragging updates state immediately. No other clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires choosing the correct component instance among two similar selectors (both include 'Price'), then
+      performing a simple transfer.
+  success_trigger:
+    human_readable:
+    - Only the drag-and-drop component instance labeled 'Product Filters' is evaluated.
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Inactive filters:
+          - Brand
+          - Rating
+          Active filters:
+          - Category
+          - Price
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Product Filters
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Price' in the User Filters selector instead of Product Filters.
+  - Dragging a different filter (e.g., 'Brand') in Product Filters.
+  - Leaving 'Price' in Inactive filters for Product Filters.
+  expected_interaction_path: Locate the 'Product Filters' section → drag 'Price' from Inactive to Active.
+  notes: Checker should scope by the section heading text or a stable data-testid per instance.
+- id: drag_drop_between_lists-mui-T05
+  name: Search within a form to add a metric
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: FormSection + TextField(search) + List (custom) using dnd-kit multiple containers'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Favorite metrics section, use the search box to find 'Churn rate' and drag it from Available metrics
+    into Favorite metrics. The task will finish automatically when done.
+  ui_copy: 'Report Builder — Favorite metrics: Available metrics (search) / Favorite metrics. Add ''Churn rate''.'
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=form_section, placement=center, scale=default, instances=1, guidance=text, clutter=low.
+
+    Scene is a report-builder form section (not an isolated single card). At the top of the page are unrelated controls: a TextField labeled 'Report name', a Select labeled 'Time range', and two buttons 'Cancel' and 'Save report' (not required for this task).
+
+    Midway down is a sub-section titled 'Favorite metrics' containing the target drag-and-drop between-lists component. It has two panels:
+    - 'Available metrics' (left) includes a search TextField at the top with placeholder 'Search metrics'. Typing filters the list.
+    - 'Favorite metrics' (right) is the destination list.
+    Items are draggable MUI ListItems with a handle icon.
+
+    Initial state:
+    - Favorite metrics: Revenue
+    - Available metrics (top to bottom): Active users, Bounce rate, Conversion rate, Customer Acquisition Cost, Net promoter score, Orders, Page views, Refund rate, Sessions, Churn rate.
+    The Available list is scrollable and shows only a few items; 'Churn rate' is easiest to locate via the search box.
+
+    No Apply/OK is required; dragging updates immediately. Clutter is low: other form fields exist but do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Adds within-component search and moderate list density in a form context with distractor inputs, increasing
+      choice interference and observability demands.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available metrics:
+          - Active users
+          - Bounce rate
+          - Conversion rate
+          - Customer Acquisition Cost
+          - Net promoter score
+          - Orders
+          - Page views
+          - Refund rate
+          - Sessions
+          Favorite metrics:
+          - Revenue
+          - Churn rate
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing in the Report name field instead of the metrics search box.
+  - Dragging a different metric (e.g., 'Bounce rate') into Favorite metrics.
+  - Filtering to 'Churn rate' but not completing the drag into Favorite metrics.
+  - Leaving 'Churn rate' in Available metrics.
+  expected_interaction_path: In 'Favorite metrics' section → type 'Churn' in the metrics search field → drag 'Churn rate'
+    into Favorite metrics.
+  notes: If search filtering unmounts items, ensure stable ids persist in state so the checker can validate membership independent
+    of current filter text.
+- id: drag_drop_between_lists-mui-T06
+  name: Assign a reviewer in a modal dialog
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Button + Dialog + List (custom) using dnd-kit multiple containers; Done commits'
+  task_template: open_and_select
+  secondary_template: transfer_move
+  browsergym_goal: Open the Assign reviewers dialog, drag 'Jordan Lee' from Available reviewers to Assigned reviewers, then
+    click Done. The task will finish automatically when done.
+  ui_copy: 'Reviewers — Button: Edit reviewers. Dialog: Assign reviewers. Move ''Jordan Lee'' to Assigned reviewers and click
+    Done.'
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=modal_flow, placement=center, scale=default, instances=1, guidance=text, clutter=low.
+
+    Scene is a modal_flow. On the base page, a small settings row labeled 'Reviewers' has a button 'Edit reviewers'. Clicking it opens a centered MUI Dialog titled 'Assign reviewers'.
+
+    Inside the dialog is the target drag-and-drop between-lists component:
+    - Left list: 'Available reviewers'
+    - Right list: 'Assigned reviewers'
+    Reviewer rows are draggable ListItems with a DragIndicator handle icon and the reviewer name.
+
+    Dialog controls:
+    - Primary button 'Done' (bottom-right) commits and closes the dialog.
+    - Secondary button 'Cancel' closes without saving.
+    Changes are staged: the in-dialog lists update immediately, but the committed selection updates only when 'Done' is clicked.
+
+    Initial state (in dialog):
+    - Assigned reviewers: Avery Patel
+    - Available reviewers: Jordan Lee, Kai Nguyen, Riley Chen
+
+    Clutter is low: only dialog chrome and buttons in addition to the component.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening a modal, transferring an item between lists, and committing via a Done button (staged
+      state), introducing overlay depth and feedback dependence.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    - The changes are committed by clicking 'Done'.
+    - The committed reviewer assignment after closing the dialog must include 'Jordan Lee' in Assigned reviewers.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available reviewers:
+          - Kai Nguyen
+          - Riley Chen
+          Assigned reviewers:
+          - Avery Patel
+          - Jordan Lee
+        order_matters: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Jordan Lee' but clicking Cancel (or closing the dialog) so the change is not saved.
+  - Moving the wrong reviewer (e.g., 'Kai Nguyen') to Assigned reviewers.
+  - Not opening the dialog and trying to drag items on the base page (no draggable lists exist there).
+  - Leaving 'Jordan Lee' in Available reviewers after clicking Done.
+  expected_interaction_path: Click 'Edit reviewers' → in dialog, drag 'Jordan Lee' to Assigned → click 'Done'.
+  notes: Expose committed selection outside the dialog (e.g., read-only chips) for the checker to verify post-Done state.
+- id: drag_drop_between_lists-mui-T07
+  name: Reset widget lists inside a table cell
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Table + embedded dual-list DnD (custom) using dnd-kit; reset with confirm dialog'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Sales dashboard row, reset the widgets back to the default lists, then confirm by clicking Reset
+    in the confirmation dialog. The task will finish automatically when done.
+  ui_copy: 'Dashboard Presets table — Sales dashboard row. Widgets: Visible / Hidden. Reset to default (click Reset to confirm).'
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=table_cell, placement=center, scale=default, instances=1, guidance=text, clutter=medium.
+
+    Scene is a table_cell layout with medium clutter. The page shows a MUI Table titled 'Dashboard Presets' with multiple rows and columns (Name, Owner, Widgets, Updated). Only the 'Sales dashboard' row contains the target drag-and-drop between-lists component embedded inside the 'Widgets' cell.
+
+    Embedded component UI (inside the cell):
+    - Two compact lists labeled 'Visible' (left) and 'Hidden' (right)
+    - Draggable ListItems with a small handle icon; lists are constrained to the cell width
+    - A small icon button with tooltip 'Reset' sits above the lists
+
+    Reset behavior:
+    - Clicking the Reset icon opens a confirmation dialog: 'Reset widgets to default?'
+    - The dialog has buttons 'Reset' and 'Cancel'
+    - Only after confirming 'Reset' does the component revert to defaults
+
+    Initial state (non-default):
+    - Visible (top to bottom): Sales, Orders
+    - Hidden (top to bottom): Revenue, Refunds
+    Default state after reset should be:
+    - Visible: Revenue, Sales, Orders
+    - Hidden: Refunds
+
+    Other table interactions (sorting chevrons, pagination) are present but irrelevant to success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Constrained table-cell embedding and a reset confirmation dialog add target acquisition and layering complexity
+      beyond a basic drag move.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    - The changes are committed by clicking 'Reset'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Visible:
+          - Revenue
+          - Sales
+          - Orders
+          Hidden:
+          - Refunds
+        order_matters: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Reset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Reset but then choosing Cancel in the confirmation dialog.
+  - Rearranging the lists manually to look correct without actually resetting (acceptable visually, but must still meet the
+    exact default order and membership).
+  - Resetting a different row (if another row has a reset control) instead of 'Sales dashboard'.
+  - Leaving the widgets in the non-default state after confirming Reset.
+  expected_interaction_path: In 'Sales dashboard' row → click the Reset icon → in dialog, click 'Reset' to confirm.
+  notes: 'Checker scope: ensure it targets the DnD component inside the ''Sales dashboard'' row, not other table content.
+    Expose row key (e.g., data-rowid=''sales'') for reliable selection.'
+- id: drag_drop_between_lists-mui-T08
+  name: Enable multiple sections in dark compact mode
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Dark + compact Lists (custom) using dnd-kit multiple containers; handle-only drag'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the App Sections card, drag 'Billing' and 'Security' from Available sections to Enabled sections. The
+    task will finish automatically when done.
+  ui_copy: App Sections — Available sections / Enabled sections (dark, compact). Enable Billing and Security.
+  setup_description: |-
+    Scene context: theme=dark, spacing=compact, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene uses dark theme and compact spacing in a centered isolated Paper card titled 'App Sections'. The drag-and-drop between-lists selector is the only main element.
+
+    Component details:
+    - Two narrow lists: 'Available sections' (left) and 'Enabled sections' (right)
+    - Each row is dense with reduced padding; a small DragIndicator handle is used to start dragging
+    - Drop indicators are subtle (thin line) due to compact mode
+
+    Initial state:
+    - Enabled sections: Profile, Notifications
+    - Available sections: Billing, Security, Integrations
+
+    Changes apply immediately with no Apply/Save.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Compact spacing in dark mode makes drag handles harder to acquire, and the task requires two correct transfers
+      without accidental drops.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available sections:
+          - Integrations
+          Enabled sections:
+          - Profile
+          - Notifications
+          - Billing
+          - Security
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving only one of the required sections (partial completion).
+  - Accidentally moving 'Integrations' into Enabled sections.
+  - Dropping an item outside the target list so it snaps back to Available sections.
+  - Reordering within Enabled sections while leaving either 'Billing' or 'Security' unenabled.
+  expected_interaction_path: Drag 'Billing' into Enabled sections → drag 'Security' into Enabled sections.
+  notes: Consider enabling keyboard dragging support (Space/Arrow) for accessibility; agents may use it if available.
+- id: drag_drop_between_lists-mui-T09
+  name: Scroll a long list to feature a product
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Paper + virtualized List (custom) using dnd-kit multiple containers'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Featured Products card, scroll the Available products list to find 'Wireless Charger' and drag it
+    into Featured products. The task will finish automatically when done.
+  ui_copy: Featured Products — Available products (scroll) / Featured products. Feature 'Wireless Charger'.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Paper card centered in the viewport titled 'Featured Products'. It contains a dual-list drag-and-drop selector:
+    - Left: 'Available products' is a fixed-height, scrollable and virtualized list (only visible rows are rendered).
+    - Right: 'Featured products' accepts drops.
+    Each product row is a draggable ListItem with a handle icon and product name.
+
+    Initial state:
+    - Featured products: Phone Case
+    - Available products (in order): Bluetooth Speaker, Desk Lamp, HDMI Adapter, Laptop Stand, Noise-canceling Headphones, Portable SSD, Screen Protector, Smartwatch Band, USB-C Cable, Webcam, Wireless Charger.
+    Only ~5 items are visible at once; 'Wireless Charger' starts near the bottom and requires scrolling inside the Available products list.
+
+    There is no search field and no Apply/Save; drops apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Virtualized scrolling plus cross-container drag increases the chance of losing the target during scroll
+      and drop, with moderate list density.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available products:
+          - Bluetooth Speaker
+          - Desk Lamp
+          - HDMI Adapter
+          - Laptop Stand
+          - Noise-canceling Headphones
+          - Portable SSD
+          - Screen Protector
+          - Smartwatch Band
+          - USB-C Cable
+          - Webcam
+          Featured products:
+          - Phone Case
+          - Wireless Charger
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Available products list (target never appears).
+  - Dragging a different product (e.g., 'Webcam') into Featured products.
+  - Dropping 'Wireless Charger' outside Featured products so it returns to Available.
+  - Failing to feature the product (Wireless Charger remains in Available products).
+  expected_interaction_path: Scroll inside Available products until 'Wireless Charger' is visible → drag it into Featured
+    products.
+  notes: Checker should use underlying state arrays rather than DOM presence because virtualization unmounts off-screen items.
+- id: drag_drop_between_lists-mui-T10
+  name: Match a quick-actions preview order and save
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Paper + List (custom) using dnd-kit multiple containers + Save'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Quick actions card, make the Quick actions list match the preview order and click Save. The task
+    will finish automatically when done.
+  ui_copy: Quick actions — Available actions / Quick actions. Preview shows the desired Quick actions order. Save.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=visual, clutter=none.
+
+    Scene is an isolated Paper card centered in the viewport titled 'Quick actions'. The component is a dual-list drag-and-drop selector with exact ordering requirements.
+
+    Main UI:
+    - Left list: 'Available actions'
+    - Right list: 'Quick actions'
+    - Each action is a draggable ListItem with a handle icon and action name.
+    - Above the 'Quick actions' list is a non-interactive 'Preview' row showing the desired quick actions as three icon tiles in left-to-right order (visual guidance).
+    - A button labeled 'Save' commits the selection and order.
+    Changes are shown immediately but are not committed until Save is clicked.
+
+    Initial state:
+    - Quick actions (top to bottom): New invoice, Create report
+    - Available actions (top to bottom): Add customer, Send email, Export CSV
+    Preview indicates target Quick actions order (top to bottom): Send email, New invoice, Export CSV
+
+    No other clutter is present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires multi-step transfers plus exact ordering to match a visual reference, and a Save step to commit—high
+      precision with multiple failure points.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    - The changes are committed by clicking 'Save'.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        containers:
+          Available actions:
+          - Add customer
+          - Create report
+          Quick actions:
+          - Send email
+          - New invoice
+          - Export CSV
+        order_matters: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Getting the right set of Quick actions but in the wrong order.
+  - Not clicking Save after arranging the lists (draft state only).
+  - Leaving 'Create report' in Quick actions.
+  - Adding an extra action to Quick actions beyond what the preview shows.
+  expected_interaction_path: Move actions between lists and reorder Quick actions to match preview → click 'Save'.
+  notes: Expose committed order in a read-only summary (e.g., a hidden JSON field) so the checker can distinguish draft vs
+    saved state.
+- id: drag_drop_between_lists-mantine-T01
+  name: Select a country by dragging it to Selected
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Paper/Card + List (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Country Selection card, drag 'France' from Available countries to Selected countries. The task will
+    finish automatically when done.
+  ui_copy: Country Selection — Available countries / Selected countries. Add France.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Mantine Paper card centered in the viewport titled 'Country Selection'. Inside is a two-column drag-and-drop selector with headers 'Available countries' (left) and 'Selected countries' (right). Each country is shown as a draggable row with a grip/handle icon and the country name.
+
+    Initial state:
+    - Available countries: France, Germany, Japan
+    - Selected countries: Canada
+
+    No overlay, no Apply/Save, and only one instance. Changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Straightforward single transfer with clear labels and immediate feedback in a minimal layout.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available countries:
+          - Germany
+          - Japan
+          Selected countries:
+          - Canada
+          - France
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Germany' instead of 'France' to Selected countries.
+  - Leaving 'France' in Available countries.
+  - Dropping outside the Selected list so the item snaps back.
+  expected_interaction_path: Drag 'France' from Available to Selected.
+  notes: 'Mantine styling: ensure handles are visually distinct; provide aria-labels for containers to improve accessibility.'
+- id: drag_drop_between_lists-mantine-T02
+  name: Pin a shortcut inside a dashboard
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Dashboard card + List (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Pinned shortcuts widget, drag 'Invoices' from Available shortcuts to Pinned shortcuts.
+    The task will finish automatically when done.
+  ui_copy: 'Dashboard — Pinned shortcuts widget: Available shortcuts / Pinned shortcuts. Pin ''Invoices''.'
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=dashboard, placement=center, scale=default, instances=1, guidance=text, clutter=medium.
+
+    Scene is a dashboard layout with medium clutter: a left sidebar with navigation links, a top header, and several dashboard widgets (stat cards, a small chart placeholder, and a recent activity list). The target component appears in a widget card titled 'Pinned shortcuts' located in the main content area.
+
+    Inside the 'Pinned shortcuts' widget is the drag-and-drop between-lists selector:
+    - Left list: 'Available shortcuts'
+    - Right list: 'Pinned shortcuts'
+    Shortcut rows are draggable with a grip icon and the shortcut name.
+
+    Initial state:
+    - Pinned shortcuts: Overview
+    - Available shortcuts: Invoices, Customers, Reports
+
+    No Save/Apply is needed; changes apply immediately. Other dashboard widgets are distractors only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Single item move, but embedded in a dashboard with multiple visible widgets that can distract and increase
+      disambiguation.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available shortcuts:
+          - Customers
+          - Reports
+          Pinned shortcuts:
+          - Overview
+          - Invoices
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Customers' instead of 'Invoices' into Pinned shortcuts.
+  - Interacting with other dashboard widgets but not changing the shortcuts lists correctly.
+  - Leaving 'Invoices' in Available shortcuts.
+  expected_interaction_path: Locate the 'Pinned shortcuts' widget → drag 'Invoices' into the Pinned list.
+  notes: Ensure the widget card has a unique heading or data-testid so the checker can locate the correct component within
+    dashboard clutter.
+- id: drag_drop_between_lists-mantine-T03
+  name: Match VIP customers to a small reference card
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + List (custom) using dnd-kit multiple containers + reference card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the VIP Customers card, make the VIP customers list match the VIP Preview by dragging customers between
+    the lists. The task will finish automatically when done.
+  ui_copy: VIP Customers — All customers / VIP customers. VIP Preview shows the desired VIP list. Match it.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=top_left, scale=default, instances=1, guidance=mixed, clutter=none.
+
+    Scene is an isolated Card anchored near the top-left of the viewport (not centered). The card title is 'VIP Customers'. It contains a drag-and-drop between-lists selector with:
+    - Left list: 'All customers'
+    - Right list: 'VIP customers'
+    Each row shows a small avatar circle, the customer name, and a grip icon used for dragging.
+
+    Guidance is mixed: a small panel titled 'VIP Preview' shows the target VIP customers as two mini profile chips. A helper sentence says 'Match VIP customers to the preview'.
+
+    Initial state:
+    - VIP customers: Alex Kim
+    - All customers: Jamie Ortega, Morgan Li
+    Preview indicates VIP customers should be: Alex Kim, Jamie Ortega
+
+    No Apply/Save; changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires using a reference preview to infer the target state, but only needs one additional customer moved
+      in an otherwise simple UI.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        containers:
+          All customers:
+          - Morgan Li
+          VIP customers:
+          - Alex Kim
+          - Jamie Ortega
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding 'Morgan Li' instead of 'Jamie Ortega' to VIP customers.
+  - Leaving VIP customers not matching the preview (missing Jamie Ortega).
+  - Moving 'Alex Kim' out of VIP customers.
+  expected_interaction_path: Drag 'Jamie Ortega' from All customers to VIP customers.
+  notes: Reference preview should be visually distinct and non-interactive; the checker should evaluate list membership only.
+- id: drag_drop_between_lists-mantine-T04
+  name: Move a ticket in the correct project (two instances)
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Two Cards + List (custom) using dnd-kit multiple containers (two instances)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Project Beta board, drag 'Database migration' from Backlog to In progress. The task will finish
+    automatically when done.
+  ui_copy: Project Alpha / Project Beta — Backlog and In progress lists. For Project Beta, move 'Database migration' to In
+    progress.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=2, guidance=text, clutter=none.
+
+    Scene is a centered isolated layout with two separate cards stacked vertically, each containing its own instance of the drag-and-drop between-lists component:
+    - Card A: 'Project Alpha' (distractor)
+    - Card B: 'Project Beta' (target)
+
+    Within each card:
+    - Two lists: 'Backlog' (left) and 'In progress' (right)
+    - Each ticket is a draggable row with a grip icon and the ticket title
+    - Changes apply immediately (no Save)
+
+    Initial state:
+    Project Alpha:
+    - Backlog: Database migration, UI refresh
+    - In progress: Login bugfix
+    Project Beta:
+    - Backlog: Database migration, Payments integration
+    - In progress: API rate limiting
+
+    No additional clutter; the primary difficulty is picking the correct instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Two similar instances with the same ticket name require careful disambiguation before performing the otherwise
+      simple transfer.
+  success_trigger:
+    human_readable:
+    - Only the drag-and-drop component instance labeled 'Project Beta' is evaluated.
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Backlog:
+          - Payments integration
+          In progress:
+          - API rate limiting
+          - Database migration
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Project Beta
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving 'Database migration' in Project Alpha instead of Project Beta.
+  - Moving 'Payments integration' instead of 'Database migration' in Project Beta.
+  - Leaving 'Database migration' in Backlog for Project Beta.
+  expected_interaction_path: Locate the 'Project Beta' card → drag 'Database migration' from Backlog to In progress.
+  notes: Checker should anchor to the card heading (Project Beta) and ignore state changes in Project Alpha.
+- id: drag_drop_between_lists-mantine-T05
+  name: Insert a field at a specific position
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + List (custom) using dnd-kit sortable + multiple containers'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Contact Fields card, drag 'Email' from Available fields into Shown fields and drop it between 'Name'
+    and 'Phone'. The task will finish automatically when done.
+  ui_copy: Contact Fields — Available fields / Shown fields. Insert 'Email' between Name and Phone.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Card centered in the viewport titled 'Contact Fields'. It contains a dual-list drag-and-drop selector for configuring which fields are shown.
+
+    Lists:
+    - 'Available fields' (left)
+    - 'Shown fields' (right)
+    Each field is a draggable row with a grip icon. The 'Shown fields' list supports ordering via drag insertion; a thin insertion indicator appears between rows.
+
+    Initial state:
+    - Available fields (top to bottom): Email, Company, Address
+    - Shown fields (top to bottom): Name, Phone
+
+    No Apply/Save; changes are immediate. No other clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires precise placement within the destination list (insertion between two items), increasing precision
+      and drag control compared to simple membership changes.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available fields:
+          - Company
+          - Address
+          Shown fields:
+          - Name
+          - Email
+          - Phone
+        order_matters: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Email' into Shown fields but placing it at the top or bottom instead of between Name and Phone.
+  - Reordering Name/Phone while failing to place Email correctly.
+  - Dragging a different field (e.g., 'Company') into Shown fields.
+  expected_interaction_path: Drag 'Email' from Available → hover over Shown list until insertion line appears between Name
+    and Phone → drop.
+  notes: Insertion indicator should be clearly visible to reduce ambiguity; checker verifies exact order.
+- id: drag_drop_between_lists-mantine-T06
+  name: Customize columns in a drawer and apply
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Button + floating panel + List (custom) using dnd-kit multiple containers; Apply commits'
+  task_template: open_and_select
+  secondary_template: transfer_move
+  browsergym_goal: Open the Customize columns panel, drag 'Notes' from Hidden columns to Visible columns, then click Apply.
+    The task will finish automatically when done.
+  ui_copy: 'Table settings — Button: Customize columns. Panel: Visible columns / Hidden columns. Move ''Notes'' to Visible
+    and Apply.'
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=panel_flow, placement=center, scale=default, instances=1, guidance=text, clutter=low.
+
+    Scene is a panel_flow. On the base page there is a header 'Table settings' with a button labeled 'Customize columns'. Clicking the button opens a floating panel titled 'Customize columns' to the right.
+
+    Inside the panel is the target drag-and-drop between-lists component:
+    - Left list: 'Visible columns'
+    - Right list: 'Hidden columns'
+    Each column is a draggable row with a grip icon. The panel footer contains two buttons: 'Cancel' and 'Apply'.
+
+    Behavior:
+    - Dragging updates the panel lists immediately.
+    - The committed column configuration updates only after clicking 'Apply'.
+
+    Initial state (in the panel):
+    - Visible columns: Name, Status
+    - Hidden columns: Notes, Tags
+
+    Clutter is low: only the panel chrome and footer buttons in addition to the component.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: panel_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening a drawer, transferring the correct item, and committing via Apply—introducing overlay
+      depth and a staged confirmation step.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    - The changes are committed by clicking 'Apply'.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Visible columns:
+          - Name
+          - Status
+          - Notes
+          Hidden columns:
+          - Tags
+        order_matters: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving 'Notes' but clicking Cancel so changes are discarded.
+  - Moving 'Tags' instead of 'Notes' into Visible columns.
+  - Leaving 'Notes' in Hidden columns after clicking Apply.
+  - Closing the panel without applying.
+  expected_interaction_path: Click 'Customize columns' → in panel, drag 'Notes' to Visible → click 'Apply'.
+  notes: Checker should validate committed state after Apply (e.g., a summary outside the drawer) to avoid passing on draft-only
+    changes.
+- id: drag_drop_between_lists-mantine-T07
+  name: Allow a protocol in dark theme with similar options
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Dark Card + List (custom) using dnd-kit multiple containers'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Security Protocols card, drag 'TLS 1.3' from Blocked protocols to Allowed protocols. The task will
+    finish automatically when done.
+  ui_copy: Security Protocols — Blocked protocols / Allowed protocols (dark). Allow TLS 1.3.
+  setup_description: |-
+    Scene context: theme=dark, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene uses dark theme in a centered isolated Card titled 'Security Protocols'. It contains a dual-list drag-and-drop selector with headers 'Blocked protocols' (left) and 'Allowed protocols' (right). Each protocol is a draggable row with a grip icon and a short label (e.g., 'TLS 1.1'). The list includes several visually similar TLS versions.
+
+    Initial state:
+    - Allowed protocols: TLS 1.2
+    - Blocked protocols: SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.3
+
+    No Apply/Save; changes apply immediately.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Dark theme plus highly similar option labels (TLS versions) increases confusion and observability demands,
+      even though the action is a single transfer.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Blocked protocols:
+          - SSL 3.0
+          - TLS 1.0
+          - TLS 1.1
+          Allowed protocols:
+          - TLS 1.2
+          - TLS 1.3
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving the wrong TLS version (e.g., 'TLS 1.1') into Allowed protocols.
+  - Leaving 'TLS 1.3' in Blocked protocols.
+  - Dropping the item outside Allowed protocols so it returns to Blocked.
+  expected_interaction_path: Drag 'TLS 1.3' from Blocked to Allowed.
+  notes: To improve semantic observability, include aria-labels like 'Blocked protocols list' and ensure item text is not
+    truncated in dark mode.
+- id: drag_drop_between_lists-mantine-T08
+  name: Connect an integration with small-scale controls
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Small-scale Card + List (custom) using dnd-kit; handle-only drag'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the Integrations card, drag 'Slack' from Available integrations to Connected integrations. The task
+    will finish automatically when done.
+  ui_copy: Integrations — Available integrations / Connected integrations (small). Connect Slack.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=small, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Card centered in the viewport with small scale (reduced font size and tighter overall component sizing, but spacing mode remains comfortable). Card title is 'Integrations'. The drag-and-drop between-lists selector shows:
+    - Left list: 'Available integrations'
+    - Right list: 'Connected integrations'
+    Each integration is a compact row with a small service icon, the service name, and a tiny grip handle used to start drag.
+
+    Initial state:
+    - Connected integrations: GitHub
+    - Available integrations: Slack, Jira, Zapier
+
+    No Apply/Save. The small-scale presentation makes the drag handle harder to acquire and the drop zone narrower.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Small-scale UI shrinks drag handles and drop targets, significantly increasing target acquisition difficulty
+      even for a single transfer.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available integrations:
+          - Jira
+          - Zapier
+          Connected integrations:
+          - GitHub
+          - Slack
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging 'Jira' or 'Zapier' instead of 'Slack'.
+  - Attempting to drag by clicking the text/icon rather than the handle (if handle-only).
+  - Dropping outside Connected integrations so Slack snaps back.
+  expected_interaction_path: Grab Slack by its small handle → drag into Connected integrations → drop.
+  notes: Consider adding a larger drag 'hit area' around the handle while keeping the visible icon small to avoid overly adversarial
+    target sizes.
+- id: drag_drop_between_lists-mantine-T09
+  name: Scroll a long engineer list to add someone on-call
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + scrollable List (custom) using dnd-kit multiple containers'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the On-call Rotation card, scroll the Available engineers list to find 'Zoe Martinez' and drag her into
+    On-call this week. The task will finish automatically when done.
+  ui_copy: On-call Rotation — Available engineers (scroll) / On-call this week. Add Zoe Martinez.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=text, clutter=none.
+
+    Scene is an isolated Card centered in the viewport titled 'On-call Rotation'. The drag-and-drop between-lists selector is presented with:
+    - Left: 'Available engineers' as a fixed-height scrollable list (visible scrollbar).
+    - Right: 'On-call this week' as the destination list.
+    Each engineer row shows initials in a small avatar circle, the full name, and a grip handle.
+
+    Initial state:
+    - On-call this week: Ava Chen
+    - Available engineers (top to bottom): Aiden Ross, Ben Patel, Chris Johnson, Dana Kim, Eli Nguyen, Fatima Ali, Grace Liu, Hiro Tanaka, Ivy Brooks, Leo Garcia, Mina Hassan, Zoe Martinez.
+    Only ~6 engineers are visible at once; 'Zoe Martinez' appears near the bottom and requires scrolling within the Available engineers list.
+
+    No search box and no Apply/Save; changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires scrolling within a list to locate an off-screen target and then completing a cross-container drag
+      without losing context.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored; only list membership matters.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available engineers:
+          - Aiden Ross
+          - Ben Patel
+          - Chris Johnson
+          - Dana Kim
+          - Eli Nguyen
+          - Fatima Ali
+          - Grace Liu
+          - Hiro Tanaka
+          - Ivy Brooks
+          - Leo Garcia
+          - Mina Hassan
+          On-call this week:
+          - Ava Chen
+          - Zoe Martinez
+        order_matters: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging the wrong person with a similar first name/initials.
+  - Scrolling the page instead of the Available engineers list.
+  - Dropping Zoe Martinez outside the On-call list so she returns to Available engineers.
+  - Leaving Zoe Martinez in Available engineers.
+  expected_interaction_path: Scroll inside Available engineers → drag 'Zoe Martinez' into On-call this week.
+  notes: If the list uses sticky headers or grouping, ensure the checker uses underlying ids and not viewport text positions.
+- id: drag_drop_between_lists-mantine-T10
+  name: Match a homepage preview layout and apply
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Card + List (custom) using dnd-kit multiple containers + Apply'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Homepage Layout card, make the Visible sections list match the preview and click Apply layout. The
+    task will finish automatically when done.
+  ui_copy: Homepage Layout — Hidden sections / Visible sections. Preview shows the desired Visible order. Apply layout.
+  setup_description: |-
+    Scene context: theme=light, spacing=comfortable, layout=isolated_card, placement=center, scale=default, instances=1, guidance=visual, clutter=none.
+
+    Scene is an isolated Card centered in the viewport titled 'Homepage Layout'. The main control is a dual-list drag-and-drop selector for page sections:
+    - Left list: 'Hidden sections'
+    - Right list: 'Visible sections'
+    Each section is a draggable row with a grip icon; the Visible list supports ordering.
+
+    Visual guidance: A non-interactive 'Preview' thumbnail to the right shows the desired visible sections in order as stacked labeled blocks. A helper line says 'Match Visible sections to the preview'.
+
+    Commit behavior:
+    - Dragging updates the on-screen draft lists.
+    - A button 'Apply layout' commits changes; until then, a small 'Not applied' note is shown.
+
+    Initial state:
+    - Visible sections (top to bottom): Hero, Testimonials
+    - Hidden sections (top to bottom): Pricing, FAQ, Contact
+    Preview indicates desired Visible sections order (top to bottom): Hero, Pricing, FAQ, Contact
+
+    No other clutter; only one instance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Multiple transfers plus exact ordering to match a visual reference, followed by an Apply step—high precision
+      with staged feedback.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order matches the target order.
+    - The changes are committed by clicking 'Apply layout'.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        containers:
+          Hidden sections:
+          - Testimonials
+          Visible sections:
+          - Hero
+          - Pricing
+          - FAQ
+          - Contact
+        order_matters: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Getting the correct visible sections but in the wrong order.
+  - Arranging the draft lists correctly but not clicking 'Apply layout'.
+  - Leaving 'Testimonials' visible even though it is not in the preview.
+  - Adding extra sections to Visible beyond those shown in the preview.
+  expected_interaction_path: Drag sections between lists and reorder Visible list to match preview → click 'Apply layout'.
+  notes: Expose committed layout state separately from draft (e.g., hidden JSON) so the checker can require Apply.

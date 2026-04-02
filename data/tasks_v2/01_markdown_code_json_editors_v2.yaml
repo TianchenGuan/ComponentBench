@@ -1,0 +1,4243 @@
+- id: markdown_editor-external-v2-T01
+  name: 'Drawer note: offscreen owner edit and save'
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside AntD Drawer'
+  task_template: scroll_find
+  secondary_template: editor_operation
+  browsergym_goal: 'Open the “Edit release note” drawer. In the “Release note (Markdown)” editor, scroll to the “## Risks” section and change `Owner: TBD` to `Owner: Platform`. Do not change anything else,
+    then click “Save note”. The task will finish automatically when done.'
+  ui_copy: 'Open the “Edit release note” drawer. In the “Release note (Markdown)” editor, scroll to the “## Risks” section and change `Owner: TBD` to `Owner: Platform`. Do not change anything else, then
+    click “Save note”. The task will finish automatically when done.'
+  setup_description: 'Layout uses drawer_flow with compact spacing and medium clutter. A release dashboard remains visible in the background with status chips, a recent activity list, and a read-only release
+    summary card. Clicking “Edit release note” opens a right-side Ant Design Drawer containing one markdown editor labeled “Release note (Markdown)”. The editor has a fixed height, an internal scrollbar,
+    the standard markdown toolbar, and a live preview panel collapsed below the source pane. Only about 8 lines are visible at once.
+
+    Initial markdown in the editor is:
+
+    # Release note
+
+
+    ## Summary
+
+    API rollout is in progress. No blockers reported.
+
+
+    ## Changelog
+
+    - Migrated auth service to new token format
+
+    - Updated rate limiter thresholds for /api/v2 endpoints
+
+    - Fixed edge case in session refresh logic
+
+    - Added retry logic for upstream gateway timeouts
+
+    - Deprecated legacy /api/v1/sync endpoint
+
+    - Bumped dependency: openssl 3.1.4 → 3.2.1
+
+
+    ## Rollback plan
+
+    1. Revert auth token migration via feature flag
+
+    2. Restore rate limiter config from snapshot
+
+    3. Re-enable /api/v1/sync if clients still depend on it
+
+
+    ## Risks
+
+    Owner: TBD
+
+    Migration window: 2 hours
+
+
+    ## Next steps
+
+    - Verify staging
+
+    - Notify support
+
+    The drawer footer contains "Cancel" and "Save note". The note is not committed until "Save note" is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: The target line starts offscreen inside a fixed-height editor, the drawer is not centered, and success requires an explicit drawer-local save, so the task pressures scroll control,
+      localized editing, and commit verification without hiding the target semantically.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The edit itself is local and exact, but it sits inside an off-center drawer with internal scrolling and a required Save step, which raises layering and confirmation pressure.
+  success_trigger:
+    human_readable:
+    - The committed markdown for “Release note (Markdown)” exactly matches the target source after normalization.
+    - The drawer-local “Save note” control has been clicked, and the drawer is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: '# Release note
+
+
+          ## Summary
+
+          API rollout is in progress. No blockers reported.
+
+
+          ## Changelog
+
+          - Migrated auth service to new token format
+
+          - Updated rate limiter thresholds for /api/v2 endpoints
+
+          - Fixed edge case in session refresh logic
+
+          - Added retry logic for upstream gateway timeouts
+
+          - Deprecated legacy /api/v1/sync endpoint
+
+          - Bumped dependency: openssl 3.1.4 → 3.2.1
+
+
+          ## Rollback plan
+
+          1. Revert auth token migration via feature flag
+
+          2. Restore rate limiter config from snapshot
+
+          3. Re-enable /api/v1/sync if clients still depend on it
+
+
+          ## Risks
+
+          Owner: Platform
+
+          Migration window: 2 hours
+
+
+          ## Next steps
+
+          - Verify staging
+
+          - Notify support'
+        mode: edit
+        saved: true
+        overlay_open: false
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save note
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the correct line but not clicking “Save note”.
+  - Changing any other line, heading, or list item in the document.
+  - Leaving the drawer open after editing.
+  - Editing background UI instead of the markdown editor.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll inside the editor until the “## Risks” section is visible.
+  - 'Replace `Owner: TBD` with `Owner: Platform` and nothing else.'
+  - Click “Save note” and verify the drawer closes.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T02
+  name: 'Three editors: update Details only'
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside dashboard card'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the “Release blurb” card, edit only the Markdown editor labeled “Details” so that its content becomes exactly:
+
+
+    ## Details
+
+    The release includes:
+
+    - API is stable
+
+    - UI polish pending
+
+
+    Do not edit the “Summary” or “Internal notes” editors. Then click “Apply section”. The task will finish automatically when done.'
+  ui_copy: 'In the “Release blurb” card, edit only the Markdown editor labeled “Details” so that its content becomes exactly:
+
+
+    ## Details
+
+    The release includes:
+
+    - API is stable
+
+    - UI polish pending
+
+
+    Do not edit the “Summary” or “Internal notes” editors. Then click “Apply section”. The task will finish automatically when done.'
+  setup_description: 'Layout is dashboard_panel with compact spacing and medium clutter. The page contains KPI chips, an activity table, and a read-only timeline card. The target “Release blurb” card contains
+    three stacked markdown editors with nearly identical small toolbars and their own live previews: “Summary”, “Details”, and “Internal notes”. Initial contents are `Short summary goes here.`, `(empty)`,
+    and `For staff only.` respectively. A single card-local button labeled “Apply section” commits the card’s current editor states. Only the Details editor should change.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Three nearly identical editors inside one dashboard card create wrong-instance risk, and the single card-level apply step forces the agent to verify that only the intended editor changed
+      before committing.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The markdown itself is short, but the core pressure comes from selecting the correct editor among three similar instances and preserving the other two while committing the card state.
+  success_trigger:
+    human_readable:
+    - The committed markdown in the editor labeled “Details” equals the target source after normalization.
+    - The editors labeled “Summary” and “Internal notes” remain unchanged from their initial values.
+    - The card-local “Apply section” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Details
+        content: '## Details
+
+          The release includes:
+
+          - API is stable
+
+          - UI polish pending'
+        saved: true
+        non_target_instances_must_remain:
+          Summary: Short summary goes here.
+          Internal notes: For staff only.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Apply section
+      require_correct_instance: true
+      target_instance_label_or_id: Details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing “Summary” or “Internal notes” in addition to, or instead of, “Details”.
+  - Entering the right lines but forgetting to click “Apply section”.
+  - Adding extra blank lines or extra text beyond the requested four lines.
+  - Leaving the Details editor empty.
+  expected_interaction_path:
+  - Locate the “Release blurb” card.
+  - Focus the editor labeled “Details”.
+  - Enter the exact markdown, leaving the other two editors untouched.
+  - Click “Apply section”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T03
+  name: 'Modal bio: localized sentence replacement'
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside MUI Dialog'
+  task_template: editor_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Click “Edit bio”. In the “Bio (Markdown)” editor, keep the heading and bullet list as they are, but replace the sentence `I enjoy puzzles.` with `I enjoy interface benchmarks.` Then click
+    “Save changes”. The task will finish automatically when done.
+  ui_copy: Click “Edit bio”. In the “Bio (Markdown)” editor, keep the heading and bullet list as they are, but replace the sentence `I enjoy puzzles.` with `I enjoy interface benchmarks.` Then click “Save
+    changes”. The task will finish automatically when done.
+  setup_description: 'Layout is modal_flow with compact spacing and low clutter. A profile card in the background shows a rendered markdown bio and an “Edit bio” button. Clicking it opens a centered MUI
+    Dialog containing one markdown editor labeled “Bio (Markdown)” and a live preview.
+
+    Initial source in the editor is:
+
+    # About me
+
+    I enjoy puzzles.
+
+    - Writes docs
+
+    - Reviews PRs
+
+    The dialog footer has “Cancel” and “Save changes”. The profile card updates only after “Save changes”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - overlay_model
+    factor_rationale: The task is a localized in-place edit inside a modal draft rather than a whole-field rewrite, and the explicit Save step forces verification that the committed value, not just the
+      transient draft, changed correctly.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: The edit target is visually obvious, but the agent must preserve surrounding content and commit via the modal rather than stopping after the draft looks right.
+  success_trigger:
+    human_readable:
+    - The committed markdown exactly matches the target source after normalization.
+    - The modal “Save changes” control has been clicked and the modal is closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: '# About me
+
+          I enjoy interface benchmarks.
+
+          - Writes docs
+
+          - Reviews PRs'
+        saved: true
+        overlay_open: false
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing the whole document with only the new sentence.
+  - Editing the heading or bullet list instead of only the sentence line.
+  - Clicking “Cancel” or closing the modal without saving.
+  - Saving a near-match with different punctuation or extra text.
+  expected_interaction_path:
+  - Open the modal.
+  - Edit only the sentence line inside the markdown source.
+  - Leave the heading and bullets untouched.
+  - Click “Save changes” and verify the modal closes.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T04
+  name: Gateway row runbook owner edit
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor embedded in table row'
+  task_template: table_operation
+  secondary_template: editor_operation
+  browsergym_goal: 'In the table row labeled “Gateway”, edit the “Runbook (Markdown)” editor so that the bullet `- owner: TBD` becomes `- owner: SRE`. Do not change any other line, then click “Save” in
+    the Gateway row. The task will finish automatically when done.'
+  ui_copy: 'In the table row labeled “Gateway”, edit the “Runbook (Markdown)” editor so that the bullet `- owner: TBD` becomes `- owner: SRE`. Do not change any other line, then click “Save” in the Gateway
+    row. The task will finish automatically when done.'
+  setup_description: 'Layout is table_cell with compact spacing, small scale, and medium clutter. A service table shows two expanded rows, “Gateway” and “Billing”, each with an inline markdown editor titled
+    “Runbook (Markdown)” and a row-local Save button.
+
+    Initial source in the Gateway row is:
+
+    ## Runbook
+
+    - owner: TBD
+
+    - channel: #ops
+
+    The Billing row has a different runbook and must remain unchanged. Row saves are independent.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: The dense row layout and row-scoped Save controls create wrong-row risk, while the localized bullet edit still demands exact preservation of the rest of the runbook.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is a hard row-scoped editor task because small table controls, two similar editor instances, and local Save semantics all have to be handled correctly.
+  success_trigger:
+    human_readable:
+    - The committed markdown in the Gateway row equals the target source after normalization.
+    - The Billing row’s markdown remains unchanged.
+    - The Gateway row’s Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Gateway
+        content: '## Runbook
+
+          - owner: SRE
+
+          - channel: #ops'
+        saved: true
+        non_target_instances_must_remain:
+          Billing: '## Runbook
+
+            - owner: FinOps
+
+            - channel: #billing-ops'
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: save-gateway-row
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Billing row instead of Gateway.
+  - 'Changing any line other than `- owner: TBD` in the Gateway runbook.'
+  - Editing the Gateway content correctly but clicking Save in the Billing row or not saving at all.
+  - Leaving the owner bullet as `TBD`.
+  expected_interaction_path:
+  - Locate the Gateway row editor.
+  - Replace only the owner bullet text.
+  - Leave Billing untouched.
+  - Click Save in the Gateway row.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T05
+  name: Match the reference preview exactly and save
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor with reference preview panel'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Article body” markdown editor, make the rendered preview match the “Reference preview” card exactly, then click “Save article”. The task will finish automatically when done.
+  ui_copy: In the “Article body” markdown editor, make the rendered preview match the “Reference preview” card exactly, then click “Save article”. The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing and medium clutter. The main panel contains an editable markdown editor labeled “Article body” in Live mode (source on the left, preview
+    on the right). To its right is a read-only card labeled “Reference preview” that shows the target rendered structure only, not the source. The reference renders: an H2 heading “Setup”, a checked task
+    “Install dependencies”, an unchecked task “Run tests”, and a blockquote containing inline code `config`. A “Save article” button commits the editor content. Initial source in the editor is a near-match
+    with the wrong heading level and plain text instead of inline code.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - clutter
+    factor_rationale: The target is specified visually rather than as source text, so the agent must use the source/preview boundary correctly and verify the rendered structure before saving in a cluttered
+      dashboard context.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The markdown is short but structurally precise, and the hard part is matching rendered semantics rather than copying a visible source string.
+  success_trigger:
+    human_readable:
+    - The source markdown in “Article body” equals the target reference source after normalization.
+    - The rendered preview for the target editor is structurally equivalent to the reference preview card.
+    - The “Save article” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-article-setup
+        reference_source: '## Setup
+
+          - [x] Install dependencies
+
+          - [ ] Run tests
+
+
+          > Use `config`.'
+        saved: true
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+        render_equivalence: true
+      require_confirm: true
+      confirm_control: Save article
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Creating a near-match with the wrong heading level, wrong checklist states, or plain text `config` instead of inline code.
+  - Matching the reference visually in part but not completely.
+  - Typing the right source but not clicking “Save article”.
+  - Editing a non-target widget in the dashboard.
+  expected_interaction_path:
+  - Inspect the reference preview card.
+  - Edit the markdown source until the live preview matches it exactly.
+  - Verify the checklist states, heading level, and inline code rendering.
+  - Click “Save article”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T06
+  name: Nested-scroll metadata edit with explicit save
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside nested scroll panel'
+  task_template: scroll_find
+  secondary_template: editor_operation
+  browsergym_goal: 'In the “Product copy” markdown editor, scroll within the editor to the “## Metadata” section and change `Release date: TBD` to `Release date: 2026-06-15`. Do not change anything else.
+    Then click “Save copy”. The task will finish automatically when done.'
+  ui_copy: 'In the “Product copy” markdown editor, scroll within the editor to the “## Metadata” section and change `Release date: TBD` to `Release date: 2026-06-15`. Do not change anything else. Then click
+    “Save copy”. The task will finish automatically when done.'
+  setup_description: 'Layout is nested_scroll with compact spacing and low clutter. The markdown editor is placed inside a scrollable right-side panel; the page itself has a separate outer scroll region
+    with navigation chips and a release-status sidebar. The editor is fixed-height, edit-only, and shows only 8–10 lines at once.
+
+    Initial source is a multi-section product copy document whose `## Metadata` section is offscreen at load. A “Save copy” button below the editor commits the current source.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: Both the page and the editor have scrollable regions, so the task isolates whether the agent can operate the editor’s own viewport, make a localized edit, and then explicitly commit
+      it.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: The visible target text is not initially on screen, and the nested scroll structure plus required Save step makes this a substantially harder version of a localized markdown edit.
+  success_trigger:
+    human_readable:
+    - The committed markdown equals the target source after normalization.
+    - Only the release-date line changed.
+    - The “Save copy” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: '# Product Page Copy
+
+
+          ## Overview
+
+          This draft describes the key features and limitations of the product.
+
+
+          ## Highlights
+
+          - Fast setup
+
+          - Works offline
+
+          - Includes export tools
+
+
+          ## Details
+
+          The copy below is for internal review. Please do not publish until approved.
+
+
+          ### Limitations
+
+          - No mobile support yet
+
+          - Limited theme customization
+
+
+          ## Metadata
+
+          Owner: Marketing
+
+          Release date: 2026-06-15
+
+          Channel: Web'
+        saved: true
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save copy
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page but not the editor, leaving the Metadata section unchanged.
+  - Changing any metadata line other than the release date.
+  - Editing the release date correctly but not clicking “Save copy”.
+  - Adding or removing blank lines elsewhere in the document.
+  expected_interaction_path:
+  - Focus the editor.
+  - Scroll within the editor until the Metadata section is visible.
+  - Replace only the release date line.
+  - Click “Save copy”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T07
+  name: Public quote exact formatting with sibling preserved
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor in dark settings panel'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the markdown editor labeled “Public quote”, replace the content with exactly:
+
+
+    > The only way out is through.
+
+    >
+
+    > *— Robert Frost*
+
+
+    Do not edit the “Internal note” editor. Then click “Apply quotes”. The task will finish automatically when done.'
+  ui_copy: 'In the markdown editor labeled “Public quote”, replace the content with exactly:
+
+
+    > The only way out is through.
+
+    >
+
+    > *— Robert Frost*
+
+
+    Do not edit the “Internal note” editor. Then click “Apply quotes”. The task will finish automatically when done.'
+  setup_description: 'Layout is settings_panel with dark theme, compact spacing, and medium clutter. Above the editors are several toggles and select controls that are unrelated. Two markdown editors appear
+    in the main panel: “Public quote” and “Internal note”. Both have the same small toolbar and live preview. Initial source in Public quote is plain prose, while Internal note contains `Do not share before
+    approval.` and must remain unchanged. “Apply quotes” commits the panel state.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - confirmation_model
+    factor_rationale: The hard part is not discovering markdown syntax alone; it is formatting the correct editor exactly in a dark compact panel while preserving the sibling editor and then committing
+      the change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Compact dark UI and two nearly identical editors make this a high-disambiguation exact-formatting task with a row-level commit step.
+  success_trigger:
+    human_readable:
+    - The committed markdown in “Public quote” equals the target source after normalization.
+    - The “Internal note” editor remains unchanged.
+    - The “Apply quotes” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Public quote
+        content: '> The only way out is through.
+
+          >
+
+          > *— Robert Frost*'
+        saved: true
+        non_target_instances_must_remain:
+          Internal note: Do not share before approval.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Apply quotes
+      require_correct_instance: true
+      target_instance_label_or_id: Public quote
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing “Internal note” instead of “Public quote”.
+  - Changing both editors.
+  - Missing the blank quoted line between the quote and the attribution.
+  - Failing to italicize the attribution or leaving it outside the blockquote.
+  expected_interaction_path:
+  - Focus the “Public quote” editor.
+  - Enter the exact three-line blockquote with italic attribution.
+  - Leave “Internal note” unchanged.
+  - Click “Apply quotes”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T08
+  name: Link insertion inside off-center announcement drawer
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor with link popover inside Mantine Drawer'
+  task_template: editor_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the “Announcement” drawer. In the “Announcement (Markdown)” editor, make only the word `documentation` in the sentence `Read the documentation for details.` a link to `https://example.com/docs`,
+    then click “Save announcement”. The task will finish automatically when done.
+  ui_copy: Open the “Announcement” drawer. In the “Announcement (Markdown)” editor, make only the word `documentation` in the sentence `Read the documentation for details.` a link to `https://example.com/docs`,
+    then click “Save announcement”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing and medium clutter. The main page shows a dashboard card and a notifications list. Clicking “Edit announcement” opens an off-center Mantine
+    Drawer. Inside is one markdown editor labeled “Announcement (Markdown)”. The editor begins with the single sentence `Read the documentation for details.` and exposes the standard toolbar, including
+    a link button that opens a small URL popover. Manual markdown entry is also allowed. The drawer footer has “Cancel” and “Save announcement”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - precision_surface
+    factor_rationale: The task stays editor-centric but adds a nested popover path for agents that rely on toolbar affordances, while the exact source requirement still penalizes linking the wrong span
+      or over-editing the sentence.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Whether the agent uses toolbar or raw syntax, the hard part is making only the intended word a link inside a drawer and then committing the change.
+  success_trigger:
+    human_readable:
+    - The committed markdown equals `Read the [documentation](https://example.com/docs) for details.` after normalization.
+    - The drawer-local “Save announcement” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: Read the [documentation](https://example.com/docs) for details.
+        saved: true
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save announcement
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Linking the whole sentence instead of only the word `documentation`.
+  - Using the correct URL but leaving `documentation` as plain text.
+  - Saving a typo in the URL.
+  - Editing the sentence correctly but not clicking “Save announcement”.
+  expected_interaction_path:
+  - Open the drawer.
+  - Either use the link toolbar popover or type markdown manually to link only `documentation`.
+  - Verify the source string is exact.
+  - Click “Save announcement”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T09
+  name: Internal note live-mode append with sibling mode preserved
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor in settings panel'
+  task_template: editor_operation
+  secondary_template: toggle_state
+  browsergym_goal: In the settings panel, switch only the markdown editor labeled “Internal note” to Live mode, append a new unchecked checklist item `- [ ] Notify QA` at the end, keep “Public note” in
+    Edit mode, and then click “Save notes”. The task will finish automatically when done.
+  ui_copy: In the settings panel, switch only the markdown editor labeled “Internal note” to Live mode, append a new unchecked checklist item `- [ ] Notify QA` at the end, keep “Public note” in Edit mode,
+    and then click “Save notes”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing and medium clutter. Two markdown editors appear side by side: “Public note” and “Internal note”. Each has the same mode toggle group (Edit
+    / Live / Preview). Both start in Edit mode.
+
+    Initial source in “Internal note” is:
+
+    ## Internal
+
+    - [ ] Update docs
+
+    Initial source in “Public note” is a short paragraph and must remain unchanged; its mode must also remain Edit. The panel footer contains “Save notes”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - scale
+    factor_rationale: This is harder than a pure mode toggle because the agent must keep track of both source state and mode state across two sibling editors, then commit only the intended combined outcome.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two editors with identical mode controls create high disambiguation load, and the task couples a specific mode state with an exact source append and a save step.
+  success_trigger:
+    human_readable:
+    - The committed markdown in “Internal note” equals the target source after normalization.
+    - “Internal note” ends in Live mode with the preview visible.
+    - “Public note” remains in Edit mode and its source remains unchanged.
+    - The “Save notes” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Internal note
+        content: '## Internal
+
+          - [ ] Update docs
+
+          - [ ] Notify QA'
+        mode: live
+        saved: true
+        non_target_instances_must_remain:
+          Public note: Public rollout note.
+          Public note__mode: edit
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save notes
+      require_correct_instance: true
+      target_instance_label_or_id: Internal note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Switching the wrong editor to Live mode.
+  - Appending the checklist item to “Public note” instead of “Internal note”.
+  - Changing the source correctly but leaving “Internal note” in Edit mode.
+  - Changing Public note’s mode or text, or failing to click “Save notes”.
+  expected_interaction_path:
+  - Select the Internal note editor.
+  - Switch it to Live mode.
+  - Append the unchecked checklist item to its source.
+  - Leave Public note unchanged and click “Save notes”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T10
+  name: Insert fenced code block in deployment-note modal
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside AntD Modal'
+  task_template: editor_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: 'Open “Edit deployment note”. In the “Deployment note (Markdown)” editor, add this fenced code block directly under the `## Commands` heading and above the next paragraph:
+
+
+    ```bash
+
+    npm run build
+
+    ```
+
+
+    Then click “Save note”. The task will finish automatically when done.'
+  ui_copy: 'Open “Edit deployment note”. In the “Deployment note (Markdown)” editor, add this fenced code block directly under the `## Commands` heading and above the next paragraph:
+
+
+    ```bash
+
+    npm run build
+
+    ```
+
+
+    Then click “Save note”. The task will finish automatically when done.'
+  setup_description: 'Layout is modal_flow with compact spacing and medium clutter. The background shows a deployment summary card and a command history list. Clicking “Edit deployment note” opens an Ant
+    Design Modal containing one markdown editor labeled “Deployment note (Markdown)”.
+
+    Initial source is:
+
+    # Deploy
+
+
+    ## Commands
+
+    Run the build before packaging.
+
+
+    ## Checks
+
+    - Smoke test
+
+    - Rollback plan ready
+
+    The source is short enough to fit without scrolling. The modal footer has “Cancel” and “Save note”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - overlay_model
+    factor_rationale: 'The challenge is not generic text entry: the fenced block must be inserted at an exact location inside a modal draft, then explicitly saved without disturbing the rest of the note.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Exact insertion location and exact fence syntax make this hard even though the note is short, and the modal adds a save boundary.
+  success_trigger:
+    human_readable:
+    - The committed markdown exactly matches the target source after normalization.
+    - The modal “Save note” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: '# Deploy
+
+
+          ## Commands
+
+          ```bash
+
+          npm run build
+
+          ```
+
+          Run the build before packaging.
+
+
+          ## Checks
+
+          - Smoke test
+
+          - Rollback plan ready'
+        saved: true
+        overlay_open: false
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save note
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Inserting the code block under the wrong heading.
+  - Using the wrong fence language or fence syntax.
+  - Appending the block to the end of the note instead of placing it under `## Commands`.
+  - Editing correctly but closing or cancelling instead of saving.
+  expected_interaction_path:
+  - Open the modal.
+  - Place the caret under `## Commands`.
+  - Insert the fenced code block exactly.
+  - Click “Save note”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T11
+  name: Staging changelog offscreen owner replacement
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor in nested scroll panel'
+  task_template: scroll_find
+  secondary_template: editor_operation
+  browsergym_goal: 'In the second markdown editor labeled “Staging changelog”, scroll to the `### Owners` section and change `Backend: TBD` to `Backend: Integrations`. Do not edit the “Production changelog”
+    editor. Then click “Apply staging note”. The task will finish automatically when done.'
+  ui_copy: 'In the second markdown editor labeled “Staging changelog”, scroll to the `### Owners` section and change `Backend: TBD` to `Backend: Integrations`. Do not edit the “Production changelog” editor.
+    Then click “Apply staging note”. The task will finish automatically when done.'
+  setup_description: 'Layout is nested_scroll with compact spacing and medium clutter. A right-side panel contains two same-size markdown editors stacked vertically: “Production changelog” and “Staging
+    changelog”. Both have fixed heights and internal scrollbars because each document is long. Only the second editor should change. In Staging changelog, the target line sits below the fold under `###
+    Owners`. The panel footer contains a button labeled “Apply staging note” that commits only the second editor.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The task combines duplicate-editor disambiguation with internal scrolling inside only one of the editors, then requires the matching local apply control, which is exactly the failure
+      chain the attached markdown evidence highlighted.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Two long editors with similar labels make wrong-instance errors likely, and the actual edit target is offscreen within the correct instance.
+  success_trigger:
+    human_readable:
+    - The committed markdown in “Staging changelog” equals the target source after normalization.
+    - The “Production changelog” editor remains unchanged.
+    - The “Apply staging note” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Staging changelog
+        content: '# Changelog
+
+
+          ## Summary
+
+          Staging rollout is planned.
+
+
+          ## Changes
+
+          - Refactored auth middleware for token rotation
+
+          - Added circuit breaker to payment gateway
+
+          - Updated cache invalidation strategy for /api/v2
+
+          - Fixed race condition in session manager
+
+          - Migrated logging pipeline to structured JSON
+
+          - Enabled feature flag for dark-mode onboarding
+
+
+          ## Dependencies
+
+          - redis 7.2 → 7.4
+
+          - express 4.18 → 4.21
+
+          - pg-pool 3.6 → 3.7
+
+
+          ### Owners
+
+          Frontend: Release
+
+          Backend: Integrations
+
+
+          ## Status
+
+          - Waiting on sign-off'
+        saved: true
+        non_target_instances_must_remain:
+          Production changelog: '# Changelog
+
+
+            ## Summary
+
+            Production rollout is complete.
+
+
+            ### Owners
+
+            Frontend: Release
+
+            Backend: Platform
+
+
+            ## Status
+
+            - Monitoring'
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Apply staging note
+      require_correct_instance: true
+      target_instance_label_or_id: Staging changelog
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Production changelog instead of Staging changelog.
+  - 'Changing any line other than `Backend: TBD` in the target document.'
+  - Making the correct edit but not clicking the staging-specific Apply control.
+  - Scrolling the page instead of the target editor and never reaching the Owners section.
+  expected_interaction_path:
+  - Locate the Staging changelog editor.
+  - Scroll within that editor to the Owners section.
+  - Replace only the backend owner line.
+  - Click “Apply staging note”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T12
+  name: Guide source and preview must match target card
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor with target card in dashboard panel'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Migration guide” markdown editor, edit the source until both the source and the rendered preview match the “Target guide” card, then click “Save guide”. The task will finish automatically
+    when done.
+  ui_copy: In the “Migration guide” markdown editor, edit the source until both the source and the rendered preview match the “Target guide” card, then click “Save guide”. The task will finish automatically
+    when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing and high clutter. A metrics rail and a recent incidents list flank the target panel. The panel contains one markdown editor labeled “Migration
+    guide”, shown in Edit mode with a separate live preview underneath. A read-only card labeled “Target guide” shows the target source as monospace text and the target rendered preview beneath it. Initial
+    source in the editor is close but wrong: the heading is `## Migration`, the ordered list is missing item 2, and the final note is plain text instead of a blockquote. “Save guide” commits the editor
+    state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - confirmation_model
+    factor_rationale: The target is doubly specified—source and rendered form—so the agent must correct near-miss markdown rather than overwrite blindly, while dashboard clutter makes the target card less
+      visually isolated.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: This is hard because the editor starts from a close but wrong state, and the agent must use both source and preview to verify an exact fix before saving.
+  success_trigger:
+    human_readable:
+    - The source markdown equals the target source after normalization.
+    - The rendered preview for the editor is structurally equivalent to the Target guide preview.
+    - The “Save guide” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-migration-guide
+        reference_source: '# Migration guide
+
+
+          1. Back up the database
+
+          2. Rotate the API keys
+
+
+          > Test rollback before cutover.'
+        saved: true
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+        render_equivalence: true
+      require_confirm: true
+      confirm_control: Save guide
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Fixing the source partially but leaving the preview structurally different from the target.
+  - Saving the right heading but missing the second ordered-list item.
+  - Using plain text for the final note instead of a blockquote.
+  - Editing other dashboard controls instead of the markdown editor.
+  expected_interaction_path:
+  - Inspect the target source and preview card.
+  - Correct the source markdown in the editor.
+  - Verify the preview now matches the target structure.
+  - Click “Save guide”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T13
+  name: Auth row reviewer note with inline code
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor embedded in MUI table cell'
+  task_template: table_operation
+  secondary_template: enter_formatted
+  browsergym_goal: 'In the table row labeled “Auth”, set the “Reviewer note (Markdown)” editor to exactly:
+
+
+    > Use `tokenTTL` from config.
+
+
+    Then click “Save” in the Auth row. The task will finish automatically when done.'
+  ui_copy: 'In the table row labeled “Auth”, set the “Reviewer note (Markdown)” editor to exactly:
+
+
+    > Use `tokenTTL` from config.
+
+
+    Then click “Save” in the Auth row. The task will finish automatically when done.'
+  setup_description: Layout is table_cell with compact spacing, small scale, and medium clutter. Two rows, “Auth” and “Billing”, are expanded. Each row contains a compact markdown editor labeled “Reviewer
+    note (Markdown)” and a row-local Save button. The Auth editor starts with `(empty)`, while Billing contains `Use billingProfile first.` and must remain unchanged. The rows are visually dense and each
+    row’s toolbar has the same icon set.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Small row-scoped editors create a strong grounding and wrong-row burden, while the exact one-line markdown target is still precise enough to catch sloppy over-editing or wrong saves.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is a dense row-scoped exact-format task where the content is short but the row targeting and row-local commit semantics make it hard.
+  success_trigger:
+    human_readable:
+    - The committed markdown in the Auth row equals the target source after normalization.
+    - The Billing row remains unchanged.
+    - The Auth row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Auth
+        content: '> Use `tokenTTL` from config.'
+        saved: true
+        non_target_instances_must_remain:
+          Billing: Use billingProfile first.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: save-auth-row
+      require_correct_instance: true
+      target_instance_label_or_id: Auth
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Saving the Billing row instead of Auth.
+  - Typing the sentence without blockquote formatting.
+  - Using inline code around the wrong text or omitting backticks.
+  - Leaving Auth empty or unsaved.
+  expected_interaction_path:
+  - Locate the Auth row.
+  - Enter the exact one-line blockquote with inline code.
+  - Leave Billing unchanged.
+  - Click Save in the Auth row.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T14
+  name: Four-editor high-contrast customer note
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside high-contrast settings panel'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: 'In the high-contrast settings panel, edit only the markdown editor labeled “Customer-facing note” so that its content becomes exactly:
+
+
+    ## Customer note
+
+    Release postponed to Tuesday.
+
+    Please watch the status page.
+
+
+    Do not edit the other three editors. Then click “Save panel”. The task will finish automatically when done.'
+  ui_copy: 'In the high-contrast settings panel, edit only the markdown editor labeled “Customer-facing note” so that its content becomes exactly:
+
+
+    ## Customer note
+
+    Release postponed to Tuesday.
+
+    Please watch the status page.
+
+
+    Do not edit the other three editors. Then click “Save panel”. The task will finish automatically when done.'
+  setup_description: 'Layout is settings_panel with high-contrast theme, compact spacing, and high clutter. Four markdown editors are stacked in one column: “Summary”, “Customer-facing note”, “Rollback
+    note”, and “Internal escalation”. Each has the same compact toolbar and a small preview. Initial contents are all different; only “Customer-facing note” should change. The panel also contains unrelated
+    toggles, segmented controls, and status chips above the editors. A single “Save panel” button commits all four editors.'
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - theme
+    - clutter
+    factor_rationale: 'The high-concentration panel loads disambiguation and local context heavily: the agent must target the one correct editor among four similarly rendered instances and preserve the
+      rest through a single shared save.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: 'The content itself is simple, but the scene is intentionally high-pressure: four same-type instances, compact layout, and one shared commit step.'
+  success_trigger:
+    human_readable:
+    - The committed markdown in “Customer-facing note” equals the target source after normalization.
+    - The other three markdown editors remain unchanged.
+    - The “Save panel” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_instance: Customer-facing note
+        content: '## Customer note
+
+          Release postponed to Tuesday.
+
+          Please watch the status page.'
+        saved: true
+        non_target_instances_must_remain:
+          Summary: Summary draft.
+          Rollback note: Rollback checklist.
+          Internal escalation: Escalate only if paging.
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Save panel
+      require_correct_instance: true
+      target_instance_label_or_id: Customer-facing note
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing any editor other than “Customer-facing note”.
+  - Editing more than one editor before saving.
+  - Entering the right text but forgetting the `## Customer note` heading.
+  - Failing to click “Save panel”.
+  expected_interaction_path:
+  - Scan the four editor labels carefully.
+  - Edit only the Customer-facing note source.
+  - Leave all other editors untouched.
+  - Click “Save panel”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T15
+  name: Bottom drawer checklist localized wording edit
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside bottom drawer'
+  task_template: scroll_find
+  secondary_template: editor_operation
+  browsergym_goal: Open the “Ops checklist” drawer. In the “Ops checklist (Markdown)” editor, scroll to the checklist section and change `- [ ] Draft rollback steps` to `- [ ] Review rollback steps`. Do
+    not change the checkbox state or any other line. Then click “Apply checklist”. The task will finish automatically when done.
+  ui_copy: Open the “Ops checklist” drawer. In the “Ops checklist (Markdown)” editor, scroll to the checklist section and change `- [ ] Draft rollback steps` to `- [ ] Review rollback steps`. Do not change
+    the checkbox state or any other line. Then click “Apply checklist”. The task will finish automatically when done.
+  setup_description: Layout is drawer_flow with compact spacing and medium clutter. A bottom drawer slides up over a status dashboard when “Edit ops checklist” is clicked. The drawer contains one fixed-height
+    markdown editor labeled “Ops checklist (Markdown)” with internal scrolling and an edit-only source pane. The checklist section is initially offscreen. The drawer footer contains “Cancel” and “Apply
+    checklist”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: The agent must reach an offscreen checklist item inside the editor, make a localized text-only change without touching the checkbox syntax, and then commit it through a drawer-local
+      action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: This is a targeted internal-scroll edit where the visible markdown syntax must be preserved exactly while only the wording changes.
+  success_trigger:
+    human_readable:
+    - The committed markdown equals the target source after normalization.
+    - The checkbox marker remains unchecked on the edited line.
+    - The “Apply checklist” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: '# Ops checklist
+
+
+          ## Checklist
+
+          - [ ] Review rollback steps
+
+          - [ ] Notify support
+
+          - [ ] Check alerts'
+        saved: true
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+      require_confirm: true
+      confirm_control: Apply checklist
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing `[ ]` to `[x]` or otherwise changing the checkbox state.
+  - Editing another checklist item instead of the rollback line.
+  - Making the wording change but not clicking “Apply checklist”.
+  - Changing multiple lines in the document.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll within the editor to the checklist section.
+  - Edit only the rollback line text.
+  - Click “Apply checklist”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: markdown_editor-external-v2-T16
+  name: Preview-verified troubleshooting correction
+  canonical_type: markdown_editor
+  implementation_source: external
+  implementation_variant: uiw/react-md-editor
+  implementation_component: 'External: @uiw/react-md-editor inside inline surface'
+  task_template: editor_operation
+  secondary_template: match_reference
+  browsergym_goal: In the “Troubleshooting note” markdown editor, correct the source so that the preview shows an H3 heading `Troubleshooting`, a bullet `Logs attached`, and a blockquote `Restart the worker
+    if retries stall.` Then click “Save note”. The task will finish automatically when done.
+  ui_copy: In the “Troubleshooting note” markdown editor, correct the source so that the preview shows an H3 heading `Troubleshooting`, a bullet `Logs attached`, and a blockquote `Restart the worker if
+    retries stall.` Then click “Save note”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing and medium clutter. The editor sits inline inside a larger troubleshooting card with an incidents table and two nearby filters. The markdown
+    editor starts with a near-match source: the heading is `## Troubleshooting`, the bullet is plain text instead of a list item, and the final note is not a blockquote. A live preview is shown under the
+    editor. The card-local “Save note” button commits the final state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - precision_surface
+    factor_rationale: The starting state is deliberately close but wrong, so the task pressures preview-aware correction rather than source filling, and the explicit save discourages stopping at a plausible
+      intermediate state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: This is hard because the agent must diagnose and repair a near-match using both source and preview, not because the editor is difficult to locate.
+  success_trigger:
+    human_readable:
+    - The committed source markdown equals the target source after normalization.
+    - The rendered preview shows the required heading level, bullet list item, and blockquote.
+    - The “Save note” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: '### Troubleshooting
+
+          - Logs attached
+
+
+          > Restart the worker if retries stall.'
+        saved: true
+      tolerance:
+        normalize_newlines: true
+        trim_trailing_whitespace: true
+        trim_outer_blank_lines: true
+        render_equivalence: true
+      require_confirm: true
+      confirm_control: Save note
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the heading at level 2 instead of level 3.
+  - Leaving `Logs attached` as plain text instead of a bullet.
+  - Leaving the final note outside a blockquote.
+  - Correcting the preview but not clicking “Save note”.
+  expected_interaction_path:
+  - Inspect the current source and preview.
+  - Correct the heading level, bullet formatting, and blockquote syntax.
+  - Verify the preview is exact.
+  - Click “Save note”.
+  notes: Use wrapper-exposed committed markdown and, where relevant, rendered preview for checking. Judge final visible/committed state, not a specific keystroke path.
+- id: code_editor-antd-v2-T01
+  name: Response editor replace widget in drawer
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: Drawer + Monaco Editor + toolbar buttons [composite]'
+  task_template: editor_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the “API script” drawer. In the “Response transform” editor, use the editor’s Replace widget to replace every `TODO` with `DONE`, leave the “Request transform” editor unchanged,
+    and then click “Apply response”. The task will finish automatically when done.
+  ui_copy: Open the “API script” drawer. In the “Response transform” editor, use the editor’s Replace widget to replace every `TODO` with `DONE`, leave the “Request transform” editor unchanged, and then
+    click “Apply response”. The task will finish automatically when done.
+  setup_description: "Layout is drawer_flow with compact spacing and medium clutter. Clicking “Edit API script” opens a right-side Ant Design Drawer containing two Monaco editors stacked vertically: “Request\
+    \ transform” and “Response transform”. Each editor has a small toolbar with Find, Replace, and Apply buttons, but only the Response editor’s Apply button should be used.\nInitial source in Response\
+    \ transform contains two TODO markers:\n// TODO: sanitize\nfunction transform(res) {\n  // TODO: map output\n  return res;\n}\nThe Request editor contains a different script and must remain unchanged."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: 'The hard part is not knowing what to type: it is selecting the correct editor, using the transient replace widget rather than generic fill, and then pairing the edit with the matching
+      local Apply control.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two near-identical editors, a tiny overlay workflow, and a row-local Apply make this a strong L3 editor task.
+  success_trigger:
+    human_readable:
+    - The Response transform editor’s committed content matches the target source exactly after normalization.
+    - The Request transform editor remains unchanged.
+    - The Response transform Apply control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_editor: Response transform
+        content: "// DONE: sanitize\nfunction transform(res) {\n  // DONE: map output\n  return res;\n}"
+        language: javascript
+        saved: true
+        non_target_instances_must_remain:
+          Request transform: "function requestTransform(req) {\n  return req;\n}"
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: apply-response-transform
+      require_correct_instance: true
+      target_instance_label_or_id: Response transform
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing TODO in the Request transform editor instead of Response transform.
+  - Replacing only one occurrence of TODO.
+  - Editing the content correctly but clicking the wrong Apply button or not applying at all.
+  - Typing DONE manually but altering surrounding punctuation or spacing.
+  expected_interaction_path:
+  - Open the drawer.
+  - Focus the Response transform editor.
+  - Open the Replace widget and replace all TODO → DONE.
+  - Click the Response editor’s Apply button.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mui-v2-T01
+  name: 'Diff editor: resolve difference to match reference'
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco_diff
+  implementation_component: 'MUI: Paper + Monaco DiffEditor [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Response mapping" diff editor, the code has a difference highlighted (like a git diff). Edit the modified version to resolve the diff so it exactly matches the reference, then
+    click "Save mapping". The task will finish automatically when done.
+  ui_copy: In the "Response mapping" diff editor, the code has a difference highlighted (like a git diff). Edit the modified version to resolve the diff so it exactly matches the reference, then click "Save
+    mapping". The task will finish automatically when done.
+  setup_description: "Layout is dashboard_panel with comfortable spacing, center placement, and medium clutter. The main card contains one Monaco DiffEditor labeled “Response mapping”. The left pane is\
+    \ read-only and shows the target code; the right pane is editable and starts as a near-match. Differences are rendered side by side.\nThe read-only pane shows:\nexport function mapResponse(res) {\n\
+    \  return { ok: res.status === 200 };\n}\nThe editable right pane instead returns `{ statusOk: ... }`. A “Save mapping” button below the diff card commits the editable pane."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - internal_scroll_region
+    factor_rationale: 'A diff surface is visually rich but still editor-native: the left pane makes the target obvious, yet the agent must still focus and repair the editable right pane exactly and then
+      commit it.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: This is a hard exact-match task because the editable pane starts from a close but wrong state and must be committed after repair.
+  success_trigger:
+    human_readable:
+    - The editable right pane exactly matches the read-only left pane after normalization.
+    - The “Save mapping” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-response-mapping-left
+        target_editor: Response mapping__right
+        match_mode: exact
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Save mapping
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the left read-only pane is impossible and does not count.
+  - Making the right pane semantically similar but not character-exact.
+  - Leaving a single difference marker in the diff and clicking Save.
+  - Matching the panes but not clicking “Save mapping”.
+  expected_interaction_path:
+  - Read the left pane.
+  - Edit the right pane until no differences remain.
+  - Verify the panes are identical.
+  - Click “Save mapping”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mantine-v2-T01
+  name: Top drawer deep-line constant edit
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Drawer + CodeMirror 6 [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Open the “Worker script” drawer. In the editor, scroll to line 180 and change `const RETRIES = 1;` to `const RETRIES = 3;`, then click “Save worker script”. The task will finish automatically
+    when done.
+  ui_copy: Open the “Worker script” drawer. In the editor, scroll to line 180 and change `const RETRIES = 1;` to `const RETRIES = 3;`, then click “Save worker script”. The task will finish automatically
+    when done.
+  setup_description: Layout is drawer_flow with dark theme, compact spacing, and low clutter. A top-position Mantine Drawer opens when “Edit worker script” is clicked. Inside is a single CodeMirror editor
+    with line numbers and an internal scrollbar. The file is about 220 lines long; the target line is not visible initially. The drawer footer contains “Cancel” and “Save worker script”. Changes are not
+    committed until Save.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The agent must operate an internal editor viewport inside a top drawer, reach a deep line reliably, make a one-token edit, and then commit it explicitly.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Deep in-editor scrolling plus an exact localized replacement and required save make this a strong L3 internal-scroll task.
+  success_trigger:
+    human_readable:
+    - The committed editor content contains `const RETRIES = 3;` at the former target location and no remaining `const RETRIES = 1;` on that line.
+    - The “Save worker script” control has been clicked.
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        must_contain: const RETRIES = 3;
+        must_not_contain: const RETRIES = 1;
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: true
+      confirm_control: Save worker script
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing a different RETRIES constant elsewhere in the file.
+  - Changing the value visually but not clicking “Save worker script”.
+  - Scrolling the page or drawer instead of the editor and never reaching the target line.
+  - Changing surrounding code unnecessarily.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll inside the editor to around line 180.
+  - Replace `1` with `3` on the RETRIES line.
+  - Click “Save worker script”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-antd-v2-T02
+  name: Secondary YAML editor exact match with local save
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: settings panel + CodeMirror 6 editors [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Secondary — Environment config” editor, make the code exactly match the Example snippet, then click the Secondary editor’s “Save” button. Do not edit the Primary editor. The task
+    will finish automatically when done.
+  ui_copy: In the “Secondary — Environment config” editor, make the code exactly match the Example snippet, then click the Secondary editor’s “Save” button. Do not edit the Primary editor. The task will
+    finish automatically when done.
+  setup_description: "Layout is settings_panel with compact spacing and medium clutter. Two CodeMirror editors are stacked: “Primary — Deployment script” and “Secondary — Environment config”. Each card\
+    \ has its own tiny Save button and a read-only Example block on the right. The Secondary editor starts with `# env config`.\nThe Example block for Secondary shows:\nenv:\n  MODE: production\n  DEBUG:\
+    \ \"false\"\nOnly the Secondary editor should change."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - confirmation_model
+    factor_rationale: Two similar editors with separate Save buttons turn a short YAML target into a wrong-instance and wrong-save problem rather than a plain source-fill task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The YAML is short, but small-scale duplicated editors and card-local save controls make the interaction meaningfully hard.
+  success_trigger:
+    human_readable:
+    - The Secondary editor content exactly matches the Example snippet after normalization.
+    - The Primary editor remains unchanged.
+    - The Secondary editor’s Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_editor: Secondary — Environment config
+        content: "env:\n  MODE: production\n  DEBUG: \"false\""
+        language: yaml
+        saved: true
+        non_target_instances_must_remain:
+          Primary — Deployment script: deploy();
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: save-secondary-environment
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Environment config
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Primary editor instead of Secondary.
+  - Matching the Example snippet but clicking the Primary Save button.
+  - Typing YAML that is semantically similar but not exact to the Example block.
+  - Leaving the Secondary editor unsaved.
+  expected_interaction_path:
+  - Locate the Secondary editor and its Example block.
+  - Enter the exact YAML shown in the Example.
+  - Leave the Primary editor untouched.
+  - Click the Secondary Save control.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mui-v2-T02
+  name: Modal routes editor replace-all and save
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: Dialog + Monaco Editor [composite]'
+  task_template: editor_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit routes”. In the “Routes editor”, replace every occurrence of `/v1/` with `/v2/`, then click “Save routes”. The task will finish automatically when done.
+  ui_copy: Open “Edit routes”. In the “Routes editor”, replace every occurrence of `/v1/` with `/v2/`, then click “Save routes”. The task will finish automatically when done.
+  setup_description: Layout is modal_flow with compact spacing and medium clutter. A centered MUI Dialog opens when “Edit routes” is clicked. Inside is one Monaco editor labeled “Routes editor” with a small
+    toolbar containing Replace and Save. The source contains exactly three occurrences of `/v1/`. Clicking Replace opens Monaco’s replace widget overlay within the editor. The dialog closes only after Save
+    succeeds.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The replace-all flow occurs inside a modal and inside the editor itself, so the task separates content understanding from the harder question of whether the agent can drive a transient
+      editor-native overlay and then commit the result.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: This is hard because success depends on both overlay handling and final commit inside a modal, not because the string replacement is semantically difficult.
+  success_trigger:
+    human_readable:
+    - All `/v1/` occurrences in the committed editor content are replaced with `/v2/`.
+    - The modal Save control has been clicked and the modal is closed.
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        must_contain: /v2/
+        must_not_contain: /v1/
+        saved: true
+        overlay_open: false
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: true
+      confirm_control: Save routes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing only some `/v1/` occurrences.
+  - Editing the routes manually but leaving one `/v1/` occurrence unchanged.
+  - Changing the content correctly but not clicking “Save routes”.
+  - Closing the dialog without saving.
+  expected_interaction_path:
+  - Open the dialog.
+  - Open the Replace widget and replace all `/v1/` → `/v2/`.
+  - Verify no `/v1/` occurrences remain.
+  - Click “Save routes”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mantine-v2-T02
+  name: Request/response sanitizer pair with exact response commit
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_monaco
+  implementation_component: 'Mantine: dashboard card + Monaco editors [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dashboard card, edit only the “Response sanitizer” editor so that it exactly matches the Example snippet, then click “Commit response sanitizer”. Do not change “Request sanitizer”.
+    The task will finish automatically when done.
+  ui_copy: In the dashboard card, edit only the “Response sanitizer” editor so that it exactly matches the Example snippet, then click “Commit response sanitizer”. Do not change “Request sanitizer”. The
+    task will finish automatically when done.
+  setup_description: "Layout is dashboard_panel with comfortable spacing and medium clutter. A card contains two Monaco editors side by side: “Request sanitizer” and “Response sanitizer”. To the far right\
+    \ is a read-only Example panel for the Response sanitizer showing:\nexport function sanitize(res) {\n  if (!res) return null;\n  return res;\n}\nThe Response editor starts without the guard clause.\
+    \ A button under only the Response editor reads “Commit response sanitizer”. The Request editor has no matching change and must remain untouched."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - confirmation_model
+    factor_rationale: The reference panel keeps semantic load low so the task stresses choosing the correct sibling editor and making the exact missing insertion before using the matching commit control.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The task is exact and local, but the real difficulty comes from the sibling-editor disambiguation and exact insertion position.
+  success_trigger:
+    human_readable:
+    - The Response sanitizer editor exactly matches the Example snippet after normalization.
+    - The Request sanitizer editor remains unchanged.
+    - The “Commit response sanitizer” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_editor: Response sanitizer
+        content: "export function sanitize(res) {\n  if (!res) return null;\n  return res;\n}"
+        saved: true
+        non_target_instances_must_remain:
+          Request sanitizer: "export function sanitize(req) {\n  return req;\n}"
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Commit response sanitizer
+      require_correct_instance: true
+      target_instance_label_or_id: Response sanitizer
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding the guard clause to the Request sanitizer instead of the Response sanitizer.
+  - Adding a semantically similar but not exact guard clause.
+  - Matching the content but not clicking the Response commit control.
+  - Changing both editors.
+  expected_interaction_path:
+  - Inspect the Example panel.
+  - Edit only the Response sanitizer source to match it exactly.
+  - Leave Request sanitizer unchanged.
+  - Click “Commit response sanitizer”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-antd-v2-T03
+  name: Rule B JSON patch in dense table cell
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: dense table row + CodeMirror patch editor [composite]'
+  task_template: table_operation
+  secondary_template: enter_formatted
+  browsergym_goal: In the “Rule B” row, replace the Patch editor content with the exact patch shown in the Example column, then click “Save” in the Rule B row. Do not change Rule A. The task will finish
+    automatically when done.
+  ui_copy: In the “Rule B” row, replace the Patch editor content with the exact patch shown in the Example column, then click “Save” in the Rule B row. Do not change Rule A. The task will finish automatically
+    when done.
+  setup_description: "Layout is table_cell with compact spacing, small scale, and medium clutter. Two rows, Rule A and Rule B, are visible. Each row has a compact patch editor, an Example code block, and\
+    \ a row-local Save button.\nRule B’s Example block shows:\n[\n  { \"op\": \"add\", \"path\": \"/headers/X-Trace\", \"value\": \"1\" }\n]\nThe Rule B editor initially contains `[]`. Rule A must remain\
+    \ unchanged."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Small dense row editors plus row-scoped saves create a strong wrong-row and wrong-save risk while the exact patch requirement keeps the task component-centric.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: 'This is hard on both grounding and exactness: the right patch must go into the right row, and the correct row-local Save must fire.'
+  success_trigger:
+    human_readable:
+    - The Rule B Patch editor content exactly matches the target patch after normalization.
+    - Rule A remains unchanged.
+    - The Rule B row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_editor: Rule B Patch
+        content: "[\n  { \"op\": \"add\", \"path\": \"/headers/X-Trace\", \"value\": \"1\" }\n]"
+        saved: true
+        non_target_instances_must_remain:
+          Rule A Patch: '[]'
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: save-rule-b
+      require_correct_instance: true
+      target_instance_label_or_id: Rule B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Rule A instead of Rule B.
+  - Entering a patch that is close but not exact.
+  - Matching the Example content but clicking the wrong Save button.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate the Rule B row.
+  - Copy or type the exact patch into the Rule B editor.
+  - Leave Rule A untouched.
+  - Click Save in the Rule B row.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mui-v2-T03
+  name: Dark nested-scroll long-file timeout edit
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: nested scroll panel + Monaco Editor [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'In the editor, scroll down to around line 250 and change the setting `"timeoutMs": 1000` to `"timeoutMs": 2500`. The task will finish automatically when done.'
+  ui_copy: 'In the editor, scroll down to around line 250 and change the setting `"timeoutMs": 1000` to `"timeoutMs": 2500`. The task will finish automatically when done.'
+  setup_description: Layout is nested_scroll with dark theme, compact spacing, and medium clutter. The editor sits inside a scrollable left-side panel, while a separate page-level scroll region contains
+    build metrics and deployment cards. The Monaco editor itself has a thin internal scrollbar and about 300 lines of JSON-like configuration. The target line is not visible initially. Changes are live—there
+    is no Save button for this task.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - placement
+    factor_rationale: 'The task isolates internal editor scrolling rather than modal confirmation: the agent must find the right line inside the editor’s viewport in a nested-scroll scene and make a localized
+      token edit without any save affordance as feedback.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This is hard because the file is long and the editor is embedded in a nested scroll layout, so reaching and editing the correct line is the real challenge.
+  success_trigger:
+    human_readable:
+    - 'The editor content contains `"timeoutMs": 2500` at the target location and no remaining `"timeoutMs": 1000` at that location.'
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        must_contain: '"timeoutMs": 2500'
+        must_not_contain: '"timeoutMs": 1000'
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing a different numeric setting instead of timeoutMs.
+  - Changing the value but also editing unrelated parts of the file.
+  - Scrolling the page instead of the editor and never reaching the target line.
+  - Leaving timeoutMs at 1000.
+  expected_interaction_path:
+  - Focus the editor.
+  - Scroll within the editor to about line 250.
+  - Replace `1000` with `2500` on the timeout line.
+  - Stop once the value is correct.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mantine-v2-T03
+  name: Response status replacement in right drawer
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_monaco
+  implementation_component: 'Mantine: right Drawer + Monaco editors [composite]'
+  task_template: editor_operation
+  secondary_template: open_overlay
+  browsergym_goal: 'Open the “Integrations” drawer. In the “Response handler” editor, change the only `status: 500` to `status: 503` using the editor’s find or replace controls, leave the “Request handler”
+    editor unchanged, and click “Apply handler”. The task will finish automatically when done.'
+  ui_copy: 'Open the “Integrations” drawer. In the “Response handler” editor, change the only `status: 500` to `status: 503` using the editor’s find or replace controls, leave the “Request handler” editor
+    unchanged, and click “Apply handler”. The task will finish automatically when done.'
+  setup_description: 'Layout is drawer_flow with compact spacing and medium clutter. Clicking “Edit integrations” opens a Mantine Drawer from the right. Inside are two same-size Monaco editors titled “Request
+    handler” and “Response handler”. The Response editor contains one line `status: 500` inside a longer handler function. A small toolbar button opens the Find widget overlay. The drawer footer contains
+    a single button labeled “Apply handler” that commits only the Response editor.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The drawer already adds one layer, and the editor-native find overlay adds a second; combined with two sibling editors and one correct apply target, the task strongly stresses grounded
+      editor control.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: 'This is a layered same-instance task: even after the agent finds the right editor, it still has to operate an overlay and pair the edit with the correct apply step.'
+  success_trigger:
+    human_readable:
+    - 'The committed content in the Response handler editor contains `status: 503` and no `status: 500` at the target location.'
+    - The Request handler editor remains unchanged.
+    - The “Apply handler” control has been clicked.
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        target_editor: Response handler
+        must_contain: 'status: 503'
+        must_not_contain: 'status: 500'
+        saved: true
+        non_target_instances_must_remain:
+          Request handler: "export function requestHandler(req) {\n  return req;\n}"
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: true
+      confirm_control: Apply handler
+      require_correct_instance: true
+      target_instance_label_or_id: Response handler
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Request handler instead of Response handler.
+  - Typing 503 somewhere else without changing the target line.
+  - Changing the content correctly but not clicking “Apply handler”.
+  - Closing the drawer without saving.
+  expected_interaction_path:
+  - Open the drawer.
+  - Focus the Response handler editor.
+  - Use Find/Replace or direct editing to change the status code.
+  - Click “Apply handler”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-antd-v2-T04
+  name: Worker tab insertion above run function
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco_tabs
+  implementation_component: 'AntD: Tabs + Monaco Editor [composite]'
+  task_template: editor_operation
+  secondary_template: navigate_to
+  browsergym_goal: In the tabbed editor surface, go to the “Worker script” tab and insert `const MAX_RETRIES = 3;` directly above `async function run() {`. Then click “Save worker tab”. The task will finish
+    automatically when done.
+  ui_copy: In the tabbed editor surface, go to the “Worker script” tab and insert `const MAX_RETRIES = 3;` directly above `async function run() {`. Then click “Save worker tab”. The task will finish automatically
+    when done.
+  setup_description: "Layout is inline_surface with compact spacing and high clutter. A card contains Ant Design card-style tabs: “Overview”, “API script”, and “Worker script”. Only one tab is visible at\
+    \ a time. The Worker script tab contains a Monaco editor starting with:\nasync function run() {\n  return true;\n}\nThe card header also contains unrelated badges and small action buttons. A tab-local\
+    \ button labeled “Save worker tab” appears only when the Worker tab is active."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - clutter
+    - confirmation_model
+    factor_rationale: The component remains the editor, but a tab change is required to reach it, and cluttered card chrome makes the correct tab and save control less visually isolated than in a plain
+      card.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: 'This task adds light navigation pressure without changing the primary skill: exact insertion in the correct editor and explicit save.'
+  success_trigger:
+    human_readable:
+    - The Worker script editor content equals the target source after normalization.
+    - The “Save worker tab” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: "const MAX_RETRIES = 3;\nasync function run() {\n  return true;\n}"
+        language: javascript
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Save worker tab
+      require_correct_instance: false
+      target_instance_label_or_id: Worker script
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the API script tab instead of Worker script.
+  - Appending the constant elsewhere instead of directly above `async function run() {`.
+  - Navigating correctly but not saving the Worker tab.
+  - Changing unrelated tab content.
+  expected_interaction_path:
+  - Switch to the Worker script tab.
+  - Insert the constant directly above the run function.
+  - Verify the placement is exact.
+  - Click “Save worker tab”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mui-v2-T04
+  name: Two similar editors exact response mapping
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: settings panel + two Monaco editors [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the settings panel, edit only the editor labeled “Response mapping” so that it exactly matches its Reference snippet, then click “Save response mapping”. Do not change the “Request
+    body” editor. The task will finish automatically when done.
+  ui_copy: In the settings panel, edit only the editor labeled “Response mapping” so that it exactly matches its Reference snippet, then click “Save response mapping”. Do not change the “Request body” editor.
+    The task will finish automatically when done.
+  setup_description: "Layout is settings_panel with comfortable spacing and medium clutter. Two Monaco editors appear in a form-like right panel: “Request body” and “Response mapping”. Each has its own\
+    \ small Save button and a small Reference box.\nThe Response mapping Reference shows:\nexport function mapResponse(res) {\n  return { ok: res.status === 200 };\n}\nThe editable Response mapping editor\
+    \ starts as a near-match returning `{ ok: res.ok }`. The Request body editor must remain unchanged."
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - confirmation_model
+    factor_rationale: The sibling editor and sibling Save buttons make wrong-instance failures possible even though the target code is short and clearly visible in the Reference box.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: This exact-match task is hard because it combines near-match correction with same-type disambiguation and card-local save semantics.
+  success_trigger:
+    human_readable:
+    - The Response mapping editor exactly matches the reference source after normalization.
+    - The Request body editor remains unchanged.
+    - The “Save response mapping” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-response-mapping-mui-v2
+        reference_source: "export function mapResponse(res) {\n  return { ok: res.status === 200 };\n}"
+        saved: true
+        non_target_instances_must_remain:
+          Request body: '{"status":"ok"}'
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Save response mapping
+      require_correct_instance: true
+      target_instance_label_or_id: Response mapping
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Request body editor instead of Response mapping.
+  - Partially matching the reference snippet.
+  - Matching the content but not clicking “Save response mapping”.
+  - Changing both editors.
+  expected_interaction_path:
+  - Locate the Response mapping editor and its Reference box.
+  - Correct the Response mapping source to exactly match the reference.
+  - Leave Request body untouched.
+  - Click “Save response mapping”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mantine-v2-T04
+  name: Edit post-deploy hook, save, and confirm
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: modal + CodeMirror editor + confirm modal [composite]'
+  task_template: confirm_cancel
+  secondary_template: editor_operation
+  browsergym_goal: Open “Edit post-deploy hook”. In the “Hook script” editor, change `enabled = true` to `enabled = false`, click “Save”, and then click “Confirm” in the confirmation dialog. The task will
+    finish automatically when done.
+  ui_copy: Open “Edit post-deploy hook”. In the “Hook script” editor, change `enabled = true` to `enabled = false`, click “Save”, and then click “Confirm” in the confirmation dialog. The task will finish
+    automatically when done.
+  setup_description: 'Layout is modal_flow with compact spacing and medium clutter. Clicking “Edit post-deploy hook” opens a Mantine Modal containing one CodeMirror editor labeled “Hook script”.
+
+    Initial source is:
+
+    enabled = true
+
+    hook = "postDeploy"
+
+    The modal footer has “Save” and “Cancel”. Clicking Save opens a second confirmation modal with “Confirm” and “Cancel”. The hook change is committed only after Confirm.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - layout
+    factor_rationale: The visible text edit is easy, but the component pressure comes from preserving focus through a two-stage modal confirmation path and verifying that the commit only happens after the
+      final confirmation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The edit is simple, but the nested confirmation model makes this a verification-heavy editor task rather than a plain fill.
+  success_trigger:
+    human_readable:
+    - The committed Hook script equals the target source after normalization.
+    - The final confirmation control has been clicked.
+    - Both modals are closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: 'enabled = false
+
+          hook = "postDeploy"'
+        saved: true
+        overlay_open: false
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the text but clicking Cancel in either modal.
+  - Clicking Save without completing the Confirm step.
+  - Editing the wrong line or changing the hook name.
+  - Leaving the confirmation modal open.
+  expected_interaction_path:
+  - Open the first modal.
+  - Edit the enabled flag.
+  - Click Save.
+  - Click Confirm in the second modal.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-antd-v2-T05
+  name: Find cacheBust line in long build script and apply
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: nested scroll panel + Monaco Editor [composite]'
+  task_template: scroll_find
+  secondary_template: editor_operation
+  browsergym_goal: In the “Build script” editor, scroll to the `cacheBust` line and change `cacheBust = "off"` to `cacheBust = "hash"`, then click “Apply build script”. The task will finish automatically
+    when done.
+  ui_copy: In the “Build script” editor, scroll to the `cacheBust` line and change `cacheBust = "off"` to `cacheBust = "hash"`, then click “Apply build script”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing and medium clutter. The build settings page has an outer scrollable main column and a scrollable code-editor card inside it. The Monaco
+    editor shows about 12 lines at once. The file is long enough that the `cacheBust` line starts offscreen. A card-local button labeled “Apply build script” commits the editor value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: The task intentionally couples in-editor search-by-scroll with a local Apply requirement, because the attached code-editor evidence showed that reaching the right deep line and then
+      actually committing the edit are separable failure points.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This is a deep-line commit task where the file length and nested scroll layout create the actual difficulty, not the semantics of the string replacement.
+  success_trigger:
+    human_readable:
+    - The committed editor content contains `cacheBust = "hash"` and no longer contains `cacheBust = "off"` at the target line.
+    - The “Apply build script” control has been clicked.
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        must_contain: cacheBust = "hash"
+        must_not_contain: cacheBust = "off"
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: true
+      confirm_control: Apply build script
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing a different option instead of cacheBust.
+  - Changing the line correctly but not clicking “Apply build script”.
+  - Changing additional unrelated lines.
+  - Never reaching the offscreen line.
+  expected_interaction_path:
+  - Scroll within the editor until the cacheBust line is visible.
+  - Replace `off` with `hash`.
+  - Verify the line is exact.
+  - Click “Apply build script”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mui-v2-T05
+  name: After-hook row exact script and row save
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_codemirror6
+  implementation_component: 'MUI: table row + CodeMirror editor [composite]'
+  task_template: table_operation
+  secondary_template: enter_formatted
+  browsergym_goal: "In the “After hook” row, replace the script editor content with exactly:\n\nexport async function afterHook() {\n  return \"done\";\n}\n\nThen click “Save” in the After hook row. Do\
+    \ not edit the “Before hook” row. The task will finish automatically when done."
+  ui_copy: "In the “After hook” row, replace the script editor content with exactly:\n\nexport async function afterHook() {\n  return \"done\";\n}\n\nThen click “Save” in the After hook row. Do not edit\
+    \ the “Before hook” row. The task will finish automatically when done."
+  setup_description: 'Layout is table_cell with compact spacing, small scale, and medium clutter. Two rows are expanded: “Before hook” and “After hook”. Each row contains a CodeMirror editor, a status pill,
+    and a row-local Save button. The After hook editor starts with `// pending`; the Before hook editor already contains a valid script and must remain unchanged.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: 'The short script is easy to understand, so the table-row layout is doing the real diagnostic work: it forces the agent to bind the correct row, edit only that editor, and pair the
+      edit with the correct row-local save.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The row-scoped save and duplicated row structure make this a strong disambiguation and exactness task even though the target script is short.
+  success_trigger:
+    human_readable:
+    - The After hook editor content exactly matches the target source after normalization.
+    - The Before hook editor remains unchanged.
+    - The After hook row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        target_editor: After hook
+        content: "export async function afterHook() {\n  return \"done\";\n}"
+        saved: true
+        non_target_instances_must_remain:
+          Before hook: "export async function beforeHook() {\n  return \"ok\";\n}"
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: save-after-hook
+      require_correct_instance: true
+      target_instance_label_or_id: After hook
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Before hook row instead of After hook.
+  - Saving the wrong row.
+  - Typing a function that is semantically similar but not exact.
+  - Leaving the After hook editor as `// pending`.
+  expected_interaction_path:
+  - Locate the After hook row.
+  - Replace the editor content with the exact script.
+  - Leave Before hook unchanged.
+  - Click Save in the After hook row.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-mantine-v2-T05
+  name: Notification worker prepend import and change literal
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_monaco
+  implementation_component: 'Mantine: dashboard panel + Monaco Editor + example block [composite]'
+  task_template: editor_operation
+  secondary_template: match_reference
+  browsergym_goal: In the “Notification worker” editor, add `import { send } from "./mail";` at the top and change the string `"queued"` to `"sent"` so the source matches the Example panel, then click “Save
+    worker”. The task will finish automatically when done.
+  ui_copy: In the “Notification worker” editor, add `import { send } from "./mail";` at the top and change the string `"queued"` to `"sent"` so the source matches the Example panel, then click “Save worker”.
+    The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing and medium clutter. The card contains one Monaco editor labeled “Notification worker”, a read-only Example panel showing the desired final
+    source, and a “Save worker” button. Initial editor source is missing the import line and contains `return "queued";` inside the worker function.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - precision_surface
+    factor_rationale: 'The example panel removes semantic ambiguity, so the task becomes a clean editor-control problem: prepend one exact line, patch one literal, and commit the final result.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is an exact multi-location edit with a save boundary, which stays diagnostically focused on the editor rather than on code understanding.
+  success_trigger:
+    human_readable:
+    - The editor source exactly matches the Example panel after normalization.
+    - The “Save worker” control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-notification-worker
+        reference_source: "import { send } from \"./mail\";\nexport function worker() {\n  return \"sent\";\n}"
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Save worker
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding the import at the wrong location instead of the top of file.
+  - Changing the literal but forgetting the import.
+  - Matching the Example panel but not clicking “Save worker”.
+  - Adding any extra lines not in the Example.
+  expected_interaction_path:
+  - Inspect the Example panel.
+  - Prepend the import line at the top of the editor.
+  - Change `queued` to `sent`.
+  - Click “Save worker”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: code_editor-antd-v2-T06
+  name: Bottom drawer line-marker insertion with save
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: bottom Drawer + Monaco Editor [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Open the “Release script” drawer. In the “Script editor”, scroll to line 160 and insert a new line `// marker` directly above `// LINE 160`, then click “Save script”. The task will finish
+    automatically when done.
+  ui_copy: Open the “Release script” drawer. In the “Script editor”, scroll to line 160 and insert a new line `// marker` directly above `// LINE 160`, then click “Save script”. The task will finish automatically
+    when done.
+  setup_description: Layout is drawer_flow with compact spacing and medium clutter. Clicking “Edit release script” opens a bottom drawer containing one Monaco editor labeled “Script editor”. The file consists
+    of numbered comment lines from `// LINE 001` through `// LINE 220`. Only about 14 lines are visible at once. The drawer footer contains “Cancel” and “Save script”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: This keeps the strong old deep-line insertion pattern but adds a real drawer save boundary so success depends on both reaching the correct location and committing the edit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A long numbered file makes the target location explicit but still hard to reach; inserting one exact line at one exact location and saving is a robust L3 editor test.
+  success_trigger:
+    human_readable:
+    - The committed editor content contains the exact two-line sequence `// marker` followed immediately by `// LINE 160`.
+    - The marker line appears exactly once in the file.
+    - The “Save script” control has been clicked.
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        must_contain: '// marker
+
+          // LINE 160'
+        marker_line: // marker
+        marker_count: 1
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: true
+      confirm_control: Save script
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding `// marker` somewhere other than directly above `// LINE 160`.
+  - Adding multiple marker lines.
+  - Editing the target line itself instead of inserting a new one above it.
+  - Inserting correctly but not clicking “Save script”.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll within the editor to line 160.
+  - Insert a new line `// marker` directly above the target line.
+  - Click “Save script”.
+  notes: Read the editor model and a saved/committed flag from the wrapper. For multi-editor layouts, instrument each editor root and each local Save/Apply control separately.
+- id: json_editor-antd-v2-T01
+  name: Override config maxUsers with local apply
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor_tree_code
+  implementation_component: 'AntD: settings panel + JSONEditor tree/code [external]'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the “Override config (JSON)” editor, set `limits.maxUsers` to `50` and click “Apply” for that editor. Do not edit the “Primary config (JSON)” editor. The task will finish automatically
+    when done.
+  ui_copy: In the “Override config (JSON)” editor, set `limits.maxUsers` to `50` and click “Apply” for that editor. Do not edit the “Primary config (JSON)” editor. The task will finish automatically when
+    done.
+  setup_description: 'Layout is settings_panel with compact spacing and medium clutter. The page shows two JSON editor cards stacked vertically: “Primary config (JSON)” and “Override config (JSON)”. Both
+    start in Tree mode and each has its own Apply button. Initial JSON in Primary is `{"limits":{"maxUsers":25,"maxProjects":10},"features":{"beta":false}}`. Initial JSON in Override is `{"limits":{"maxUsers":10,"maxProjects":5},"features":{"beta":false}}`.
+    Only the Override editor should change.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - secondary_supporting_primitive
+    - confirmation_model
+    factor_rationale: Two similar tree editors with separate local Apply buttons reproduce the strongest wrong-instance and wrong-save failure chain from the attached JSON evidence while keeping the semantic
+      target simple.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The nested path is straightforward, but the duplicate-instance and local-Apply structure make this a genuinely hard editor task.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at `$.limits.maxUsers` in “Override config (JSON)” equals 50.
+    - The Primary config editor remains unchanged.
+    - The Override editor’s Apply control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.limits.maxUsers
+        value: 50
+        saved: true
+        non_target_instances_must_remain:
+          Primary config (JSON):
+            limits:
+              maxUsers: 25
+              maxProjects: 10
+            features:
+              beta: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: apply-override-config
+      require_correct_instance: true
+      target_instance_label_or_id: Override config (JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Updating `maxUsers` in the Primary config instead of the Override config.
+  - Updating `maxProjects` instead of `maxUsers`.
+  - Setting the value to a different number.
+  - Editing correctly but clicking the wrong Apply button or not applying at all.
+  expected_interaction_path:
+  - Locate the Override config editor.
+  - Expand `limits` if needed and edit `maxUsers` to 50.
+  - Leave the Primary config unchanged.
+  - Click the Override Apply control.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mui-v2-T01
+  name: Raw JSON repair in modal and apply
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor_code_modal
+  implementation_component: 'MUI: Dialog + JSONEditor code mode [external]'
+  task_template: confirm_cancel
+  secondary_template: enter_formatted
+  browsergym_goal: Open the raw JSON editor. Make the JSON valid, set `mode` to `"safe"` and `threshold` to `0.8`, then click “Apply”. The task will finish automatically when done.
+  ui_copy: Open the raw JSON editor. Make the JSON valid, set `mode` to `"safe"` and `threshold` to `0.8`, then click “Apply”. The task will finish automatically when done.
+  setup_description: "Layout is modal_flow with compact spacing and low clutter. A settings card contains a button labeled “Edit raw JSON…”. Clicking it opens a centered MUI Dialog with one JSONEditor instance\
+    \ starting in Code mode.\nThe editor shows invalid JSON on load:\n{\n  \"mode\": \"safe\",\n  \"threshold\": 0.8,\n}\nA validation message appears under the editor and the Apply button is disabled until\
+    \ the JSON becomes valid. The dialog footer contains “Cancel” and “Apply”."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - precision_surface
+    factor_rationale: The goal is simple semantically, but the task becomes diagnostic because the editor opens in an invalid state and the commit control is unavailable until the agent repairs the code-mode
+      buffer and notices the state change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: This is a recovery-heavy modal editor task because the agent must resolve validation before the explicit apply step is even available.
+  success_trigger:
+    human_readable:
+    - 'The committed JSON equals `{ "mode": "safe", "threshold": 0.8 }` after parsing.'
+    - The dialog Apply control has been clicked and the dialog is closed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          mode: safe
+          threshold: 0.8
+        saved: true
+        overlay_open: false
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the JSON invalid and unable to apply.
+  - Producing valid JSON with the wrong mode or wrong threshold value.
+  - Fixing the content but closing or cancelling the dialog instead of applying.
+  - Adding extra keys beyond the requested object.
+  expected_interaction_path:
+  - Open the raw JSON dialog.
+  - Remove the syntax error and ensure the JSON matches the requested object.
+  - Wait until the Apply button becomes enabled.
+  - Click Apply.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mantine-v2-T01
+  name: 'Drawer duplicate editors: add Slack to Service B only'
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor_tree_drawer
+  implementation_component: 'Mantine: Drawer + two JSONEditor instances [external]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'Open the “Integrations” drawer. In the editor labeled “Service B config (JSON)”, use the editor search to jump to `integrations`, add a child key `slack` with `enabled: true` and `channel:
+    "#alerts"`, and click “Save” for Service B only. The task will finish automatically when done.'
+  ui_copy: 'Open the “Integrations” drawer. In the editor labeled “Service B config (JSON)”, use the editor search to jump to `integrations`, add a child key `slack` with `enabled: true` and `channel: "#alerts"`,
+    and click “Save” for Service B only. The task will finish automatically when done.'
+  setup_description: 'Layout is drawer_flow with compact spacing and medium clutter. A Mantine Drawer opens from the right and contains two JSON editors side by side: “Service A config (JSON)” and “Service
+    B config (JSON)”. Both start in Tree mode and both have a small built-in search field plus a local Save button. Each document contains an `integrations` object but only Service B should gain the new
+    `slack` child. Service A must remain unchanged.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - internal_scroll_region
+    factor_rationale: This preserves the strong duplicate-instance/local-save pattern while adding a small search-box control so the task remains about grounded node selection and commit, not about scrolling
+      through every branch manually.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two same-type editors, nested addition of an object, and editor-local search and save make this a high-disambiguation hard task.
+  success_trigger:
+    human_readable:
+    - 'The committed JSON in Service B contains `integrations.slack = {enabled: true, channel: "#alerts"}`.'
+    - Service A remains unchanged.
+    - The Service B Save control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.integrations.slack
+        value:
+          enabled: true
+          channel: '#alerts'
+        saved: true
+        non_target_instances_must_remain:
+          Service A config (JSON):
+            integrations:
+              email:
+                enabled: true
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: save-service-b
+      require_correct_instance: true
+      target_instance_label_or_id: Service B config (JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding the Slack object to Service A instead of Service B.
+  - Creating `slack` with the wrong channel string or wrong boolean value.
+  - Adding the object correctly but clicking the wrong Save button.
+  - Editing an unrelated branch instead of `integrations`.
+  expected_interaction_path:
+  - Open the drawer.
+  - Focus the Service B editor and search for `integrations`.
+  - Add the nested Slack object with the exact values.
+  - Click Save for Service B.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-antd-v2-T02
+  name: Compact step reorder with Apply
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor_tree_drag
+  implementation_component: 'AntD: Card + JSONEditor tree drag handles [external]'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “Pipeline steps (JSON)” editor, reorder `steps` to `["validate", "transform", "send"]`, then click “Apply”. The task will finish automatically when done.
+  ui_copy: In the “Pipeline steps (JSON)” editor, reorder `steps` to `["validate", "transform", "send"]`, then click “Apply”. The task will finish automatically when done.
+  setup_description: 'Layout is table_cell-like compact card placement in the top-right of the viewport. One JSONEditor instance starts in Tree mode. The `steps` array is visible with drag handles on each
+    item row. Initial JSON is `{ "steps": ["validate", "send", "transform"], "enabled": true }`. Only the order of the `steps` array matters. A small “Apply” button below the editor commits the result.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - scale
+    - placement
+    - confirmation_model
+    factor_rationale: 'The task isolates the reorder idiom itself: small drag handles and dense rows make the drag exacting, and the Apply step forces verification that the order, not just the visible selection
+      state, was committed.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Drag-only array reordering is one of the strongest interaction-knowledge separators for this component family.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at `$.steps` equals `["validate", "transform", "send"]` in that order.
+    - The “Apply” control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.steps
+        value:
+        - validate
+        - transform
+        - send
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the array order as validate, send, transform.
+  - Producing a different order than the requested target.
+  - Duplicating or deleting an item while dragging.
+  - Reordering correctly but not clicking Apply.
+  expected_interaction_path:
+  - Locate the steps array.
+  - Drag `transform` above `send` using the handle.
+  - Verify the array order is correct.
+  - Click Apply.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mui-v2-T02
+  name: 'Webhook payload row: add top-level version and save row'
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor_tree_table
+  implementation_component: 'MUI: table row + JSONEditor [external]'
+  task_template: table_operation
+  secondary_template: hierarchical_path_select
+  browsergym_goal: 'In the table row labeled “Webhook payload template”, add a top-level numeric field `version: 2` in the JSON editor and click “Save” in that row. Do not edit the other row. The task will
+    finish automatically when done.'
+  ui_copy: 'In the table row labeled “Webhook payload template”, add a top-level numeric field `version: 2` in the JSON editor and click “Save” in that row. Do not edit the other row. The task will finish
+    automatically when done.'
+  setup_description: 'Layout is table_cell with compact spacing and medium clutter. Two rows are expanded: “Webhook payload template” and “Response template”. Each row contains a JSON editor and a row-local
+    Save button. The Webhook payload row contains `{ "data": { "kind": "deploy" } }`. The Response template row must remain unchanged.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: 'A simple top-level add is made hard by row-scoped locality: the agent must choose the correct row, make the structural edit at the right level, and pair it with the correct Save button.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This task’s difficulty comes from row disambiguation and structural placement of the new key rather than from JSON syntax alone.
+  success_trigger:
+    human_readable:
+    - The committed JSON in the Webhook payload row has top-level `version = 2`.
+    - The Response template row remains unchanged.
+    - The Webhook payload row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.version
+        value: 2
+        saved: true
+        non_target_instances_must_remain:
+          Response template:
+            status: ok
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-webhook-row
+      require_correct_instance: true
+      target_instance_label_or_id: Webhook payload template
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding `version` inside `data` instead of at the top level.
+  - Adding `version` as a string instead of a number.
+  - Editing the Response template row instead of the Webhook row.
+  - Adding the field but not clicking the Webhook row Save control.
+  expected_interaction_path:
+  - Locate the Webhook payload row.
+  - 'Add a new top-level numeric field `version: 2`.'
+  - Leave the other row unchanged.
+  - Click Save in the Webhook payload row.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mantine-v2-T02
+  name: Scroll to searchV2 in compact tree and save
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor_tree_scroll
+  implementation_component: 'Mantine: Card + JSONEditor tree [external]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the “Features (JSON)” editor, scroll to `features.experimental.searchV2`, set it to `true`, and click “Save”. The task will finish automatically when done.
+  ui_copy: In the “Features (JSON)” editor, scroll to `features.experimental.searchV2`, set it to `true`, and click “Save”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing and low clutter. A Mantine Card near the top-left contains one JSONEditor instance in Tree mode. The document is long enough that `features.experimental.searchV2`
+    starts offscreen and requires scrolling inside the editor. The page itself also contains a separate scroll region with release notes and a changelog list. A Save button under the editor commits the
+    JSON.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: The task is hard because the target node lives below the fold inside a dense tree editor, so the agent has to control the correct scroll region and then commit the exact boolean change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The boolean change is semantically easy, but the long compact tree and explicit save still create meaningful scroll and confirmation pressure.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at `$.features.experimental.searchV2` equals true.
+    - The Save control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.features.experimental.searchV2
+        value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting `checkoutV3` instead of `searchV2`.
+  - Leaving `searchV2` unchanged.
+  - Changing the flag correctly but not clicking Save.
+  - Breaking JSON validity by switching modes and leaving malformed text.
+  expected_interaction_path:
+  - Scroll within the editor until the experimental flags are visible.
+  - Set `searchV2` to true.
+  - Click Save.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-antd-v2-T03
+  name: Advanced config replace from reference and confirm
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor_code_modal_confirm
+  implementation_component: 'AntD: Modal + JSONEditor + confirm dialog [external]'
+  task_template: enter_formatted
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Advanced config (JSON)” modal. In Code mode, replace the JSON so it exactly matches the Target JSON panel, click “Save”, and then click “Confirm”. The task will finish automatically
+    when done.
+  ui_copy: Open the “Advanced config (JSON)” modal. In Code mode, replace the JSON so it exactly matches the Target JSON panel, click “Save”, and then click “Confirm”. The task will finish automatically
+    when done.
+  setup_description: "Layout is modal_flow with compact spacing and medium clutter. Clicking “Edit advanced config” opens an Ant Design Modal containing one JSONEditor instance and a read-only Target JSON\
+    \ panel on the right. The editor starts in Code mode with:\n{\n  \"mode\": \"lenient\",\n  \"sampling\": {\"sampleRate\": 0.1},\n  \"tags\": []\n}\nThe Target panel shows:\n{\n  \"mode\": \"strict\"\
+    ,\n  \"sampling\": {\"sampleRate\": 0.5},\n  \"tags\": [\"prod\"]\n}\nThe modal footer contains Save and Cancel. Clicking Save opens a confirmation dialog with Confirm and Cancel."
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - guidance
+    - confirmation_model
+    factor_rationale: The JSON replacement is exact and fully specified, but the two-stage modal confirmation ensures the task still measures state verification rather than a single overwrite action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: This is hard because the agent has to combine exact replacement with a confirm-after-save pattern and keep track of when the JSON is only drafted versus committed.
+  success_trigger:
+    human_readable:
+    - The committed JSON equals the target JSON after parsing.
+    - The final Confirm control has been clicked.
+    - Both overlays are closed at terminal state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          mode: strict
+          sampling:
+            sampleRate: 0.5
+          tags:
+          - prod
+        saved: true
+        overlay_open: false
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Saving the right draft but cancelling the confirmation dialog.
+  - Producing a close but not exact JSON object.
+  - Leaving the modal or confirmation dialog open.
+  - Adding extra keys beyond the target JSON.
+  expected_interaction_path:
+  - Open the modal.
+  - Replace the JSON in Code mode so it matches the target panel exactly.
+  - Click Save.
+  - Click Confirm.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mui-v2-T03
+  name: Allowed origins backend add new item and save
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor_tree_dual
+  implementation_component: 'MUI: settings panel + two JSONEditor instances [external]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Allowed origins (Backend JSON)”, add `https://example.com` to `allowedOrigins` without removing the existing entry, then click “Save” for that editor. Do not edit
+    the Frontend editor. The task will finish automatically when done.
+  ui_copy: In the editor labeled “Allowed origins (Backend JSON)”, add `https://example.com` to `allowedOrigins` without removing the existing entry, then click “Save” for that editor. Do not edit the Frontend
+    editor. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing and medium clutter. Two JSON editors are stacked: “Allowed origins (Frontend JSON)” and “Allowed origins (Backend JSON)”. Each includes
+    a small built-in search box and a local Save button. Frontend starts with `{"allowedOrigins":["https://app.example.com"],"allowCredentials":true}`. Backend starts with `{"allowedOrigins":["https://api.example.com"],"allowCredentials":false}`.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - internal_scroll_region
+    factor_rationale: The search field helps locate the relevant array, but the real diagnostic pressure is still choosing the correct editor, preserving the existing member, and using the matching local
+      Save control.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the array update sits inside the correct of two similar editors and must preserve an existing element before the local save step.
+  success_trigger:
+    human_readable:
+    - The committed Backend JSON has `allowedOrigins` containing both `https://api.example.com` and `https://example.com`.
+    - The Frontend editor remains unchanged.
+    - The Backend Save control has been clicked.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        json_path: $.allowedOrigins
+        must_contain_members:
+        - https://api.example.com
+        - https://example.com
+        saved: true
+        non_target_instances_must_remain:
+          Allowed origins (Frontend JSON):
+            allowedOrigins:
+            - https://app.example.com
+            allowCredentials: true
+      tolerance:
+        array_order: ignore
+      require_confirm: true
+      confirm_control: save-backend-origins
+      require_correct_instance: true
+      target_instance_label_or_id: Allowed origins (Backend JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Frontend JSON editor instead of Backend.
+  - Replacing the existing backend origin instead of adding a second one.
+  - Adding the correct origin but not clicking the Backend Save control.
+  - Changing `allowCredentials` or other fields unnecessarily.
+  expected_interaction_path:
+  - Locate the Backend editor.
+  - Use the search box to find `allowedOrigins` if helpful.
+  - Add the new origin while preserving the existing array item.
+  - Click Save for the Backend editor.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mantine-v2-T03
+  name: 'Rate limit B only: change perMinute and save'
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor_tree_dual
+  implementation_component: 'Mantine: settings panel + two JSONEditor instances [external]'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the editor labeled “Rate limit B (JSON)”, set `rateLimit.perMinute` to `120`, leave “Rate limit A (JSON)” unchanged, and click “Save” for Rate limit B. The task will finish automatically
+    when done.
+  ui_copy: In the editor labeled “Rate limit B (JSON)”, set `rateLimit.perMinute` to `120`, leave “Rate limit A (JSON)” unchanged, and click “Save” for Rate limit B. The task will finish automatically when
+    done.
+  setup_description: 'Layout is settings_panel with compact spacing and medium clutter. Two JSON editors sit one above the other: “Rate limit A (JSON)” and “Rate limit B (JSON)”. Both start in Tree mode
+    and both have a local Save button. Rate limit A begins with `perMinute: 60`; Rate limit B begins with `perMinute: 30`. Only B should change.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - theme
+    factor_rationale: The tree interaction itself is simple, so the scene pressure is coming from sibling-instance disambiguation in a compact dark panel and the requirement to use the correct local Save
+      button.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The nested-path edit is easy to understand, but the duplicate editors and local save controls still make it a hard grounded JSON task.
+  success_trigger:
+    human_readable:
+    - The committed value at `$.rateLimit.perMinute` in Rate limit B equals 120.
+    - Rate limit A remains unchanged.
+    - The Rate limit B Save control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.rateLimit.perMinute
+        value: 120
+        saved: true
+        non_target_instances_must_remain:
+          Rate limit A (JSON):
+            rateLimit:
+              perMinute: 60
+              burst: 30
+            enabled: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-rate-limit-b
+      require_correct_instance: true
+      target_instance_label_or_id: Rate limit B (JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Rate limit A instead of Rate limit B.
+  - Changing `burst` instead of `perMinute`.
+  - Editing correctly but clicking the wrong Save button or not saving at all.
+  - Changing other fields unnecessarily.
+  expected_interaction_path:
+  - Locate Rate limit B.
+  - Expand `rateLimit` if needed and edit `perMinute` to 120.
+  - Leave Rate limit A unchanged.
+  - Click Save for Rate limit B.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-antd-v2-T04
+  name: Search integrations and add nested Slack object
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor_tree_search
+  implementation_component: 'AntD: dashboard card + JSONEditor tree with search [external]'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the “Runtime config (JSON)” editor, use the editor search to find `integrations`, add a child key `slack` with `enabled: true` and `channel: "#alerts"`, then click “Save runtime config”.
+    The task will finish automatically when done.'
+  ui_copy: 'In the “Runtime config (JSON)” editor, use the editor search to find `integrations`, add a child key `slack` with `enabled: true` and `channel: "#alerts"`, then click “Save runtime config”.
+    The task will finish automatically when done.'
+  setup_description: Layout is dashboard_panel with compact spacing and medium clutter. The card contains one JSONEditor in Tree mode, a small built-in search field, and a “Save runtime config” button.
+    The document has multiple top-level sections; the `integrations` object is not initially visible without either scrolling or search. No other editor instance is present, but nearby dashboard cards are
+    visible and irrelevant.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - clutter
+    factor_rationale: This variant uses the editor’s own search affordance to reach a buried branch, then tests whether the agent can add a nested object correctly and still remember the final explicit
+      save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The nested addition is exact and local, but reaching the right branch and then committing the result still makes it a hard JSON-editor task.
+  success_trigger:
+    human_readable:
+    - 'The committed JSON contains `$.integrations.slack = {enabled: true, channel: "#alerts"}`.'
+    - The “Save runtime config” control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.integrations.slack
+        value:
+          enabled: true
+          channel: '#alerts'
+        saved: true
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Save runtime config
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding `slack` outside the `integrations` object.
+  - Adding the right object but with the wrong channel or boolean.
+  - Saving a partial object with only one of the two required fields.
+  - Forgetting to click “Save runtime config”.
+  expected_interaction_path:
+  - Use the search field to jump to `integrations`.
+  - Add the nested Slack object with the exact two fields.
+  - Verify the tree shows the correct structure.
+  - Click “Save runtime config”.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mui-v2-T04
+  name: Drawer code-mode replacement with dark theme
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor_code_drawer
+  implementation_component: 'MUI: Drawer + JSONEditor code mode [external]'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: "Open the “Deployment settings (JSON)” drawer. Switch to Code mode and replace the JSON with:\n\n{\n  \"region\": \"eu-west-1\",\n  \"debug\": false\n}\n\nThen click “Save”. The task\
+    \ will finish automatically when done."
+  ui_copy: "Open the “Deployment settings (JSON)” drawer. Switch to Code mode and replace the JSON with:\n\n{\n  \"region\": \"eu-west-1\",\n  \"debug\": false\n}\n\nThen click “Save”. The task will finish\
+    \ automatically when done."
+  setup_description: 'Layout is drawer_flow with dark theme, compact spacing, and medium clutter. A MUI Drawer opens from the right when “Edit deployment settings” is clicked. Inside is one JSONEditor instance
+    with a Tree/Code mode toggle. It starts in Tree mode. In Code mode, invalid JSON disables Save. Initial JSON is `{ "region": "us-east-2", "debug": true, "replicas": 2 }`. The Save button is in the drawer
+    footer.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - overlay_model
+    - theme
+    factor_rationale: The drawer and code-mode validation create a real commit boundary, while the replacement remains semantically simple enough that failures stay attributable to editor control rather
+      than JSON reasoning.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: This is a hard code-mode replacement task because the agent must handle mode switching, exact replacement, validation, and explicit save inside a drawer.
+  success_trigger:
+    human_readable:
+    - 'The committed JSON equals `{ "region": "eu-west-1", "debug": false }` after parsing.'
+    - The Save control has been clicked and the drawer is closed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        json:
+          region: eu-west-1
+          debug: false
+        saved: true
+        overlay_open: false
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the extra `replicas` key in the JSON.
+  - Producing invalid JSON and never enabling Save.
+  - Entering the correct JSON but not clicking Save.
+  - Saving a JSON object with the wrong region or debug value.
+  expected_interaction_path:
+  - Open the drawer.
+  - Switch to Code mode.
+  - Replace the JSON exactly with the target object.
+  - Click Save.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mantine-v2-T04
+  name: Columns reorder in dense table cell
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor_tree_drag_table
+  implementation_component: 'Mantine: table row + JSONEditor drag handles [external]'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the row labeled “Visible columns”, reorder `columns` to `["id", "email", "createdAt"]`, then click “Save row”. The task will finish automatically when done.
+  ui_copy: In the row labeled “Visible columns”, reorder `columns` to `["id", "email", "createdAt"]`, then click “Save row”. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, small scale, and medium clutter. A row labeled “Visible columns” contains a JSON editor in Tree mode with drag handles for each array item.
+    The `columns` array starts as `["email", "id", "createdAt"]`. The row has a small “Save row” button. Nearby rows and filters are visible but irrelevant.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - scale
+    - layout
+    - confirmation_model
+    factor_rationale: This is a mandatory reorder task in a dense row-scoped surface, so it directly targets the drag idiom rather than allowing a text-edit shortcut to dominate the interaction.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small drag handles and row-local save semantics make this a hard interaction-knowledge task even though the target order is simple.
+  success_trigger:
+    human_readable:
+    - The committed array at `$.columns` equals `["id", "email", "createdAt"]` in that order.
+    - The “Save row” control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.columns
+        value:
+        - id
+        - email
+        - createdAt
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save row
+      require_correct_instance: false
+      target_instance_label_or_id: Visible columns
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the array order unchanged.
+  - Producing any order other than the target order.
+  - Deleting or duplicating a column while dragging.
+  - Reordering correctly but not clicking Save row.
+  expected_interaction_path:
+  - Drag `id` to the first position.
+  - Verify the visible order is id, email, createdAt.
+  - Click Save row.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-antd-v2-T05
+  name: Experiment flags far-down betaUI apply
+  canonical_type: json_editor
+  implementation_source: antd
+  implementation_variant: jsoneditor_tree_scroll
+  implementation_component: 'AntD: nested scroll panel + JSONEditor tree [external]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the “Experiment flags (JSON)” editor, scroll to `featureFlags.betaUI`, set it to `true`, and click “Apply”. The task will finish automatically when done.
+  ui_copy: In the “Experiment flags (JSON)” editor, scroll to `featureFlags.betaUI`, set it to `true`, and click “Apply”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing and medium clutter. The AntD card is placed off-center in a larger settings page. The page itself scrolls, and the JSON editor has its own
+    internal scroll region. The document is long; `featureFlags.betaUI` is located far below the initial viewport. A small “Apply” button under the editor commits the change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: This keeps the path semantics simple but makes the agent prove it can control the JSON editor’s own viewport and still remember the local Apply step once the buried node is found.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The main source of difficulty is locating and committing a far-down nested flag inside the correct scroll region.
+  success_trigger:
+    human_readable:
+    - The committed JSON value at `$.featureFlags.betaUI` equals true.
+    - The Apply control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.featureFlags.betaUI
+        value: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting a neighboring flag instead of betaUI.
+  - Finding the right node but not clicking Apply.
+  - Changing more than the requested flag.
+  - Scrolling the page instead of the editor and never reaching the target branch.
+  expected_interaction_path:
+  - Scroll within the editor until featureFlags is visible.
+  - Set betaUI to true.
+  - Click Apply.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mui-v2-T05
+  name: 'Three editors: update Backend rollout only'
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor_tree_multi
+  implementation_component: 'MUI: dashboard panel + three JSONEditor instances [external]'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the dashboard panel, edit only the editor labeled “Backend rollout (JSON)” so that `rollout.percentage` becomes `25`, then click its “Save” button. Do not change the “Frontend rollout
+    (JSON)” or “Notifications (JSON)” editors. The task will finish automatically when done.
+  ui_copy: In the dashboard panel, edit only the editor labeled “Backend rollout (JSON)” so that `rollout.percentage` becomes `25`, then click its “Save” button. Do not change the “Frontend rollout (JSON)”
+    or “Notifications (JSON)” editors. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing and high clutter. Three JSON editor cards appear in one column: “Frontend rollout (JSON)”, “Backend rollout (JSON)”, and “Notifications
+    (JSON)”. Each starts in Tree mode and each has its own Save button. Only Backend rollout should change; it starts with `{ "rollout": { "percentage": 10, "paused": false } }`.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: This keeps the JSON edit itself modest so the task cleanly measures disambiguation across three same-type editors in a cluttered dashboard and a card-local save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three visually similar editor cards and three local Save buttons make this a hard wrong-instance task despite the small scalar change.
+  success_trigger:
+    human_readable:
+    - The committed value at `$.rollout.percentage` in Backend rollout equals 25.
+    - The Frontend rollout and Notifications editors remain unchanged.
+    - The Backend rollout Save control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.rollout.percentage
+        value: 25
+        saved: true
+        non_target_instances_must_remain:
+          Frontend rollout (JSON):
+            rollout:
+              percentage: 50
+              paused: false
+          Notifications (JSON):
+            email: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-backend-rollout
+      require_correct_instance: true
+      target_instance_label_or_id: Backend rollout (JSON)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Frontend rollout instead of Backend rollout.
+  - Changing Backend rollout but clicking the wrong Save button.
+  - Changing the paused flag instead of the percentage.
+  - Editing more than one editor.
+  expected_interaction_path:
+  - Locate the Backend rollout editor among the three cards.
+  - Edit the nested percentage field to 25.
+  - Leave the other two editors unchanged.
+  - Click the Backend rollout Save button.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mantine-v2-T05
+  name: Target JSON replace, save, and confirm in modal
+  canonical_type: json_editor
+  implementation_source: mantine
+  implementation_variant: jsoneditor_code_modal_confirm
+  implementation_component: 'Mantine: Modal + JSONEditor + confirm modal [external]'
+  task_template: confirm_cancel
+  secondary_template: match_reference
+  browsergym_goal: Open the “Advanced config (JSON)” modal. In Code mode, make the JSON exactly match the “Target JSON” panel, click “Save”, and then click “Confirm”. The task will finish automatically
+    when done.
+  ui_copy: Open the “Advanced config (JSON)” modal. In Code mode, make the JSON exactly match the “Target JSON” panel, click “Save”, and then click “Confirm”. The task will finish automatically when done.
+  setup_description: Layout is modal_flow with compact spacing and medium clutter. A Mantine settings card has a button labeled “Edit advanced config (JSON)…”. Clicking it opens a modal with one JSON editor
+    on the left and a read-only “Target JSON” panel on the right. The editor starts in Code mode. The footer contains Save and Cancel; clicking Save opens a second confirm modal with Confirm and Cancel.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - guidance
+    - confirmation_model
+    factor_rationale: 'This is the cleanest way to keep a whole-document replacement task hard without making it adversarial: the target is fully visible, but the modal-plus-confirm sequence still tests
+      state verification and overlay handling.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The JSON target is explicit, but the nested overlay flow and exactness requirements keep the task meaningfully hard.
+  success_trigger:
+    human_readable:
+    - The committed JSON equals the Target JSON after parsing.
+    - The final Confirm control has been clicked.
+    - The modals are closed at terminal state.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-mantine-advanced-json
+        reference_json:
+          mode: strict
+          sampling:
+            sampleRate: 0.5
+          tags:
+          - prod
+        saved: true
+        overlay_open: false
+      tolerance:
+        object_key_order: ignore
+        array_order: respect
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching the target draft but cancelling the confirmation dialog.
+  - Leaving extra keys from the initial JSON.
+  - Saving invalid JSON.
+  - Closing the modal before confirmation.
+  expected_interaction_path:
+  - Open the modal.
+  - Replace the JSON so it matches the Target JSON panel exactly.
+  - Click Save.
+  - Click Confirm.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.
+- id: json_editor-mui-v2-T06
+  name: Priority reorder in compact dashboard card
+  canonical_type: json_editor
+  implementation_source: mui
+  implementation_variant: jsoneditor_tree_drag
+  implementation_component: 'MUI: dashboard card + JSONEditor drag handles [external]'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the “Priority order (JSON)” editor, reorder `priority` to `["P1", "P2", "P3"]`, then click “Save”. The task will finish automatically when done.
+  ui_copy: In the “Priority order (JSON)” editor, reorder `priority` to `["P1", "P2", "P3"]`, then click “Save”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing and medium clutter. A single JSON editor card titled “Priority order (JSON)” starts in Tree mode. The `priority` array is visible with
+    item drag handles. Initial JSON is `{ "priority": ["P2", "P1", "P3"] }`. A Save button under the card commits the order-sensitive array.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - clutter
+    - precision_surface
+    factor_rationale: This deliberately keeps semantics minimal so the task isolates the mandatory reorder idiom that the attached JSON report identified as one of the clearest interaction-knowledge separators.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Even with only three items, array reordering plus a save step is reliably hard for agents that do not understand the tree-editor drag idiom.
+  success_trigger:
+    human_readable:
+    - The committed array at `$.priority` equals `["P1", "P2", "P3"]` in that order.
+    - The Save control has been clicked.
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        json_path: $.priority
+        value:
+        - P1
+        - P2
+        - P3
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving P2 ahead of P1.
+  - Producing any different order than the target order.
+  - Dragging correctly but not clicking Save.
+  - Deleting or duplicating an array item.
+  expected_interaction_path:
+  - Drag P1 above P2.
+  - Verify the order is P1, P2, P3.
+  - Click Save.
+  notes: Parse the committed JSON after the required Save/Apply/Confirm step. For duplicate instances, instrument each editor root and each local Save control separately.

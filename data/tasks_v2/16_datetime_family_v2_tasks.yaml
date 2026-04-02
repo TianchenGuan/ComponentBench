@@ -1,0 +1,3536 @@
+- id: date_picker_single-antd-v2-T01
+  name: Billing date via year-month-day with picker OK among three fields
+  canonical_type: date_picker_single
+  implementation_source: antd
+  implementation_variant: needConfirm + year/month/day navigation
+  implementation_component: 'AntD: DatePicker'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the scheduling settings panel, edit only the date picker labeled “Billing date”. Set it to September 18, 2028, then click the picker’s OK button to confirm. Do not change “Reminder date” or “Archive date”. The task will finish automatically when done.
+  ui_copy: In the scheduling settings panel, edit only the date picker labeled “Billing date”. Set it to September 18, 2028, then click the picker’s OK button to confirm. Do not change “Reminder date” or “Archive date”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off-center placement, default scale, and high clutter. A billing-automation page shows toggles, status chips, and a read-only audit table above a form section containing three Ant Design DatePicker fields: “Reminder date”, “Billing date”, and “Archive date”. Each field looks identical except for its label. The target field starts empty. The other two are prefilled and must remain unchanged. Opening any field shows the standard Ant Design calendar popover with year and month switching, and this instance is configured with needConfirm so the panel footer includes OK and Cancel. The initial visible month is February 2026, so reaching the target requires year/month navigation before selecting the day and confirming it.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: Three nearly identical fields in a compact high-clutter panel create wrong-instance pressure, and the picker-level OK requirement forces the agent to verify committed state instead of stopping after a draft selection.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The date itself is exact but human-feasible; the real pressure comes from instance disambiguation, long-range calendar navigation, and the need to convert a draft pick into a committed value with OK.
+  success_trigger:
+    human_readable:
+    - The committed value of the AntD DatePicker labeled “Billing date” equals 2028-09-18.
+    - The picker-level OK control has been used to confirm the selection.
+    - “Reminder date” and “Archive date” remain at their initial values.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2028-09-18'
+        saved: true
+        non_target_instances_must_remain:
+          Reminder date: '2026-03-07'
+          Archive date: '2026-12-31'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Billing date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct date on “Reminder date” or “Archive date” instead of “Billing date”.
+  - Selecting September 18, 2028 but leaving the picker in a draft state without clicking OK.
+  - Changing either non-target field while setting the target date.
+  - Selecting the wrong year, month, or day.
+  expected_interaction_path:
+  - Locate the field labeled “Billing date”.
+  - Open the picker and navigate from February 2026 to September 2028.
+  - Select day 18.
+  - Click OK in the picker footer and verify the other two fields are unchanged.
+  notes: Checker should read the committed field value, not the temporary panel state. Bind each field to a stable instance id so correct-instance checking does not rely on DOM order.
+- id: date_picker_single-antd-v2-T02
+  name: Blackout-aware follow-up date in an off-center drawer
+  canonical_type: date_picker_single
+  implementation_source: antd
+  implementation_variant: disabledDate + needConfirm
+  implementation_component: 'AntD: DatePicker inside AntD Drawer'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit follow-up plan” drawer. In the date picker labeled “Follow-up date”, set the date to October 13, 2026 and click OK to confirm. Weekends and blackout dates are disabled, so choose only the requested enabled date. The task will finish automatically when done.
+  ui_copy: Open the “Edit follow-up plan” drawer. In the date picker labeled “Follow-up date”, set the date to October 13, 2026 and click OK to confirm. Weekends and blackout dates are disabled, so choose only the requested enabled date. The task will finish automatically when done.
+  setup_description: Layout is drawer_flow with compact spacing, bottom_right placement, default scale, and medium clutter. A support dashboard remains visible underneath. Clicking “Edit follow-up plan” opens a right-side Ant Design Drawer containing one DatePicker labeled “Follow-up date”, a helper note about business-day-only scheduling, and two read-only summary cards. The picker starts empty and opens to February 2026. The calendar disables weekends and also disables October 12 and October 14, 2026 as blackout days. needConfirm is enabled, so the panel has OK and Cancel. The target date is the only enabled candidate in its local neighborhood.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - placement
+    factor_rationale: The task combines an off-center drawer with disabled-date interference and a picker-level confirm step, which raises interaction-knowledge and state-verification difficulty without making the instruction itself ambiguous.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The challenge is not arithmetic; it is recognizing enabled versus disabled dates after month navigation, then explicitly confirming the one correct choice from the drawer.
+  success_trigger:
+    human_readable:
+    - The committed value of “Follow-up date” equals 2026-10-13.
+    - The picker-level OK control has been clicked.
+    - The drawer remains open or closes according to implementation, but the committed field value must be correct.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2026-10-13'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Follow-up date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Attempting to click a disabled weekend or blackout date so the field remains unset.
+  - Selecting a nearby enabled date other than October 13, 2026.
+  - Selecting the correct date but dismissing the panel without clicking OK.
+  - Editing any non-target control in the drawer.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open the “Follow-up date” picker and navigate to October 2026.
+  - Choose the enabled day 13 while avoiding disabled nearby dates.
+  - Click OK to commit the selection.
+  notes: Instrument disabled day cells separately from enabled cells for debugging, but checker should only depend on the committed field value and the confirm action.
+- id: date_picker_single-antd-v2-T03
+  name: Milestone B table-row date from a visual reference chip
+  canonical_type: date_picker_single
+  implementation_source: antd
+  implementation_variant: row-scoped save
+  implementation_component: 'AntD: DatePicker embedded in table cell'
+  task_template: table_operation
+  secondary_template: match_reference
+  browsergym_goal: In the “Release milestones” table, edit only the row labeled “Milestone B”. Set its “Due date” picker to match the date shown in the blue reference chip, then click “Save” in the Milestone B row. Do not change Milestone A or Milestone C. The task will finish automatically when done.
+  ui_copy: In the “Release milestones” table, edit only the row labeled “Milestone B”. Set its “Due date” picker to match the date shown in the blue reference chip, then click “Save” in the Milestone B row. Do not change Milestone A or Milestone C. The task will finish automatically when done.
+  setup_description: 'Layout is table_cell with compact spacing, bottom_right placement, small scale, and high clutter. A release dashboard includes filters and a dense table titled “Release milestones”. Above the table is a blue reference chip reading “Target date: 2027-04-06”. Three rows—Milestone A, Milestone B, and Milestone C—each contain an inline Ant Design DatePicker in the “Due date” column plus a row-local Save button. The target is the Milestone B row. The other two rows have existing due dates and must remain unchanged. The picker opens as a popover anchored to the small cell control.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 3
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Small in-cell controls, row-local saves, and three same-type instances create grounding and disambiguation pressure, while the visual reference chip keeps the target semantically simple.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The exact date is visible, but hitting the correct small table-cell picker, saving only the target row, and leaving the other rows untouched make this a hard row-scoped date task.
+  success_trigger:
+    human_readable:
+    - The committed due date in the row labeled “Milestone B” equals 2027-04-06.
+    - The Milestone B row-local Save control has been clicked.
+    - Milestone A and Milestone C keep their initial due dates.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2027-04-06'
+        saved: true
+        non_target_instances_must_remain:
+          Milestone A: '2027-03-22'
+          Milestone C: '2027-05-11'
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-milestone-b-row
+      require_correct_instance: true
+      target_instance_label_or_id: Milestone B / Due date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the reference date to Milestone A or Milestone C.
+  - Selecting the correct date in Milestone B but failing to click Save in that row.
+  - Changing the target row and a non-target row together.
+  - Selecting the wrong date because the reference chip was ignored.
+  expected_interaction_path:
+  - Read the date from the blue reference chip.
+  - Locate the Milestone B row and open its Due date picker.
+  - Select 2027-04-06.
+  - Click Save in the Milestone B row.
+  notes: Checker should scope each field and save button by row id, not by position. The reference chip date may be used for debug but the canonical target is fixed.
+- id: date_picker_single-antd-v2-T04
+  name: Far-past archival date in a nested-scroll review panel
+  canonical_type: date_picker_single
+  implementation_source: antd
+  implementation_variant: needConfirm + far navigation
+  implementation_component: 'AntD: DatePicker inside nested scroll panel'
+  task_template: scroll_find
+  secondary_template: open_and_select
+  browsergym_goal: In the review workspace, scroll the right-side panel until the field labeled “Archived on” is visible. Set that date picker to December 31, 1998 and click OK to confirm. Then click “Apply metadata”. The task will finish automatically when done.
+  ui_copy: In the review workspace, scroll the right-side panel until the field labeled “Archived on” is visible. Set that date picker to December 31, 1998 and click OK to confirm. Then click “Apply metadata”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing, off_center placement, default scale, and medium clutter. The page has an outer scrollable workspace with an activity feed on the left and a metadata panel on the right. The metadata panel itself has an inner scrollbar and contains multiple fields; “Archived on” is initially below the fold. The field is an Ant Design DatePicker configured with needConfirm. It opens around February 2026. A panel-level “Apply metadata” button commits the metadata block after the picker itself has accepted the date. No other date field should be changed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - layout
+    factor_rationale: The right field is not initially visible, and the task requires both inner-panel targeting and far-back calendar navigation before two separate commit events complete the interaction.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is intrinsically hard because the target field is hidden in an inner scroll region and the requested year is far from the initial view, so a careful human needs multiple layered actions before the state is truly committed.
+  success_trigger:
+    human_readable:
+    - The committed value of “Archived on” equals 1998-12-31.
+    - The picker-level OK control has been clicked.
+    - The panel-level “Apply metadata” control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '1998-12-31'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply metadata
+      require_correct_instance: true
+      target_instance_label_or_id: Archived on
+      terminal_condition: task ends when predicate holds
+      picker_confirm_control: OK
+  negative_cases:
+  - Scrolling the page but not the inner metadata panel, leaving “Archived on” untouched.
+  - Selecting a nearby year such as 1999 or 1998-12-30.
+  - Clicking OK in the picker but not “Apply metadata”.
+  - Applying metadata without changing the target field.
+  expected_interaction_path:
+  - Scroll the inner metadata panel until “Archived on” appears.
+  - Open the picker and navigate back to December 1998.
+  - Select day 31 and click OK.
+  - Click “Apply metadata”.
+  notes: 'This task intentionally has two commits: the picker-level OK and the panel-level Apply. Checker should ensure the final persisted metadata value is 1998-12-31.'
+- id: date_picker_single-mui-v2-T05
+  name: Primary deadline with year-month-day views and explicit accept
+  canonical_type: date_picker_single
+  implementation_source: mui
+  implementation_variant: DesktopDatePicker closeOnSelect=false + action bar
+  implementation_component: 'MUI X: DesktopDatePicker'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the roadmap dashboard, edit only the date picker labeled “Primary deadline”. Set it to November 21, 2031, then click OK to accept it. Do not change “Secondary deadline” or “Escalation date”. The task will finish automatically when done.
+  ui_copy: In the roadmap dashboard, edit only the date picker labeled “Primary deadline”. Set it to November 21, 2031, then click OK to accept it. Do not change “Secondary deadline” or “Escalation date”. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing, top_left placement, default scale, and high clutter. A roadmap dashboard shows KPI cards, a release burndown chart, and a three-field deadline block containing MUI DesktopDatePicker instances labeled “Primary deadline”, “Secondary deadline”, and “Escalation date”. The target field starts empty. The other two are prefilled and must remain unchanged. The picker is configured with views ['year','month','day'], closeOnSelect=false, and an action bar with Cancel and OK, so selecting a date does not commit until OK is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: The task deliberately couples three same-type pickers with a top-left dashboard placement and an explicit accept step so that the pressure comes from instance tracking and commit semantics rather than date arithmetic alone.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A careful human can solve it reliably, but only by targeting the correct picker, navigating a long way through the MUI views, and remembering that draft and accepted values differ.
+  success_trigger:
+    human_readable:
+    - The committed value of the MUI DatePicker labeled “Primary deadline” equals 2031-11-21.
+    - The picker action bar OK control has been clicked.
+    - “Secondary deadline” and “Escalation date” remain unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2031-11-21'
+        saved: true
+        non_target_instances_must_remain:
+          Secondary deadline: '2031-10-03'
+          Escalation date: '2031-12-01'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Primary deadline
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the correct picker but not pressing OK.
+  - Applying the date to Secondary deadline or Escalation date.
+  - Changing one of the non-target deadlines while editing the target.
+  - Ending on the wrong year, month, or day.
+  expected_interaction_path:
+  - Open the Primary deadline picker.
+  - Use the year, month, and day views to reach November 21, 2031.
+  - Click OK to accept the value.
+  - Verify the other two deadlines remain unchanged.
+  notes: This task relies on MUI action-bar acceptance semantics. Checker should read accepted value, not transient onChange drafts.
+- id: date_picker_single-mui-v2-T06
+  name: Resolved-on date hidden in a nested filter sidebar
+  canonical_type: date_picker_single
+  implementation_source: mui
+  implementation_variant: DesktopDatePicker in nested scroll sidebar
+  implementation_component: 'MUI X: DesktopDatePicker'
+  task_template: scroll_find
+  secondary_template: open_and_select
+  browsergym_goal: Scroll the filters sidebar until the date picker labeled “Resolved on” is visible. Set it to December 23, 2026 and click OK to accept it. Do not change the nearby picker labeled “Created on”. The task will finish automatically when done.
+  ui_copy: Scroll the filters sidebar until the date picker labeled “Resolved on” is visible. Set it to December 23, 2026 and click OK to accept it. Do not change the nearby picker labeled “Created on”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing, off_center placement, default scale, and medium clutter. A ticket analytics page has a scrollable filters sidebar on the right and a large chart canvas on the left. Inside the sidebar are many controls, including two MUI DesktopDatePicker fields labeled “Created on” and “Resolved on”. “Resolved on” is initially below the fold. The pickers use an action bar with Cancel and OK so the accepted value updates only after OK. “Created on” is prefilled and must stay unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: 'This turns an otherwise ordinary picker into a layered targeting task: the correct field is hidden inside a sidebar scroll region, adjacent to a similar sibling, and the value is not accepted until OK.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The task is hard because the user must control the right scroll region, select the right sibling field, and convert a draft MUI selection into an accepted value.
+  success_trigger:
+    human_readable:
+    - The accepted value of “Resolved on” equals 2026-12-23.
+    - The MUI action bar OK control has been clicked for that picker.
+    - “Created on” remains 2026-01-12.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2026-12-23'
+        saved: true
+        non_target_instances_must_remain:
+          Created on: '2026-01-12'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Resolved on
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page but not the filters sidebar, so “Resolved on” is never changed.
+  - Changing “Created on” instead of “Resolved on”.
+  - Selecting December 23, 2026 but not clicking OK.
+  - Choosing a nearby date such as December 22 or December 24.
+  expected_interaction_path:
+  - Scroll the filters sidebar until “Resolved on” appears.
+  - Open that picker and navigate to December 2026.
+  - Select day 23 and accept with OK.
+  - Verify “Created on” stayed fixed.
+  notes: Make the sidebar scroll container independently instrumented so automation and debugging can distinguish outer-page versus sidebar scrolling.
+- id: date_picker_single-mui-v2-T07
+  name: Visual reference mini-calendar in a drawer for Ship-by only
+  canonical_type: date_picker_single
+  implementation_source: mui
+  implementation_variant: DesktopDatePicker + visual reference
+  implementation_component: 'MUI X: DesktopDatePicker inside MUI Drawer'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit shipment dates” drawer. Set only the date picker labeled “Ship by” so that it matches the date shown on the reference mini-calendar card, then click OK in the picker and “Save shipment dates” in the drawer. Do not change “Publish on”. The task will finish automatically when done.
+  ui_copy: Open the “Edit shipment dates” drawer. Set only the date picker labeled “Ship by” so that it matches the date shown on the reference mini-calendar card, then click OK in the picker and “Save shipment dates” in the drawer. Do not change “Publish on”. The task will finish automatically when done.
+  setup_description: Layout is drawer_flow with compact spacing, off_center placement, default scale, and medium clutter. Clicking “Edit shipment dates” opens a MUI Drawer. Inside the drawer are two MUI DesktopDatePicker fields labeled “Publish on” and “Ship by”, plus a small read-only reference card that renders a mini-calendar tile for the target date (resolved to 2027-02-14). The target field starts empty. Publish on is prefilled and must remain unchanged. The picker uses a desktop popper with Cancel and OK action bar controls, and the drawer has its own “Save shipment dates” button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - confirmation_model
+    factor_rationale: 'The target is given visually rather than as a raw date string, and the agent must survive a nested confirm structure: picker OK followed by drawer Save while leaving the sibling field untouched.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Matching a visual date reference is manageable for humans, but the nested overlay plus sibling-preservation requirement makes this a high-value mixed failure task.
+  success_trigger:
+    human_readable:
+    - The committed value of “Ship by” equals 2027-02-14.
+    - The picker OK control and the drawer “Save shipment dates” control have both been used.
+    - “Publish on” remains 2027-02-01.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ship-by-reference
+        date: '2027-02-14'
+        saved: true
+        non_target_instances_must_remain:
+          Publish on: '2027-02-01'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save shipment dates
+      require_correct_instance: true
+      target_instance_label_or_id: Ship by
+      terminal_condition: task ends when predicate holds
+      picker_confirm_control: OK
+  negative_cases:
+  - Changing the Publish on field instead of Ship by.
+  - Selecting the right draft date but failing to click either the picker OK or the drawer Save button.
+  - Misreading the mini-calendar and choosing the wrong day or month.
+  - Saving after changing both fields.
+  expected_interaction_path:
+  - Open the drawer and read the mini-calendar reference card.
+  - Open the Ship by picker and navigate to the referenced date.
+  - Click OK in the picker.
+  - Click Save shipment dates in the drawer.
+  notes: Expose the resolved reference date in app state for deterministic checking, but do not render the raw ISO date in benchmark mode.
+- id: date_picker_single-mantine-v2-T08
+  name: Launch date via modal DatePickerInput with level change
+  canonical_type: date_picker_single
+  implementation_source: mantine
+  implementation_variant: DatePickerInput dropdownType=modal
+  implementation_component: 'Mantine: DatePickerInput'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the release settings panel, edit only the field labeled “Launch date”. Open its picker in modal form, navigate to November 23, 2035, select it, and click “Save schedule”. Do not change “Retire date”. The task will finish automatically when done.
+  ui_copy: In the release settings panel, edit only the field labeled “Launch date”. Open its picker in modal form, navigate to November 23, 2035, select it, and click “Save schedule”. Do not change “Retire date”. The task will finish automatically when done.
+  setup_description: Layout is settings_panel with compact spacing, off_center placement, default scale, and high clutter. The panel contains two Mantine DatePickerInput fields labeled “Launch date” and “Retire date”, plus segmented controls, switches, and status labels above them. The target field is empty. “Retire date” is prefilled and must remain unchanged. The Mantine DatePickerInput is configured with dropdownType='modal', so opening it launches a modal calendar. Level changes are enabled, letting the user click the month/year label to switch between date, month, and year levels.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - clutter
+    factor_rationale: The Mantine modal picker adds one extra layer before the actual calendar interaction, and the target date is far enough away that the user must use level changes rather than simple month stepping.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: This is hard because the correct field sits in a cluttered settings panel, the picker opens in a modal, and the target year is far away from the initial state.
+  success_trigger:
+    human_readable:
+    - The committed value of “Launch date” equals 2035-11-23.
+    - The settings panel “Save schedule” control has been clicked.
+    - “Retire date” remains 2036-03-01.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2035-11-23'
+        saved: true
+        non_target_instances_must_remain:
+          Retire date: '2036-03-01'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save schedule
+      require_correct_instance: true
+      target_instance_label_or_id: Launch date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the Retire date field.
+  - Selecting the correct date in the modal but closing it without saving the schedule panel.
+  - Navigating to 2035 but choosing the wrong month or day.
+  - Using the wrong field because both controls look alike.
+  expected_interaction_path:
+  - Open the Launch date picker.
+  - Use level change to move to year and month selection, then choose November 23, 2035.
+  - Close the modal picker normally after selection.
+  - Click Save schedule.
+  notes: Mantine DatePickerInput inherits date-picker features while opening in a modal when dropdownType='modal'. Checker should use the field’s stored value after panel save.
+- id: date_picker_single-mantine-v2-T09
+  name: Invoice date typed in DD/MM/YYYY with parser and row apply
+  canonical_type: date_picker_single
+  implementation_source: mantine
+  implementation_variant: DateInput valueFormat + dateParser
+  implementation_component: 'Mantine: DateInput'
+  task_template: enter_formatted
+  secondary_template: table_operation
+  browsergym_goal: In the “Invoices” table, edit only the row labeled “INV-204”. Enter the “Invoice date” as 23/11/2026 in the DD/MM/YYYY field, make sure the value is accepted, and click “Apply” in that row. Do not change row INV-203. The task will finish automatically when done.
+  ui_copy: In the “Invoices” table, edit only the row labeled “INV-204”. Enter the “Invoice date” as 23/11/2026 in the DD/MM/YYYY field, make sure the value is accepted, and click “Apply” in that row. Do not change row INV-203. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, bottom_left placement, small scale, and high clutter. An “Invoices” table shows two editable rows. Each row has a Mantine DateInput in DD/MM/YYYY format and a row-local Apply button. The INV-204 row is the target and starts empty. INV-203 is prefilled and must remain unchanged. The field uses valueFormat='DD/MM/YYYY', a parser that accepts that format, and min/max validation limited to November 2026. Invalid text shows an error state and does not update the underlying value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: 'This preserves one hard keyboard-editing slice in the unit while making it genuinely diagnostic: small table fields, row-local apply, wrong-instance pressure, and parser/validation all matter at once.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Free text entry would be easy in isolation, but exact formatting, row-scoped commit, validation, and small table-cell targeting together make this a legitimate hard date-input task.
+  success_trigger:
+    human_readable:
+    - The committed value of the INV-204 row’s Invoice date equals 2026-11-23.
+    - The INV-204 row Apply control has been clicked.
+    - The INV-203 row remains 2026-11-05.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        date: '2026-11-23'
+        saved: true
+        non_target_instances_must_remain:
+          INV-203 / Invoice date: '2026-11-05'
+      tolerance: null
+      require_confirm: true
+      confirm_control: apply-inv-204-row
+      require_correct_instance: true
+      target_instance_label_or_id: INV-204 / Invoice date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing 23/11/2026 but leaving the field in an invalid or uncommitted state.
+  - Changing the INV-203 row instead of INV-204.
+  - Entering a different date in November 2026.
+  - Applying the row without a valid accepted date.
+  expected_interaction_path:
+  - Locate the INV-204 row.
+  - Focus the DateInput and type 23/11/2026 exactly.
+  - Confirm the field accepts the value rather than staying in error.
+  - Click Apply in the INV-204 row.
+  notes: Checker should read the parsed stored value, not the raw input text, and should reject invalid/error states even if the text visually resembles the target.
+- id: date_picker_single-mantine-v2-T10
+  name: High-contrast go-live date with preset decoys and shared save
+  canonical_type: date_picker_single
+  implementation_source: mantine
+  implementation_variant: DatePickerInput with presets
+  implementation_component: 'Mantine: DatePickerInput'
+  task_template: match_reference
+  secondary_template: open_and_select
+  browsergym_goal: In the high-contrast launch panel, set only the field labeled “Go-live date” to match the date shown on the reference card, then click “Save panel”. Do not change “Freeze date” or choose a preset chip unless it actually matches the reference. The task will finish automatically when done.
+  ui_copy: In the high-contrast launch panel, set only the field labeled “Go-live date” to match the date shown on the reference card, then click “Save panel”. Do not change “Freeze date” or choose a preset chip unless it actually matches the reference. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with high_contrast theme, compact spacing, off_center placement, small scale, and high clutter. The launch panel contains two Mantine DatePickerInput fields—“Freeze date” and “Go-live date”—plus several preset chips such as “Tomorrow”, “Next week”, and “End of month”. A reference card in the same panel resolves to 2027-02-14. The preset chips do not match that reference. “Freeze date” is prefilled and must remain unchanged. The panel has a single “Save panel” button.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - instances
+    - clutter
+    factor_rationale: The panel raises disambiguation and grounding pressure with two similar fields, many decoy presets, and a visual reference that does not collapse to a single obvious text string in the input itself.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Decoy presets and two similar fields create meaningful interference, so the agent has to read the reference card, ignore shortcut chips, and preserve the non-target field through a shared save.
+  success_trigger:
+    human_readable:
+    - The committed value of “Go-live date” equals 2027-02-14.
+    - The panel “Save panel” control has been clicked.
+    - “Freeze date” remains 2027-02-01.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: go-live-reference
+        date: '2027-02-14'
+        saved: true
+        non_target_instances_must_remain:
+          Freeze date: '2027-02-01'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save panel
+      require_correct_instance: true
+      target_instance_label_or_id: Go-live date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing a preset chip that does not equal the reference date.
+  - Editing Freeze date instead of Go-live date.
+  - Selecting the correct date but not clicking Save panel.
+  - Changing both fields before saving.
+  expected_interaction_path:
+  - Read the reference card.
+  - Open the Go-live date picker and manually navigate to the referenced date.
+  - Select it while leaving Freeze date untouched.
+  - Click Save panel.
+  notes: Presets are decoys here; checker should ignore how the state was reached and evaluate only final committed values plus non-target preservation.
+- id: date_picker_range-antd-v2-T11
+  name: Comparison window cross-month on the correct picker with OK
+  canonical_type: date_picker_range
+  implementation_source: antd
+  implementation_variant: RangePicker needConfirm
+  implementation_component: 'AntD: DatePicker.RangePicker'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the analytics settings panel, edit only the range picker labeled “Comparison window”. Set it to January 28, 2027 through February 6, 2027, then click OK in the picker to confirm. Do not change “Primary window” or “Archive window”. The task will finish automatically when done.
+  ui_copy: In the analytics settings panel, edit only the range picker labeled “Comparison window”. Set it to January 28, 2027 through February 6, 2027, then click OK in the picker to confirm. Do not change “Primary window” or “Archive window”. The task will finish automatically when done.
+  setup_description: Layout is settings_panel with compact spacing, off_center placement, small scale, and high clutter. Three Ant Design RangePicker fields—“Primary window”, “Comparison window”, and “Archive window”—are stacked in one card beside unrelated toggles and numeric fields. The target field is empty. The other two are prefilled and must remain unchanged. Opening the target field shows the two-panel AntD range calendar. needConfirm is enabled, so selecting the start and end dates creates a draft until OK is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: The main burden is correct-instance tracking across three similar range pickers plus the draft-versus-committed distinction introduced by the AntD confirm step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A careful human still solves it reliably, but only by selecting the right field, managing a cross-month range, and confirming the draft with OK while leaving two sibling ranges untouched.
+  success_trigger:
+    human_readable:
+    - The committed range in “Comparison window” equals 2027-01-28 through 2027-02-06.
+    - The picker-level OK control has been clicked.
+    - “Primary window” and “Archive window” remain unchanged.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2027-01-28'
+        end_date: '2027-02-06'
+        saved: true
+        non_target_instances_must_remain:
+          Primary window:
+          - '2027-01-01'
+          - '2027-01-14'
+          Archive window:
+          - '2026-12-01'
+          - '2026-12-31'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Comparison window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct range on Primary window or Archive window instead of Comparison window.
+  - Selecting only the start date or otherwise leaving the range partial.
+  - Selecting the right endpoints but not clicking OK.
+  - Changing any non-target range while editing the target.
+  expected_interaction_path:
+  - Open the Comparison window field.
+  - Navigate if needed so January 28 and February 6, 2027 are selectable.
+  - Select start and end, then click OK.
+  - Verify the other two ranges stay unchanged.
+  notes: Checker should normalize committed start/end dates to ISO strings and verify correct-instance semantics by field label or stable id.
+- id: date_picker_range-antd-v2-T12
+  name: Change dates then close without saving to preserve originals
+  canonical_type: date_picker_range
+  implementation_source: antd
+  implementation_variant: RangePicker discard-on-close
+  implementation_component: 'AntD: DatePicker.RangePicker inside modal'
+  task_template: confirm_cancel
+  secondary_template: set_range
+  browsergym_goal: Open the "Edit blackout dates" modal. In the range picker labeled "Blackout dates", change the dates to August 3, 2026 through August 7, 2026, then click "Close" (not "Save changes") so the committed blackout dates stay July 10, 2026 through July 12, 2026. The task will finish automatically when done.
+  ui_copy: 'Edit blackout dates → change Blackout dates to Aug 3–Aug 7, 2026; click Close (not Save changes); committed dates stay Jul 10–Jul 12.'
+  setup_description: Clicking "Edit blackout dates" opens a modal dialog containing one Ant Design RangePicker labeled "Blackout dates" and explanatory text. The field is prefilled with the accepted range 2026-07-10 to 2026-07-12. The modal footer has "Close" and "Save changes" buttons. Changes made in the picker are only committed when "Save changes" is clicked; clicking "Close" discards any draft changes.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - depth_layering
+    - feedback_dynamics
+    factor_rationale: 'This task tests whether the agent understands the draft/committed distinction: it must make a visible change and then intentionally discard it by closing instead of saving.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The agent must understand that closing the modal without saving discards the draft changes, and verify the committed dates remain unchanged.
+  success_trigger:
+    human_readable:
+    - The committed blackout dates remain 2026-07-10 through 2026-07-12.
+    - The draft was changed to a different range before closing.
+    - The modal was closed via "Close" (not "Save changes").
+    canonical_predicate:
+      predicate_type: cancel_discards_changes
+      target_state:
+        start_date: '2026-07-10'
+        end_date: '2026-07-12'
+        draft_changed: true
+        modal_closed_without_saving: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: Close
+      require_correct_instance: true
+      target_instance_label_or_id: Blackout dates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking "Save changes" instead of "Close", which would commit the August dates.
+  - Not changing the dates at all before closing.
+  - Leaving the committed value changed from the original July range.
+  expected_interaction_path:
+  - Open the modal.
+  - Change the Blackout dates to August 3–August 7, 2026.
+  - Click "Close" to discard the draft.
+  - Committed dates remain July 10–July 12, 2026.
+  notes: The checker requires evidence that a draft change was made before the modal was closed without saving.
+- id: date_picker_range-antd-v2-T13
+  name: Project window start-only range with explicit OK among two fields
+  canonical_type: date_picker_range
+  implementation_source: antd
+  implementation_variant: allowEmpty end + needConfirm
+  implementation_component: 'AntD: DatePicker.RangePicker'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the release panel, edit only the range picker labeled “Project window”. Set the start date to October 3, 2026, leave the end date empty, and click OK to confirm. Do not change “Audit window”. The task will finish automatically when done.
+  ui_copy: In the release panel, edit only the range picker labeled “Project window”. Set the start date to October 3, 2026, leave the end date empty, and click OK to confirm. Do not change “Audit window”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing, bottom_left placement, default scale, and medium clutter. Two Ant Design RangePicker fields appear inside a release-panel surface: “Audit window” and “Project window”. The target field is empty and configured with allowEmpty for the end date, plus needConfirm so the panel shows OK and Cancel. “Audit window” is prefilled and must remain unchanged. The target requires an open-ended range rather than a normal two-endpoint selection.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: Open-ended ranges are a known interaction-knowledge trap, and the task compounds that with two same-type fields and a corner placement that increases acquisition pressure without making the instruction itself unclear.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The hard part is preserving the empty end state through the picker’s commit logic while targeting the correct field and leaving the sibling untouched.
+  success_trigger:
+    human_readable:
+    - The committed range in “Project window” has start_date 2026-10-03 and end_date null.
+    - The picker-level OK control has been clicked.
+    - “Audit window” remains 2026-09-01 through 2026-09-30.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2026-10-03'
+        end_date: null
+        saved: true
+        non_target_instances_must_remain:
+          Audit window:
+          - '2026-09-01'
+          - '2026-09-30'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Project window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting both start and end dates instead of leaving the end empty.
+  - Changing Audit window instead of Project window.
+  - Selecting October 3, 2026 but failing to click OK.
+  - Leaving the field partially drafted but not accepted.
+  expected_interaction_path:
+  - Open the Project window picker.
+  - Select October 3, 2026 as the start.
+  - Leave the end unset and click OK.
+  - Verify Audit window remains unchanged.
+  notes: Use null for the end date in canonical state. This task only counts if the accepted field value is open-ended after confirmation.
+- id: date_picker_range-antd-v2-T14
+  name: Business-days-only scheduling range in a drawer
+  canonical_type: date_picker_range
+  implementation_source: antd
+  implementation_variant: disabledDate + minDate/maxDate + needConfirm
+  implementation_component: 'AntD: DatePicker.RangePicker inside Drawer'
+  task_template: set_range
+  secondary_template: open_and_select
+  browsergym_goal: Open the “Schedule campaign” drawer. In the range picker labeled “Campaign dates”, set the range to November 3, 2026 through November 11, 2026 and click OK. Weekends are disabled and the drawer’s date limits prevent navigating outside the campaign quarter. The task will finish automatically when done.
+  ui_copy: Open the “Schedule campaign” drawer. In the range picker labeled “Campaign dates”, set the range to November 3, 2026 through November 11, 2026 and click OK. Weekends are disabled and the drawer’s date limits prevent navigating outside the campaign quarter. The task will finish automatically when done.
+  setup_description: Layout is drawer_flow with compact spacing, top_right placement, default scale, and medium clutter. Clicking “Schedule campaign” opens an Ant Design Drawer containing one RangePicker labeled “Campaign dates”, help text, and read-only campaign metadata cards. The picker uses disabledDate to block weekends, minDate/maxDate to restrict panel navigation to Q4 2026, and needConfirm so the chosen range must be accepted with OK. The field starts empty.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - placement
+    - guidance
+    factor_rationale: This is a range task where the date logic is still human-natural, but business-day restrictions and quarter-bounded navigation raise interaction pressure inside an off-center drawer.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Disabled weekends and bounded navigation create a denser, more failure-prone calendar surface than a plain range picker, and the target is only committed after OK.
+  success_trigger:
+    human_readable:
+    - The committed range in “Campaign dates” equals 2026-11-03 through 2026-11-11.
+    - The picker-level OK control has been clicked.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2026-11-03'
+        end_date: '2026-11-11'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Campaign dates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Attempting to use a disabled weekend as either endpoint.
+  - Selecting a partial range and confirming it.
+  - Selecting nearby weekdays that do not match the requested endpoints.
+  - Choosing the correct dates but leaving the picker unconfirmed.
+  expected_interaction_path:
+  - Open the drawer and then the Campaign dates picker.
+  - Navigate within the allowed quarter to November 2026.
+  - Select November 3 as start and November 11 as end.
+  - Click OK.
+  notes: This task intentionally uses bounded navigation and disabled weekends to increase density interference while staying realistic for a business scheduler.
+- id: date_picker_range-mui-v2-T15
+  name: Cohort comparison cross-year range in a cluttered dashboard
+  canonical_type: date_picker_range
+  implementation_source: mui
+  implementation_variant: DesktopDateRangePicker with action bar
+  implementation_component: 'MUI X Pro: DesktopDateRangePicker'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the cohort dashboard, edit only the range field labeled “Comparison period”. Set it to December 27, 2026 through January 8, 2027, then click OK to accept it. Do not change “Primary period” or “Holiday freeze”. The task will finish automatically when done.
+  ui_copy: In the cohort dashboard, edit only the range field labeled “Comparison period”. Set it to December 27, 2026 through January 8, 2027, then click OK to accept it. Do not change “Primary period” or “Holiday freeze”. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing, top_right placement, default scale, and high clutter. A dashboard filter strip contains three MUI DesktopDateRangePicker controls labeled “Primary period”, “Comparison period”, and “Holiday freeze”, surrounded by selects, pills, and a search field. The target field is empty. The other two are prefilled. The picker uses closeOnSelect=false with an action bar so the accepted value changes only after OK. The requested range crosses a year boundary, which forces careful month and instance tracking.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - placement
+    factor_rationale: A crowded dashboard filter strip is exactly where wrong-instance range edits happen, and the cross-year endpoints amplify state-tracking demands without requiring obscure knowledge.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is hard because three similar range fields compete for attention in a crowded strip and the agent must commit a cross-year draft with OK on the correct one.
+  success_trigger:
+    human_readable:
+    - The accepted range in “Comparison period” equals 2026-12-27 through 2027-01-08.
+    - The picker OK control has been clicked.
+    - “Primary period” and “Holiday freeze” remain unchanged.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2026-12-27'
+        end_date: '2027-01-08'
+        saved: true
+        non_target_instances_must_remain:
+          Primary period:
+          - '2026-12-01'
+          - '2026-12-20'
+          Holiday freeze:
+          - '2026-12-24'
+          - '2026-12-26'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Comparison period
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the correct range on Primary period or Holiday freeze.
+  - Selecting only one endpoint or leaving the value as a draft.
+  - Crossing the year boundary incorrectly, such as ending in January 2026 or December 2027.
+  - Changing a non-target period while editing Comparison period.
+  expected_interaction_path:
+  - Open the Comparison period field.
+  - Navigate to late December 2026 and early January 2027.
+  - Select the two endpoints and press OK.
+  - Verify the sibling periods remain unchanged.
+  notes: Use stable labels and field ids; do not rely on DOM order in a packed filter bar.
+- id: date_picker_range-mui-v2-T16
+  name: Start-end specific disabled dates in a scheduler modal
+  canonical_type: date_picker_range
+  implementation_source: mui
+  implementation_variant: DateRangePicker shouldDisableDate(role-aware)
+  implementation_component: 'MUI X Pro: DateRangePicker inside MUI Dialog'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Schedule rollout” dialog. In the range field labeled “Rollout dates”, set the start to March 11, 2027 and the end to March 16, 2027, then click OK to apply. In this picker, some dates are disabled differently for the start and end positions, so use the requested enabled pair only. The task will finish automatically when done.
+  ui_copy: Open the “Schedule rollout” dialog. In the range field labeled “Rollout dates”, set the start to March 11, 2027 and the end to March 16, 2027, then click OK to apply. In this picker, some dates are disabled differently for the start and end positions, so use the requested enabled pair only. The task will finish automatically when done.
+  setup_description: 'Layout is modal_flow with compact spacing, center placement, default scale, and medium clutter. Clicking “Schedule rollout” opens a MUI Dialog with one MUI DateRangePicker labeled “Rollout dates”. The picker uses role-aware shouldDisableDate logic: start dates cannot fall on weekends, and end dates additionally block March 17 and March 18, 2027. The field starts empty and uses an action bar with Cancel and OK, so the range remains draft until OK.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - overlay_model
+    - clutter
+    factor_rationale: 'Role-specific disabled dates are a strong interaction-knowledge slice for range widgets: the user must understand that start and end can have different enabled sets, then still complete the dialog-confirm flow.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The modal is simple to find, but the enabled-day logic differs by endpoint and the range is not accepted until OK, creating a compact but genuinely hard scheduler task.
+  success_trigger:
+    human_readable:
+    - The accepted range in “Rollout dates” equals 2027-03-11 through 2027-03-16.
+    - The picker OK control has been clicked.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2027-03-11'
+        end_date: '2027-03-16'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Rollout dates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing a disabled date for the start or end position.
+  - Selecting only the start and leaving the end empty.
+  - Selecting a nearby but incorrect end date such as March 17, 2027.
+  - Closing the picker without clicking OK.
+  expected_interaction_path:
+  - Open the dialog and then the Rollout dates field.
+  - Choose March 11, 2027 as start and March 16, 2027 as end.
+  - Press OK in the action bar.
+  notes: The underlying checker should depend only on accepted value and not on how many intermediate disabled cells were probed.
+- id: date_picker_range-mui-v2-T17
+  name: Single-input keyboard range with external apply and sibling preservation
+  canonical_type: date_picker_range
+  implementation_source: mui
+  implementation_variant: DateRangePicker slots field=SingleInputDateRangeField
+  implementation_component: 'MUI X Pro: DateRangePicker with SingleInputDateRangeField'
+  task_template: enter_formatted
+  secondary_template: table_operation
+  browsergym_goal: In the compact audit table, edit only the “Audit span” field in row “Service B”. Enter the range 04/10/2027 – 04/16/2027 in the single input field, make sure the value is accepted, and click “Apply” in the Service B row. Do not change the Service A row. The task will finish automatically when done.
+  ui_copy: In the compact audit table, edit only the “Audit span” field in row “Service B”. Enter the range 04/10/2027 – 04/16/2027 in the single input field, make sure the value is accepted, and click “Apply” in the Service B row. Do not change the Service A row. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, bottom_right placement, small scale, and high clutter. Two rows, “Service A” and “Service B”, each contain a MUI DateRangePicker configured with slots.field = SingleInputDateRangeField, so the whole range is edited in one text field. The rows also have row-local Apply buttons. Service B is the target and starts empty. Service A is prefilled and must remain unchanged. Partial or invalid range text leaves the underlying value unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: This keeps one explicit keyboard-edit slice in the range family, but moves it into a small, dense, row-scoped context where parsing, row attribution, and preservation of the sibling row all matter.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Exact single-input range typing is already fragile; placing it in a compact table with a row-local Apply step turns it into a meaningful hard task instead of a generic form fill.
+  success_trigger:
+    human_readable:
+    - The accepted range in Service B / Audit span equals 2027-04-10 through 2027-04-16.
+    - The Service B row Apply control has been clicked.
+    - The Service A row remains 2027-04-01 through 2027-04-07.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2027-04-10'
+        end_date: '2027-04-16'
+        saved: true
+        non_target_instances_must_remain:
+          Service A / Audit span:
+          - '2027-04-01'
+          - '2027-04-07'
+      tolerance: null
+      require_confirm: true
+      confirm_control: apply-service-b-row
+      require_correct_instance: true
+      target_instance_label_or_id: Service B / Audit span
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering the right text but leaving the field in an invalid or partial parse state.
+  - Changing Service A instead of Service B.
+  - Entering only one endpoint or reversing the order.
+  - Not clicking Apply in the Service B row.
+  expected_interaction_path:
+  - Locate the Service B row.
+  - Focus the single-input range field and enter 04/10/2027 – 04/16/2027.
+  - Verify the field accepts the value.
+  - Click Apply in the Service B row.
+  notes: Checker should read parsed start/end values from component state, not raw text. This task intentionally tests the single-input keyboard-edit path mentioned in MUI docs.
+- id: date_picker_range-mantine-v2-T18
+  name: Same-day outage window using allowSingleDateInRange
+  canonical_type: date_picker_range
+  implementation_source: mantine
+  implementation_variant: DatePicker type=range allowSingleDateInRange
+  implementation_component: 'Mantine: DatePickerInput'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: In the maintenance panel, edit only the field labeled “Outage window”. Set it to a same-day range of May 12, 2027 through May 12, 2027, then click “Save maintenance”. Do not change “Review window”. The task will finish automatically when done.
+  ui_copy: In the maintenance panel, edit only the field labeled “Outage window”. Set it to a same-day range of May 12, 2027 through May 12, 2027, then click “Save maintenance”. Do not change “Review window”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing, off_center placement, default scale, and medium clutter. Two Mantine DatePickerInput fields with type=''range'' appear side by side: “Review window” and “Outage window”. The target field is configured with allowSingleDateInRange, so the same date can be used for both start and end instead of being deselected on the second click. Review window is prefilled and must remain unchanged. A shared “Save maintenance” button commits the surface state.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: Same-day ranges are a documented but uncommon range-picker idiom, so the task directly probes whether the agent understands the selection rule while still preserving a sibling field through a shared save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: 'The difficulty lies in the range-selection idiom itself: many agents expect a second click on the same day to deselect, so the task adds a meaningful interaction-knowledge burden without hiding the target.'
+  success_trigger:
+    human_readable:
+    - The committed range in “Outage window” has start_date and end_date both equal to 2027-05-12.
+    - The “Save maintenance” control has been clicked.
+    - “Review window” remains 2027-05-03 through 2027-05-09.
+    canonical_predicate:
+      predicate_type: range_equals
+      target_state:
+        start_date: '2027-05-12'
+        end_date: '2027-05-12'
+        saved: true
+        non_target_instances_must_remain:
+          Review window:
+          - '2027-05-03'
+          - '2027-05-09'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save maintenance
+      require_correct_instance: true
+      target_instance_label_or_id: Outage window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting May 12 only as a start date and leaving the end null.
+  - Clicking the same date twice but ending with a deselected field because the wrong instance or wrong config was used.
+  - Changing Review window instead of Outage window.
+  - Setting the same-day draft correctly but not clicking Save maintenance.
+  expected_interaction_path:
+  - Open the Outage window picker.
+  - Navigate to May 2027 and select May 12 as a same-day range.
+  - Leave Review window untouched.
+  - Click Save maintenance.
+  notes: This task intentionally uses Mantine’s documented allowSingleDateInRange behavior. Checker should verify both endpoints explicitly.
+- id: date_picker_range-mantine-v2-T19
+  name: Promo dates in modal range picker with preset decoys
+  canonical_type: date_picker_range
+  implementation_source: mantine
+  implementation_variant: DatePickerInput type=range dropdownType=modal presets
+  implementation_component: 'Mantine: DatePickerInput'
+  task_template: match_reference
+  secondary_template: open_and_select
+  browsergym_goal: Open the “Edit promo dates” panel. Set only the “Promo dates” range to match the start and end shown on the reference card, then click “Save promo”. Do not use a preset chip unless it exactly matches the reference, and do not change “Review dates”. The task will finish automatically when done.
+  ui_copy: Open the “Edit promo dates” panel. Set only the “Promo dates” range to match the start and end shown on the reference card, then click “Save promo”. Do not use a preset chip unless it exactly matches the reference, and do not change “Review dates”. The task will finish automatically when done.
+  setup_description: 'Layout is drawer_flow with compact spacing, off_center placement, default scale, and high clutter. Inside a Mantine Drawer are two DatePickerInput fields with type=''range'': “Review dates” and “Promo dates”. The picker opens in a modal via dropdownType=''modal''. Preset chips such as “Last 7 days”, “This month”, and “Next week” are visible, but the reference card resolves to 2027-08-29 through 2027-09-04, which none of the presets matches exactly. Review dates is prefilled and must remain unchanged. A drawer-level “Save promo” button commits the result.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - overlay_model
+    factor_rationale: Visual reference plus non-matching preset chips creates meaningful interference, and the nested modal drawer structure adds layered state tracking while still staying true to documented Mantine APIs.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: This is a hard mixed task because the agent must ignore shortcut presets, track a visual reference across nested layers, and preserve the sibling range through a shared save.
+  success_trigger:
+    human_readable:
+    - The committed Promo dates range equals 2027-08-29 through 2027-09-04.
+    - The drawer-level “Save promo” control has been clicked.
+    - Review dates remains 2027-08-01 through 2027-08-07.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: promo-reference-card
+        start_date: '2027-08-29'
+        end_date: '2027-09-04'
+        saved: true
+        non_target_instances_must_remain:
+          Review dates:
+          - '2027-08-01'
+          - '2027-08-07'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save promo
+      require_correct_instance: true
+      target_instance_label_or_id: Promo dates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a visible preset that does not equal the reference range.
+  - Changing Review dates instead of Promo dates.
+  - Selecting the correct range inside the modal but not saving the drawer.
+  - Leaving one endpoint unset.
+  expected_interaction_path:
+  - Open the drawer and inspect the reference card.
+  - Open the Promo dates picker modal and navigate manually to the referenced start and end dates.
+  - Leave Review dates unchanged.
+  - Click Save promo.
+  notes: The reference card may expose both dates visually; checker should evaluate final committed range only and ignore whether presets were opened or examined.
+- id: date_picker_range-mantine-v2-T20
+  name: Reference-matched manual range in a compact settings panel
+  canonical_type: date_picker_range
+  implementation_source: mantine
+  implementation_variant: DatePickerInput type=range
+  implementation_component: 'Mantine: DatePickerInput'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the compact settings panel, set only the range field labeled “Shipping window” so that it matches the start and end dates shown in the reference card. Then click “Apply filters”. Do not change “Billing window” or “Returns window”. The task will finish automatically when done.
+  ui_copy: In the compact settings panel, set only the range field labeled “Shipping window” so that it matches the start and end dates shown in the reference card. Then click “Apply filters”. Do not change “Billing window” or “Returns window”. The task will finish automatically when done.
+  setup_description: Layout is settings_panel with compact spacing, bottom_right placement, small scale, and high clutter. A right-side filter card contains three Mantine DatePickerInput range fields labeled “Billing window”, “Shipping window”, and “Returns window”. The card also includes toggles and segmented controls. A reference card at the top resolves to 2027-06-18 through 2027-06-26. The target field is empty; the other two are prefilled and must remain unchanged. A single “Apply filters” button commits the whole card.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 3
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: 'This is a dense disambiguation task: three similar range fields in a bottom-corner filter card are a known weak point for visually grounded agents, and the reference is visual rather than directly typed into the target instruction.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Small bottom-corner controls and three competing instances create substantial grounding and disambiguation load, even though the underlying range itself is not exotic.
+  success_trigger:
+    human_readable:
+    - The committed range in “Shipping window” equals 2027-06-18 through 2027-06-26.
+    - The “Apply filters” control has been clicked.
+    - Billing window and Returns window remain unchanged.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: shipping-reference
+        start_date: '2027-06-18'
+        end_date: '2027-06-26'
+        saved: true
+        non_target_instances_must_remain:
+          Billing window:
+          - '2027-06-01'
+          - '2027-06-07'
+          Returns window:
+          - '2027-06-10'
+          - '2027-06-12'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Shipping window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the reference range to the wrong field.
+  - Changing any non-target range before clicking Apply filters.
+  - Selecting only one endpoint or a nearby off-by-one range.
+  - Leaving the card unsaved after the correct draft appears.
+  expected_interaction_path:
+  - Read the reference card.
+  - Open the Shipping window field and select the two dates.
+  - Leave Billing window and Returns window unchanged.
+  - Click Apply filters.
+  notes: This task is intentionally compact and bottom-right because placement and spacing are especially punitive for visual modes in the factor analysis.
+- id: datetime_picker_range-antd-v2-T21
+  name: Backup window overlay-only range with OK on the correct instance
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: RangePicker showTime readOnly + needConfirm
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime)'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the scheduling drawer, edit only the date-time range labeled “Backup window”. Set it to February 20, 2027 14:00 through February 20, 2027 15:15, then click OK to confirm. Do not change “Primary window”. The field is read-only, so use the picker UI rather than typing. The task will finish automatically when done.
+  ui_copy: In the scheduling drawer, edit only the date-time range labeled “Backup window”. Set it to February 20, 2027 14:00 through February 20, 2027 15:15, then click OK to confirm. Do not change “Primary window”. The field is read-only, so use the picker UI rather than typing. The task will finish automatically when done.
+  setup_description: 'Layout is drawer_flow with compact spacing, off_center placement, default scale, and medium clutter. A right-side drawer contains two Ant Design DatePicker.RangePicker widgets with showTime enabled: “Primary window” and “Backup window”. The Primary window is prefilled and must stay unchanged. The target field is empty and configured readOnly so keyboard shortcuts cannot bypass the overlay. The picker shows date panels plus time columns, and needConfirm is enabled so the draft does not commit until OK.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - confirmation_model
+    factor_rationale: This task intentionally removes the direct-text shortcut and forces true overlay manipulation on the correct sibling field, which is exactly where the evidence says the family becomes diagnostic.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Dual endpoints, time subcontrols, correct-instance tracking, and the picker-level confirm step are enough to make this a solid hard datetime task without needing artificial wording.
+  success_trigger:
+    human_readable:
+    - The committed Backup window range equals 2027-02-20T14:00:00 through 2027-02-20T15:15:00 (local time).
+    - The picker OK control has been clicked.
+    - Primary window remains 2027-02-18T09:00:00 through 2027-02-18T10:00:00.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-02-20T14:00:00'
+        end: '2027-02-20T15:15:00'
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Primary window:
+          - '2027-02-18T09:00:00'
+          - '2027-02-18T10:00:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Backup window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing into the field if the implementation leaves it editable in benchmark mode instead of using the overlay.
+  - Changing Primary window instead of Backup window.
+  - Selecting the right dates but the wrong times, or leaving one endpoint partial.
+  - Not clicking OK after making the draft selection.
+  expected_interaction_path:
+  - Open the Backup window picker.
+  - Select February 20, 2027 as both endpoints’ date and set the times to 14:00 and 15:15.
+  - Click OK to accept the range.
+  - Verify Primary window is unchanged.
+  notes: 'Expose the committed datetime range in local ISO form for checking. The readOnly field behavior is important: this task is meant to test popup manipulation, not raw text entry.'
+- id: datetime_picker_range-antd-v2-T22
+  name: Cross-midnight cutover window with seconds in a compact drawer
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: showTime with seconds + needConfirm
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime seconds)'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Cutover plan” drawer. Set the date-time range labeled “Cutover window” to November 7, 2026 23:30:15 through November 8, 2026 01:15:45, then click OK. The task will finish automatically when done.
+  ui_copy: Open the “Cutover plan” drawer. Set the date-time range labeled “Cutover window” to November 7, 2026 23:30:15 through November 8, 2026 01:15:45, then click OK. The task will finish automatically when done.
+  setup_description: Layout is drawer_flow with compact spacing, bottom_right placement, small scale, and medium clutter. Clicking “Cutover plan” opens an Ant Design Drawer containing one datetime range picker labeled “Cutover window”. showTime is enabled with seconds visible, so the time panel includes hour, minute, and second controls. needConfirm is enabled. The field starts empty, and the cutover spans midnight, so the end endpoint lives on the next calendar day.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - precision_surface
+    - confirmation_model
+    - placement
+    factor_rationale: The task raises precision and layering using second-level time controls, a date boundary crossing, and a small bottom-corner drawer placement, all of which are recurrent weak points for agents.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Exact second-level values plus a cross-midnight endpoint switch make this a frontier-hard but still human-feasible datetime manipulation.
+  success_trigger:
+    human_readable:
+    - The committed range equals 2026-11-07T23:30:15 through 2026-11-08T01:15:45 (local time).
+    - The picker OK control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2026-11-07T23:30:15'
+        end: '2026-11-08T01:15:45'
+        timezone: local
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Cutover window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving seconds at :00 or any values other than 15 and 45.
+  - Setting the end date on November 7 instead of November 8.
+  - Selecting only the start endpoint or leaving the range in draft state.
+  - Clicking outside the picker instead of pressing OK.
+  expected_interaction_path:
+  - Open the drawer and the Cutover window picker.
+  - Set the start date/time to 2026-11-07 23:30:15.
+  - Advance to the end endpoint and set 2026-11-08 01:15:45.
+  - Click OK.
+  notes: Checker should use exact second-level equality. This task should not expose hidden tolerance; equality is exact by design.
+- id: datetime_picker_range-antd-v2-T23
+  name: Billing window start-only datetime with null end and OK
+  canonical_type: datetime_picker_range
+  implementation_source: antd
+  implementation_variant: showTime allowEmpty end + needConfirm
+  implementation_component: 'AntD: DatePicker.RangePicker (showTime, allowEmpty end)'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the billing table, edit only the row labeled “Enterprise”. Set the “Billing window” start to May 1, 2027 00:00, leave the end empty, and click OK in the picker. Then click “Save” in the Enterprise row. Do not change the Startup row. The task will finish automatically when done.
+  ui_copy: In the billing table, edit only the row labeled “Enterprise”. Set the “Billing window” start to May 1, 2027 00:00, leave the end empty, and click OK in the picker. Then click “Save” in the Enterprise row. Do not change the Startup row. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, off_center placement, small scale, and high clutter. A billing-plan table contains two rows, “Startup” and “Enterprise”, each with an Ant Design datetime RangePicker labeled “Billing window” and a row-local Save button. The Enterprise row is the target. The picker is configured with showTime, allowEmpty for the end, and needConfirm. Startup is prefilled and must remain unchanged. The task requires an open-ended datetime interval rather than a conventional two-endpoint range.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Open-ended datetime ranges are easy to misunderstand, and the row-scoped save makes the task robustly about the correct table instance rather than generic field entry.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The combination of null-end semantics, time precision, small row controls, and two-stage confirmation makes this a strong hard case for both interaction knowledge and recovery.
+  success_trigger:
+    human_readable:
+    - The committed Enterprise / Billing window state has start 2027-05-01T00:00:00 and end null.
+    - The picker OK control and Enterprise row Save control have both been clicked.
+    - Startup remains unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-05-01T00:00:00'
+        end: null
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Startup / Billing window:
+          - '2027-04-01T00:00:00'
+          - '2027-04-30T23:59:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-enterprise-row
+      require_correct_instance: true
+      target_instance_label_or_id: Enterprise / Billing window
+      terminal_condition: task ends when predicate holds
+      picker_confirm_control: OK
+  negative_cases:
+  - Setting both start and end instead of leaving the end null.
+  - Changing the Startup row instead of the Enterprise row.
+  - Selecting the correct start value but not clicking either OK or the row Save button.
+  - Leaving the field in a partial draft with no accepted start.
+  expected_interaction_path:
+  - Locate the Enterprise row and open its Billing window picker.
+  - Set May 1, 2027 00:00 as the start and leave the end unset.
+  - Click OK in the picker.
+  - Click Save in the Enterprise row.
+  notes: Use null for the end endpoint in the canonical state. Row-local instance ids are required so the checker can ignore the Startup row.
+- id: datetime_picker_range-mui-v2-T24
+  name: Approval window matched from reference card with action bar
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: DesktopDateTimeRangePicker + action bar
+  implementation_component: 'MUI X Pro: DesktopDateTimeRangePicker'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the approval dashboard, edit only the field labeled “Approval window”. Make its start and end match the date-time range shown on the reference card, then click OK in the picker. Do not change “Review window”. The task will finish automatically when done.
+  ui_copy: In the approval dashboard, edit only the field labeled “Approval window”. Make its start and end match the date-time range shown on the reference card, then click OK in the picker. Do not change “Review window”. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing, top_left placement, default scale, and high clutter. The dashboard contains two MUI DesktopDateTimeRangePicker controls labeled “Review window” and “Approval window”. A separate reference card resolves to the target range 2027-06-01 10:00 through 2027-06-01 12:30. Review window is prefilled and must stay unchanged. The datetime range picker uses an action bar so the chosen range is not accepted until OK.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - placement
+    factor_rationale: 'This keeps the datetime task grounded in a real dashboard context: one visual reference card, two similar datetime widgets, and an explicit accept step that separates draft and committed state.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The reference is easy for a human to read, but the agent still has to drive the correct datetime range picker and accept the result while preserving the sibling control.
+  success_trigger:
+    human_readable:
+    - The accepted value of Approval window equals 2027-06-01T10:00:00 through 2027-06-01T12:30:00 (local time).
+    - The picker OK control has been clicked.
+    - Review window remains 2027-05-30T09:00:00 through 2027-05-30T11:00:00.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: approval-window-reference
+        start: '2027-06-01T10:00:00'
+        end: '2027-06-01T12:30:00'
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Review window:
+          - '2027-05-30T09:00:00'
+          - '2027-05-30T11:00:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Approval window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the reference range to Review window.
+  - Setting the right draft values but failing to click OK.
+  - Misreading the reference card and choosing the wrong hour or minute.
+  - Changing both widgets before acceptance.
+  expected_interaction_path:
+  - Read the reference card.
+  - Open Approval window and set the start and end datetimes.
+  - Press OK.
+  - Verify Review window stays unchanged.
+  notes: The reference card may display the target in localized human format, but canonical checking should use local ISO datetimes.
+- id: datetime_picker_range-mui-v2-T25
+  name: Night shift cross-month datetime range in dark modal
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: DesktopDateTimeRangePicker closeOnSelect=false
+  implementation_component: 'MUI X Pro: DesktopDateTimeRangePicker inside Dialog'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit night shift” dialog. In the field labeled “Night shift window”, set the start to January 31, 2027 10:00 PM and the end to February 1, 2027 06:30 AM, then click OK. The task will finish automatically when done.
+  ui_copy: Open the “Edit night shift” dialog. In the field labeled “Night shift window”, set the start to January 31, 2027 10:00 PM and the end to February 1, 2027 06:30 AM, then click OK. The task will finish automatically when done.
+  setup_description: Layout is modal_flow with compact spacing, center placement, default scale, and medium clutter. Clicking “Edit night shift” opens a dark MUI Dialog containing one datetime range picker labeled “Night shift window”. The field starts empty. The range crosses both midnight and the end of the month. The picker uses an action bar with Cancel and OK, so the value is accepted only after OK.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - overlay_model
+    - precision_surface
+    factor_rationale: A cross-midnight, cross-month datetime task is a compact stressor for layered endpoint tracking; the dialog wrapper and picker-level OK ensure the task remains about accepted state rather than transient drafts.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The endpoints are exact and cognitively natural, but the month boundary plus AM/PM interpretation and confirm semantics create a real hard case.
+  success_trigger:
+    human_readable:
+    - The accepted range equals 2027-01-31T22:00:00 through 2027-02-01T06:30:00 (local time).
+    - The picker OK control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-01-31T22:00:00'
+        end: '2027-02-01T06:30:00'
+        timezone: local
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Night shift window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing 10:00 AM instead of 10:00 PM.
+  - Keeping the end date on January 31 instead of February 1.
+  - Selecting only one endpoint or not pressing OK.
+  - Closing the dialog without an accepted value.
+  expected_interaction_path:
+  - Open the dialog and the Night shift window picker.
+  - Set the start to January 31, 2027 10:00 PM.
+  - Advance to the end endpoint and set February 1, 2027 06:30 AM.
+  - Click OK.
+  notes: Canonical state should be checked in 24-hour local ISO format even if the UI shows 12-hour labels.
+- id: datetime_picker_range-mui-v2-T26
+  name: Single-input keyboard datetime range with external apply
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: DateTimeRangePicker SingleInputDateTimeRangeField
+  implementation_component: 'MUI X Pro: DateTimeRangePicker with SingleInputDateTimeRangeField'
+  task_template: enter_formatted
+  secondary_template: table_operation
+  browsergym_goal: In the compact operations table, edit only the “Editing window” field in row “Pipeline B”. Enter 04/10/2027 08:15 AM – 04/10/2027 09:45 AM into the single input field, make sure the range is accepted, and click “Apply” in the Pipeline B row. Do not change Pipeline A. The task will finish automatically when done.
+  ui_copy: In the compact operations table, edit only the “Editing window” field in row “Pipeline B”. Enter 04/10/2027 08:15 AM – 04/10/2027 09:45 AM into the single input field, make sure the range is accepted, and click “Apply” in the Pipeline B row. Do not change Pipeline A. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, bottom_right placement, small scale, and high clutter. Two rows, “Pipeline A” and “Pipeline B”, each contain a MUI DateTimeRangePicker configured with a SingleInputDateTimeRangeField and a row-local Apply button. Pipeline B is the target and starts empty. Pipeline A is prefilled and must remain unchanged. The control supports keyboard editing of the full range string; invalid or partial text leaves the component value unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: 'This is the intentionally hard keyboard-edit branch for datetime ranges: one compact single-input field, row-level apply, and sibling preservation all make the parse-and-commit path diagnostically meaningful.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: A fully typed datetime range is exacting on its own; placing it in a compact row-scoped context turns it into a strong precision and verification task.
+  success_trigger:
+    human_readable:
+    - The accepted Pipeline B / Editing window range equals 2027-04-10T08:15:00 through 2027-04-10T09:45:00 (local time).
+    - The Pipeline B row Apply control has been clicked.
+    - Pipeline A remains unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-04-10T08:15:00'
+        end: '2027-04-10T09:45:00'
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Pipeline A / Editing window:
+          - '2027-04-09T10:00:00'
+          - '2027-04-09T12:00:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: apply-pipeline-b-row
+      require_correct_instance: true
+      target_instance_label_or_id: Pipeline B / Editing window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing a near-match that parses to the wrong time or date.
+  - Leaving the field partially parsed or invalid.
+  - Applying changes to Pipeline A instead of Pipeline B.
+  - Forgetting the row-local Apply step.
+  expected_interaction_path:
+  - Locate Pipeline B.
+  - Focus the single input datetime range field and type the full range string.
+  - Verify the field accepts the value.
+  - Click Apply in the Pipeline B row.
+  notes: MUI documents the single-input field path for range pickers. Checker should inspect parsed start/end values and ignore raw text if parsing failed.
+- id: datetime_picker_range-mui-v2-T27
+  name: Freeze window with endpoint-specific disabled dates
+  canonical_type: datetime_picker_range
+  implementation_source: mui
+  implementation_variant: DateTimeRangePicker shouldDisableDate(role-aware)
+  implementation_component: 'MUI X Pro: DateTimeRangePicker'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Freeze schedule” modal. In the field labeled “Freeze window”, set the start to March 14, 2027 09:00 AM and the end to March 21, 2027 06:00 PM, then click OK. Some dates are disabled differently for the start and end positions, so use the requested enabled pair only. The task will finish automatically when done.
+  ui_copy: Open the “Freeze schedule” modal. In the field labeled “Freeze window”, set the start to March 14, 2027 09:00 AM and the end to March 21, 2027 06:00 PM, then click OK. Some dates are disabled differently for the start and end positions, so use the requested enabled pair only. The task will finish automatically when done.
+  setup_description: Layout is modal_flow with compact spacing, center placement, default scale, and low clutter. Clicking “Freeze schedule” opens a modal containing one MUI DateTimeRangePicker. The picker uses role-aware shouldDisableDate so the start cannot land on blocked weekdays and the end cannot land on blocked weekend exceptions; the enabled target pair is March 14, 2027 09:00 AM to March 21, 2027 06:00 PM. The picker uses an action bar with OK.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - overlay_model
+    - clutter
+    factor_rationale: 'This is a role-aware validation slice for datetime ranges: endpoint-specific disabled dates combine with times and an OK-confirmed modal to create genuine interaction-knowledge pressure.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: It stays human-solvable because the requested endpoints are explicit, but it is hard because endpoint roles, times, and acceptance all have to be tracked correctly.
+  success_trigger:
+    human_readable:
+    - The accepted Freeze window equals 2027-03-14T09:00:00 through 2027-03-21T18:00:00 (local time).
+    - The picker OK control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-03-14T09:00:00'
+        end: '2027-03-21T18:00:00'
+        timezone: local
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Freeze window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a disabled date for either endpoint.
+  - Choosing the right dates but wrong times.
+  - Leaving the selection in draft state by closing the picker without OK.
+  - Completing only one endpoint.
+  expected_interaction_path:
+  - Open the modal and the Freeze window picker.
+  - Set March 14, 2027 09:00 AM as start and March 21, 2027 06:00 PM as end.
+  - Press OK.
+  notes: This task intentionally uses endpoint-aware disabling documented by MUI range validation; checker should only depend on final accepted state.
+- id: datetime_picker_range-mantine-v2-T28
+  name: Reservation window composite modal group in the correct section
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite DateTimePicker ×2 dropdownType=modal
+  implementation_component: 'Mantine: DateTimePicker ×2 grouped as one range'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the reservation settings panel, edit only the composite field group labeled “Reservation window”. Set Start to February 14, 2027 09:30 and End to February 14, 2027 11:00, then click “Save reservations”. Do not change “Fallback window”. The task will finish automatically when done.
+  ui_copy: In the reservation settings panel, edit only the composite field group labeled “Reservation window”. Set Start to February 14, 2027 09:30 and End to February 14, 2027 11:00, then click “Save reservations”. Do not change “Fallback window”. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with compact spacing, off_center placement, default scale, and high clutter. Mantine does not provide a single native datetime range picker, so the page uses two grouped DateTimePicker inputs—Start and End—under each section title. Two sections exist: “Fallback window” and “Reservation window”. The target group is empty; the fallback group is prefilled and must remain unchanged. Each DateTimePicker opens in a modal via dropdownType=''modal''. A shared “Save reservations” button commits the panel.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - clutter
+    factor_rationale: 'The composite nature of the Mantine implementation is itself part of the diagnostic value: the agent must manage two modal pickers inside the right section while leaving a structurally identical sibling group untouched.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is a high-value hard task because group-level disambiguation, dual endpoints, modal opening, and shared save all have to be coordinated correctly.
+  success_trigger:
+    human_readable:
+    - The committed Reservation window composite group has start 2027-02-14T09:30:00 and end 2027-02-14T11:00:00.
+    - The panel-level “Save reservations” control has been clicked.
+    - Fallback window remains unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-02-14T09:30:00'
+        end: '2027-02-14T11:00:00'
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Fallback window:
+          - '2027-02-15T13:00:00'
+          - '2027-02-15T15:00:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save reservations
+      require_correct_instance: true
+      target_instance_label_or_id: Reservation window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Fallback window group instead of Reservation window.
+  - Setting only Start or only End in the target group.
+  - Changing the target group correctly but not clicking Save reservations.
+  - Mixing the Start and End values or swapping them.
+  expected_interaction_path:
+  - Locate the Reservation window group.
+  - Open the Start picker modal and set 2027-02-14 09:30.
+  - Open the End picker modal and set 2027-02-14 11:00.
+  - Click Save reservations.
+  notes: Treat the Start+End pair as one canonical datetime range component in checking. Each modal picker should expose its selected datetime independently for debugging.
+- id: datetime_picker_range-mantine-v2-T29
+  name: Resolved-between composite group hidden in a nested filters sidebar
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite DateTimePicker ×2 in nested scroll
+  implementation_component: 'Mantine: DateTimePicker ×2 grouped as one range'
+  task_template: scroll_find
+  secondary_template: set_range
+  browsergym_goal: Scroll the filters sidebar until the composite field group labeled “Resolved between” is visible. Set Start to October 15, 2027 06:00 and End to October 15, 2027 18:00, then click “Apply filters”. Do not change “Created between”. The task will finish automatically when done.
+  ui_copy: Scroll the filters sidebar until the composite field group labeled “Resolved between” is visible. Set Start to October 15, 2027 06:00 and End to October 15, 2027 18:00, then click “Apply filters”. Do not change “Created between”. The task will finish automatically when done.
+  setup_description: 'Layout is nested_scroll with compact spacing, off_center placement, default scale, and medium clutter. A ticketing page has a right-side filters sidebar with its own scroll region. Two composite Mantine datetime groups are stacked in the sidebar: “Created between” and “Resolved between”. The target group is initially below the fold. Each endpoint uses a DateTimePicker, and both fields accept values only after their internal modal pickers finish selection. Created between is prefilled and must stay unchanged. The sidebar has an “Apply filters” button.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - layout
+    factor_rationale: 'The task pressures both search and state tracking: the correct composite group is hidden in the sidebar scroll region, and the user must manipulate both endpoints there before the external Apply makes the range active.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Hidden target group, dual endpoints, a sibling group, and an external Apply step make this a robust hard datetime-range task even though the target values themselves are simple.
+  success_trigger:
+    human_readable:
+    - The committed Resolved between group equals 2027-10-15T06:00:00 through 2027-10-15T18:00:00.
+    - The “Apply filters” control has been clicked.
+    - Created between remains unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        start: '2027-10-15T06:00:00'
+        end: '2027-10-15T18:00:00'
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Created between:
+          - '2027-10-01T00:00:00'
+          - '2027-10-07T23:59:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Resolved between
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the filters sidebar and never reaching the target group.
+  - Editing Created between instead of Resolved between.
+  - Setting only one endpoint in the target group.
+  - Changing the target group correctly but not clicking Apply filters.
+  expected_interaction_path:
+  - Scroll the filters sidebar until Resolved between is visible.
+  - Set Start to 2027-10-15 06:00 and End to 2027-10-15 18:00.
+  - Leave Created between unchanged.
+  - Click Apply filters.
+  notes: Checker should treat the composite group as one canonical component and only evaluate persisted sidebar filter state after Apply.
+- id: datetime_picker_range-mantine-v2-T30
+  name: Incident window composite group in a high-contrast panel
+  canonical_type: datetime_picker_range
+  implementation_source: mantine
+  implementation_variant: composite DateTimePicker ×2 high-contrast
+  implementation_component: 'Mantine: DateTimePicker ×2 grouped as one range'
+  task_template: match_reference
+  secondary_template: set_range
+  browsergym_goal: In the high-contrast incident panel, edit only the composite field group labeled “Incident window” so it matches the start and end shown on the reference card, then click “Save panel”. Do not change “Maintenance window”. The task will finish automatically when done.
+  ui_copy: In the high-contrast incident panel, edit only the composite field group labeled “Incident window” so it matches the start and end shown on the reference card, then click “Save panel”. Do not change “Maintenance window”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with high_contrast theme, compact spacing, bottom_left placement, small scale, and high clutter. Two composite Mantine DateTimePicker groups appear in one incident card: “Maintenance window” and “Incident window”. A reference card resolves to 2027-09-09 21:00 through 2027-09-10 01:30. The target group is empty; the maintenance group is prefilled and must remain unchanged. Each endpoint opens with the standard Mantine DateTimePicker overlay. A single “Save panel” button commits the card state.'
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - instances
+    - clutter
+    factor_rationale: The panel puts a composite range interaction into a visually loud, high-disambiguation context where two same-type groups compete for attention and the target is given visually.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is hard because the agent must translate a visual reference into two datetime endpoints, target the correct composite group, and preserve the sibling group before the shared save.
+  success_trigger:
+    human_readable:
+    - The committed Incident window group equals 2027-09-09T21:00:00 through 2027-09-10T01:30:00.
+    - The panel “Save panel” control has been clicked.
+    - Maintenance window remains unchanged.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: incident-window-reference
+        start: '2027-09-09T21:00:00'
+        end: '2027-09-10T01:30:00'
+        timezone: local
+        saved: true
+        non_target_instances_must_remain:
+          Maintenance window:
+          - '2027-09-12T09:00:00'
+          - '2027-09-12T12:00:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save panel
+      require_correct_instance: true
+      target_instance_label_or_id: Incident window
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Maintenance window instead of Incident window.
+  - Selecting only one endpoint or choosing the wrong date boundary at midnight.
+  - Matching the reference in draft state but not saving the panel.
+  - Changing both groups before saving.
+  expected_interaction_path:
+  - Read the reference card.
+  - Edit the Incident window Start and End fields to match it.
+  - Leave Maintenance window untouched.
+  - Click Save panel.
+  notes: This task intentionally uses a visual reference rather than raw copied text. Canonical checking should happen on saved local ISO datetimes.
+- id: time_picker-antd-v2-T31
+  name: Quiet hours end at 11:45 PM with 12-hour confirm among two fields
+  canonical_type: time_picker
+  implementation_source: antd
+  implementation_variant: use12Hours + needConfirm
+  implementation_component: 'AntD: TimePicker'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the alert settings panel, edit only the time picker labeled “Quiet hours end”. Set it to 11:45 PM, then click OK to confirm. Do not change “Quiet hours start”. The task will finish automatically when done.
+  ui_copy: In the alert settings panel, edit only the time picker labeled “Quiet hours end”. Set it to 11:45 PM, then click OK to confirm. Do not change “Quiet hours start”. The task will finish automatically when done.
+  setup_description: Layout is settings_panel with compact spacing, off_center placement, small scale, and high clutter. Two Ant Design TimePicker controls labeled “Quiet hours start” and “Quiet hours end” sit inside a settings card with toggles and badges above them. The target field starts at 10:00 PM. The sibling field starts at 08:00 AM and must remain unchanged. The target picker uses use12Hours with a meridiem column and needConfirm, so the user must select hour, minute, and PM before clicking OK.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - spacing
+    factor_rationale: 'This task pressures the classic 12-hour confusion path: the agent must manipulate the correct sibling picker, choose the correct meridiem and minute, and then explicitly confirm it.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The time is simple for a human, but the compact popup, meridiem column, correct-instance tracking, and OK-confirm step make it a strong hard time-picker task.
+  success_trigger:
+    human_readable:
+    - The committed value of “Quiet hours end” equals 23:45.
+    - The picker OK control has been clicked.
+    - Quiet hours start remains 08:00.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '23:45'
+        saved: true
+        non_target_instances_must_remain:
+          Quiet hours start: 08:00
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Quiet hours end
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting 11:45 AM instead of 11:45 PM.
+  - Changing Quiet hours start instead of Quiet hours end.
+  - Selecting 11:45 PM but not clicking OK.
+  - Leaving the minute or meridiem column on the wrong value.
+  expected_interaction_path:
+  - Open Quiet hours end.
+  - Select 11, 45, and PM in the popup columns.
+  - Click OK.
+  - Verify Quiet hours start remains unchanged.
+  notes: Checker should normalize 12-hour display to canonical 24-hour HH:mm.
+- id: time_picker-antd-v2-T32
+  name: Audit cutoff at 13:07:30 with seconds in a compact drawer
+  canonical_type: time_picker
+  implementation_source: antd
+  implementation_variant: showSeconds + needConfirm
+  implementation_component: 'AntD: TimePicker'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit audit cutoff” drawer. In the time picker labeled “Audit cutoff”, set the time to 13:07:30 and click OK to confirm. The task will finish automatically when done.
+  ui_copy: Open the “Edit audit cutoff” drawer. In the time picker labeled “Audit cutoff”, set the time to 13:07:30 and click OK to confirm. The task will finish automatically when done.
+  setup_description: Layout is drawer_flow with compact spacing, bottom_right placement, small scale, and medium clutter. Clicking “Edit audit cutoff” opens a drawer containing one Ant Design TimePicker labeled “Audit cutoff”. Seconds are enabled, so the popup includes hour, minute, and second columns. needConfirm is enabled. The field starts at 13:00:00. The compact small layout makes the popup controls denser than the default picker.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - precision_surface
+    - confirmation_model
+    - placement
+    factor_rationale: Second-level precision and dense popup columns are a known weak point; the bottom-corner drawer raises acquisition pressure without making the task artificial.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Exact seconds are physically and semantically precise but still feasible for a human; the confirm step and compact drawer make this a strong hard case.
+  success_trigger:
+    human_readable:
+    - The committed time equals 13:07:30.
+    - The picker OK control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '13:07:30'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Audit cutoff
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving seconds at 00 or any value other than 30.
+  - Choosing 13:07 instead of 13:07:30.
+  - Selecting the right values but not clicking OK.
+  - Closing the drawer or picker without a committed change.
+  expected_interaction_path:
+  - Open the drawer and the Audit cutoff picker.
+  - Set hour 13, minute 07, second 30.
+  - Click OK.
+  notes: Checker should compare canonical HH:mm:ss exactly with no hidden tolerance.
+- id: time_picker-antd-v2-T33
+  name: Region B escalation time in a row-scoped table
+  canonical_type: time_picker
+  implementation_source: antd
+  implementation_variant: minuteStep=5 + row save
+  implementation_component: 'AntD: TimePicker in table cell'
+  task_template: table_operation
+  secondary_template: set_scalar
+  browsergym_goal: In the “Escalation times” table, edit only the row labeled “Region B”. Set its “Escalation time” picker to 23:55, then click “Save” in the Region B row. Do not change Region A or Region C. The task will finish automatically when done.
+  ui_copy: In the “Escalation times” table, edit only the row labeled “Region B”. Set its “Escalation time” picker to 23:55, then click “Save” in the Region B row. Do not change Region A or Region C. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, bottom_right placement, small scale, and high clutter. Three rows—Region A, Region B, and Region C—each contain an Ant Design TimePicker and a row-local Save button. All pickers start at 23:00 and use a 5-minute step. Region B is the only target. The cell controls are small and closely packed with status chips and enable switches.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Row-local saving plus three nearly identical small controls produces the sort of grounded table-operation pressure that v1 showed was highly diagnostic for time widgets.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Once the popup is open the target time is simple, but the row-scoped context and small bottom-corner controls make correctly localizing and saving the target genuinely hard.
+  success_trigger:
+    human_readable:
+    - The committed Region B escalation time equals 23:55.
+    - The Region B row Save control has been clicked.
+    - Region A and Region C remain 23:00.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '23:55'
+        saved: true
+        non_target_instances_must_remain:
+          Region A / Escalation time: '23:00'
+          Region C / Escalation time: '23:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-region-b-row
+      require_correct_instance: true
+      target_instance_label_or_id: Region B / Escalation time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying 23:55 to Region A or Region C instead of Region B.
+  - Selecting 23:50 or 23:00 because the 5-minute increments were misread.
+  - Changing Region B correctly but clicking Save in the wrong row or not saving at all.
+  - Changing multiple rows.
+  expected_interaction_path:
+  - Locate Region B.
+  - Open its time picker and select 23:55.
+  - Click Save in the Region B row.
+  notes: Checker should scope by row id and canonical HH:mm values.
+- id: time_picker-antd-v2-T34
+  name: Recovery from partial draft in adjacent time pickers
+  canonical_type: time_picker
+  implementation_source: antd
+  implementation_variant: use12Hours + needConfirm recovery
+  implementation_component: 'AntD: TimePicker'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: In the meeting card, set only the time picker labeled “End time” to 9:05 PM and click OK. If you open the wrong adjacent picker or leave a partial draft, recover and finish with only End time changed. Do not change “Start time”. The task will finish automatically when done.
+  ui_copy: In the meeting card, set only the time picker labeled “End time” to 9:05 PM and click OK. If you open the wrong adjacent picker or leave a partial draft, recover and finish with only End time changed. Do not change “Start time”. The task will finish automatically when done.
+  setup_description: Layout is inline_surface with compact spacing, off_center placement, default scale, and medium clutter. A meeting card contains two adjacent Ant Design TimePicker controls labeled “Start time” and “End time”. Start time is 7:00 PM and must remain unchanged. End time is 7:30 PM. Both use 12-hour format with needConfirm and small popup columns. The closeness of the fields makes wrong-picker activation common, and partial drafts do not commit until OK.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - confirmation_model
+    factor_rationale: 'This task emphasizes recovery after a plausible local mistake: the two pickers are adjacent, drafts are not accepted automatically, and only one field should end up changed.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The exact target is not hard for a human, but preserving Start time and converting only End time into an accepted 12-hour value makes this a meaningful recovery-heavy slice.
+  success_trigger:
+    human_readable:
+    - End time equals 21:05 in committed state.
+    - Start time remains 19:00.
+    - The End time picker’s OK control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '21:05'
+        saved: true
+        non_target_instances_must_remain:
+          Start time: '19:00'
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: End time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Start time instead of End time.
+  - Leaving End time as a draft without pressing OK.
+  - Selecting 9:05 AM instead of 9:05 PM.
+  - Ending with both fields modified.
+  expected_interaction_path:
+  - Focus the End time field, not the adjacent Start time field.
+  - Choose 9, 05, and PM.
+  - Click OK.
+  - Verify Start time stayed at 7:00 PM.
+  notes: Checker should compare both fields at terminal state to catch wrong-instance edits and incomplete recovery.
+- id: time_picker-mui-v2-T35
+  name: Static time picker confirmation with sibling field preserved
+  canonical_type: time_picker
+  implementation_source: mui
+  implementation_variant: StaticTimePicker with action bar
+  implementation_component: 'MUI X: StaticTimePicker'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the planner panel, use the static time picker labeled “End time” to set it to 22:35, then click OK. Do not change the nearby field labeled “Start time”. The task will finish automatically when done.
+  ui_copy: In the planner panel, use the static time picker labeled “End time” to set it to 22:35, then click OK. Do not change the nearby field labeled “Start time”. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing, center placement, default scale, and medium clutter. A planner card contains a static MUI time picker for “End time”, a normal text field for other metadata, and a separate read-only “Start time” field showing 09:00 that must remain unchanged. The static picker renders inline without a popper and includes an action bar with Cancel and OK. The current End time is 17:00. The content uses digital clock sections rather than free-form typing.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - clutter
+    - instances
+    factor_rationale: Inline static pickers remove the acquisition cost of a popper but increase the need to reason about pending versus accepted state in a context where another time field is nearby and should not change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: The interaction is readable for a human, but it still requires correct section selection, an OK accept step, and preservation of a nearby sibling time field.
+  success_trigger:
+    human_readable:
+    - The accepted End time equals 22:35.
+    - The static picker OK control has been clicked.
+    - Start time remains 09:00.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '22:35'
+        saved: true
+        non_target_instances_must_remain:
+          Start time: 09:00
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: End time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Start time instead of End time.
+  - Selecting the correct draft time but not clicking OK.
+  - Selecting 22:30 or 22:53 instead of 22:35.
+  - Editing unrelated metadata controls while End time stays unchanged.
+  expected_interaction_path:
+  - Use the static End time picker sections to choose 22 and 35.
+  - Click OK.
+  - Verify Start time is unchanged.
+  notes: StaticTimePicker is inline, so checker must rely on accepted state rather than open/closed popup markers.
+- id: time_picker-mui-v2-T36
+  name: Dashboard filter End time from a visual reference clock card
+  canonical_type: time_picker
+  implementation_source: mui
+  implementation_variant: DesktopTimePicker with action bar
+  implementation_component: 'MUI X: DesktopTimePicker'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dashboard filter strip, edit only the time picker labeled “End time” so it matches the time shown on the reference clock card, then click OK. Do not change “Start time” or “Grace period”. The task will finish automatically when done.
+  ui_copy: In the dashboard filter strip, edit only the time picker labeled “End time” so it matches the time shown on the reference clock card, then click OK. Do not change “Start time” or “Grace period”. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, top_right placement, default scale, and high clutter. A filter strip contains three time controls: a MUI DesktopTimePicker labeled “Start time”, a target DesktopTimePicker labeled “End time”, and a small numeric “Grace period” control. A reference card nearby resolves to 17:45. Start time is prefilled with 09:00 and must remain unchanged. The DesktopTimePicker uses an action bar so the selection is accepted only after OK.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - clutter
+    factor_rationale: 'The visual reference reduces wording burden but not interaction burden: the agent still has to find the correct crowded control in the top-right strip and accept the draft time explicitly.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: This is hard primarily because the crowded top-right filter strip is a known grounding failure context, even though the target time itself is simple.
+  success_trigger:
+    human_readable:
+    - The accepted End time equals 17:45.
+    - The picker OK control has been clicked.
+    - Start time remains 09:00.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: end-time-clock-reference
+        time_24h: '17:45'
+        saved: true
+        non_target_instances_must_remain:
+          Start time: 09:00
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: End time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Start time to the reference instead of End time.
+  - Reading the clock card incorrectly and selecting a near-miss time.
+  - Making the correct draft selection but not accepting it with OK.
+  - Changing Grace period instead of the target picker.
+  expected_interaction_path:
+  - Read the reference card.
+  - Open End time and choose the matching time.
+  - Press OK.
+  - Verify Start time is unchanged.
+  notes: The reference card should not expose raw HH:mm text in benchmark mode if you want a purely visual slice; checker still uses canonical 24-hour time.
+- id: time_picker-mui-v2-T37
+  name: TimeField keyboard edit in a compact operations row
+  canonical_type: time_picker
+  implementation_source: mui
+  implementation_variant: TimeField keyboard editing
+  implementation_component: 'MUI X: TimeField'
+  task_template: enter_formatted
+  secondary_template: table_operation
+  browsergym_goal: In the operations table, edit only the “Cutoff time” field in row “Pipeline B”. Enter 09:07 into the time field, make sure the value is accepted, and click “Apply” in that row. Do not change Pipeline A. The task will finish automatically when done.
+  ui_copy: In the operations table, edit only the “Cutoff time” field in row “Pipeline B”. Enter 09:07 into the time field, make sure the value is accepted, and click “Apply” in that row. Do not change Pipeline A. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, bottom_left placement, small scale, and high clutter. Two rows, “Pipeline A” and “Pipeline B”, each contain an MUI TimeField and a row-local Apply button. Pipeline B is the target and starts empty. Pipeline A is prefilled with 08:30 and must remain unchanged. The TimeField uses keyboard section editing; partial or invalid edits do not update the underlying value until the field sections form a valid time.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: This preserves one explicit keyboard-editing branch for time selection, but it is anchored in a row-scoped compact table so correct-instance targeting and acceptance still matter.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: A section-based keyboard field is exacting, and the compact row context plus Apply step makes it more diagnostic than a bare standalone time input.
+  success_trigger:
+    human_readable:
+    - The accepted Pipeline B cutoff time equals 09:07.
+    - The Pipeline B row Apply control has been clicked.
+    - Pipeline A remains 08:30.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: 09:07
+        saved: true
+        non_target_instances_must_remain:
+          Pipeline A / Cutoff time: 08:30
+      tolerance: null
+      require_confirm: true
+      confirm_control: apply-pipeline-b-row
+      require_correct_instance: true
+      target_instance_label_or_id: Pipeline B / Cutoff time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Entering a malformed or partial time that leaves the field invalid.
+  - Applying the change to Pipeline A instead of Pipeline B.
+  - Typing 09:70 or 09:17 instead of 09:07.
+  - Not clicking Apply after the field becomes valid.
+  expected_interaction_path:
+  - Locate Pipeline B.
+  - Focus the TimeField and edit the hour/minute sections to 09:07.
+  - Verify the field accepts the value.
+  - Click Apply in the Pipeline B row.
+  notes: MUI TimeField is documented as a keyboard-editing component. Checker should inspect parsed field state, not raw text, before considering the row save.
+- id: time_picker-mantine-v2-T38
+  name: Internal deadline 9:05 PM in Mantine dropdown picker
+  canonical_type: time_picker
+  implementation_source: mantine
+  implementation_variant: TimePicker format=12h withDropdown
+  implementation_component: 'Mantine: TimePicker'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the communications card, edit only the time picker labeled “Internal deadline”. Set it to 9:05 PM. Leave “Public deadline” unchanged, then click “Save deadlines”. The task will finish automatically when done.
+  ui_copy: In the communications card, edit only the time picker labeled “Internal deadline”. Set it to 9:05 PM. Leave “Public deadline” unchanged, then click “Save deadlines”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing, off_center placement, default scale, and medium clutter. Two Mantine TimePicker controls appear in a card: “Public deadline” and “Internal deadline”. The target field starts at 7:00 PM. The sibling field starts at 5:30 PM and must remain unchanged. The target uses format=''12h'' and withDropdown, so the user can choose hour, minute, and am/pm from the dropdown that appears when an input is focused. The card has a “Save deadlines” button.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - overlay_model
+    factor_rationale: Mantine’s TimePicker only calls onChange when the entered value is valid and complete, so a 12-hour sibling-preservation task naturally stresses both correctness and commit verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The time itself is simple, but the agent must fill all required parts of a valid 12-hour value on the correct field and preserve the sibling control until the external save.
+  success_trigger:
+    human_readable:
+    - The committed Internal deadline equals 21:05.
+    - The Save deadlines control has been clicked.
+    - Public deadline remains 17:30.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '21:05'
+        saved: true
+        non_target_instances_must_remain:
+          Public deadline: '17:30'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save deadlines
+      require_correct_instance: true
+      target_instance_label_or_id: Internal deadline
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting 9:05 AM instead of 9:05 PM.
+  - Editing Public deadline instead of Internal deadline.
+  - Leaving the dropdown or field in a partial state that never becomes valid.
+  - Changing Internal deadline correctly but not saving the card.
+  expected_interaction_path:
+  - Open Internal deadline.
+  - Use the dropdown to choose 9, 05, and PM.
+  - Leave Public deadline untouched.
+  - Click Save deadlines.
+  notes: Mantine TimePicker exposes valid value only after all required parts are filled; checker should rely on canonical 24-hour stored state.
+- id: time_picker-mantine-v2-T39
+  name: Log time 13:07:30 with seconds in nested scroll
+  canonical_type: time_picker
+  implementation_source: mantine
+  implementation_variant: TimePicker withSeconds withDropdown
+  implementation_component: 'Mantine: TimePicker'
+  task_template: scroll_find
+  secondary_template: set_scalar
+  browsergym_goal: Scroll the diagnostics sidebar until the time picker labeled “Log time” is visible. Set it to 13:07:30 and click “Apply diagnostics”. The task will finish automatically when done.
+  ui_copy: Scroll the diagnostics sidebar until the time picker labeled “Log time” is visible. Set it to 13:07:30 and click “Apply diagnostics”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing, off_center placement, default scale, and medium clutter. A diagnostics page has a right-side sidebar with its own scroll container. The target Mantine TimePicker labeled “Log time” is below the fold inside that sidebar. The control uses withSeconds and withDropdown, so hour, minute, and second sections plus a dropdown are available. The field starts empty. A sidebar-level “Apply diagnostics” button commits the filter state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - precision_surface
+    - layout
+    factor_rationale: Second-level time entry is difficult enough on its own; hiding the correct field in a nested sidebar makes the task jointly test navigation, completion of all sections, and commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target is exact to the second and not initially visible, so the task meaningfully combines nested scrolling with high-precision Mantine time entry.
+  success_trigger:
+    human_readable:
+    - The committed Log time equals 13:07:30.
+    - The Apply diagnostics control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '13:07:30'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply diagnostics
+      require_correct_instance: true
+      target_instance_label_or_id: Log time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the sidebar so the target is never edited.
+  - Leaving seconds missing so Mantine never emits a valid value.
+  - Choosing 13:07:03 or 13:07:00 instead of 13:07:30.
+  - Not clicking Apply diagnostics after setting the field.
+  expected_interaction_path:
+  - Scroll the diagnostics sidebar until Log time is visible.
+  - Enter or choose 13:07:30 in the TimePicker.
+  - Click Apply diagnostics.
+  notes: Mantine docs state onChange is called only when the value is valid and complete; checker should use the stored canonical value after Apply.
+- id: time_picker-mantine-v2-T40
+  name: SLA cutoff in a compact bottom-corner row with sibling preservation
+  canonical_type: time_picker
+  implementation_source: mantine
+  implementation_variant: TimePicker withDropdown 24h
+  implementation_component: 'Mantine: TimePicker'
+  task_template: table_operation
+  secondary_template: set_scalar
+  browsergym_goal: In the SLA table, edit only the row labeled “Enterprise”. Set the “Cutoff time” picker to 18:40, then click “Save” in the Enterprise row. Do not change the “Standard” row. The task will finish automatically when done.
+  ui_copy: In the SLA table, edit only the row labeled “Enterprise”. Set the “Cutoff time” picker to 18:40, then click “Save” in the Enterprise row. Do not change the “Standard” row. The task will finish automatically when done.
+  setup_description: Layout is table_cell with compact spacing, bottom_right placement, small scale, and high clutter. A two-row SLA table contains Mantine TimePicker controls with withDropdown enabled. The rows are “Standard” and “Enterprise”. Enterprise is the target and starts at 18:00. Standard is prefilled with 17:30 and must remain unchanged. Each row has its own Save button, and the small bottom-corner placement increases target acquisition pressure.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - placement
+    factor_rationale: 'This is the row-scoped Mantine counterpart to the strong table-cell pressure you saw elsewhere: small controls, bottom-corner placement, and one sibling row make the task about grounded targeting as much as time selection.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The accepted value is simple, but finding the right compact row control and saving only that row is difficult enough to make it a strong hard task.
+  success_trigger:
+    human_readable:
+    - The committed Enterprise cutoff time equals 18:40.
+    - The Enterprise row Save control has been clicked.
+    - Standard remains 17:30.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        time_24h: '18:40'
+        saved: true
+        non_target_instances_must_remain:
+          Standard / Cutoff time: '17:30'
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-enterprise-row
+      require_correct_instance: true
+      target_instance_label_or_id: Enterprise / Cutoff time
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Standard row instead of Enterprise.
+  - Selecting the wrong minute such as 18:04 or 18:45.
+  - Changing Enterprise correctly but not clicking the Enterprise row Save button.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate the Enterprise row.
+  - Open its TimePicker and set 18:40.
+  - Click Save in the Enterprise row.
+  notes: Row-local ids are required. Checker should compare canonical HH:mm values and verify the Standard row is unchanged.
+- id: calendar_embedded-antd-v2-T41
+  name: Far-future release date on embedded AntD calendar with panel save
+  canonical_type: calendar_embedded
+  implementation_source: antd
+  implementation_variant: Calendar with controlled month/year
+  implementation_component: 'AntD: Calendar'
+  task_template: select_one
+  secondary_template: navigate_to
+  browsergym_goal: In the release settings panel, use the embedded calendar labeled “Release calendar” to select November 23, 2035, then click “Save panel”. The task will finish automatically when done.
+  ui_copy: In the release settings panel, use the embedded calendar labeled “Release calendar” to select November 23, 2035, then click “Save panel”. The task will finish automatically when done.
+  setup_description: Layout is settings_panel with compact spacing, off_center placement, default scale, and high clutter. The main panel contains one embedded Ant Design Calendar labeled “Release calendar”, plus surrounding toggles, read-only status chips, and a release summary card. The calendar initially shows February 2026. The header exposes month and year navigation. Selecting a date creates a pending highlight, but the committed “Applied release date” readout updates only after the panel-level “Save panel” button is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - clutter
+    factor_rationale: This turns a plain embedded calendar into a hard layered task by pairing far-future navigation with a separate panel-level commit, so the user must verify pending versus applied state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The date is explicit, but it is far from the starting month and only counts after a separate save, which makes this much more diagnostic than a bare single-click day selection.
+  success_trigger:
+    human_readable:
+    - The committed applied date for Release calendar equals 2035-11-23.
+    - The panel-level Save panel control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_date: '2035-11-23'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save panel
+      require_correct_instance: true
+      target_instance_label_or_id: Release calendar
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Navigating to the right month/year but not selecting day 23.
+  - Selecting the right day but not clicking Save panel.
+  - Selecting 2035-11-22 or 2035-11-24 instead of the requested date.
+  - Editing unrelated settings without changing the calendar state.
+  expected_interaction_path:
+  - Navigate the embedded calendar from February 2026 to November 2035.
+  - Click day 23.
+  - Click Save panel.
+  notes: Checker should distinguish pending selected date from applied saved date if the implementation uses separate state.
+- id: calendar_embedded-antd-v2-T42
+  name: Team C applied date in a three-calendar dashboard
+  canonical_type: calendar_embedded
+  implementation_source: antd
+  implementation_variant: Calendar x3 with global apply
+  implementation_component: 'AntD: Calendar'
+  task_template: select_one
+  secondary_template: confirm_cancel
+  browsergym_goal: In the team scheduling dashboard, use only the calendar labeled “Team C” to select February 1, 2027, then click “Apply changes”. Leave Team A and Team B with no applied date. The task will finish automatically when done.
+  ui_copy: In the team scheduling dashboard, use only the calendar labeled “Team C” to select February 1, 2027, then click “Apply changes”. Leave Team A and Team B with no applied date. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing, center placement, default scale, and high clutter. Three Ant Design Calendar cards—Team A, Team B, and Team C—sit in one row beneath a toolbar. All start on January 2027 with no applied date. Clicking a day sets a pending highlight inside that calendar, but the readout “Applied date” under each card updates only when the global footer button “Apply changes” is clicked. Team C is the target; Team A and Team B must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The challenge is not the date itself but disambiguation across three same-type embedded calendars and the separation between pending cell highlight and globally applied state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three similar calendars and a global apply step create exactly the kind of layered disambiguation burden that embedded calendars were strong at in the evidence bundle.
+  success_trigger:
+    human_readable:
+    - Team C applied date equals 2027-02-01.
+    - The global Apply changes control has been clicked.
+    - Team A and Team B applied dates remain null.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_date: '2027-02-01'
+        saved: true
+        non_target_instances_must_remain:
+          Team A: null
+          Team B: null
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: true
+      target_instance_label_or_id: Team C
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting February 1 on Team A or Team B instead of Team C.
+  - Selecting the right pending date on Team C but not clicking Apply changes.
+  - Applying any date to Team A or Team B.
+  - Selecting the wrong day in Team C.
+  expected_interaction_path:
+  - Locate Team C.
+  - Click February 1, 2027 in Team C only.
+  - Click Apply changes.
+  notes: This task intentionally separates pending highlight from applied state. Checker should use per-team committed dates.
+- id: calendar_embedded-mui-v2-T43
+  name: Static date picker in dark mode with OK-confirmed far future
+  canonical_type: calendar_embedded
+  implementation_source: mui
+  implementation_variant: StaticDatePicker with action bar
+  implementation_component: 'MUI X: StaticDatePicker'
+  task_template: select_one
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dark maintenance panel, use the embedded calendar labeled “Maintenance date” to select December 28, 2032, then click OK. The task will finish automatically when done.
+  ui_copy: In the dark maintenance panel, use the embedded calendar labeled “Maintenance date” to select December 28, 2032, then click OK. The task will finish automatically when done.
+  setup_description: Layout is settings_panel with compact spacing, off_center placement, default scale, and medium clutter. One MUI StaticDatePicker is embedded directly in the panel and labeled “Maintenance date”. It starts on February 2026. The static picker includes an action bar with Cancel and OK. The surrounding card includes alert severity chips and a read-only outage summary. The selected date is only accepted when OK is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - placement
+    factor_rationale: Static MUI calendars remove popup search cost but still create a strong accepted-versus-pending distinction when paired with a far-future target and explicit OK confirmation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: This is hard because the target year is far away and the selected day does not count until the inline picker’s OK action accepts it.
+  success_trigger:
+    human_readable:
+    - The accepted Maintenance date equals 2032-12-28.
+    - The picker OK control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_date: '2032-12-28'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Maintenance date
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Navigating to December 2032 but choosing the wrong day.
+  - Selecting the correct day but not clicking OK.
+  - Clicking Cancel after selecting the target date.
+  - Leaving the picker on a different year or month.
+  expected_interaction_path:
+  - Navigate the static picker to December 2032.
+  - Select day 28.
+  - Click OK.
+  notes: Checker should use accepted value rather than highlighted draft value.
+- id: calendar_embedded-mui-v2-T44
+  name: Billing calendar only, with sibling calendar preserved and Apply
+  canonical_type: calendar_embedded
+  implementation_source: mui
+  implementation_variant: DateCalendar x2 with external apply
+  implementation_component: 'MUI X: DateCalendar'
+  task_template: select_one
+  secondary_template: confirm_cancel
+  browsergym_goal: In the shipping workspace, use only the embedded calendar labeled “Billing calendar” to select April 19, 2027, then click “Apply changes”. Do not select any date in “Shipping calendar”. The task will finish automatically when done.
+  ui_copy: In the shipping workspace, use only the embedded calendar labeled “Billing calendar” to select April 19, 2027, then click “Apply changes”. Do not select any date in “Shipping calendar”. The task will finish automatically when done.
+  setup_description: 'Layout is inline_surface with compact spacing, bottom_right placement, small scale, and high clutter. Two MUI DateCalendar instances sit side by side inside a logistics card: “Shipping calendar” and “Billing calendar”. Both begin on February 2027 with no applied date. Clicking a day sets a pending selection in that calendar, but an external “Apply changes” button below the pair commits the current selections. Shipping calendar must remain unselected.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: Side-by-side calendars are disambiguation-heavy for visually grounded agents, and the external Apply step forces verification that only the target calendar accumulated a pending date.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The day itself is easy, but small bottom-corner calendars with a shared Apply and strict sibling preservation make this a strong grounding and state-tracking task.
+  success_trigger:
+    human_readable:
+    - The applied date for Billing calendar equals 2027-04-19.
+    - Shipping calendar applied date remains null.
+    - The external Apply changes control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_date: '2027-04-19'
+        saved: true
+        non_target_instances_must_remain:
+          Shipping calendar: null
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: true
+      target_instance_label_or_id: Billing calendar
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting April 19 on Shipping calendar instead of Billing calendar.
+  - Selecting the correct date in Billing calendar but forgetting Apply changes.
+  - Selecting dates in both calendars.
+  - Selecting the wrong day or month in Billing calendar.
+  expected_interaction_path:
+  - Navigate Billing calendar to April 2027 if needed.
+  - Select day 19 in Billing calendar only.
+  - Click Apply changes.
+  notes: Use separate applied states for each calendar, not a shared global selected date.
+- id: calendar_embedded-mui-v2-T45
+  name: Dense grid selection from a subtle visual marker
+  canonical_type: calendar_embedded
+  implementation_source: mui
+  implementation_variant: DateCalendar custom day rendering
+  implementation_component: 'MUI X: DateCalendar'
+  task_template: match_reference
+  secondary_template: select_one
+  browsergym_goal: In the review dashboard, use the embedded calendar labeled “Review calendar” to select the day marked with the purple target ring, then click “Apply review date”. Ignore gray and orange markers. The task will finish automatically when done.
+  ui_copy: In the review dashboard, use the embedded calendar labeled “Review calendar” to select the day marked with the purple target ring, then click “Apply review date”. Ignore gray and orange markers. The task will finish automatically when done.
+  setup_description: 'Layout is dashboard_panel with compact spacing, center placement, default scale, and medium clutter. One MUI DateCalendar labeled “Review calendar” is embedded in a card alongside a legend: purple ring = Target, orange dot = Busy, gray dot = Blocked. Several days in March 2027 show orange or gray markers; exactly one day shows the purple ring. No textual date readout is shown until the external “Apply review date” button is clicked. The target day is March 12, 2027.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - confirmation_model
+    factor_rationale: 'This directly targets the subtle-cue dense-grid weakness from the evidence: the user must resolve the right day from visual markers in the calendar itself, then still commit it with an external Apply.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The difficulty is almost entirely in distinguishing the target visual marker from nearby decoys, not in date arithmetic.
+  success_trigger:
+    human_readable:
+    - The applied Review calendar date equals 2027-03-12.
+    - The Apply review date control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: review-calendar-purple-target
+        selected_date: '2027-03-12'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply review date
+      require_correct_instance: true
+      target_instance_label_or_id: Review calendar
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a day with an orange or gray marker instead of the purple target ring.
+  - Selecting the right day but not clicking Apply review date.
+  - Selecting an unmarked day.
+  - Relying on a textual date that is not present in the UI.
+  expected_interaction_path:
+  - Use the legend to identify the purple target marker.
+  - Find the matching marked day in the March 2027 grid.
+  - Select it and click Apply review date.
+  notes: The target marker can be exposed in internal app state for deterministic checking, but benchmark mode should not print the resolved ISO date in the DOM.
+- id: calendar_embedded-mantine-v2-T46
+  name: Far-future planning date with Mantine level change and Save
+  canonical_type: calendar_embedded
+  implementation_source: mantine
+  implementation_variant: Calendar allowLevelChange
+  implementation_component: 'Mantine: Calendar'
+  task_template: select_one
+  secondary_template: navigate_to
+  browsergym_goal: In the planning sidebar, use the embedded calendar labeled “Planning calendar” to select November 23, 2035, then click “Save planning date”. The task will finish automatically when done.
+  ui_copy: In the planning sidebar, use the embedded calendar labeled “Planning calendar” to select November 23, 2035, then click “Save planning date”. The task will finish automatically when done.
+  setup_description: Layout is nested_scroll with compact spacing, off_center placement, small scale, and medium clutter. A right-side planning sidebar contains one Mantine Calendar labeled “Planning calendar”, but the sidebar itself is scrollable and the calendar sits below a block of explanatory text and filter chips. The calendar starts on February 2026. Mantine’s allowLevelChange behavior is enabled, so clicking the month label moves between date, month, and year levels. A “Save planning date” button below the calendar commits the current selection.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - scale
+    - layout
+    factor_rationale: The task remains human-solvable because Mantine exposes level changes clearly, but the hidden sidebar location and far-future target push it into the hard regime without any fake ambiguity.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: It is hard because the user must first target the correct inner panel region, then use level changes to navigate a long time span before saving the result.
+  success_trigger:
+    human_readable:
+    - The saved Planning calendar date equals 2035-11-23.
+    - The Save planning date control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_date: '2035-11-23'
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save planning date
+      require_correct_instance: true
+      target_instance_label_or_id: Planning calendar
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the sidebar and never reaching the calendar.
+  - Navigating to 2035 but selecting the wrong month or day.
+  - Selecting the right day but not saving it.
+  - Stopping at the correct year-level view without returning to date level and choosing day 23.
+  expected_interaction_path:
+  - Scroll the sidebar until the Planning calendar is fully visible.
+  - Use the calendar label to change levels and navigate to November 2035.
+  - Select day 23.
+  - Click Save planning date.
+  notes: Checker should inspect the saved selected date, not just the currently displayed month or pending highlight.
+- id: calendar_embedded-mantine-v2-T47
+  name: Purple target marker in dark settings panel with sibling preserved
+  canonical_type: calendar_embedded
+  implementation_source: mantine
+  implementation_variant: Calendar custom day render x2
+  implementation_component: 'Mantine: Calendar'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dark settings panel, use only the calendar labeled “Customer calendar” to navigate to May 2027 and select the day marked with the purple target marker, then click “Apply calendars”. Leave “Internal calendar” unchanged. The task will finish automatically when done.
+  ui_copy: In the dark settings panel, use only the calendar labeled “Customer calendar” to navigate to May 2027 and select the day marked with the purple target marker, then click “Apply calendars”. Leave “Internal calendar” unchanged. The task will finish automatically when done.
+  setup_description: 'Layout is settings_panel with dark theme, compact spacing, off_center placement, default scale, and high clutter. Two Mantine Calendar instances sit one above the other: “Internal calendar” and “Customer calendar”. Each calendar uses custom day rendering with colored markers. In the target Customer calendar, one day in May 2027 has a purple ring marker; other days show gray and orange marks. Internal calendar must remain without a selected date. The panel commits via a shared “Apply calendars” button.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: 'This combines two of the strongest calendar stressors from the evidence: subtle in-grid visual cues and wrong-instance pressure from multiple same-type embedded calendars.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The hard part is locating the target marker in the correct calendar and not disturbing the sibling calendar before the panel-level Apply.
+  success_trigger:
+    human_readable:
+    - The applied date in Customer calendar equals 2027-05-18.
+    - Internal calendar applied date remains null.
+    - The Apply calendars control has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: customer-calendar-purple-target
+        selected_date: '2027-05-18'
+        saved: true
+        non_target_instances_must_remain:
+          Internal calendar: null
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply calendars
+      require_correct_instance: true
+      target_instance_label_or_id: Customer calendar
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the target-marked day in Internal calendar instead of Customer calendar.
+  - Selecting an orange or gray marked day in Customer calendar.
+  - Selecting the right day but not clicking Apply calendars.
+  - Applying any date to Internal calendar.
+  expected_interaction_path:
+  - Locate the Customer calendar.
+  - Use the legend/marker styling to find the purple target day.
+  - Select it.
+  - Click Apply calendars.
+  notes: As with other visual-cue tasks, benchmark mode should not surface the resolved ISO date directly in visible text.
+- id: calendar_embedded-mantine-v2-T48
+  name: Team B quarterly planning date with global apply across three calendars
+  canonical_type: calendar_embedded
+  implementation_source: mantine
+  implementation_variant: Calendar x3 with global apply
+  implementation_component: 'Mantine: Calendar'
+  task_template: select_one
+  secondary_template: confirm_cancel
+  browsergym_goal: In the quarterly planning dashboard, use only the calendar labeled “Team B” to select May 4, 2027, then click “Apply changes”. Leave Team A and Team C without an applied date. The task will finish automatically when done.
+  ui_copy: In the quarterly planning dashboard, use only the calendar labeled “Team B” to select May 4, 2027, then click “Apply changes”. Leave Team A and Team C without an applied date. The task will finish automatically when done.
+  setup_description: Layout is dashboard_panel with compact spacing, center placement, default scale, and high clutter. Three Mantine Calendar cards—Team A, Team B, and Team C—sit in one row beneath a toolbar and status strip. All begin on February 2027 with no applied date. Clicking a day sets a pending selection in the corresponding card. A global footer button “Apply changes” commits all pending selections. Only Team B should end with an applied date.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Multiple inline calendars with one shared apply step are a strong embedded-calendar stressor because they force the user to reason about pending state locally and committed state globally.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the user must target Team B only, possibly navigate to May 2027, and then commit the change globally without contaminating the other two calendars.
+  success_trigger:
+    human_readable:
+    - Team B applied date equals 2027-05-04.
+    - Team A and Team C applied dates remain null.
+    - The global Apply changes control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selected_date: '2027-05-04'
+        saved: true
+        non_target_instances_must_remain:
+          Team A: null
+          Team C: null
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: true
+      target_instance_label_or_id: Team B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting May 4 in Team A or Team C instead of Team B.
+  - Selecting dates in more than one calendar before applying.
+  - Selecting the right pending date in Team B but not clicking Apply changes.
+  - Stopping in the wrong month or selecting the wrong day.
+  expected_interaction_path:
+  - Navigate Team B to May 2027 if needed.
+  - Select day 4 in Team B only.
+  - Click Apply changes.
+  notes: Use per-team committed state rather than transient selected day highlights for success.

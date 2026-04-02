@@ -1,0 +1,2367 @@
+- id: data_grid_editable-antd-T01
+  name: Edit customer name (inline cell)
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells
+  implementation_component: 'AntD: Table (Editable Cells demo pattern)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Orders table, set the Customer for order ORD-1003 to "Ava Chen". The task will finish automatically when done.
+  ui_copy: 'Orders table: Set Customer for ORD-1003 to "Ava Chen".'
+  setup_description: |-
+    The page shows a single bordered Ant Design Table inside an isolated card titled “Orders (Editable Cells)”, centered in the viewport.
+    The table uses the common “editable cells” pattern: clicking an editable cell turns it into an inline text input, and the value is committed when you press Enter or click outside the cell.
+
+    Configuration and contents:
+    - Spacing mode is comfortable, with default-sized controls.
+    - One table instance only.
+    - Columns (left to right): Order ID (read-only key), Customer (editable text), Quantity (editable number), Status (editable select), Notes (editable text), Paid (editable checkbox).
+    - The Order ID column contains unique IDs like ORD-1001 … ORD-1010 and is not editable.
+    - Initial state: row ORD-1003 has a Customer value different from the target.
+
+    There are no other required UI controls; any other elements on the page are decorative and do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single inline text cell edit in a single table instance with clear labels and immediate feedback.
+  success_trigger:
+    human_readable:
+    - The Orders table cell at row_id=ORD-1003, column=Customer equals "Ava Chen" (after trimming surrounding whitespace).
+    - The value is committed (the cell is no longer showing an active text editor).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-1003
+          column_id: Customer
+          value: Ava Chen
+          value_type: string
+      tolerance:
+        type: exact
+        case_sensitive: true
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing a different row (any Order ID other than ORD-1003).
+  - Editing the wrong column (e.g., Notes instead of Customer).
+  - Typing the correct text but leaving the cell in edit mode without committing (value not saved in the grid state).
+  - Customer value differs from "Ava Chen" (including extra whitespace or different spelling).
+  expected_interaction_path:
+  - Locate row with Order ID ORD-1003.
+  - Click the Customer cell to enter edit mode.
+  - Type Ava Chen.
+  - Press Enter or click outside the cell to commit.
+  notes:
+  - Checker should read the committed cell text (not the transient editor value).
+  - 'Instrumentation hint: mark the table root with data-testid=''orders-table'' and expose row keys via data-row-key (AntD Table).'
+- id: data_grid_editable-antd-T02
+  name: Set quantity (inline numeric cell)
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells
+  implementation_component: 'AntD: Table (Editable Cells demo pattern)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Orders table, set the Quantity for order ORD-1005 to 12. The task will finish automatically when done.
+  ui_copy: 'Orders table: Set Quantity for ORD-1005 to 12.'
+  setup_description: |-
+    The page shows a single centered “Orders (Editable Cells)” card containing an Ant Design Table with inline cell editing.
+    Numeric cells use an InputNumber-style editor when activated; edits commit on Enter or when the editor loses focus.
+
+    Configuration and contents:
+    - Theme is light; spacing is comfortable; component scale is default.
+    - One table instance.
+    - Columns: Order ID (read-only key), Customer (editable text), Quantity (editable number), Status (editable select), Notes (editable text), Paid (editable checkbox).
+    - Initial state: row ORD-1005 has a Quantity value not equal to 12.
+
+    No other actions (Save/Apply) are required beyond committing the cell editor.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single numeric value change in an inline editor with exact target and immediate visible feedback.
+  success_trigger:
+    human_readable:
+    - The Orders table cell at row_id=ORD-1005, column=Quantity equals the integer 12.
+    - The value is committed (no active numeric editor remains open for that cell).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-1005
+          column_id: Quantity
+          value: 12
+          value_type: number
+      tolerance:
+        type: absolute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Quantity changed for the wrong Order ID.
+  - A value other than 12 is committed (including 12.0 if the grid expects an integer and formats differently).
+  - The editor is left open and the underlying grid state is not updated.
+  expected_interaction_path:
+  - Find row ORD-1005.
+  - Click the Quantity cell to activate the numeric editor.
+  - Enter 12 (or adjust to 12).
+  - Press Enter or click outside to commit.
+  notes:
+  - Checker should parse the committed Quantity as an integer from the rendered cell text.
+- id: data_grid_editable-antd-T03
+  name: Change status via dropdown (cell editor)
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells
+  implementation_component: 'AntD: Table (Editable Cells demo pattern + Select editor)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders table, change the Status for order ORD-1001 to "Shipped". The task will finish automatically when done.
+  ui_copy: 'Orders table: Set Status for ORD-1001 to Shipped.'
+  setup_description: |-
+    A single Ant Design Table is presented in an isolated card titled “Orders (Editable Cells)”.
+    The Status column is editable and uses an Ant Design Select control inside the cell editor.
+
+    Interaction details:
+    - Click the Status cell to enter edit mode. A dropdown/popup list opens with options: Pending, Processing, Shipped, Cancelled.
+    - Selecting an option immediately updates the cell and closes the dropdown (no separate Save button).
+
+    Scene configuration:
+    - Light theme, comfortable spacing, default scale.
+    - One table instance, no clutter beyond the table itself.
+    - Initial state: ORD-1001 has a Status value different from “Shipped”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single dropdown selection inside a cell editor with a small option set and clear text labels.
+  success_trigger:
+    human_readable:
+    - The Orders table cell at row_id=ORD-1001, column=Status equals "Shipped".
+    - The value is committed (cell is in view mode; no open select dropdown for that cell).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-1001
+          column_id: Status
+          value: Shipped
+          value_type: enum
+      tolerance:
+        type: exact
+        case_sensitive: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different status (e.g., Processing) or changing the wrong row.
+  - Leaving the dropdown open without committing a selection.
+  - Editing a different column such as Customer or Quantity.
+  expected_interaction_path:
+  - Locate row ORD-1001.
+  - Activate the Status cell editor.
+  - Choose "Shipped" from the dropdown.
+  - Ensure the cell shows Shipped (committed).
+  notes:
+  - Checker should normalize status by exact string match from the rendered cell content.
+- id: data_grid_editable-antd-T04
+  name: Toggle paid checkbox in a cell
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells
+  implementation_component: 'AntD: Table (Editable Cells demo pattern + Checkbox editor)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Orders table, set Paid for order ORD-1002 to checked (Paid = Yes). The task will finish automatically when done.
+  ui_copy: 'Orders table: Mark ORD-1002 as Paid (checked).'
+  setup_description: |-
+    The UI is a single Orders table (Ant Design Table) shown in a centered isolated card.
+    The Paid column is editable and is represented as a checkbox in each row.
+
+    Details:
+    - Light theme, comfortable spacing, default scale.
+    - One table instance.
+    - The Paid checkbox is part of the table cell content (no separate editor overlay).
+    - Initial state: ORD-1002 is currently unchecked (Paid = No).
+
+    Other columns (Customer, Quantity, Status, Notes) exist but are irrelevant for this task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single checkbox toggle in a clearly labeled row with immediate visible state.
+  success_trigger:
+    human_readable:
+    - The Orders table row_id=ORD-1002 has Paid = true (checked).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-1002
+          column_id: Paid
+          value: true
+          value_type: boolean
+      tolerance:
+        type: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling Paid for a different Order ID.
+  - Leaving ORD-1002 Paid unchecked.
+  - Checking a similarly positioned checkbox outside the table (if any).
+  expected_interaction_path:
+  - Find row ORD-1002.
+  - Click the Paid checkbox so it becomes checked.
+  notes:
+  - Checker should read the boolean value from the underlying row model or checkbox state.
+- id: data_grid_editable-antd-T05
+  name: Clear notes text in a cell
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells
+  implementation_component: 'AntD: Table (Editable Cells demo pattern)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Orders table, clear the Notes for order ORD-1004 so the Notes cell is blank. The task will finish automatically when done.
+  ui_copy: 'Orders table: Clear Notes for ORD-1004 (leave blank).'
+  setup_description: |-
+    A centered card titled “Orders (Editable Cells)” contains an Ant Design Table with inline cell editing.
+    The Notes column is an editable free-text field; clicking the Notes cell shows an inline text input.
+
+    Configuration:
+    - Light theme; comfortable spacing; default component scale.
+    - One table instance; no additional clutter.
+    - Initial state: ORD-1004 Notes contains some text (non-empty).
+
+    Committing behavior: pressing Enter or blurring the input commits the new cell value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single text cell edit with an obvious empty target and immediate in-cell feedback once committed.
+  success_trigger:
+    human_readable:
+    - The Orders table cell at row_id=ORD-1004, column=Notes is empty (after trimming whitespace).
+    - The value is committed (cell in view mode).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-1004
+          column_id: Notes
+          value: ''
+          value_type: string
+      tolerance:
+        type: exact
+        case_sensitive: true
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any non-whitespace text in Notes for ORD-1004.
+  - Clearing Notes for the wrong row.
+  - Leaving the editor open so the underlying grid state still contains the old Notes value.
+  expected_interaction_path:
+  - Locate row ORD-1004.
+  - Click Notes cell to edit.
+  - Delete the text so the input is empty.
+  - Commit with Enter or click outside.
+  notes:
+  - Checker should treat a cell with only whitespace as not blank unless trim_whitespace is enabled.
+- id: data_grid_editable-antd-T06
+  name: Edit a row and click Save (row editing mode)
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_rows
+  implementation_component: 'AntD: Table (Editable Rows demo pattern with Edit/Save/Cancel)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Invoices table, edit invoice INV-2002 so that Customer is "Riley Park" and Quantity is 5, then click Save for that row. The task will finish automatically when done.
+  ui_copy: 'Invoices table: For INV-2002 set Customer = Riley Park, Quantity = 5, then Save.'
+  setup_description: |-
+    The page is a small “Billing” form section with a few read-only fields (Billing period, Account ID) above an Ant Design Table titled “Invoices (Editable Rows)”.
+    This table uses the “editable rows” pattern:
+    - Each row has an Operation column with an “Edit” action.
+    - Clicking “Edit” turns multiple cells in that row into input fields at once and the Operation column changes to “Save” and “Cancel”.
+    - Changes are only committed when you click “Save” for that same row.
+
+    Table details:
+    - Light theme, comfortable spacing, default scale.
+    - One table instance.
+    - Columns: Invoice ID (read-only key), Customer (editable text), Quantity (editable number), Notes (editable text), Operation (Edit/Save/Cancel).
+    - Initial state: INV-2002 has different values for Customer and/or Quantity.
+
+    Distractors:
+    - The form section includes non-interactive summary text and a disabled “Export CSV” button, which does not affect the task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires entering row edit mode, updating multiple fields, and explicitly confirming via the row-level Save action.
+  success_trigger:
+    human_readable:
+    - In the Invoices table, row_id=INV-2002 has Customer = "Riley Park" and Quantity = 5.
+    - The INV-2002 row is in view mode (row editing is not active).
+    - The row-level Save action has been applied (no pending edits).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: INV-2002
+          column_id: Customer
+          value: Riley Park
+          value_type: string
+        - row_id: INV-2002
+          column_id: Quantity
+          value: 5
+          value_type: number
+        row_edit_mode:
+        - row_id: INV-2002
+          mode: view
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save (row action)
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the wrong invoice row (anything other than INV-2002).
+  - Updating Customer/Quantity but not clicking Save (changes not committed).
+  - Clicking Cancel instead of Save.
+  - Customer or Quantity differs from the target after Save.
+  expected_interaction_path:
+  - Locate invoice INV-2002.
+  - Click Edit in the Operation column for that row.
+  - Set Customer to Riley Park and Quantity to 5.
+  - Click Save for that row.
+  notes:
+  - Checker should verify both cell values AND that the row has exited edit mode (no inline inputs).
+  - 'Instrumentation hint: include stable selectors for the row actions (e.g., data-testid=''row-save-INV-2002'').'
+- id: data_grid_editable-antd-T07
+  name: Set validated quantity in compact table
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_validated
+  implementation_component: 'AntD: Table (Editable Cells) + InputNumber validation'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Inventory table, set the Quantity for SKU SKU-118 to 7. The task will finish automatically when done.
+  ui_copy: 'Inventory table: Set Quantity for SKU-118 to 7.'
+  setup_description: |-
+    The page shows a single Ant Design Table inside a centered isolated card titled “Inventory (Validated)”.
+    This table uses inline editable cells.
+
+    Key configuration:
+    - Spacing mode is compact (tighter row height and smaller padding), which makes cell targets closer together.
+    - Scale is default; theme is light.
+    - One table instance.
+    - Columns: SKU (read-only key), Item (read-only), Quantity (editable number with validation), Location (read-only).
+    - Quantity editing uses an InputNumber editor with validation rules: it must be an integer from 1 to 99. Invalid values show a red validation message below the input and are not committed.
+
+    Initial state:
+    - Row SKU-118 exists and its Quantity is not 7.
+
+    No additional buttons are required; success depends on the committed cell value.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Compact spacing increases acquisition difficulty and validation feedback requires committing a valid integer value.
+  success_trigger:
+    human_readable:
+    - The Inventory table cell at row_id=SKU-118, column=Quantity equals 7 (integer) and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: SKU-118
+          column_id: Quantity
+          value: 7
+          value_type: number
+      tolerance:
+        type: absolute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the Quantity for a different SKU.
+  - Leaving an invalid value (out of range or non-integer) that triggers validation and is not committed.
+  - Leaving the editor open so the grid state still shows the old Quantity.
+  expected_interaction_path:
+  - Find row SKU-118.
+  - Activate the Quantity cell editor.
+  - Enter 7.
+  - Commit with Enter or click outside once the validation state is clear.
+  notes:
+  - Checker should compare the committed Quantity as an integer and ignore transient invalid input states.
+- id: data_grid_editable-antd-T08
+  name: Paginate to find a row and edit a cell
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_paginated
+  implementation_component: 'AntD: Table (Editable Cells) with pagination'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Orders table, go to the row with Order ID ORD-3017 and set its Customer to "Mia Rivera". The task will finish automatically when done.
+  ui_copy: 'Orders table: Set Customer for ORD-3017 to Mia Rivera.'
+  setup_description: |-
+    The interface is a single Ant Design Table in an isolated card titled “All Orders”.
+    The card is anchored near the top-right of the viewport (not centered), so the table starts higher on the page.
+
+    Table behavior:
+    - The table uses pagination with 10 rows per page (page controls below the table).
+    - Customer is an inline editable cell (click to edit; Enter/blur commits).
+    - The Order ID column is a non-editable unique key.
+
+    Initial state:
+    - The table has at least 3 pages of data.
+    - Order ID ORD-3017 exists but is not visible on the first page (it appears on a later page).
+
+    Distractors:
+    - A small “Summary” text block appears above the table but does not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires navigation within the table (pagination) to locate the correct row before performing a standard inline edit.
+  success_trigger:
+    human_readable:
+    - The All Orders table cell at row_id=ORD-3017, column=Customer equals "Mia Rivera" (trimmed) and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-3017
+          column_id: Customer
+          value: Mia Rivera
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Customer on a different Order ID.
+  - Customer value not exactly "Mia Rivera" after committing.
+  - Typing the value but not committing the edit (cell stays in edit mode).
+  expected_interaction_path:
+  - Use pagination controls to reach the page containing ORD-3017.
+  - Locate row ORD-3017.
+  - Edit the Customer cell to Mia Rivera and commit.
+  notes:
+  - Checker should locate row by Order ID key, not by current visible row index (pagination can reorder visible indices).
+- id: data_grid_editable-antd-T09
+  name: Edit the correct table when two grids are present
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_multi_instance
+  implementation_component: 'AntD: Table (Editable Cells) x2 in dashboard layout'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: On the Dashboard page, in the Returns table (not the Orders table), change the Status for return RET-1002 to "Approved". The task will finish automatically when done.
+  ui_copy: 'Dashboard: Returns table — set Status for RET-1002 to Approved.'
+  setup_description: |-
+    The page uses a dashboard layout with two cards shown side-by-side:
+
+    1) Left card: “Orders” — an editable Ant Design Table of recent orders.
+    2) Right card: “Returns” — an editable Ant Design Table of return requests.
+
+    Both tables share a similar look and both support inline editable cells. This task targets the Returns table only.
+
+    Returns table details:
+    - Columns: Return ID (read-only key), Reason (read-only), Status (editable select), Notes (editable text).
+    - Editing Status opens a dropdown list with options: Requested, Under Review, Approved, Denied.
+    - Changes commit immediately on selection (no separate Save button).
+
+    Clutter:
+    - The dashboard also contains a small metrics strip (Total Orders / Total Returns) above the two cards.
+
+    Initial state:
+    - In the Returns table, RET-1002 exists and its Status is not “Approved”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two similar editable tables require correct instance selection before performing a simple dropdown edit.
+  success_trigger:
+    human_readable:
+    - In the Returns table instance, the cell at row_id=RET-1002, column=Status equals "Approved".
+    - No other table instance is considered for success.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: RET-1002
+          column_id: Status
+          value: Approved
+          value_type: enum
+      tolerance:
+        type: exact
+        case_sensitive: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Returns table
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Status in the Orders table instead of the Returns table.
+  - Setting RET-1002 to a status other than Approved.
+  - Leaving the dropdown open without committing a selection.
+  expected_interaction_path:
+  - Identify the Returns table card.
+  - Locate row RET-1002.
+  - Edit Status and select Approved.
+  notes:
+  - Checker must ensure the correct table instance (Returns) was modified.
+  - 'Instrumentation hint: give each table container a stable data-testid (e.g., data-testid=''orders-table'' and data-testid=''returns-table'').'
+- id: data_grid_editable-antd-T10
+  name: Match a priority value to a visual reference chip
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_match_reference
+  implementation_component: 'AntD: Table (Editable Cells) + Tag/Select for Priority'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Support Tickets table, set the Priority for ticket TCK-1021 to match the Priority shown in the Reference card. The task will finish automatically when done.
+  ui_copy: 'Support Tickets: Make Priority for TCK-1021 match the Reference card.'
+  setup_description: |-
+    This page is a settings-style panel with two sections:
+
+    Left: a “Reference” card that shows a single Priority chip (a colored Tag). The chip label is clearly visible (e.g., “High”, “Medium”, or “Low”) and its color reinforces the meaning.
+
+    Right: an editable Ant Design Table titled “Support Tickets”.
+    - Columns: Ticket ID (read-only key), Subject (read-only), Priority (editable), Owner (read-only).
+    - The Priority cell is displayed as a colored Tag in view mode.
+    - When you click a Priority cell, it becomes a Select editor with the options Low, Medium, High.
+
+    Scene configuration:
+    - Light theme; comfortable spacing; default scale.
+    - One table instance.
+    - Low clutter: a couple of explanatory sentences above the table; no other interactive controls required.
+
+    Initial state:
+    - Ticket TCK-1021 exists and its Priority does not match the Reference chip.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires interpreting a visual reference and mapping it to the correct dropdown option in the targeted row.
+  success_trigger:
+    human_readable:
+    - 'Read the Priority label from the Reference card (canonical enum: Low/Medium/High).'
+    - The Support Tickets table cell at row_id=TCK-1021, column=Priority equals that reference value and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: TCK-1021
+          column_id: Priority
+          value:
+            source: reference_card
+            selector: priority-reference
+            transform: text_to_enum
+          value_type: enum_from_reference
+      tolerance:
+        type: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Priority to the wrong level (not matching the Reference chip label).
+  - Editing the wrong ticket row.
+  - Leaving the editor uncommitted (dropdown open).
+  expected_interaction_path:
+  - Read the Priority label in the Reference card.
+  - Find TCK-1021 in the Support Tickets table.
+  - Edit the Priority cell and choose the matching option.
+  notes:
+  - Checker should use the reference chip's text label as the canonical target (e.g., High/Medium/Low).
+  - 'Instrumentation hint: expose the reference chip text via data-testid=''priority-reference''.'
+- id: data_grid_editable-antd-T11
+  name: Edit a date cell in a modal and apply changes
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_datepicker_in_modal
+  implementation_component: 'AntD: Modal + Table (Editable Cells) + DatePicker editor'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Edit delivery schedule modal. In the Delivery table, set the Due date for order ORD-4102 to March 15, 2026, then click Apply changes. The task will finish automatically when done.
+  ui_copy: 'Edit delivery schedule: Set Due date for ORD-4102 to March 15, 2026 and Apply changes.'
+  setup_description: |-
+    The page is a dark-theme settings page with a single primary button labeled “Edit delivery schedule”.
+    Clicking this button opens an Ant Design Modal dialog (modal flow). The modal contains an editable table titled “Delivery”.
+
+    Modal/table details:
+    - Theme: dark (both the underlying page and the modal).
+    - The table uses inline editable cells.
+    - Columns: Order ID (read-only key), Destination (read-only), Due date (editable date), Notes (editable text).
+    - Editing Due date opens an Ant Design DatePicker popover anchored to the cell. The date picker includes a calendar grid and an “OK” button.
+
+    Confirmation:
+    - Changes are only finalized when you click the modal footer button “Apply changes”.
+    - Clicking the modal close icon or “Cancel” discards changes.
+
+    Initial state:
+    - Row ORD-4102 exists; its Due date is not March 15, 2026.
+
+    Clutter:
+    - The underlying page has other disabled controls, but they are not required.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires a multi-layer interaction (modal + date picker popover) and an explicit Apply confirmation to finalize the grid state.
+  success_trigger:
+    human_readable:
+    - In the Delivery table (within the modal), row_id=ORD-4102 has Due date = 2026-03-15 (ISO).
+    - The modal confirmation control “Apply changes” has been activated so the new date is committed to the underlying table state.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-4102
+          column_id: Due date
+          value: '2026-03-15'
+          value_type: date_iso
+        modal_state:
+          id: edit-delivery-schedule
+          applied: true
+      tolerance:
+        type: exact
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the Due date on the wrong Order ID.
+  - Selecting a date close to March 15, 2026 but not the exact date.
+  - Choosing the correct date in the picker but not clicking Apply changes in the modal.
+  - Leaving the modal open in an un-applied state (pending edits).
+  expected_interaction_path:
+  - Click Edit delivery schedule to open the modal.
+  - Locate row ORD-4102 and click the Due date cell.
+  - Use the DatePicker to select March 15, 2026 (confirm with OK if shown).
+  - Click Apply changes in the modal footer.
+  notes:
+  - Checker should parse the committed Due date into ISO format (YYYY-MM-DD).
+  - Require_confirm is tied to the modal footer button, not the date picker OK button.
+- id: data_grid_editable-antd-T12
+  name: Search and select an assignee from a long list
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_searchable_select
+  implementation_component: 'AntD: Table (Editable Cells) + Select(showSearch) editor'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Team Assignments table, set the Assignee for task TASK-007 to "Jordan Lee". The task will finish automatically when done.
+  ui_copy: 'Team Assignments: Set Assignee for TASK-007 to Jordan Lee.'
+  setup_description: |-
+    The page is a light-theme dashboard with several small cards. The main card contains an Ant Design Table titled “Team Assignments”.
+    The layout is more crowded than baseline:
+    - Spacing mode is compact.
+    - The table is rendered in a small scale (reduced font and control size).
+
+    Table details:
+    - One table instance.
+    - Columns: Task ID (read-only key), Title (read-only), Assignee (editable), Status (read-only).
+    - The Assignee cell uses an Ant Design Select editor with showSearch enabled.
+    - The dropdown contains many names (around 40), so typing is the quickest way to find the right option.
+    - Selecting an option commits immediately (no separate Save button).
+
+    Clutter/distractors:
+    - Above the table is a small toolbar with non-required buttons (Refresh, Export).
+    - A right sidebar card shows “Team capacity” but does not affect success.
+
+    Initial state:
+    - TASK-007 exists; its Assignee is not Jordan Lee.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small, compact targets plus a long searchable dropdown increase acquisition and choice interference.
+  success_trigger:
+    human_readable:
+    - The Team Assignments table cell at row_id=TASK-007, column=Assignee equals "Jordan Lee" (trimmed) and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: TASK-007
+          column_id: Assignee
+          value: Jordan Lee
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Assigning the correct person to the wrong task row.
+  - Selecting a similar name (e.g., Jordan Li) instead of Jordan Lee.
+  - Typing the name but failing to commit a selection so the cell remains unchanged.
+  - Changing a different column or table control.
+  expected_interaction_path:
+  - Locate row TASK-007.
+  - Activate the Assignee cell editor to open the searchable dropdown.
+  - Type Jordan Lee to filter.
+  - Select Jordan Lee from results and ensure the cell shows it.
+  notes:
+  - Checker should compare the committed Assignee string exactly (trimmed).
+- id: data_grid_editable-antd-T13
+  name: Enter a currency value in the correct table instance
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_cells_currency_multi_instance
+  implementation_component: 'AntD: Table (Editable Cells) with formatted currency editor'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the Overrides table, set Max refund for policy POL-3 to $125.50 (this same amount is shown in the small Reference amount badge). The task will finish automatically when done.
+  ui_copy: 'Overrides table: Set Max refund for POL-3 to $125.50 (see Reference amount badge).'
+  setup_description: |-
+    This page is a settings panel with two similar cards, each containing an editable Ant Design Table:
+
+    1) “Default thresholds” table (Primary) — baseline values (read-only-looking but still editable in some columns).
+    2) “Overrides” table (Secondary) — per-policy overrides.
+
+    The task targets the Overrides table only.
+
+    A small “Reference amount” badge near the Overrides table header displays “$125.50” as a visual reference.
+
+    Overrides table details:
+    - Columns: Policy ID (read-only key), Region (read-only), Max refund (editable currency), Active (editable checkbox).
+    - The Max refund cell is displayed with a dollar sign and two decimals in view mode (e.g., “$80.00”).
+    - Clicking the cell opens an inline input that accepts a number; on commit it formats to “$X.XX”.
+    - Commit happens on Enter or blur; there is no separate Save button.
+
+    Scene configuration:
+    - Light theme, comfortable spacing, default scale.
+    - Two table instances on the page (Default thresholds vs Overrides).
+    - Medium clutter: surrounding toggles and helper text describe the settings but do not affect success.
+
+    Initial state:
+    - In Overrides, row POL-3 exists and Max refund is not $125.50.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires formatted numeric entry with two-decimal precision and correct selection of the Overrides table among two similar instances.
+  success_trigger:
+    human_readable:
+    - In the Overrides table instance, row_id=POL-3 has Max refund equal to 125.50 USD (numeric comparison within ±0.01).
+    - The value is committed (cell in view mode).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: POL-3
+          column_id: Max refund
+          value: 125.5
+          value_type: currency_usd
+      tolerance:
+        type: absolute
+        value: 0.01
+        format_hint: $ with 2 decimals
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Overrides table
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Max refund in the Default thresholds table instead of Overrides.
+  - Entering 125.5 without the correct two-decimal committed format (if the grid does not normalize it).
+  - Setting a value close to $125.50 but outside the allowed rounding/tolerance.
+  - Leaving the editor open so the committed cell value remains unchanged.
+  expected_interaction_path:
+  - Identify the Overrides table card.
+  - Locate row POL-3.
+  - Edit the Max refund cell and enter 125.50 (or $125.50 depending on input).
+  - Commit with Enter or click outside and verify the cell displays $125.50.
+  notes:
+  - Checker can parse numeric value from the cell and compare within a small tolerance; optionally also assert the rendered format includes a leading '$' and exactly two decimals.
+- id: data_grid_editable-antd-T14
+  name: Cancel a row edit so nothing is saved
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_rows_cancel
+  implementation_component: 'AntD: Table (Editable Rows) with Edit/Save/Cancel'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Vendors table, click Edit for vendor V-17 and then click Cancel to discard the edit (do not save). The task will finish automatically when done.
+  ui_copy: 'Vendors table: For V-17, enter edit mode and then Cancel (discard changes).'
+  setup_description: |-
+    The page is a form-style section titled “Vendors” anchored near the bottom-left of the viewport.
+    It contains a single Ant Design Table using row editing with explicit actions.
+
+    Table details:
+    - Columns: Vendor ID (read-only key), Company (read-only), Contact (editable text), Email (editable text), Operation (Edit/Save/Cancel).
+    - Clicking “Edit” on a row switches that row into edit mode (inputs appear for Contact and Email) and shows “Save” and “Cancel”.
+    - Clicking “Cancel” exits edit mode and discards any edits (reverts to the pre-edit values).
+
+    Initial state:
+    - Vendor V-17 exists and currently shows Contact = “Pat Quinn”.
+    - No rows are in edit mode initially.
+
+    Clutter:
+    - The section includes helper text and a non-interactive “Last updated” timestamp; these are distractors only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires correctly using the Cancel control to revert and exit edit mode; success depends on edit-state dynamics rather than just a value change.
+  success_trigger:
+    human_readable:
+    - Vendor V-17 exits edit mode via the row-level Cancel action (last_edit_outcome = canceled).
+    - After canceling, V-17 Contact remains "Pat Quinn" (trimmed) and no edits are committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: V-17
+          column_id: Contact
+          value: Pat Quinn
+          value_type: string
+        row_edit_mode:
+        - row_id: V-17
+          mode: view
+        row_last_edit_outcome:
+        - row_id: V-17
+          outcome: canceled
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Cancel (row action)
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Save for V-17 instead of Cancel.
+  - Leaving V-17 in edit mode (inputs still visible).
+  - Any committed change to V-17 Contact or Email after exiting edit mode.
+  expected_interaction_path:
+  - Locate vendor V-17.
+  - Click Edit in its Operation column.
+  - Click Cancel for that same row to discard edits and exit edit mode.
+  notes:
+  - 'To distinguish Save vs Cancel when no values change, instrument the grid to record last_edit_outcome per row: ''saved'' or ''canceled''.'
+  - Checker should assert last_edit_outcome['V-17'] == 'canceled' and that displayed values match the pre-edit snapshot.
+- id: data_grid_editable-antd-T15
+  name: Add a new row and save it
+  canonical_type: data_grid_editable
+  implementation_source: antd
+  implementation_variant: table_editable_rows_add_row
+  implementation_component: 'AntD: Table (Editable Rows) with Add a row + Save'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the New Orders table, click Add a row and create a new order with Order ID ORD-9001, Customer "Sam Lee", Quantity 3, and Status "Pending", then click Save for the new row. The task will finish automatically when done.
+  ui_copy: 'New Orders: Add row ORD-9001 (Sam Lee, Qty 3, Pending) and Save.'
+  setup_description: |-
+    The page contains one isolated card titled “New Orders” with an Ant Design Table that supports adding rows.
+    Above the table is a primary button labeled “Add a row”.
+
+    Add/edit behavior:
+    - Clicking “Add a row” inserts a new editable row at the top of the table.
+    - The new row appears immediately in edit mode with input controls for several columns.
+    - The Operation column for the new row shows “Save” and “Cancel”.
+    - Saving commits the row into the table (inputs disappear).
+
+    Table details:
+    - Theme light; spacing comfortable; default scale; centered.
+    - Columns: Order ID (editable only for the new row), Customer (editable text), Quantity (editable number), Status (editable select with options Pending/Processing/Shipped/Cancelled), Operation.
+    - Initial state: ORD-9001 does not yet exist in the table.
+
+    Distractors:
+    - A small hint text under the button describes required fields, but it is not interactive.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multi-step creation requires coordinating several edits in a newly inserted row and explicitly saving to commit the new grid state.
+  success_trigger:
+    human_readable:
+    - A committed row with row_id=ORD-9001 exists in the New Orders table.
+    - 'For ORD-9001: Customer = "Sam Lee", Quantity = 3, Status = "Pending".'
+    - The row is saved/committed (not in edit mode).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: ORD-9001
+          column_id: Customer
+          value: Sam Lee
+          value_type: string
+        - row_id: ORD-9001
+          column_id: Quantity
+          value: 3
+          value_type: number
+        - row_id: ORD-9001
+          column_id: Status
+          value: Pending
+          value_type: enum
+        row_exists:
+        - row_id: ORD-9001
+        row_edit_mode:
+        - row_id: ORD-9001
+          mode: view
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save (new row)
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding a row but not saving it (row remains in edit mode or is discarded).
+  - Saving a row with a different Order ID than ORD-9001.
+  - Only partially filling fields (e.g., Customer correct but Status wrong).
+  - Creating the correct values in the editor but clicking Cancel or closing the row without committing.
+  expected_interaction_path:
+  - Click Add a row.
+  - In the new row, enter Order ID ORD-9001, Customer Sam Lee, Quantity 3.
+  - Open Status dropdown and choose Pending.
+  - Click Save for the new row.
+  notes:
+  - Checker should confirm the new row exists in committed table data and is not in edit mode.
+  - 'Instrumentation hint: provide a stable selector for the Add a row button and for the new-row Save action.'
+- id: data_grid_editable-mui-T01
+  name: Edit name cell (DataGrid cell edit)
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing
+  implementation_component: 'MUI X: DataGrid (cell editing)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Users data grid, set the Name for row ID 3 to "Ava Chen". The task will finish automatically when done.
+  ui_copy: 'Users grid: Set Name for ID 3 to Ava Chen.'
+  setup_description: |-
+    The page shows a single MUI X DataGrid inside a centered isolated card titled “Users”.
+    The grid uses built-in cell editing:
+    - You can start editing a cell by double-clicking it (or by focusing the cell and pressing Enter).
+    - Edits commit when you press Enter or click outside the cell (returning to view mode).
+
+    Grid configuration:
+    - Light theme; comfortable spacing; default scale.
+    - One grid instance.
+    - Columns: ID (read-only key), Name (editable text), Age (editable number), Role (editable single-select), Active (editable boolean), Notes (editable text).
+    - Initial state: row ID 3 exists and Name is not “Ava Chen”.
+
+    No other controls are required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single text cell edit in a single DataGrid with clear row key and immediate visible update after commit.
+  success_trigger:
+    human_readable:
+    - In the Users DataGrid, row_id=3, column=Name equals "Ava Chen" (trimmed) and is committed (not in edit mode).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 3
+          column_id: Name
+          value: Ava Chen
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing a different row ID.
+  - Editing the wrong column (e.g., Notes).
+  - Typing the right text but not committing it (cell remains in edit mode and underlying state unchanged).
+  - Name differs from "Ava Chen" after commit.
+  expected_interaction_path:
+  - Locate row with ID 3.
+  - Activate editing for the Name cell (double click or Enter).
+  - Type Ava Chen and commit with Enter or click outside.
+  notes:
+  - 'Instrumentation hint: MUI DataGrid exposes row id via data-id and column via data-field; checker can query the rendered cell or the internal row model.'
+- id: data_grid_editable-mui-T02
+  name: Set age numeric cell
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing
+  implementation_component: 'MUI X: DataGrid (cell editing)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Users data grid, set the Age for row ID 5 to 41. The task will finish automatically when done.
+  ui_copy: 'Users grid: Set Age for ID 5 to 41.'
+  setup_description: |-
+    A single MUI X DataGrid titled “Users” is shown in a centered card.
+    The Age column is editable and uses a numeric editor when the cell enters edit mode.
+
+    Details:
+    - Light theme; comfortable spacing; default scale.
+    - One grid instance.
+    - Columns include ID (read-only key) and Age (editable number).
+    - Commit behavior: pressing Enter or moving focus away commits the edit.
+
+    Initial state:
+    - Row ID 5 exists and its Age value is not 41.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single numeric edit with a clear target value and immediate feedback after commit.
+  success_trigger:
+    human_readable:
+    - In the Users DataGrid, row_id=5 has Age = 41 (integer) and the edit is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 5
+          column_id: Age
+          value: 41
+          value_type: number
+      tolerance:
+        type: absolute
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Age for the wrong row ID.
+  - Committing a value other than 41 (including 41.0 if integer is required).
+  - Leaving the cell in edit mode without committing.
+  expected_interaction_path:
+  - Locate row ID 5.
+  - Enter edit mode for Age.
+  - Set value to 41.
+  - Commit the edit.
+  notes:
+  - Checker should parse Age as an integer from the row model or displayed cell.
+- id: data_grid_editable-mui-T03
+  name: Select a status option in a single-select cell
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_single_select
+  implementation_component: 'MUI X: DataGrid (singleSelect column editing)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders data grid, change Status for row ID 2 to "Shipped". The task will finish automatically when done.
+  ui_copy: 'Orders grid: Set Status for ID 2 to Shipped.'
+  setup_description: |-
+    The page contains one MUI X DataGrid inside an isolated card titled “Orders”.
+    The Status column is configured as a singleSelect editable column.
+
+    Interaction details:
+    - Enter edit mode on the Status cell (double click or press Enter when focused).
+    - A select dropdown appears within the cell editor listing: New, Processing, Shipped, Cancelled.
+    - Selecting an option commits it and returns the cell to view mode.
+
+    Scene configuration:
+    - Light theme; comfortable spacing; default scale.
+    - One grid instance.
+    - Initial state: row ID 2 exists and Status is not “Shipped”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A straightforward single-select edit with a small option set; the main complexity is entering and exiting edit mode.
+  success_trigger:
+    human_readable:
+    - In the Orders DataGrid, row_id=2, column=Status equals "Shipped" and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 2
+          column_id: Status
+          value: Shipped
+          value_type: enum
+      tolerance:
+        type: exact
+        case_sensitive: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different status option.
+  - Changing Status in a different row.
+  - Leaving the dropdown/editor open without committing.
+  expected_interaction_path:
+  - Locate row ID 2.
+  - Enter edit mode on Status.
+  - Choose Shipped from the dropdown.
+  - Verify the cell shows Shipped in view mode.
+  notes:
+  - Checker should compare the committed status string exactly.
+- id: data_grid_editable-mui-T04
+  name: Toggle boolean cell (Active)
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_boolean_editing
+  implementation_component: 'MUI X: DataGrid (boolean cell editing)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Users data grid, set Active for row ID 4 to On (true). The task will finish automatically when done.
+  ui_copy: 'Users grid: Turn Active ON for ID 4.'
+  setup_description: |-
+    A single MUI X DataGrid titled “Users” is shown in a centered isolated card.
+    The Active column is a boolean editable column, displayed as a checkbox/switch-like control in each cell.
+
+    Details:
+    - Light theme; comfortable spacing; default scale.
+    - One grid instance.
+    - Row IDs are numeric and shown in the first column.
+    - Initial state: row ID 4 has Active = Off/false.
+
+    Toggling updates the grid state immediately (no separate Save button).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single boolean toggle in a clearly labeled row with immediate feedback.
+  success_trigger:
+    human_readable:
+    - In the Users DataGrid, row_id=4 has Active = true.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 4
+          column_id: Active
+          value: true
+          value_type: boolean
+      tolerance:
+        type: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling Active for a different row.
+  - Leaving row ID 4 as inactive/false.
+  - Toggling a control outside the grid (if present).
+  expected_interaction_path:
+  - Locate row ID 4.
+  - Click the Active checkbox/toggle so it becomes On.
+  notes:
+  - Checker should read Active as a boolean value from the grid model.
+- id: data_grid_editable-mui-T05
+  name: Clear a notes cell (empty string)
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing
+  implementation_component: 'MUI X: DataGrid (cell editing)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Users data grid, clear the Notes for row ID 6 so the Notes cell is blank. The task will finish automatically when done.
+  ui_copy: 'Users grid: Clear Notes for ID 6 (leave blank).'
+  setup_description: |-
+    The UI is a single centered MUI X DataGrid titled “Users”.
+    Notes is an editable text column. Entering edit mode shows a text input.
+
+    Configuration:
+    - Light theme; comfortable spacing; default scale.
+    - One grid instance.
+    - Initial state: row ID 6 has a non-empty Notes value.
+
+    Commit behavior: press Enter or click outside the cell to commit the cleared value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single text edit to an empty target with clear observability once committed.
+  success_trigger:
+    human_readable:
+    - In the Users DataGrid, row_id=6, column=Notes is empty (trimmed) and committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 6
+          column_id: Notes
+          value: ''
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any non-whitespace text in Notes for row ID 6.
+  - Clearing Notes for a different row.
+  - Not committing the edit (cell remains in edit mode).
+  expected_interaction_path:
+  - Locate row ID 6.
+  - Enter edit mode for Notes.
+  - Delete text so it is empty.
+  - Commit the edit.
+  notes:
+  - Checker should treat trimmed whitespace as empty if trim_whitespace is enabled.
+- id: data_grid_editable-mui-T06
+  name: Edit a row in row-edit mode and save
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_row_editing_actions
+  implementation_component: 'MUI X: DataGrid (row editing with actions column)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Employees data grid, edit row ID 7 so that Name is "Riley Park" and Role is "Manager", then click Save for that row. The task will finish automatically when done.
+  ui_copy: 'Employees grid: For ID 7 set Name = Riley Park, Role = Manager, then Save.'
+  setup_description: |-
+    The page is a light-theme form section titled “Employees” with a MUI X DataGrid embedded below a short description paragraph.
+    The grid is configured for row editing (editMode="row") and includes an Actions column.
+
+    Row editing behavior:
+    - Each row has an Edit icon/button in the Actions column.
+    - Clicking Edit switches the entire row into edit mode (multiple cells become editors).
+    - The Actions column then shows Save and Cancel controls.
+    - Changes are committed only when Save is clicked.
+
+    Grid details:
+    - One grid instance; comfortable spacing; default scale.
+    - Columns: ID (read-only key), Name (editable text), Role (editable single-select with options: Staff, Manager, Director), Location (read-only), Actions (Edit/Save/Cancel).
+    - Initial state: row ID 7 exists and differs from the target values.
+
+    Distractors:
+    - A disabled “Export” button sits above the grid but does not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Row edit mode requires multiple edits plus an explicit Save action to commit.
+  success_trigger:
+    human_readable:
+    - In the Employees DataGrid, row_id=7 has Name = "Riley Park" and Role = "Manager".
+    - The row is saved and in view mode (row editing not active).
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 7
+          column_id: Name
+          value: Riley Park
+          value_type: string
+        - row_id: 7
+          column_id: Role
+          value: Manager
+          value_type: enum
+        row_edit_mode:
+        - row_id: 7
+          mode: view
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save (row action)
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the wrong row ID.
+  - Changing values but not clicking Save for that row.
+  - Clicking Cancel instead of Save.
+  - Name or Role differs from the target after save.
+  expected_interaction_path:
+  - Locate row ID 7.
+  - Click Edit in the Actions column.
+  - Set Name to Riley Park and Role to Manager.
+  - Click Save for that row.
+  notes:
+  - Checker should verify both values and that the row is in view mode after saving.
+- id: data_grid_editable-mui-T07
+  name: Enter a formatted currency value in a compact grid
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_formatted_currency
+  implementation_component: 'MUI X: DataGrid (custom edit component with valueFormatter/valueParser)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the Projects data grid, set the Budget for row ID 5 to $1,250.00. The task will finish automatically when done.
+  ui_copy: 'Projects grid: Set Budget for ID 5 to $1,250.00.'
+  setup_description: |-
+    A single MUI X DataGrid titled “Projects” is shown in a centered card.
+    The grid is rendered in compact spacing, reducing row height and cell padding.
+
+    Budget column behavior:
+    - Budget is an editable column displayed in US currency format in view mode (e.g., “$800.00”).
+    - Entering edit mode shows a text input that accepts numeric input; the grid formats the committed value to “$X,XXX.XX”.
+    - If the entered value cannot be parsed into a valid currency amount, the cell shows an inline error state and does not commit.
+
+    Grid details:
+    - One grid instance; light theme; scale default; spacing compact.
+    - Columns: ID (read-only key), Project (read-only), Budget (editable currency), Owner (read-only).
+    - Initial state: row ID 5 Budget is not $1,250.00.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires precise formatted numeric entry and correct commit behavior in a compact layout.
+  success_trigger:
+    human_readable:
+    - In the Projects DataGrid, row_id=5 has Budget = 1250.00 USD (numeric within ±0.01) and the edit is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 5
+          column_id: Budget
+          value: 1250.0
+          value_type: currency_usd
+      tolerance:
+        type: absolute
+        value: 0.01
+        format_hint: $ with 2 decimals and optional commas
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Budget for a different row ID.
+  - Committing a value that parses to something other than 1250.00.
+  - Entering a value that leaves the cell in an error state (not committed).
+  - Not committing the edit.
+  expected_interaction_path:
+  - Locate row ID 5.
+  - Enter edit mode for Budget.
+  - Type 1250.00 (or 1,250.00) and commit.
+  - Verify the cell displays $1,250.00.
+  notes:
+  - Checker should parse the committed numeric value (float) and compare within ±0.01; optionally also verify formatted display.
+- id: data_grid_editable-mui-T08
+  name: Use quick filter to locate a row and edit a cell
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_with_toolbar_filter
+  implementation_component: 'MUI X: DataGrid (Toolbar quick filter + cell editing)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Invoices data grid, use the grid's search/quick filter to find invoice INV-1042, then set its Status to "Paid". The task will finish automatically when done.
+  ui_copy: 'Invoices grid: Find INV-1042 using search, then set Status to Paid.'
+  setup_description: |-
+    The page is arranged like a small dashboard with the main content anchored near the top-left.
+    The primary component is a MUI X DataGrid titled “Invoices”.
+
+    Grid configuration:
+    - Light theme; comfortable spacing; default scale.
+    - One grid instance.
+    - Columns: Invoice (row id key, e.g., INV-1042), Customer, Amount, Status (editable singleSelect), Actions.
+    - The DataGrid toolbar is enabled and includes a “Search” / “Quick filter” text field that filters visible rows as you type.
+
+    Task-relevant behavior:
+    - After filtering, you can edit the Status cell of the matching row using the standard singleSelect editor.
+    - Selecting a status commits immediately.
+
+    Initial state:
+    - Invoice INV-1042 exists but may not be visible until you filter or scroll.
+    - INV-1042 Status is not “Paid”.
+
+    Clutter:
+    - Two small KPI tiles sit above the grid but are unrelated.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires using an in-grid filtering control to locate a specific row before editing a single-select cell.
+  success_trigger:
+    human_readable:
+    - In the Invoices DataGrid, row_id=INV-1042, column=Status equals "Paid" and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: INV-1042
+          column_id: Status
+          value: Paid
+          value_type: enum
+      tolerance:
+        type: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Status for a different invoice.
+  - Setting the status to something other than Paid.
+  - Not committing the selection (leaving editor open).
+  expected_interaction_path:
+  - Use the toolbar quick filter to search for INV-1042.
+  - Locate the INV-1042 row in the filtered results.
+  - Edit Status and select Paid.
+  notes:
+  - Checker should identify the row by its invoice ID string, independent of filtering state.
+- id: data_grid_editable-mui-T09
+  name: Edit the correct DataGrid when two are on the page
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_multi_instance
+  implementation_component: 'MUI X: DataGrid x2 (two independent grids)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: On the Planning dashboard, in the Backlog data grid (not the Current sprint grid), set the Title for item BL-13 to "Refactor auth". The task will finish automatically when done.
+  ui_copy: 'Planning dashboard: Backlog grid — set Title for BL-13 to Refactor auth.'
+  setup_description: |-
+    This page is a planning dashboard with two MUI X DataGrids stacked vertically:
+
+    - Top card: “Current sprint” data grid.
+    - Bottom card: “Backlog” data grid.
+
+    Both grids have similar columns and both are editable, so you must choose the correct instance.
+
+    Backlog grid details:
+    - Columns: Item ID (read-only key, e.g., BL-13), Title (editable text), Owner (read-only), Status (read-only).
+    - Editing Title uses standard cell editing (double click / Enter to edit; Enter/blur to commit).
+
+    Scene configuration:
+    - Light theme; comfortable spacing; default scale.
+    - Two grid instances (Current sprint vs Backlog).
+    - Medium clutter: a few non-required filter chips and a “Refresh” icon appear in the header area.
+
+    Initial state:
+    - In the Backlog grid, item BL-13 exists and its Title is not “Refactor auth”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two similar editable grids increase disambiguation load even though the edit itself is simple.
+  success_trigger:
+    human_readable:
+    - In the Backlog data grid instance, row_id=BL-13, column=Title equals "Refactor auth" (trimmed) and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: BL-13
+          column_id: Title
+          value: Refactor auth
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Backlog data grid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Title in the Current sprint grid instead of Backlog.
+  - Editing a different backlog item ID.
+  - Not committing the edit (cell remains in edit mode).
+  expected_interaction_path:
+  - Identify the Backlog grid section.
+  - Locate row BL-13.
+  - Edit Title to Refactor auth and commit.
+  notes:
+  - Checker must ensure Backlog grid instance is the one modified (e.g., via container-testid).
+- id: data_grid_editable-mui-T10
+  name: Match a grid value to a visual reference
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_match_reference
+  implementation_component: 'MUI X: DataGrid (singleSelect Priority with chip rendering)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Tickets data grid, set Priority for ticket ID 2 to match the Priority shown in the Reference card. The task will finish automatically when done.
+  ui_copy: 'Tickets grid: Make Priority for ID 2 match the Reference card.'
+  setup_description: |-
+    The page is a settings-style layout with two panels:
+
+    - A left “Reference” card that displays a single Priority chip with a visible label (Low/Medium/High).
+    - A right panel containing one MUI X DataGrid titled “Tickets”.
+
+    Grid details:
+    - One grid instance; light theme; comfortable spacing; default scale.
+    - Columns: ID (read-only key), Title (read-only), Priority (editable singleSelect), Owner (read-only).
+    - Priority is rendered as a colored chip in view mode; in edit mode it becomes a dropdown with options Low, Medium, High.
+
+    Guidance:
+    - The target is provided visually by the Reference chip; the label on the chip is the canonical value.
+
+    Initial state:
+    - Ticket ID 2 exists and its Priority does not match the Reference chip.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires mapping a visual reference chip to the correct dropdown option in the correct row.
+  success_trigger:
+    human_readable:
+    - Read the reference Priority chip label (Low/Medium/High).
+    - The Tickets DataGrid cell at row_id=2, column=Priority equals the reference value and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 2
+          column_id: Priority
+          value:
+            source: reference_card
+            selector: priority-reference
+            transform: text_to_enum
+          value_type: enum_from_reference
+      tolerance:
+        type: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Priority to a value that does not match the Reference chip.
+  - Editing the wrong ticket row.
+  - Not committing the selection (editor left open).
+  expected_interaction_path:
+  - Read the label on the Reference Priority chip.
+  - Locate ticket ID 2 in the grid.
+  - Edit Priority and select the matching option.
+  notes:
+  - Checker should compute the target enum from the reference chip text (data-testid='priority-reference').
+- id: data_grid_editable-mui-T11
+  name: Cancel a row edit in dark theme
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_row_editing_cancel
+  implementation_component: 'MUI X: DataGrid (row editing with Save/Cancel actions)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Employees data grid, click Edit for row ID 4 and then click Cancel to discard the edit (do not save). The task will finish automatically when done.
+  ui_copy: 'Employees grid: For ID 4, enter edit mode then Cancel (discard changes).'
+  setup_description: |-
+    The page is a dark-theme “Employees” section containing a single MUI X DataGrid configured for row editing (editMode="row").
+
+    Row editing behavior:
+    - Row ID 4 has an Edit control in the Actions column.
+    - When a row enters edit mode, Save and Cancel controls appear in the Actions column.
+    - Cancel exits edit mode and discards changes, restoring the previous committed values.
+
+    Grid details:
+    - Theme: dark.
+    - Comfortable spacing; default scale.
+    - One grid instance.
+    - Columns: ID (read-only key), Name (editable), Role (editable singleSelect), Actions (Edit/Save/Cancel).
+    - Initial committed state for row ID 4 includes Role = “Designer”.
+
+    No other required controls are present; a non-interactive header and helper text are distractors only.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Success depends on using the Cancel control to exit edit mode without committing changes; dark theme reduces contrast slightly for some agents.
+  success_trigger:
+    human_readable:
+    - Row ID 4 exits edit mode via Cancel (last_edit_outcome = canceled).
+    - After canceling, row_id=4 Role remains "Designer" and the row is in view mode.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 4
+          column_id: Role
+          value: Designer
+          value_type: enum
+        row_edit_mode:
+        - row_id: 4
+          mode: view
+        row_last_edit_outcome:
+        - row_id: 4
+          outcome: canceled
+      tolerance:
+        type: exact
+      require_confirm: true
+      confirm_control: Cancel (row action)
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Save instead of Cancel.
+  - Leaving the row in edit mode.
+  - Any committed change to row ID 4 values after exiting edit mode.
+  expected_interaction_path:
+  - Locate row ID 4.
+  - Click Edit in the Actions column.
+  - Click Cancel to discard and return to view mode.
+  notes:
+  - As with other cancel tasks, instrument a row_last_edit_outcome flag to disambiguate Save vs Cancel when values remain unchanged.
+- id: data_grid_editable-mui-T12
+  name: Edit with single-click-to-edit in a small grid
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_single_click_recipe
+  implementation_component: 'MUI X: DataGrid (cellModesModel single-click edit recipe)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Notes data grid, set the Notes for row ID 12 to "OK". The task will finish automatically when done.
+  ui_copy: 'Notes grid: Set Notes for ID 12 to OK.'
+  setup_description: |-
+    This page contains a single MUI X DataGrid titled “Notes”, positioned near the top-right of the viewport.
+    The grid is rendered at a small scale (reduced font size and tighter header height).
+
+    Editing behavior (non-default):
+    - The grid is configured using the documented “single click to enter edit mode” recipe.
+    - Clicking an editable cell immediately turns it into a text input (no double-click needed).
+    - Pressing Enter or clicking outside commits the value.
+
+    Grid details:
+    - Theme light; spacing comfortable; scale small; placement top-right.
+    - One grid instance.
+    - Columns: ID (read-only key), Notes (editable text), Updated (read-only).
+    - Initial state: row ID 12 exists and Notes is not “OK”.
+
+    No external Save button is used; success depends on the committed cell value.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small-scale rendering plus single-click editing increases the chance of misclicks and unintended focus/edits.
+  success_trigger:
+    human_readable:
+    - In the Notes DataGrid, row_id=12, column=Notes equals "OK" (trimmed) and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 12
+          column_id: Notes
+          value: OK
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Notes for a different row ID.
+  - Leaving Notes as something other than "OK" after commit.
+  - Leaving the cell in edit mode without committing.
+  expected_interaction_path:
+  - Locate row ID 12.
+  - Click the Notes cell (enters edit mode immediately).
+  - Type OK and commit (Enter or click outside).
+  notes:
+  - Checker should ensure the committed row model has Notes == "OK" and that the cell is in view mode.
+- id: data_grid_editable-mui-T13
+  name: Set a date using an in-cell date picker
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_date_picker
+  implementation_component: 'MUI X: DataGrid (custom DatePicker edit component)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Schedule data grid, set the Start date for row ID 9 to April 1, 2026. The task will finish automatically when done.
+  ui_copy: 'Schedule grid: Set Start date for ID 9 to April 1, 2026.'
+  setup_description: |-
+    The page is a light-theme dashboard card titled “Schedule” containing one MUI X DataGrid.
+    The dashboard has moderate clutter: a sidebar list of teams and a small legend card, but they are not required.
+
+    Date editing behavior:
+    - The Start date column is editable and uses a date-picker popover as the cell editor.
+    - Activating the Start date cell opens a calendar popover anchored to the cell, allowing selection of a specific date.
+    - After selecting a date, the cell shows the formatted date (e.g., “2026-04-01” or “Apr 1, 2026”) and commits when the editor closes (Enter, click outside, or an OK action depending on the picker configuration).
+
+    Guidance:
+    - Above the grid is a helper text showing the canonical date format used in the grid (mixed guidance: text + example).
+
+    Initial state:
+    - Row ID 9 exists and Start date is not April 1, 2026.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening and navigating a date-picker popover within a DataGrid cell and ensuring the edit is committed.
+  success_trigger:
+    human_readable:
+    - In the Schedule DataGrid, row_id=9 has Start date = 2026-04-01 (ISO) and the edit is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 9
+          column_id: Start date
+          value: '2026-04-01'
+          value_type: date_iso
+      tolerance:
+        type: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the wrong date (off by a day/month/year).
+  - Changing Start date in the wrong row.
+  - Selecting the correct date but not committing it (cell remains in edit mode).
+  expected_interaction_path:
+  - Locate row ID 9.
+  - Enter edit mode for Start date.
+  - Use the date picker to select April 1, 2026.
+  - Close/commit the editor so the grid state updates.
+  notes:
+  - Checker should normalize the committed Start date to ISO (YYYY-MM-DD) before comparison.
+- id: data_grid_editable-mui-T14
+  name: Autocomplete selection in the correct grid instance
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_cell_editing_autocomplete_multi_instance
+  implementation_component: 'MUI X: DataGrid (custom Autocomplete edit component) x2'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: On the Team assignments page, in the Team B data grid (not Team A), set Assignee for task T-13 to "Jordan Lee". The task will finish automatically when done.
+  ui_copy: 'Team assignments: Team B grid — set Assignee for T-13 to Jordan Lee.'
+  setup_description: |-
+    The page contains two MUI X DataGrids in a dashboard layout:
+
+    - Left card: “Team A” assignments grid.
+    - Right card: “Team B” assignments grid.
+
+    Both grids are editable and share similar columns. The task targets the Team B grid only.
+
+    Team B grid details:
+    - Columns: Task (read-only key, e.g., T-13), Title (read-only), Assignee (editable), Due (read-only).
+    - The Assignee cell uses a custom Autocomplete editor (MUI Autocomplete) inside the DataGrid:
+      - When editing, a text field appears.
+      - Typing filters a long list of people (dozens of options).
+      - Selecting a suggestion commits the value.
+
+    Scene configuration:
+    - Light theme; comfortable spacing; default scale.
+    - Two grid instances; medium clutter from other cards and headers.
+
+    Initial state:
+    - In Team B, task T-13 exists and Assignee is not Jordan Lee.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Autocomplete selection requires search among many options and correct disambiguation between two similar grid instances.
+  success_trigger:
+    human_readable:
+    - In the Team B data grid instance, row_id=T-13, column=Assignee equals "Jordan Lee" (trimmed) and is committed.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: T-13
+          column_id: Assignee
+          value: Jordan Lee
+          value_type: string
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Team B data grid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Assignee in Team A instead of Team B.
+  - Selecting a similar but incorrect name.
+  - Typing Jordan Lee but not selecting/committing the autocomplete option so the cell remains unchanged.
+  - Editing the wrong task row.
+  expected_interaction_path:
+  - Identify the Team B grid card.
+  - Find row T-13.
+  - Enter edit mode for Assignee.
+  - Type Jordan Lee and select the matching suggestion to commit.
+  notes:
+  - Checker should require correct instance (Team B) and exact committed string match.
+- id: data_grid_editable-mui-T15
+  name: Add a new record using the DataGrid toolbar and save
+  canonical_type: data_grid_editable
+  implementation_source: mui
+  implementation_variant: datagrid_row_editing_crud_add_row
+  implementation_component: 'MUI X: DataGrid (CRUD / row editing with toolbar Add)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Records data grid, click Add record and create a new row with ID 501, Name "Nova", Age 22, and Status "New", then click Save for the new row. The task will finish automatically when done.
+  ui_copy: 'Records grid: Add row 501 (Nova, 22, New) and Save.'
+  setup_description: |-
+    The page is a dark-theme dashboard with multiple widgets (high clutter). The main widget is a MUI X DataGrid titled “Records”.
+    The grid is configured for CRUD-style row editing with an integrated toolbar.
+
+    Toolbar and add-row behavior:
+    - The grid header includes a toolbar with an “Add record” button.
+    - Clicking “Add record” inserts a new row and immediately puts it into row edit mode.
+    - An Actions column shows Save and Cancel controls for the new row.
+    - The new row is only committed to the grid’s data model when Save is clicked.
+
+    Grid details:
+    - Theme dark; comfortable spacing; default scale.
+    - One grid instance.
+    - Columns: ID (editable for new row), Name (editable text), Age (editable number), Status (editable singleSelect: New, Active, Archived), Actions (Save/Cancel).
+    - Initial state: no existing row with ID 501.
+
+    Clutter:
+    - Additional dashboard cards (charts, notifications, filters) surround the grid but do not affect success.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: High-clutter dashboard plus multi-field row creation and explicit Save confirmation increases interaction complexity and recovery cost.
+  success_trigger:
+    human_readable:
+    - A committed row with row_id=501 exists in the Records DataGrid.
+    - 'For row_id=501: Name="Nova", Age=22, Status="New".'
+    - The row is saved and not in edit mode.
+    canonical_predicate:
+      predicate_type: grid_cells_equal
+      target_state:
+        cells:
+        - row_id: 501
+          column_id: Name
+          value: Nova
+          value_type: string
+        - row_id: 501
+          column_id: Age
+          value: 22
+          value_type: number
+        - row_id: 501
+          column_id: Status
+          value: New
+          value_type: enum
+        row_exists:
+        - row_id: 501
+        row_edit_mode:
+        - row_id: 501
+          mode: view
+      tolerance:
+        type: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save (row action)
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Creating a row but not saving it (row remains in edit mode or disappears).
+  - Saving with a different ID than 501.
+  - Only partially setting the values (e.g., Name correct but Status wrong).
+  - Clicking Cancel instead of Save.
+  expected_interaction_path:
+  - Click Add record in the DataGrid toolbar.
+  - In the new row, set ID to 501, Name to Nova, Age to 22, Status to New.
+  - Click Save for the new row.
+  notes:
+  - Checker should confirm a committed row with id=501 exists and is in view mode.
+  - 'Instrumentation hint: expose toolbar button selectors and per-row save actions.'

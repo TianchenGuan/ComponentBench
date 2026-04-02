@@ -1,0 +1,2354 @@
+- id: resizable_columns-antd-T01
+  name: Set Amount column to 160px (single table)
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the “Amount” column width to 160 px in the table. No confirmation is needed. The task will finish automatically
+    when done.
+  ui_copy: Set the “Amount” column width to 160 px in the table. No confirmation is needed. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport with a single “Payments” table.
+
+    The table is an Ant Design Table configured with **resizable columns** using a composed header cell (react-resizable).
+    - Column headers: Date, Type, Note, Amount, Action.
+    - Each header has a thin vertical resize handle on its **right edge** (visible on hover).
+    - While dragging, a small tooltip near the pointer shows the current width in pixels (e.g., “160px”).
+    - Under the table title there is a small “Width Monitor” line that always shows the current width of the Amount column as text (e.g., “Amount width: 148px”) for observability.
+
+    Initial state:
+    - Amount column starts at 120px.
+    - Other columns are already set and do not need to be changed.
+
+    No distractors: no other tables, no modals, no extra form fields.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single table with a live pixel readout makes the target state easy to observe; only one resize handle interaction
+      is required with a generous tolerance.
+  success_trigger:
+    human_readable:
+    - The Amount column width is within ±12px of 160px.
+    - No confirmation/apply click is required.
+    - The predicate is evaluated on the only resizable table on the page.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          amount: 160
+      tolerance:
+        type: absolute_px
+        value: 12
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing a different column (e.g., Note) while leaving Amount outside tolerance.
+  - Amount width is 147px or 173px (outside ±12px).
+  - Changing column order or sorting does not count as success.
+  expected_interaction_path:
+  - Hover the Amount header to reveal the resize handle.
+  - Drag the handle left/right until the tooltip or Width Monitor reads 160px.
+  - Release the mouse to finish resizing.
+  notes: |-
+    Instrumentation: add data-testid for the table root (e.g., rc-table-payments) and for the live width readout (e.g., rc-width-amount).
+    Checker: read the canonical column width from the table’s column state (not from DOM pixels) to avoid zoom/layout variance.
+- id: resizable_columns-antd-T02
+  name: Drag-resize Note column to 260px
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Resize the “Note” column to 260 px wide in the table. No confirmation is needed. The task will finish automatically
+    when done.
+  ui_copy: Resize the “Note” column to 260 px wide in the table. No confirmation is needed. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One Ant Design Table (“Payments”) with resizable column headers (react-resizable handles on the right edge of each header).
+    - Headers: Date, Type, Note, Amount, Action.
+    - Resize handles are visible on hover; a dashed vertical guide line appears while dragging.
+    - A compact “Width Monitor” row under the table lists widths for Note and Amount (e.g., “Note: 240px • Amount: 120px”).
+
+    Initial state:
+    - Note column starts at 200px.
+    - Amount starts at 120px.
+
+    No clutter or extra components.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Straightforward single-handle drag with continuous feedback and no competing instances or overlays.
+  success_trigger:
+    human_readable:
+    - The Note column width is within ±12px of 260px.
+    - No Apply/OK is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          note: 260
+      tolerance:
+        type: absolute_px
+        value: 12
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Note width is outside tolerance (e.g., 245px or 275px).
+  - Only Amount was resized (Note unchanged).
+  - Resizing Note in a way that snaps back (drag not completed) does not count.
+  expected_interaction_path:
+  - Hover the right edge of the Note header to reveal the resize handle.
+  - Click-drag the handle until the Width Monitor shows ~260px for Note.
+  - Release to commit the width.
+  notes: |-
+    AntD composite resizable header typically wraps <th> with react-resizable’s handle element.
+    Ensure the handle has a stable selector (data-testid like rc-handle-note) for debugging, even if the agent uses pixels.
+- id: resizable_columns-antd-T03
+  name: Reset table column widths to default
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the table’s column widths back to the default layout using the “Reset widths” control. The task will
+    finish automatically when done.
+  ui_copy: Reset the table’s column widths back to the default layout using the “Reset widths” control. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One resizable Ant Design Table with a small toolbar above it:
+    - Toolbar buttons: “Reset widths” (primary), “Export CSV” (secondary, distractor).
+    - Table headers: Date, Type, Note, Amount, Action.
+    - Widths are currently **customized** (not default), and the Width Monitor shows all five widths.
+
+    Default layout (shown as a faint hint text under the Reset button):
+    - Date 140px, Type 120px, Note 200px, Amount 120px, Action 100px.
+
+    Initial state (customized):
+    - Date 140px, Type 120px, Note 280px, Amount 80px, Action 100px.
+
+    Clicking “Reset widths” immediately restores the default widths and shows a small toast “Column widths reset”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A single clearly labeled reset control with explicit default widths minimizes both motor and reasoning
+      complexity.
+  success_trigger:
+    human_readable:
+    - 'All column widths match the default layout: Date 140px, Type 120px, Note 200px, Amount 120px, Action 100px.'
+    - No additional confirmation is required after the reset.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        column_widths_px:
+          date: 140
+          type: 120
+          note: 200
+          amount: 120
+          action: 100
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only some columns match the default widths while others remain customized.
+  - Clicking “Export CSV” does not count as success.
+  - Visually resizing columns to approximate defaults but leaving any column off by 1px does not count (exact match required).
+  expected_interaction_path:
+  - Locate the toolbar above the table.
+  - Click “Reset widths”.
+  - Verify the Width Monitor returns to the default values.
+  notes: |-
+    Checker should compare against stored “defaultWidths” for the table instance, not recomputed DOM widths.
+    Keep “Export CSV” as a harmless distractor (no navigation).
+- id: resizable_columns-antd-T04
+  name: Set Type column to 140px (dark theme)
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the dark-themed table, set the “Type” column width to 140 px. No confirmation is needed. The task will
+    finish automatically when done.
+  ui_copy: In the dark-themed table, set the “Type” column width to 140 px. No confirmation is needed. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated_card in **dark theme**, centered.
+
+    One Ant Design Table with resizable columns (react-resizable handles).
+    - Headers: Date, Type, Note, Amount, Action.
+    - Dark header background; resize handles appear as lighter vertical grips on hover.
+    - A “Width Monitor” line under the header displays “Type width: ###px”.
+
+    Initial state:
+    - Type column starts at 110px.
+
+    No additional clutter.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Same simple interaction as baseline, but dark theme slightly reduces visual contrast of the handle.
+  success_trigger:
+    human_readable:
+    - Type column width is within ±12px of 140px.
+    - No Apply/OK is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          type: 140
+      tolerance:
+        type: absolute_px
+        value: 12
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Type width outside tolerance.
+  - Changing the Amount column instead of Type.
+  - Toggling any table option (sorting/filter) does not count.
+  expected_interaction_path:
+  - Hover the right edge of the Type header.
+  - Drag the handle until the width readout reaches 140px.
+  - Release to commit.
+  notes: |-
+    Ensure dark theme still exposes a clear focus outline/hover affordance so this is not an adversarial visibility trap.
+- id: resizable_columns-antd-T05
+  name: Resize Reason column in Secondary table to 220px
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the “Secondary (Refunds)” table, set the “Reason” column width to 220 px. No confirmation is needed.
+    The task will finish automatically when done.
+  ui_copy: In the “Secondary (Refunds)” table, set the “Reason” column width to 220 px. No confirmation is needed. The task
+    will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, containing **two** stacked resizable tables (instances=2).
+
+    Table A label: “Primary (Payments)”
+    - Columns: Date, Customer, Amount, Status.
+    - Resizable headers with handles on the right edge.
+
+    Table B label: “Secondary (Refunds)” (the target instance)
+    - Columns: Date, Amount, Reason, Agent.
+    - Resizable headers with the same handle affordance.
+
+    Observability:
+    - Each table has its own Width Monitor line directly beneath its label.
+    - The Secondary monitor explicitly shows “Reason width: ###px”.
+
+    Initial state:
+    - Secondary.Reason starts at 160px.
+    - Primary table is already correctly sized but remains resizable as a distractor.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Two similar resizable tables increase the chance of resizing the wrong instance, but the target has a clear
+      label and live width readout.
+  success_trigger:
+    human_readable:
+    - In the Secondary (Refunds) table, the Reason column width is within ±8px of 220px.
+    - Changes to the Primary table are ignored for success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          reason: 220
+      tolerance:
+        type: absolute_px
+        value: 8
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary (Refunds)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Reason in the Primary table (wrong instance).
+  - Secondary.Reason width outside tolerance.
+  - Resizing the Amount column instead of Reason.
+  expected_interaction_path:
+  - Locate the Secondary (Refunds) table by its label.
+  - Hover the right edge of the Reason header and drag the handle.
+  - Stop when the Secondary Width Monitor shows ~220px for Reason.
+  notes: |-
+    Instrumentation: each table instance should have a stable instance id (e.g., rc-table-primary, rc-table-secondary) and width monitors scoped to that instance.
+    Checker must confirm the correct instance via instance id/label, not by DOM position.
+- id: resizable_columns-antd-T06
+  name: Resize Description column in invoice form section
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the “Line items” table, resize the “Description” column to 320 px wide. No confirmation is needed. The
+    task will finish automatically when done.
+  ui_copy: In the “Line items” table, resize the “Description” column to 320 px wide. No confirmation is needed. The task
+    will finish automatically when done.
+  setup_description: |-
+    Layout: form_section (Invoice editor) with **low clutter**.
+
+    Page structure:
+    - A short invoice header form (Invoice #, Customer, Currency) above the table (distractors; not required).
+    - A section heading “Line items” followed by a resizable Ant Design Table.
+
+    Line items table:
+    - Columns: Item, Description, Qty, Unit price.
+    - Resizable handles on the right edge of each header.
+    - The Description header includes a small “w=###px” badge that updates live.
+    - Other headers include sort icons, increasing click/drag interference slightly.
+
+    Initial state:
+    - Description starts at 240px.
+    - Table width is fixed to the card; resizing Description shifts adjacent columns but does not require adjusting them.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Resizing occurs among nearby form controls and sortable headers, increasing the chance of mis-clicks; the
+      width badge keeps observability reasonable.
+  success_trigger:
+    human_readable:
+    - In the Line items table, Description column width is within ±8px of 320px.
+    - No confirmation/apply step is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          description: 320
+      tolerance:
+        type: absolute_px
+        value: 8
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Line items
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Description width outside tolerance.
+  - Resizing Item or Qty instead of Description.
+  - Typing in invoice form fields does not count as success.
+  expected_interaction_path:
+  - Scroll (if needed) to the Line items section header.
+  - Hover the right edge of the Description header and drag the resize handle.
+  - Stop when the badge reads about 320px.
+  notes: |-
+    Add data-testid hooks: rc-table-line-items; rc-col-description; rc-col-width-description.
+    Checker should ignore non-width changes such as sorting state.
+- id: resizable_columns-antd-T07
+  name: Keep Order ID column within 120–140px (bottom-right)
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Resize the “Order ID” column so it ends up between 120 px and 140 px wide. No confirmation is needed. The
+    task will finish automatically when done.
+  ui_copy: Resize the “Order ID” column so it ends up between 120 px and 140 px wide. No confirmation is needed. The task
+    will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card anchored to the **bottom-right** of the viewport (placement != center).
+
+    One resizable Ant Design Table (“Recent orders”):
+    - Columns: Order ID, Customer, Total, Status.
+    - Resize handles on header right edges.
+    - A small “Order ID width: ###px” readout is shown above the table.
+
+    Initial state:
+    - Order ID starts at 180px (too wide).
+    - Other columns are fixed but still resizable.
+
+    The goal is tolerant: any final width between 120 and 140 px is acceptable.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The acceptable range reduces precision demands, but the bottom-right placement increases acquisition difficulty
+      near the viewport edge.
+  success_trigger:
+    human_readable:
+    - Order ID column width is between 120px and 140px (inclusive).
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_widths_px_range:
+          order_id:
+            min: 120
+            max: 140
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Recent orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Order ID width is 119px or 141px (outside range).
+  - Resizing Customer/Total/Status but leaving Order ID outside range.
+  - Dragging but releasing before the width updates (no committed change).
+  expected_interaction_path:
+  - Locate the Recent orders table card in the bottom-right.
+  - Drag the right-edge resize handle for Order ID left until the readout is within 120–140px.
+  - Release to finish.
+  notes: |-
+    Range checker should treat endpoints as inclusive.
+    Provide the width readout as text (not only a visual guide) so the task remains feasible for non-pixel observation modes.
+- id: resizable_columns-antd-T08
+  name: 'Compact small table: set 3 column widths precisely'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact table, resize columns so that “SKU” is 90 px, “Product” is 220 px, and “Qty” is 70 px wide.
+    No confirmation is needed. The task will finish automatically when done.
+  ui_copy: In the compact table, resize columns so that “SKU” is 90 px, “Product” is 220 px, and “Qty” is 70 px wide. No confirmation
+    is needed. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered. Spacing mode is **compact** and the component scale is **small**.
+
+    One resizable Ant Design Table (“Inventory”, compact density):
+    - Columns: SKU, Product, Qty, Location.
+    - Header padding is reduced; resize handles are thinner and closer together.
+    - A Width Monitor above the table shows three live values: “SKU: ###px • Product: ###px • Qty: ###px”.
+    - Min widths: SKU min 60px, Product min 140px, Qty min 60px.
+
+    Initial state:
+    - SKU 120px, Product 180px, Qty 90px, Location 160px.
+
+    No other distractors; difficulty comes from small targets and multiple sequential drags.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small resize handles plus three precise target widths require repeated accurate dragging and careful monitoring
+      of live feedback.
+  success_trigger:
+    human_readable:
+    - SKU width is within ±4px of 90px.
+    - Product width is within ±4px of 220px.
+    - Qty width is within ±4px of 70px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          sku: 90
+          product: 220
+          qty: 70
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Inventory
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one or two of the three columns meet the target widths.
+  - Any target column is outside tolerance (e.g., Product at 226px).
+  - Resizing Location instead of a target column does not help.
+  expected_interaction_path:
+  - Resize SKU by dragging the separator on its right edge until ~90px.
+  - Resize Product by dragging its right separator until ~220px.
+  - Resize Qty by dragging its right separator until ~70px.
+  - Verify all three values in the Width Monitor.
+  notes: |-
+    In compact/small mode, ensure the handle remains at least ~6–8px wide to remain realistically clickable.
+    Checker should read widths from component state; DOM pixel measurement can vary under zoom.
+- id: resizable_columns-antd-T09
+  name: Match Primary table widths to visual reference (2 instances)
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the column widths in the “Primary (Plan pricing)” table to the reference layout shown above it. The
+    task will finish automatically when done.
+  ui_copy: Match the column widths in the “Primary (Plan pricing)” table to the reference layout shown above it. The task
+    will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, containing a **reference ruler** and two resizable tables (instances=2).
+
+    Reference layout (visual guidance):
+    - A horizontal bar with labeled segments “Plan”, “Usage”, and “Price”.
+    - The bar is visually aligned to the Primary table header.
+    - For accessibility/mixed guidance, the bar has an aria-label that includes the numeric target widths.
+
+    Table 1 label: “Primary (Plan pricing)” (target)
+    - Columns: Plan, Usage, Price, Action.
+    - Resizable handles on header right edges.
+    - Width badges are NOT shown for individual columns (to force using the reference).
+
+    Table 2 label: “Secondary (Plan pricing)” (distractor)
+    - Same columns and also resizable.
+
+    Initial state:
+    - Primary column widths are slightly off from the reference.
+    - Secondary table can be resized but does not matter for success.
+
+    Target reference widths (from the reference bar’s aria-label):
+    - Plan 160px, Usage 220px, Price 140px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires aligning multiple column widths to a reference without per-column numeric badges, plus selecting
+      the correct table instance.
+  success_trigger:
+    human_readable:
+    - In the Primary (Plan pricing) table, Plan is within ±6px of 160px.
+    - In the Primary (Plan pricing) table, Usage is within ±6px of 220px.
+    - In the Primary (Plan pricing) table, Price is within ±6px of 140px.
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: plan_pricing_ref_v1
+        column_widths_px:
+          plan: 160
+          usage: 220
+          price: 140
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary (Plan pricing)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching widths in the Secondary table instead of the Primary table.
+  - Only some columns match the reference while others remain off.
+  - Relying on approximate visual alignment that leaves any column outside ±6px.
+  expected_interaction_path:
+  - Identify the Primary (Plan pricing) table by its label.
+  - Drag the header separators to align Plan, then Usage, then Price to the reference bar.
+  - Re-check alignment after each adjustment (previous drags can shift other columns).
+  notes: |-
+    Mixed guidance implementation hint: give the reference bar an aria-label like “Reference widths: Plan 160px, Usage 220px, Price 140px”.
+    Checker should ignore any changes in the Secondary table.
+- id: resizable_columns-antd-T10
+  name: 'Dashboard: resize Revenue to 200px and apply'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + react-resizable (ResizableTitle header cell)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dashboard’s “Sales” table, resize the “Revenue” column to 200 px wide and then click “Apply layout”.
+    The task will finish automatically when done.
+  ui_copy: In the dashboard’s “Sales” table, resize the “Revenue” column to 200 px wide and then click “Apply layout”. The
+    task will finish automatically when done.
+  setup_description: |-
+    Layout: dashboard with **high clutter**.
+
+    The page contains multiple widgets:
+    - KPI tiles (Revenue, Orders, Conversion) (distractors).
+    - A date range picker and a “Refresh” button (distractors; not required).
+    - A card titled “Sales” containing a resizable Ant Design Table (target component).
+
+    Sales table:
+    - Columns: Region, Orders, Revenue, Trend.
+    - Resizable handles on header right edges.
+    - A small inline readout under the table title shows “Revenue width (pending): ###px”.
+    - The table supports a **pending layout** state: resizing updates the preview immediately, but the layout is not considered saved until the user clicks “Apply layout”.
+
+    Controls inside the Sales card footer:
+    - “Apply layout” (primary)
+    - “Cancel” (secondary)
+
+    Initial state:
+    - Revenue column starts at 160px.
+    - No pending changes at load.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: High clutter increases mis-click risk, and success requires an additional Apply step with distinct ‘pending
+      vs saved’ feedback.
+  success_trigger:
+    human_readable:
+    - Revenue column width is within ±5px of 200px in the Sales table.
+    - The user has clicked “Apply layout” after achieving the target width (saved/committed state).
+    - The predicate is evaluated only on the Sales table instance.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          revenue: 200
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: true
+      confirm_control: Apply layout
+      require_correct_instance: false
+      target_instance_label_or_id: Sales
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Revenue is resized to ~200px but “Apply layout” is not clicked.
+  - Clicking “Cancel” after resizing (reverts pending changes).
+  - Revenue width outside tolerance after Apply.
+  expected_interaction_path:
+  - Locate the Sales card on the dashboard.
+  - Drag the Revenue column resize handle until the pending width readout is ~200px.
+  - Click “Apply layout” in the card footer.
+  notes: |-
+    Checker should track a committed width state separate from live drag preview (e.g., savedColumnWidths vs draftColumnWidths).
+    Provide stable selectors: rc-dashboard-sales, rc-apply-layout.
+- id: resizable_columns-mui-T01
+  name: Resize Full name column to 220px (DataGrid)
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (column resizing enabled)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Data Grid, resize the “Full name” column to 220 px wide. No confirmation is needed. The task will
+    finish automatically when done.
+  ui_copy: In the Data Grid, resize the “Full name” column to 220 px wide. No confirmation is needed. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated_card centered in the viewport.
+
+    One MUI X DataGrid with resizable columns:
+    - Column headers: ID, Full name, Email, Role.
+    - Resizing affordance: drag the **right portion of the column separator** in the header.
+    - While dragging, a vertical guide line appears at the potential new boundary.
+    - A “Width Monitor” line below the grid shows “Full name width: ###px”.
+
+    Initial state:
+    - Full name starts at 160px.
+    - Other columns are unchanged.
+
+    No extra toolbars or menus required for success (sorting/menu icons may be present but are distractors).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single grid with a clear width monitor; modest interference from header icons but otherwise default behavior.
+  success_trigger:
+    human_readable:
+    - Full name column width is within ±10px of 220px.
+    - No Apply/OK is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          full_name: 220
+      tolerance:
+        type: absolute_px
+        value: 10
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: DataGrid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Full name width outside tolerance.
+  - Resizing Email instead of Full name.
+  - Sorting the column or opening the column menu does not count.
+  expected_interaction_path:
+  - Move to the divider at the right edge of the Full name header.
+  - Drag left/right until the Width Monitor reads ~220px.
+  - Release to commit.
+  notes: |-
+    MUI X DataGrid provides callbacks such as onColumnWidthChange for instrumentation.
+    Add data-testid to the width monitor (e.g., rc-width-full_name) for stable checker reads.
+- id: resizable_columns-mui-T02
+  name: Resize Age column into 80–100px range
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (column resizing enabled)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Resize the “Age” column so its width ends up between 80 px and 100 px. No confirmation is needed. The task
+    will finish automatically when done.
+  ui_copy: Resize the “Age” column so its width ends up between 80 px and 100 px. No confirmation is needed. The task will
+    finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One MUI X DataGrid:
+    - Headers: ID, Full name, Age, City.
+    - Column separators are draggable for resizing.
+    - A small text readout under the grid shows “Age width: ###px”.
+
+    Initial state:
+    - Age starts at 140px (too wide).
+    - Min width for Age is 60px, max width is 200px.
+
+    The target is a range; any width within 80–100px is acceptable.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: A wide acceptable range reduces precision; the main challenge is grabbing the correct header separator
+      amid minor icon clutter.
+  success_trigger:
+    human_readable:
+    - Age column width is between 80px and 100px (inclusive).
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_widths_px_range:
+          age:
+            min: 80
+            max: 100
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: DataGrid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Age width is 79px or 101px (outside range).
+  - Resizing City instead of Age.
+  - Changing density/filters does not count.
+  expected_interaction_path:
+  - Drag the separator on the right of the Age header to shrink the column.
+  - Stop when the Age width readout is within 80–100px.
+  notes: |-
+    Ensure the Age width readout is always visible (no hover-only) to keep observability high for easy tier.
+- id: resizable_columns-mui-T03
+  name: 'Dark theme: set Status column to 140px'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (column resizing enabled)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the dark-themed Data Grid, set the “Status” column width to 140 px. No confirmation is needed. The task
+    will finish automatically when done.
+  ui_copy: In the dark-themed Data Grid, set the “Status” column width to 140 px. No confirmation is needed. The task will
+    finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, **dark theme**.
+
+    One MUI X DataGrid:
+    - Headers: Ticket, Owner, Status, Updated.
+    - Column resizing is enabled via draggable header separators.
+    - A “Status width: ###px” monitor appears below the grid.
+
+    Initial state:
+    - Status starts at 100px.
+
+    No extra clutter.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single resize target with numeric feedback; dark theme slightly lowers contrast but not enough to move
+      beyond easy.
+  success_trigger:
+    human_readable:
+    - Status column width is within ±10px of 140px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          status: 140
+      tolerance:
+        type: absolute_px
+        value: 10
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Tickets grid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Status width outside tolerance.
+  - Resizing Owner instead of Status.
+  - Opening the column menu does not count.
+  expected_interaction_path:
+  - Grab the separator at the right edge of the Status header.
+  - Drag until the monitor shows ~140px.
+  notes: |-
+    Dark theme should preserve visible separator affordances; consider adding hover highlight on the resizable separator.
+- id: resizable_columns-mui-T04
+  name: 'Two grids: resize Total in Orders grid'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (column resizing enabled)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the “Orders” Data Grid (not the Customers grid), set the “Total” column width to 150 px. No confirmation
+    is needed. The task will finish automatically when done.
+  ui_copy: In the “Orders” Data Grid (not the Customers grid), set the “Total” column width to 150 px. No confirmation is
+    needed. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, containing **two** MUI DataGrids (instances=2).
+
+    Grid 1 label: “Orders” (target instance)
+    - Headers: Order, Customer, Total, Status.
+    - Resizable separators in the header.
+    - Width Monitor under this grid shows “Total width: ###px”.
+
+    Grid 2 label: “Customers” (distractor instance)
+    - Headers: Customer, Email, Segment, LTV.
+    - Also resizable.
+
+    Initial state:
+    - Orders.Total starts at 110px.
+    - Both grids are fully visible without scrolling.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Two similar grids require correct-instance disambiguation; header icon density modestly increases acquisition
+      difficulty.
+  success_trigger:
+    human_readable:
+    - In the Orders grid, Total column width is within ±8px of 150px.
+    - Changes in the Customers grid do not count.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          total: 150
+      tolerance:
+        type: absolute_px
+        value: 8
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Total in the Customers grid (wrong instance).
+  - Orders.Total width outside tolerance.
+  - Resizing Status instead of Total.
+  expected_interaction_path:
+  - Locate the grid labeled Orders.
+  - Drag the separator to the right of the Total header until the monitor shows ~150px.
+  notes: |-
+    Provide stable instance identifiers on each grid root (e.g., rc-grid-orders, rc-grid-customers).
+    Checker should use the grid instance id to read column width from API state.
+- id: resizable_columns-mui-T05
+  name: 'Settings panel: scroll to Shipping Address and set to 300px'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (horizontal scroll + column resizing)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Address Book Data Grid, scroll horizontally to find the “Shipping Address” column and resize it
+    to 300 px wide. No confirmation is needed. The task will finish automatically when done.
+  ui_copy: In the Address Book Data Grid, scroll horizontally to find the “Shipping Address” column and resize it to 300 px
+    wide. No confirmation is needed. The task will finish automatically when done.
+  setup_description: |-
+    Layout: settings_panel with low clutter.
+
+    Page structure:
+    - Left sidebar with 5 settings links (Profile, Notifications, Billing, Addresses, API Keys) — distractors.
+    - Main panel titled “Addresses” containing a wide MUI DataGrid.
+
+    DataGrid (“Address Book”):
+    - Many columns: Name, Email, Phone, City, State, ZIP, Country, Shipping Address, Billing Address, Notes.
+    - The grid is narrower than the total column width, so it has a **horizontal scrollbar**.
+    - Shipping Address column starts off-screen to the right (not initially visible).
+    - Column resizing is enabled via draggable header separators.
+
+    Observability:
+    - A Width Monitor above the grid always shows “Shipping Address width: ###px”.
+    - The monitor updates even if the column is currently off-screen.
+
+    Initial state:
+    - Shipping Address starts at 220px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires horizontal scrolling to bring the target header into view and then performing a drag-resize among
+      many columns.
+  success_trigger:
+    human_readable:
+    - Shipping Address column width is within ±8px of 300px.
+    - No confirmation step is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          shipping_address: 300
+      tolerance:
+        type: absolute_px
+        value: 8
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Address Book
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Billing Address instead of Shipping Address.
+  - Shipping Address width outside tolerance.
+  - Vertical scrolling the grid without revealing the Shipping Address header does not complete the task.
+  expected_interaction_path:
+  - Use the horizontal scrollbar (or trackpad shift-scroll) to bring the Shipping Address header into view.
+  - Drag the separator on the right side of the Shipping Address header until the Width Monitor is ~300px.
+  - Release to commit.
+  notes: |-
+    Make sure the horizontal scrollbar is visible and usable (not hidden).
+    Checker should read width from DataGrid column state (apiRef or internal state), not from rendered cell sizes.
+- id: resizable_columns-mui-T06
+  name: Match DataGrid column widths to visual header strip
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (column resizing enabled)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the Data Grid’s column widths to the visual header strip shown above the grid. The task will finish
+    automatically when done.
+  ui_copy: Match the Data Grid’s column widths to the visual header strip shown above the grid. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One MUI DataGrid with a **visual reference strip** directly above the header row:
+    - The strip is a colored bar with labeled segments: “Name”, “Email”, “Role”.
+    - The strip’s segment boundaries are intended to line up with the DataGrid’s column separators.
+    - No numeric pixel targets are shown; the intended widths must be inferred from the visual alignment.
+
+    DataGrid:
+    - Headers: Name, Email, Role, Last login.
+    - Resizable separators in header.
+
+    Initial state:
+    - Name/Email/Role widths are close but not aligned to the strip.
+
+    Target reference widths used by the checker:
+    - Name 180px, Email 260px, Role 120px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires perceptual alignment to a visual reference without explicit numeric feedback, increasing observability
+      and precision demands.
+  success_trigger:
+    human_readable:
+    - Name width is within ±6px of 180px.
+    - Email width is within ±6px of 260px.
+    - Role width is within ±6px of 120px.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: mui_header_strip_ref_v1
+        column_widths_px:
+          name: 180
+          email: 260
+          role: 120
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: DataGrid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Aligning only one or two columns to the strip.
+  - Using the wrong separator (e.g., resizing Last login instead of Role).
+  - Column widths outside tolerance even if they look close.
+  expected_interaction_path:
+  - Compare the grid header separators to the reference strip boundaries.
+  - Drag separators to align Name, then Email, then Role.
+  - Re-check alignment after adjustments.
+  notes: |-
+    Keep the strip visually aligned with the grid’s content box (same left padding) to avoid ambiguous alignment.
+    Checker uses numeric targets but UI only provides the strip (visual guidance).
+- id: resizable_columns-mui-T07
+  name: Use toolbar to reset DataGrid column widths
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid + custom toolbar (Reset widths)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Data Grid’s column widths back to the default layout using the “Reset widths” button. The task
+    will finish automatically when done.
+  ui_copy: Reset the Data Grid’s column widths back to the default layout using the “Reset widths” button. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One MUI DataGrid with a compact toolbar row above it:
+    - Buttons: “Reset widths” (primary), “Export” (secondary distractor), “Density” (opens menu; distractor).
+    - Resizable columns are enabled, but the intended solution is to use Reset.
+
+    Default widths (shown in helper text under the toolbar):
+    - ID 90px, Name 180px, Email 240px, Role 120px.
+
+    Initial state (customized):
+    - ID 90px, Name 140px, Email 300px, Role 120px.
+
+    Clicking “Reset widths” immediately restores defaults and shows a toast “Restored default column widths”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Simple button-based reset, but the presence of multiple toolbar controls adds mild selection interference.
+  success_trigger:
+    human_readable:
+    - 'All column widths match defaults exactly: ID 90px, Name 180px, Email 240px, Role 120px.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        column_widths_px:
+          id: 90
+          name: 180
+          email: 240
+          role: 120
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: DataGrid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Export or Density instead of Reset widths.
+  - Manually resizing to approximate defaults but leaving any column off by 1px.
+  - Resetting sort/filter state does not count.
+  expected_interaction_path:
+  - Locate the toolbar above the DataGrid.
+  - Click “Reset widths”.
+  - Observe columns snap back to the defaults.
+  notes: |-
+    Checker should read column widths from DataGrid state (apiRef.current.getAllColumns()).
+    Provide data-testid for the Reset button (e.g., rc-reset-widths).
+- id: resizable_columns-mui-T08
+  name: 'Compact small DataGrid: precisely set 2 adjacent widths'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (compact density)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact Data Grid, resize columns so “Product” is 240 px wide and “Region” is 140 px wide. No confirmation
+    is needed. The task will finish automatically when done.
+  ui_copy: In the compact Data Grid, resize columns so “Product” is 240 px wide and “Region” is 140 px wide. No confirmation
+    is needed. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered. Spacing is **compact** and scale is **small**.
+
+    One MUI DataGrid (“Sales by product”):
+    - Headers: Product, Region, Units, Revenue.
+    - Compact density reduces header padding and shrinks separator grab area.
+    - Sorting and column menu icons are present in headers (increases click/drag interference).
+    - Width Monitor below the grid shows “Product: ###px • Region: ###px”.
+
+    Initial state:
+    - Product 200px, Region 180px.
+    - Columns have minWidth constraints (Product min 140px, Region min 120px).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small, dense header separators and adjacent targets require high-precision dragging without accidentally
+      triggering sort/menu actions.
+  success_trigger:
+    human_readable:
+    - Product width is within ±4px of 240px.
+    - Region width is within ±4px of 140px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          product: 240
+          region: 140
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Sales by product
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two target columns matches.
+  - Accidentally sorting a column while leaving widths incorrect.
+  - Any target width outside tolerance after releasing the drag.
+  expected_interaction_path:
+  - Drag the separator to the right of Product to reach ~240px.
+  - Drag the separator to the right of Region to reach ~140px.
+  - Use the Width Monitor to verify final values.
+  notes: |-
+    Consider disabling column sorting on mouse-up while resizing to avoid accidental sort side effects (known UX edge case in some grids).
+    Checker should ignore sort state changes and evaluate widths only.
+- id: resizable_columns-mui-T09
+  name: 'Three grids: match Primary widths to reference layout'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid (multiple instances)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the column widths in the “Primary (Forecast)” Data Grid to the reference layout shown next to it.
+    The task will finish automatically when done.
+  ui_copy: Match the column widths in the “Primary (Forecast)” Data Grid to the reference layout shown next to it. The task
+    will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, containing **three** resizable DataGrids (instances=3) and a reference panel.
+
+    Reference panel (mixed guidance):
+    - A small static “Reference layout” box lists target columns with a miniature visual ruler.
+    - The box also includes a screen-reader-friendly text description of the target widths.
+
+    Grid labels:
+    - “Primary (Forecast)” — target instance
+      Columns: Month, Forecast, Actual, Delta
+    - “Secondary (Forecast)” — distractor, same columns
+    - “Tertiary (Forecast)” — distractor, same columns
+
+    Initial state:
+    - Primary widths are close but not matching reference.
+    - Secondary and Tertiary are resizable but irrelevant.
+
+    Target widths (from the reference panel text):
+    - Month 120px, Forecast 160px, Actual 160px, Delta 120px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three nearly identical grids create heavy instance disambiguation load, and matching a multi-column layout
+      requires multiple accurate drags.
+  success_trigger:
+    human_readable:
+    - In Primary (Forecast), Month is within ±5px of 120px.
+    - In Primary (Forecast), Forecast is within ±5px of 160px.
+    - In Primary (Forecast), Actual is within ±5px of 160px.
+    - In Primary (Forecast), Delta is within ±5px of 120px.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: forecast_ref_v1
+        column_widths_px:
+          month: 120
+          forecast: 160
+          actual: 160
+          delta: 120
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary (Forecast)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching widths in Secondary or Tertiary instead of Primary.
+  - Only some columns match the reference.
+  - Any Primary target column outside tolerance.
+  expected_interaction_path:
+  - Identify the grid labeled Primary (Forecast).
+  - Use the reference panel to know the target layout.
+  - Resize each separator to reach the four target widths.
+  notes: |-
+    Provide per-grid data-testid (rc-grid-forecast-primary/secondary/tertiary).
+    Mixed guidance reference should not require interacting with any control—purely informational.
+- id: resizable_columns-mui-T10
+  name: 'Modal layout editor: resize Description and Save'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid inside Modal (customize layout)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Customize columns”, then resize the “Description” column to 320 px wide and click “Save”. The task
+    will finish automatically when done.
+  ui_copy: Open “Customize columns”, then resize the “Description” column to 320 px wide and click “Save”. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: modal_flow (centered).
+
+    Page starts with a settings card containing:
+    - A button “Customize columns” (opens the modal).
+    - Other toggles (Show totals, Compact mode) as distractors.
+
+    Modal content:
+    - Title: “Customize columns”
+    - A MUI DataGrid preview with resizable columns: Field, Description, Visible, Order.
+    - Resizable separators in the header.
+    - A small inline readout in the modal footer shows “Description width (draft): ###px”.
+
+    Modal footer buttons:
+    - “Save” (primary)
+    - “Cancel” (secondary)
+
+    Behavior:
+    - Resizing updates the preview immediately but is considered **draft** until Save is clicked.
+    - Clicking Save commits widths and shows a toast “Saved column layout”.
+
+    Initial state:
+    - Description starts at 240px.
+    - Modal is closed on page load.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a modal, performing precise resizing in an overlay, and committing changes with Save (draft
+      vs committed feedback).
+  success_trigger:
+    human_readable:
+    - Description column width is within ±5px of 320px in the committed (saved) layout.
+    - The user clicked “Save” after achieving the target width.
+    - Width must apply to the DataGrid inside the Customize columns modal.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          description: 320
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: Customize columns modal grid
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Description is resized to ~320px but Save is not clicked.
+  - Cancel is clicked (reverts changes).
+  - Description width outside tolerance after Save.
+  expected_interaction_path:
+  - Click “Customize columns” to open the modal.
+  - Drag the Description column separator until the draft readout is ~320px.
+  - Click “Save” to commit.
+  notes: |-
+    Checker should wait for the committed state update (e.g., after Save handler) rather than reading draft width during drag.
+    Add data-testid to modal root and Save button for robust selection.
+- id: resizable_columns-mantine-T01
+  name: Resize Name column to 200px (Mantine table)
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the table, resize the “Name” column to 200 px wide. No confirmation is needed. The task will finish
+    automatically when done.
+  ui_copy: In the table, resize the “Name” column to 200 px wide. No confirmation is needed. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One Mantine-styled table with resizable columns implemented as a composite:
+    - Headers: Name, Email, Team, Role.
+    - Each header cell has a visible grab handle (a small vertical grip) on the right edge.
+    - When dragging, a small tooltip shows the current width in pixels.
+    - A “Width Monitor” line under the card title shows “Name width: ###px”.
+
+    Initial state:
+    - Name starts at 160px.
+
+    No other tables or overlays.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single composite table with always-visible handles and a numeric width monitor keeps the interaction straightforward.
+  success_trigger:
+    human_readable:
+    - Name column width is within ±12px of 200px.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          name: 200
+      tolerance:
+        type: absolute_px
+        value: 12
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Team members
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Name width outside tolerance.
+  - Resizing Email instead of Name.
+  - Dragging the table scrollbar (if any) does not count.
+  expected_interaction_path:
+  - Find the handle on the right edge of the Name header.
+  - Drag until the width monitor reaches ~200px.
+  - Release to commit.
+  notes: |-
+    Composite implementation hint: store widths in React state keyed by column id; apply widths via inline style on <th>/<td>.
+    Add data-testid for the handle (rc-handle-name) and width monitor (rc-width-name).
+- id: resizable_columns-mantine-T02
+  name: 'Dark theme: set Price column to 120px'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the dark-themed table, set the “Price” column width to 120 px. No confirmation is needed. The task will
+    finish automatically when done.
+  ui_copy: In the dark-themed table, set the “Price” column width to 120 px. No confirmation is needed. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, **dark theme**.
+
+    One Mantine-styled “Products” table with resizable headers:
+    - Headers: Product, Category, Price, Stock.
+    - Resize handles are always visible as small grips.
+    - A “Price width: ###px” monitor is shown under the table title.
+
+    Initial state:
+    - Price starts at 160px.
+
+    No clutter or additional instances.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single target width with explicit numeric feedback; dark theme provides a small robustness variation without
+      adding extra steps.
+  success_trigger:
+    human_readable:
+    - Price column width is within ±12px of 120px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          price: 120
+      tolerance:
+        type: absolute_px
+        value: 12
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Products
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Price width outside tolerance.
+  - Resizing Stock instead of Price.
+  - Changing page theme or toggles (if present) does not count.
+  expected_interaction_path:
+  - Drag the resize handle on the right edge of Price until the monitor reads ~120px.
+  notes: |-
+    Ensure dark theme maintains sufficient contrast for the grip handle (hover highlight helps).
+- id: resizable_columns-mantine-T03
+  name: Reset column widths to defaults (Mantine)
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the table’s column widths back to the default layout using “Reset widths”. The task will finish automatically
+    when done.
+  ui_copy: Reset the table’s column widths back to the default layout using “Reset widths”. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One resizable Mantine-styled table with a small action row above it:
+    - Buttons: “Reset widths” (primary), “Download” (distractor).
+    - The table is titled “Contacts”.
+
+    Contacts table headers:
+    - Name, Email, Phone, Company.
+
+    Default widths (listed as helper text next to Reset):
+    - Name 180px, Email 260px, Phone 140px, Company 200px.
+
+    Initial state (customized):
+    - Name 220px, Email 220px, Phone 140px, Company 200px.
+
+    Clicking Reset widths restores defaults instantly and shows a small toast.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: One clear reset action with explicit default targets; minimal interaction complexity.
+  success_trigger:
+    human_readable:
+    - 'All column widths equal the default layout: Name 180px, Email 260px, Phone 140px, Company 200px.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        column_widths_px:
+          name: 180
+          email: 260
+          phone: 140
+          company: 200
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Contacts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Download instead of Reset widths.
+  - Any column width differs from default by 1px.
+  - Resizing manually to approximate defaults does not count (must reach exact defaults).
+  expected_interaction_path:
+  - Click “Reset widths”.
+  - Observe columns snap to default widths.
+  notes: |-
+    Checker reads stored default widths; reset implementation should set exact integer pixel widths for determinism.
+- id: resizable_columns-mantine-T04
+  name: 'Two tables: resize Warehouse in Primary inventory'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the “Primary (Inventory)” table, set the “Warehouse” column width to 180 px. No confirmation is needed.
+    The task will finish automatically when done.
+  ui_copy: In the “Primary (Inventory)” table, set the “Warehouse” column width to 180 px. No confirmation is needed. The
+    task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered, containing **two** Mantine-styled resizable tables (instances=2).
+
+    Table labels:
+    - “Primary (Inventory)” — target instance
+      Columns: SKU, Item, Warehouse, On hand
+    - “Secondary (Backorders)” — distractor instance
+      Columns: SKU, Item, Warehouse, ETA
+
+    Resizing:
+    - Each header has a small grip handle on its right edge.
+    - A Width Monitor appears beneath each table label; the Primary monitor shows “Warehouse width: ###px”.
+
+    Initial state:
+    - Primary.Warehouse starts at 140px.
+    - Secondary table is also resizable but irrelevant.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Correct-instance selection across two similar tables is the main challenge; resizing itself is straightforward
+      with numeric feedback.
+  success_trigger:
+    human_readable:
+    - In Primary (Inventory), Warehouse width is within ±8px of 180px.
+    - Do not credit changes in Secondary (Backorders).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          warehouse: 180
+      tolerance:
+        type: absolute_px
+        value: 8
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary (Inventory)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Warehouse in Secondary (Backorders) instead of Primary.
+  - Primary.Warehouse outside tolerance.
+  - Resizing Item instead of Warehouse.
+  expected_interaction_path:
+  - Locate the Primary (Inventory) label.
+  - Drag the Warehouse header grip until the monitor reads ~180px.
+  - Release to commit.
+  notes: |-
+    Assign instance ids rather than relying on vertical position (e.g., rc-table-inventory-primary).
+- id: resizable_columns-mantine-T05
+  name: Match widths to visual reference strip (Mantine)
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Match the table’s column widths to the visual reference strip shown above the header. The task will finish
+    automatically when done.
+  ui_copy: Match the table’s column widths to the visual reference strip shown above the header. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated_card, centered.
+
+    One Mantine-styled resizable table with a **visual reference strip** above it:
+    - The strip has labeled segments “Name” and “Email” whose boundary should align with the table’s column separator.
+    - No numeric pixel values are displayed.
+
+    Table:
+    - Columns: Name, Email, Role.
+    - Resizable grips on the right edges of Name and Email.
+
+    Initial state:
+    - Name/Email widths are close but not aligned to the strip.
+
+    Target widths used by the checker:
+    - Name 180px, Email 260px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires visual alignment without explicit numeric feedback, but only involves two columns and one table
+      instance.
+  success_trigger:
+    human_readable:
+    - Name width is within ±6px of 180px.
+    - Email width is within ±6px of 260px.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: mantine_strip_ref_v1
+        column_widths_px:
+          name: 180
+          email: 260
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Members
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two columns matches the reference.
+  - Resizing Role instead of Name/Email.
+  - Widths outside tolerance even if visually close.
+  expected_interaction_path:
+  - Compare the header separator positions to the reference strip.
+  - Drag the Name and Email grips until boundaries align.
+  - Re-check alignment after each drag.
+  notes: |-
+    Keep the strip and table aligned to the same left padding/margins to prevent ambiguous matching.
+- id: resizable_columns-mantine-T06
+  name: 'Top-left placement: set Qty into 70–90px range'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Resize the “Qty” column so it ends up between 70 px and 90 px wide. No confirmation is needed. The task
+    will finish automatically when done.
+  ui_copy: Resize the “Qty” column so it ends up between 70 px and 90 px wide. No confirmation is needed. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated_card anchored to the **top-left** of the viewport.
+
+    One Mantine-styled resizable table titled “Stock check”:
+    - Columns: Item, Qty, Unit.
+    - Resizable grip handles on header right edges.
+    - A compact readout above the table shows “Qty width: ###px”.
+
+    Initial state:
+    - Qty starts at 130px (too wide).
+
+    Goal is tolerant: any width in the inclusive range 70–90px is acceptable.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Range target reduces precision requirements; top-left placement increases acquisition difficulty near window
+      chrome/edges.
+  success_trigger:
+    human_readable:
+    - Qty column width is between 70px and 90px (inclusive).
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_widths_px_range:
+          qty:
+            min: 70
+            max: 90
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Stock check
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Qty width is 69px or 91px (outside range).
+  - Resizing Item instead of Qty.
+  - Adjusting row data (if editable) does not count.
+  expected_interaction_path:
+  - Find the Qty header grip.
+  - Drag left until the readout is within 70–90px.
+  - Release to commit.
+  notes: |-
+    Keep the card away from browser UI overlays; top-left placement should still be within safe content margins.
+- id: resizable_columns-mantine-T07
+  name: 'Compact small: set 3 widths precisely (Mantine)'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact table, resize columns so “ID” is 80 px, “Customer” is 200 px, and “Status” is 120 px wide.
+    No confirmation is needed. The task will finish automatically when done.
+  ui_copy: In the compact table, resize columns so “ID” is 80 px, “Customer” is 200 px, and “Status” is 120 px wide. No confirmation
+    is needed. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card, centered. Spacing is **compact** and component scale is **small**.
+
+    One Mantine-styled table titled “Orders (compact)”:
+    - Columns: ID, Customer, Status, Updated.
+    - Resize grips are thinner in compact mode and sit close to header text.
+    - A Width Monitor above the table shows “ID: ###px • Customer: ###px • Status: ###px”.
+
+    Initial state:
+    - ID 110px, Customer 170px, Status 160px.
+    - Updated column width is fixed (not a target).
+
+    Difficulty comes from multiple accurate drags with small targets.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small compact grips plus three strict target widths make this a high-precision repeated drag task.
+  success_trigger:
+    human_readable:
+    - ID width is within ±4px of 80px.
+    - Customer width is within ±4px of 200px.
+    - Status width is within ±4px of 120px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          id: 80
+          customer: 200
+          status: 120
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Orders (compact)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any target column outside tolerance.
+  - Only one or two columns match.
+  - Resizing Updated does not help.
+  expected_interaction_path:
+  - Drag the ID separator to reach ~80px.
+  - Drag the Customer separator to reach ~200px.
+  - Drag the Status separator to reach ~120px.
+  - Confirm all three values in the Width Monitor.
+  notes: |-
+    Ensure table uses consistent box-sizing so pixel widths are deterministic.
+    Provide visible focus/hover feedback for the grip to avoid ambiguity in compact mode.
+- id: resizable_columns-mantine-T08
+  name: 'Horizontal scroll: find Billing Address and set to 340px'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose) with horizontal scroll'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Customers table, scroll horizontally to find the “Billing Address” column and resize it to 340 px
+    wide. No confirmation is needed. The task will finish automatically when done.
+  ui_copy: In the Customers table, scroll horizontally to find the “Billing Address” column and resize it to 340 px wide.
+    No confirmation is needed. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated_card anchored to the **bottom-right**.
+
+    One Mantine-styled resizable table titled “Customers”:
+    - Many columns: Name, Email, Phone, City, State, ZIP, Country, Shipping Address, Billing Address, Notes.
+    - The card is narrower than the full table; a **horizontal scrollbar** is present.
+    - Billing Address starts off-screen to the right.
+    - Column resize grips exist on each header.
+
+    Observability:
+    - A persistent Width Monitor above the table shows “Billing Address width: ###px”.
+
+    Initial state:
+    - Billing Address starts at 260px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires navigating horizontal scroll to locate the target header in a wide table, then performing a precise
+      resize.
+  success_trigger:
+    human_readable:
+    - Billing Address column width is within ±6px of 340px.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          billing_address: 340
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: Customers
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Shipping Address instead of Billing Address.
+  - Billing Address width outside tolerance.
+  - Scrolling vertically only (never revealing Billing Address header) does not complete the task.
+  expected_interaction_path:
+  - Use the horizontal scrollbar to bring Billing Address into view.
+  - Drag Billing Address’s right-edge grip until the monitor reads ~340px.
+  - Release to commit.
+  notes: |-
+    Provide a visible horizontal scrollbar (do not hide it behind overlay fade).
+    Checker reads width from state keyed by column id, not from DOM.
+- id: resizable_columns-mantine-T09
+  name: 'Drawer: resize Notes in Secondary view and save'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles inside Drawer (compose)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Customize columns”, then in “Secondary (Support view)” resize the “Notes” column to 260 px wide and
+    click “Save changes”. The task will finish automatically when done.
+  ui_copy: Open “Customize columns”, then in “Secondary (Support view)” resize the “Notes” column to 260 px wide and click
+    “Save changes”. The task will finish automatically when done.
+  setup_description: |-
+    Layout: drawer_flow (drawer slides in).
+
+    Page initial view:
+    - A settings card with a button “Customize columns” (opens the drawer).
+    - No other required controls.
+
+    Drawer content:
+    - Title: “Customize columns”
+    - Three resizable table previews (instances=3) in an accordion:
+      1) “Primary (Sales view)”
+      2) “Secondary (Support view)” — target instance
+      3) “Archived (Read-only view)”
+    - Each preview table has resizable header grips and a small per-table Width Monitor.
+
+    Secondary (Support view) table:
+    - Columns: Ticket, Owner, Priority, Notes.
+    - Notes column has a visible grip and a monitor line “Notes width: ###px”.
+
+    Drawer footer buttons:
+    - “Save changes” (primary)
+    - “Cancel” (secondary)
+
+    Behavior:
+    - Resizing updates a draft layout; it is only committed when “Save changes” is clicked.
+
+    Initial state:
+    - Secondary.Notes starts at 180px.
+    - Drawer is closed on load.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Requires opening a drawer, selecting the correct instance among three previews, resizing precisely, and
+      saving to commit changes.
+  success_trigger:
+    human_readable:
+    - In Secondary (Support view), Notes width is within ±5px of 260px.
+    - The user clicked “Save changes” after achieving the target (committed state).
+    - Resizing in other preview tables must not be counted as success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          notes: 260
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary (Support view)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Notes resized correctly but Save changes not clicked.
+  - Resizing Notes in Primary or Archived instead of Secondary.
+  - Clicking Cancel (reverts).
+  expected_interaction_path:
+  - Click “Customize columns” to open the drawer.
+  - Expand/select the Secondary (Support view) preview if collapsed.
+  - Drag the Notes column grip to ~260px using the monitor.
+  - Click “Save changes”.
+  notes: |-
+    Checker should distinguish draft vs committed widths (e.g., committedWidths updated only on Save).
+    Provide data-testid for drawer, accordion panels, and Save/Cancel buttons.
+- id: resizable_columns-mantine-T10
+  name: 'Form section: set API Key column to 171px with tooltip-only feedback'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + custom resizable header handles (compose)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the “API logs” table, set the “API Key” column width to 171 px. No confirmation is needed. The task
+    will finish automatically when done.
+  ui_copy: In the “API logs” table, set the “API Key” column width to 171 px. No confirmation is needed. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: form_section with **medium clutter**.
+
+    Page structure:
+    - A filter row above the table (Date range, Status dropdown, Search input) — distractors.
+    - Section heading “API logs” followed by a Mantine-styled resizable table.
+
+    API logs table:
+    - Columns: Time, Method, Endpoint, API Key, Status.
+    - Resizable grips on header right edges.
+    - **No persistent width monitor**: the only numeric feedback is a small tooltip (e.g., “171px”) that appears next to the cursor *while dragging*.
+    - After releasing the drag, the tooltip disappears.
+
+    Initial state:
+    - API Key starts at 220px.
+    - minWidth for API Key is 140px.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Unusual exact target width with tight tolerance and tooltip-only feedback increases precision and observability
+      difficulty amid moderate surrounding clutter.
+  success_trigger:
+    human_readable:
+    - API Key column width is within ±3px of 171px.
+    - No confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          api_key: 171
+      tolerance:
+        type: absolute_px
+        value: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: API logs
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - API Key width outside tolerance (e.g., 167px or 175px).
+  - Resizing Endpoint instead of API Key.
+  - Interacting with filter controls does not count.
+  expected_interaction_path:
+  - Hover the right edge of the API Key header to grab its grip.
+  - Drag left while watching the tooltip until it reads about 171px.
+  - Release to commit the width.
+  notes: |-
+    Tooltip should be keyboard-accessible via aria-live if possible, but it may remain primarily visual (semantic_observability=2).
+    Checker reads final stored width after drag end.

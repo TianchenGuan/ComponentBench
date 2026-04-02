@@ -1,0 +1,2012 @@
+- id: code_editor-antd-T01
+  name: Quick log line
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: Card + Select + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the Script editor, enter exactly this single line: console.log(''hello''); The task will finish automatically when done.'
+  ui_copy: 'In the Script editor, enter exactly this single line: console.log(''hello''); The task will finish automatically when done.'
+  setup_description: |-
+    Page shows a single Ant Design Card centered in the viewport titled "Script editor".
+    Inside the card is a composite code editor: an AntD toolbar row (Language dropdown + a few icon buttons) and a Monaco Editor text surface below.
+    Spacing is comfortable with default-sized controls. The editor is large enough to show ~12 lines and includes a left gutter with line numbers.
+    Initial state: the editor content is empty (no text). Language is set to JavaScript. Word wrap is off.
+    There are no other form fields, menus, or dialogs on the page, and there is only one editor instance.
+  scene_context: &id001
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single-line text entry with one editor instance and no overlays; success is a straightforward exact-content check.
+  success_trigger:
+    human_readable:
+    - The Script editor's content equals `console.log('hello');` (allowing an optional trailing newline).
+    - No other editor instance is present, so instance disambiguation is not applicable.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: console.log('hello');
+        language: javascript
+        options:
+          word_wrap: null
+          tab_size: null
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing the semicolon or using different quotes (e.g., double quotes) in the line.
+  - Extra characters beyond the line (other than a single trailing newline).
+  - Typing into a non-editor element (e.g., a toolbar input) without changing the editor content.
+  expected_interaction_path:
+  - Click inside the Monaco editor text area.
+  - Type the line exactly.
+  - Leave the editor as-is (no Apply needed).
+  notes: Checker reads Monaco model value and normalizes line endings; optional trailing newline allowed.
+- id: code_editor-antd-T02
+  name: Reset to starter snippet
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: Card + Select + Button + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the editor back to its default starter snippet using the Reset control in the editor. The task will finish automatically when done.
+  ui_copy: Reset the editor back to its default starter snippet using the Reset control in the editor. The task will finish automatically when done.
+  setup_description: |-
+    Page shows a single Ant Design Card titled "Starter snippet" in the center.
+    The card contains a composite code editor built from AntD controls plus a CodeMirror 6 editor surface.
+    A small toolbar above the editor includes: Language dropdown, Reset button (label "Reset"), and a non-interactive status text "Unsaved".
+    Initial state: the editor content has been modified and currently reads `export const broken = true` on a single line.
+    The desired default content is the built-in starter snippet (shown nowhere else), and pressing Reset immediately restores it.
+    There is only one editor instance; no dialogs, popovers, or other inputs are on the page.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single obvious Reset control restores a known default; no typing or multi-step overlays required.
+  success_trigger:
+    human_readable:
+    - The editor content equals the built-in starter snippet.
+    - Reset is applied immediately (no additional confirmation required).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          // Starter snippet
+          export function add(a, b) {
+            return a + b;
+          }
+        language: javascript
+        options:
+          word_wrap: null
+          tab_size: null
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clearing the editor to empty instead of restoring the default snippet.
+  - Restoring a snippet that is similar but not identical (e.g., missing the comment line).
+  - Editing the content manually without using Reset and leaving it slightly different from the default.
+  expected_interaction_path:
+  - Locate the Reset button in the toolbar above the editor.
+  - Click Reset once.
+  - Wait for the editor content to change to the starter snippet.
+  notes: Instrument Reset with data-testid='editor-reset'. Default snippet stored server-side for checker.
+- id: code_editor-antd-T03
+  name: Switch language to JSON
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: Card + Select + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Set the editor Language to JSON using the Language control. The task will finish automatically when done.
+  ui_copy: Set the editor Language to JSON using the Language control. The task will finish automatically when done.
+  setup_description: |-
+    Centered Ant Design Card titled "Language" contains one composite code editor.
+    The toolbar row includes a labeled dropdown "Language" with options: JavaScript, JSON, Python, YAML.
+    Below the toolbar is a Monaco Editor with line numbers and a small scrollbar.
+    Initial state: Language is set to JavaScript. The editor already contains a small JSON-looking snippet:
+    {"status": "ok"} formatted on three lines.
+    Changing Language does not modify the text; it only changes the editor mode (syntax highlighting / language id).
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires opening a dropdown and choosing one option; otherwise the scene is simple with one instance.
+  success_trigger:
+    human_readable:
+    - The editor language/mode is set to JSON.
+    - Editor text may remain unchanged; only the language state is checked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: null
+        language: json
+        options:
+          word_wrap: null
+          tab_size: null
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting YAML or JavaScript instead of JSON.
+  - Opening the dropdown but leaving the language unchanged.
+  - Changing the editor text without setting the language to JSON.
+  expected_interaction_path:
+  - Click the Language dropdown.
+  - Select JSON.
+  - Verify the dropdown now shows JSON.
+  notes: Checker uses editor API (e.g., monaco.editor.getModel().getLanguageId()). Content is ignored for this task.
+- id: code_editor-antd-T04
+  name: Enter small JSON config
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: Card + Select + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    In the Config editor, enter this JSON exactly:
+    {
+      "enabled": true,
+      "retries": 3
+    }
+    The task will finish automatically when done.
+  ui_copy: |-
+    In the Config editor, enter this JSON exactly:
+    {
+      "enabled": true,
+      "retries": 3
+    }
+    The task will finish automatically when done.
+  setup_description: |-
+    Single Ant Design Card labeled "Config editor" is centered.
+    A composite CodeMirror 6 editor is shown with a small toolbar: a Language dropdown fixed to "JSON" (disabled), and a Clear icon.
+    Initial state: the editor is empty and focused is not set.
+    CodeMirror shows line numbers and automatically indents when you press Enter, but no auto-format button is present.
+    There are no other components on the page.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A short, four-line formatted snippet; the main challenge is getting quotes, commas, and indentation correct.
+  success_trigger:
+    human_readable:
+    - The Config editor content parses to the same JSON value as the target (formatting/whitespace independent).
+    - No Apply/OK is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          {
+            "enabled": true,
+            "retries": 3
+          }
+        language: json
+        options:
+          word_wrap: null
+          tab_size: 2
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing a comma after the first property or using single quotes instead of double quotes.
+  - Incorrect indentation (e.g., no two-space indent for properties).
+  - Extra properties or comments added to the JSON.
+  expected_interaction_path:
+  - Click inside the editor.
+  - Type or paste the JSON exactly with newlines and indentation.
+  - Stop when the content matches.
+  notes: Checker normalizes CRLF/LF and trims trailing spaces on each line before comparison.
+- id: code_editor-antd-T05
+  name: Replace TODO with DONE
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: Card + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: editor_operation
+  secondary_template: open_overlay
+  browsergym_goal: In the Script editor, replace every occurrence of the text "TODO" with "DONE", then click Apply. The task will finish automatically when done.
+  ui_copy: In the Script editor, replace every occurrence of the text "TODO" with "DONE", then click Apply. The task will finish automatically when done.
+  setup_description: |-
+    Ant Design isolated card in the center titled "Script editor".
+    A composite Monaco-based code editor fills the card: toolbar (buttons: Find, Replace, Apply) and Monaco editor area with line numbers.
+    Initial state: the editor contains a short JavaScript snippet with the word "TODO" appearing twice (once in the header comment and once inside the function).
+    Clicking the Replace button opens Monaco's inline find/replace widget inside the editor (an overlay anchored to the top-right of the editor).
+    Apply is a primary AntD Button in the toolbar; it commits the current editor model into a "Saved" state and shows a brief toast "Saved".
+    No other editors exist.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires interacting with an in-editor overlay (replace) and then committing via Apply; minor text mistakes prevent exact match.
+  success_trigger:
+    human_readable:
+    - All occurrences of "TODO" in the Script editor content are replaced with "DONE".
+    - Apply has been pressed so the editor is in the saved/committed state.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          // DONE: replace me
+          function run() {
+            // DONE: implement
+            return 0;
+          }
+        language: javascript
+        options:
+          word_wrap: null
+          tab_size: 2
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one "TODO" replaced (partial replace).
+  - Text replaced correctly but Apply was not clicked (still unsaved).
+  - Replacing "TODO" with a different word or changing surrounding punctuation/spacing.
+  expected_interaction_path:
+  - Click inside the editor.
+  - Open Replace (button or Ctrl+H).
+  - Replace all TODO → DONE.
+  - Click Apply to commit.
+  notes: Checker also verifies a boolean `saved` flag that flips only when Apply is clicked.
+- id: code_editor-antd-T06
+  name: Enable word wrap (dark theme)
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: Card + Switch + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on Word wrap for the editor using the Word wrap control. The task will finish automatically when done.
+  ui_copy: Turn on Word wrap for the editor using the Word wrap control. The task will finish automatically when done.
+  setup_description: |-
+    Ant Design Card is centered; the whole page uses a dark theme (dark background with light text), but spacing remains comfortable.
+    The composite editor uses CodeMirror 6. A toolbar includes a labeled toggle switch "Word wrap" (off by default) and a read-only indicator "JS".
+    Initial state: the editor contains one very long single line that extends beyond the visible width, producing a horizontal scrollbar when wrap is off.
+    Toggling Word wrap immediately changes the editor option so long lines wrap within the viewport.
+    There is one editor instance and no confirmation dialogs.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A simple state toggle, but the control is a small switch and the dark theme reduces contrast relative to baseline.
+  success_trigger:
+    human_readable:
+    - Editor option `word_wrap` is enabled (true).
+    - Editor content is otherwise unchanged.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: null
+        language: javascript
+        options:
+          word_wrap: true
+          tab_size: null
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling a different option (e.g., "Line numbers") instead of Word wrap.
+  - Opening settings but leaving Word wrap off.
+  - Changing the editor text to make the line shorter without enabling wrap.
+  expected_interaction_path:
+  - Locate the Word wrap switch in the toolbar.
+  - Click the switch to turn it on.
+  - Verify wrapping visually (horizontal scroll no longer needed).
+  notes: Checker reads CodeMirror extension state for lineWrapping (or a stored option flag).
+- id: code_editor-antd-T07
+  name: Apply with confirmation
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: Card + Popconfirm + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: confirm_cancel
+  secondary_template: enter_text
+  browsergym_goal: In the Script editor, change `count` from 0 to 1, then click Apply and choose Confirm in the confirmation prompt. The task will finish automatically when done.
+  ui_copy: In the Script editor, change `count` from 0 to 1, then click Apply and choose Confirm in the confirmation prompt. The task will finish automatically when done.
+  setup_description: |-
+    Ant Design Card (center) titled "Apply with confirmation".
+    Composite Monaco editor with toolbar actions: Apply (primary), and a small status chip "Not saved".
+    Initial state: the editor contains exactly `let count = 0;` on one line.
+    When you click Apply, an AntD Popconfirm appears anchored to the Apply button with the message "Apply changes?" and two buttons: "Confirm" and "Cancel".
+    Only after clicking Confirm does the editor become saved; a toast "Saved" appears briefly.
+    There is only one editor instance and no other page clutter.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The text edit itself is easy, but success additionally requires handling a confirmation popover after Apply.
+  success_trigger:
+    human_readable:
+    - The Script editor content equals `let count = 1;` (optional trailing newline allowed).
+    - The Apply confirmation has been confirmed (saved/committed state is true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: let count = 1;
+        language: javascript
+        options:
+          word_wrap: null
+          tab_size: null
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the number to 1 but not clicking Apply.
+  - Clicking Apply but selecting Cancel in the confirmation prompt.
+  - Introducing extra spaces or changing the variable name (content mismatch).
+  expected_interaction_path:
+  - Click inside the editor and edit `0` to `1`.
+  - Click Apply.
+  - In the popconfirm, click Confirm.
+  notes: Checker requires both content match and a `saved` flag that flips only after Confirm.
+- id: code_editor-antd-T08
+  name: Edit secondary YAML config (2 editors)
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: Form + Card + Button + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    In the Secondary — Environment config editor, enter exactly this YAML and then click the Secondary editor’s Apply button:
+    env:
+      MODE: production
+      DEBUG: "false"
+    The task will finish automatically when done.
+  ui_copy: |-
+    In the Secondary — Environment config editor, enter exactly this YAML and then click the Secondary editor’s Apply button:
+    env:
+      MODE: production
+      DEBUG: "false"
+    The task will finish automatically when done.
+  setup_description: |-
+    Form section layout: a "Deployment" form with multiple fields (Name, Region, Notes) and two code editor cards stacked vertically.
+    Spacing mode is compact and components are rendered at the small size tier.
+    Editor instances (same canonical_type) on page:
+      1) "Primary — Deployment script" (CodeMirror 6, JavaScript mode)
+      2) "Secondary — Environment config" (CodeMirror 6, YAML mode)
+    Each card has its own toolbar with a small Apply button on the right.
+    Initial state: Primary contains a short script; Secondary contains placeholder text `# env config`.
+    Only the Secondary editor content matters for this task; other form inputs are distractors and do not affect success.
+    Clicking Apply in a card commits that editor’s value and changes a status text in that card from "Unsaved" to "Saved".
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: form_section
+    placement: center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Small/compact controls and two similar editor instances increase disambiguation and targeting difficulty; formatted YAML must match.
+  success_trigger:
+    human_readable:
+    - The Secondary — Environment config editor content equals the target YAML (line endings normalized; trailing whitespace ignored).
+    - The change is committed by pressing the Secondary editor’s Apply control.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          env:
+            MODE: production
+            DEBUG: "false"
+        language: yaml
+        options:
+          word_wrap: null
+          tab_size: 2
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: apply-secondary
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Environment config
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Primary — Deployment script editor instead of the Secondary editor.
+  - Entering the YAML correctly but not clicking the Secondary Apply button (still unsaved).
+  - 'YAML that is close but wrong (e.g., `DEBUG: false` without quotes, wrong indentation, or missing `env:`).'
+  expected_interaction_path:
+  - Click inside the Secondary editor.
+  - Replace the placeholder with the YAML snippet (preserve newlines/indentation).
+  - Click the Apply button in the Secondary editor card.
+  notes: Use data-testid on each editor root (editor-primary/editor-secondary) and on Secondary apply (apply-secondary) for reliable instance targeting.
+- id: code_editor-antd-T09
+  name: Insert marker at line 160 (scroll)
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_monaco
+  implementation_component: 'AntD: Card + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll the Script editor to line 160 and insert a new line `// marker` directly above the existing line `// LINE 160`. The task will finish automatically when done.
+  ui_copy: Scroll the Script editor to line 160 and insert a new line `// marker` directly above the existing line `// LINE 160`. The task will finish automatically when done.
+  setup_description: |-
+    Single Ant Design Card is anchored near the bottom-right of the viewport (placement=bottom_right) but remains fully visible without page scrolling.
+    The composite editor uses Monaco with line numbers enabled and a narrow scrollbar.
+    Initial state: the editor is preloaded with a long file consisting of numbered comment lines from `// LINE 001` up to `// LINE 220` (one per line).
+    There is no separate search field outside the editor; the intended way to reach line 160 is by scrolling within the editor.
+    Toolbar has only non-essential controls (Copy, Format disabled); they are distractors and do not affect success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires substantial in-editor scrolling to reach a specific line and precise insertion at the correct location in a dense, long file.
+  success_trigger:
+    human_readable:
+    - The editor contains the exact two-line sequence `// marker` immediately followed by `// LINE 160`.
+    - The marker line appears exactly once in the file.
+    canonical_predicate:
+      predicate_type: contains_substring
+      target_state:
+        must_contain: |-
+          // marker
+          // LINE 160
+        marker_line: // marker
+        marker_count: 1
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding `// marker` somewhere else (not directly above `// LINE 160`).
+  - Adding multiple `// marker` lines (more than one occurrence).
+  - Editing `// LINE 160` itself (e.g., renaming it) instead of inserting a new marker line.
+  expected_interaction_path:
+  - Click inside the editor.
+  - Scroll within the editor until the gutter shows around line 160 and `// LINE 160` is visible.
+  - Insert a new line directly above it and type `// marker`.
+  notes: Checker searches the full editor text for the normalized substring and counts exact matches of the marker line.
+- id: code_editor-antd-T10
+  name: Match reference snippet (dashboard)
+  canonical_type: code_editor
+  implementation_source: antd
+  implementation_variant: composite_codemirror6
+  implementation_component: 'AntD: Dashboard layout + Button + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the code in the editor exactly match the code shown in the Reference panel, then click Apply. The task will finish automatically when done.
+  ui_copy: Make the code in the editor exactly match the code shown in the Reference panel, then click Apply. The task will finish automatically when done.
+  setup_description: |-
+    Dashboard-style layout in dark theme: left sidebar shows a fake file tree and recent runs (non-interactive labels), main area has two panels.
+    Top panel is a read-only "Reference" code block (monospace) showing the target snippet the user should match.
+    Bottom panel is the composite code editor (CodeMirror 6) with a toolbar (Apply button, Clear icon).
+    Initial state: the editor contains a different snippet (a placeholder `// start here`).
+    Apply commits the editor content and shows an inline status "Saved" under the editor.
+    Only the editor content (after Apply) is checked for success; sidebar items are clutter only.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires exact matching to a visually provided reference snippet and an explicit Apply step; dark dashboard layout adds moderate distraction.
+  success_trigger:
+    human_readable:
+    - The editor content exactly matches the Reference panel snippet (exact characters and newlines; line endings normalized).
+    - Apply has been clicked to commit the value.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-antd-10
+        match_mode: exact
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editor content differs from the Reference snippet (missing/extra spaces, commas, or newlines).
+  - Content matches but Apply was not pressed (unsaved).
+  - Copying only part of the Reference snippet (partial match).
+  expected_interaction_path:
+  - Read the Reference panel.
+  - Edit the CodeMirror editor to match it exactly (type or paste).
+  - Click Apply.
+  notes: |-
+    Reference panel has data-testid='ref-antd-10' and contains:
+    export const config = {
+      retries: 3,
+      backoffMs: 250
+    };
+- id: code_editor-mui-T01
+  name: Add import at top
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: Paper + Toolbar + IconButton + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'At the very top of the editor, add this line above the existing code: import React from ''react''; The task will finish automatically when done.'
+  ui_copy: 'At the very top of the editor, add this line above the existing code: import React from ''react''; The task will finish automatically when done.'
+  setup_description: |-
+    Material UI (MUI) Paper card is centered with a header "Editor".
+    A composite code editor is embedded: MUI Toolbar (icon buttons for Copy and Clear) and a Monaco Editor region below.
+    Initial state: the editor contains a 3-line JavaScript function:
+    function greet(name) { ... }
+    Cursor starts at the beginning of the file.
+    There is only one editor instance and no dialogs. Theme is light and spacing is comfortable.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small multi-line content change but still a simple single-instance edit without overlays or extra confirmations.
+  success_trigger:
+    human_readable:
+    - The editor content matches the expected code with the import line added at the top (optional trailing newline allowed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          import React from 'react';
+          function greet(name) {
+            return 'hi ' + name;
+          }
+        language: javascript
+        options:
+          word_wrap: null
+          tab_size: 2
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding the import line in the wrong place (not at the very top).
+  - Misspelling the import statement or using different quotes.
+  - Deleting or altering the existing function while adding the import.
+  expected_interaction_path:
+  - Click in the editor if needed.
+  - Move the cursor to the first line (Home / Ctrl+Home).
+  - Insert the import line and a newline before the existing code.
+  notes: Checker compares full content; does not require clicking any Save/Apply.
+- id: code_editor-mui-T02
+  name: Clear editor
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_codemirror6
+  implementation_component: 'MUI: Paper + IconButton + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the editor so it is completely empty using the Clear control. The task will finish automatically when done.
+  ui_copy: Clear the editor so it is completely empty using the Clear control. The task will finish automatically when done.
+  setup_description: |-
+    MUI Paper card centered titled "Scratchpad".
+    Composite CodeMirror 6 editor with a compact toolbar: a single trash icon button labeled "Clear".
+    Initial state: editor contains two lines:
+    let a = 1;
+    let b = 2;
+    Pressing Clear immediately sets the editor content to an empty string. There is no confirmation dialog.
+    No other editor instances or form elements are present.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single button interaction with immediate feedback and a trivial target state (empty content).
+  success_trigger:
+    human_readable:
+    - Editor content is exactly empty (length 0).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: ''
+        language: null
+        options:
+          word_wrap: null
+          tab_size: null
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Deleting only part of the content, leaving whitespace or a newline.
+  - Clicking outside the editor without clearing it.
+  - Using Undo to bring content back after clearing.
+  expected_interaction_path:
+  - Click the Clear (trash) icon in the toolbar.
+  - Verify the editor is blank.
+  notes: 'Checker trims nothing: content must be exactly empty.'
+- id: code_editor-mui-T03
+  name: Open Find panel
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: Paper + Toolbar + IconButton + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Find panel in the editor (the in-editor search UI). The task will finish automatically when done.
+  ui_copy: Open the Find panel in the editor (the in-editor search UI). The task will finish automatically when done.
+  setup_description: |-
+    MUI Paper card centered with a Monaco-based code editor.
+    Toolbar contains a magnifying-glass icon button labeled "Find".
+    Initial state: find/search UI is closed. Editor contains a small snippet, but its content is irrelevant.
+    Clicking Find opens Monaco's find widget overlay within the editor (typically at the top-right of the editor surface) with a focused search input.
+    There is a single editor instance and no other overlays on page load.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Just opening a single overlay from a clearly labeled toolbar button; no text needs to be edited.
+  success_trigger:
+    human_readable:
+    - The editor's Find overlay is open (visible) and in the 'find' mode.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay:
+          type: find
+          open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening a different overlay (e.g., Replace) instead of Find.
+  - Focusing the editor without opening the Find widget.
+  - Opening the Find UI and then closing it.
+  expected_interaction_path:
+  - Click the Find (magnifying glass) icon.
+  - Ensure the search widget appears in the editor.
+  notes: Checker can read a boolean like `editorOverlay.findOpen` exposed by the wrapper, or detect presence of the find widget DOM.
+- id: code_editor-mui-T04
+  name: Enter formatted Python function
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_codemirror6
+  implementation_component: 'MUI: Paper + Chip + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    In the editor, enter this Python code exactly (including indentation):
+
+    def area(radius):
+        pi = 3.14159
+        return pi * radius * radius
+
+    The task will finish automatically when done.
+  ui_copy: |-
+    In the editor, enter this Python code exactly (including indentation):
+
+    def area(radius):
+        pi = 3.14159
+        return pi * radius * radius
+
+    The task will finish automatically when done.
+  setup_description: |-
+    MUI Paper card centered titled "Python snippet".
+    Composite CodeMirror 6 editor configured for Python (syntax highlighting and 4-space indentation).
+    Toolbar shows a disabled Language chip "Python" and a small helper text "Use 4 spaces for indentation".
+    Initial state: editor is empty.
+    No Apply/Save button is present; the editor is live.
+    There are no other form fields or distracting widgets.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Multi-line formatted input with strict indentation requirements, but otherwise a clean single-instance scene.
+  success_trigger:
+    human_readable:
+    - Editor content equals the target Python snippet (line endings normalized; trailing whitespace ignored).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          def area(radius):
+              pi = 3.14159
+              return pi * radius * radius
+        language: python
+        options:
+          word_wrap: null
+          tab_size: 4
+          font_size: null
+        overlay:
+          type: null
+          open: false
+        cursor: null
+        selection: null
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using tabs or 2-space indentation instead of 4 spaces.
+  - Missing a colon after the function definition.
+  - Extra blank lines inserted inside the snippet.
+  expected_interaction_path:
+  - Click inside the editor.
+  - Type or paste the 3-line function with 4-space indentation on the last two lines.
+  - Stop when it matches.
+  notes: Checker trims trailing spaces per-line but does not alter indentation.
+- id: code_editor-mui-T05
+  name: Replace http with https
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: Paper + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: editor_operation
+  secondary_template: open_overlay
+  browsergym_goal: In the editor, replace every occurrence of "http://" with "https://", then click Apply. The task will finish automatically when done.
+  ui_copy: In the editor, replace every occurrence of "http://" with "https://", then click Apply. The task will finish automatically when done.
+  setup_description: |-
+    MUI Paper card in the center with a Monaco-based code editor.
+    Toolbar includes buttons: Replace (icon with label), and Apply (contained button).
+    Initial state: the editor contains two lines with "http://".
+    Clicking Replace opens the in-editor replace widget (overlay) where you can enter find/replace text and choose Replace All.
+    Apply commits the current content and flips a status label below the editor from "Unsaved" to "Saved".
+    No other editors are present; no modal dialogs.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Overlay-based replace plus an explicit Apply requirement; content has multiple occurrences to ensure 'replace all' behavior.
+  success_trigger:
+    human_readable:
+    - All occurrences of "http://" are replaced with "https://" in the editor content.
+    - Apply has been clicked (saved/committed state true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          const url = "https://example.com/api";
+          fetch("https://example.com/api/status");
+        language: javascript
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only replacing the first occurrence (partial replace).
+  - Replacing with a different protocol string (e.g., `https:` missing slashes).
+  - Correct replacement but failing to click Apply.
+  expected_interaction_path:
+  - Open Replace (button or Ctrl+H).
+  - Find `http://` and replace with `https://` using Replace All.
+  - Click Apply.
+  notes: Expose a wrapper `saved` boolean that toggles only on Apply; checker validates both saved and content.
+- id: code_editor-mui-T06
+  name: Switch language to SQL
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_codemirror6
+  implementation_component: 'MUI: Paper + Select + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Set the editor Language to SQL. The task will finish automatically when done.
+  ui_copy: Set the editor Language to SQL. The task will finish automatically when done.
+  setup_description: |-
+    MUI Paper card centered with a composite CodeMirror editor.
+    A labeled MUI Select control "Language" sits above the editor with options: JSON, SQL, YAML, Python.
+    Initial state: Language is JSON. The editor contains a small example query-looking text, but content is not checked for this task.
+    Selecting a language updates the editor mode immediately; no Apply button exists.
+    Only one editor instance is present.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Dropdown selection with several similar language options; success depends on setting the correct editor mode.
+  success_trigger:
+    human_readable:
+    - The editor language/mode is SQL.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        language: sql
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing JSON/YAML/Python instead of SQL.
+  - Opening the menu but leaving the selection unchanged.
+  - Changing the text without setting Language to SQL.
+  expected_interaction_path:
+  - Open the Language dropdown.
+  - Click SQL.
+  - Ensure the dropdown now shows SQL.
+  notes: Checker reads wrapper state `language` (string) bound to the language Select.
+- id: code_editor-mui-T07
+  name: Set tab size to 4 (compact)
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_codemirror6
+  implementation_component: 'MUI: Paper + IconButton stepper + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the editor tab size to 4 using the Tab size control. The task will finish automatically when done.
+  ui_copy: Set the editor tab size to 4 using the Tab size control. The task will finish automatically when done.
+  setup_description: |-
+    MUI Paper card in the center; spacing mode is compact (tighter padding and smaller gaps) but controls are still readable.
+    Composite CodeMirror editor with a small settings row above it.
+    Settings row contains a labeled numeric stepper "Tab size" with minus/plus buttons and a value display.
+    Initial state: Tab size is 2. Editor content is a short indented snippet, but content is not checked.
+    Changing the Tab size updates the editor option immediately; no Apply button is required.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires setting a scalar to an exact value using a compact stepper; state is visible but small controls increase acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The editor option `tab_size` equals 4.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        options:
+          tab_size: 4
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Tab size at 2 or setting it to a different value (e.g., 3).
+  - Typing in the editor without changing the Tab size setting.
+  - Changing Tab size temporarily but not leaving it at 4.
+  expected_interaction_path:
+  - Locate the Tab size stepper.
+  - Increase or type the value until it shows 4.
+  - Leave it at 4.
+  notes: Instrument the stepper input with aria-label='Tab size' and expose the resulting option in wrapper state for the checker.
+- id: code_editor-mui-T08
+  name: Match reference in correct editor (2 instances)
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: Form controls + Paper + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Response mapping editor, make the code exactly match the Reference snippet shown above it, then click Save. The task will finish automatically when done.
+  ui_copy: In the Response mapping editor, make the code exactly match the Reference snippet shown above it, then click Save. The task will finish automatically when done.
+  setup_description: |-
+    Form section layout titled "API settings" with several standard MUI inputs (Endpoint URL, Method, Timeout) as distractors.
+    Below the inputs are two code editor cards (same canonical_type) arranged vertically:
+      • "Request body" (JSON)
+      • "Response mapping" (JavaScript)
+    Each editor card has its own toolbar with a Save button.
+    In the Response mapping card, a small read-only "Reference" box is shown directly above the editor with the target snippet.
+    Initial state: both editors contain placeholder comments.
+    Save commits only that card’s editor and shows "Saved" under the editor.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two similar editors in a cluttered form require selecting the correct instance; exact match to a reference snippet plus an explicit Save step.
+  success_trigger:
+    human_readable:
+    - The Response mapping editor content exactly matches its Reference snippet (exact characters/newlines; line endings normalized).
+    - The Response mapping editor has been saved via its Save button.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-mui-08
+        target_editor: Response mapping
+        match_mode: exact
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: save-response-mapping
+      require_correct_instance: true
+      target_instance_label_or_id: Response mapping
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Request body editor instead of Response mapping.
+  - Copying only part of the reference snippet (partial match).
+  - Matching the content but not clicking the Response mapping Save button.
+  expected_interaction_path:
+  - Locate the Response mapping section (second editor).
+  - Edit the code to match the Reference box exactly.
+  - Click Save in the Response mapping toolbar.
+  notes: |-
+    Reference box has data-testid='ref-mui-08' and contains:
+    export function mapResponse(res) {
+      return { ok: res.status === 200 };
+    }
+    Save button for the target card uses data-testid='save-response-mapping'.
+- id: code_editor-mui-T09
+  name: Change timeoutMs at line 250 (dark, scroll)
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_monaco
+  implementation_component: 'MUI: Paper + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'In the editor, scroll down to around line 250 and change the setting `"timeoutMs": 1000` to `"timeoutMs": 2500`. The task will finish automatically when done.'
+  ui_copy: 'In the editor, scroll down to around line 250 and change the setting `"timeoutMs": 1000` to `"timeoutMs": 2500`. The task will finish automatically when done.'
+  setup_description: |-
+    MUI Paper card anchored toward the bottom-left of the viewport; page is in dark theme.
+    Composite Monaco editor with line numbers and a thin scrollbar.
+    Initial state: the editor contains a long JSON configuration file (~300 lines). Around line 250 there is exactly one line containing `"timeoutMs": 1000,`.
+    There is no external search box; the intended interaction is to scroll within the editor to the specified region and edit the number.
+    No Apply/Save button is present; changes are live.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Deep in-editor scrolling to a specific line in a long file under dark theme increases acquisition and density challenges; a small numeric edit must be correct.
+  success_trigger:
+    human_readable:
+    - 'The editor text contains the exact substring `"timeoutMs": 2500`.'
+    - 'The substring `"timeoutMs": 1000` no longer appears anywhere in the editor.'
+    - There is exactly one `timeoutMs` key in the file.
+    canonical_predicate:
+      predicate_type: contains_and_not_contains
+      target_state:
+        must_contain: '"timeoutMs": 2500'
+        must_not_contain: '"timeoutMs": 1000'
+        key: timeoutMs
+        key_count: 1
+      tolerance:
+        content:
+          normalize_line_endings: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing a different value (e.g., `retryMs`) instead of `timeoutMs`.
+  - Setting the value to something other than 2500.
+  - Leaving both 1000 and 2500 in the file (duplicate or partial edit).
+  expected_interaction_path:
+  - Scroll within the editor until you reach around line 250.
+  - Locate the `timeoutMs` line.
+  - Edit 1000 to 2500.
+  notes: 'Checker counts occurrences of the JSON key via regex "timeoutMs"\s*: and validates presence/absence of target substrings.'
+- id: code_editor-mui-T10
+  name: Edit JSON in modal and save
+  canonical_type: code_editor
+  implementation_source: mui
+  implementation_variant: composite_codemirror6
+  implementation_component: 'MUI: Dialog + Button + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: confirm_cancel
+  secondary_template: enter_formatted
+  browsergym_goal: Open the settings editor, change the JSON so that `enabled` is false, then click Save. The task will finish automatically when done.
+  ui_copy: Open the settings editor, change the JSON so that `enabled` is false, then click Save. The task will finish automatically when done.
+  setup_description: |-
+    Page shows a centered MUI Button labeled "Edit settings". Clicking it opens a modal dialog (MUI Dialog).
+    Inside the modal is a composite code editor (CodeMirror 6) labeled "Settings JSON" and prefilled with a small JSON object.
+    Modal footer has two buttons: Cancel and Save.
+    Initial state: modal is closed. When opened, the editor content is:
+    { "enabled": true, "level": "info" } formatted across multiple lines.
+    Clicking Save commits the editor content to the underlying value and closes the modal; a small toast "Saved" appears.
+    Only the committed editor content is checked for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires a modal open/close flow plus a confirmation action (Save) after making a precise boolean edit inside formatted JSON.
+  success_trigger:
+    human_readable:
+    - 'The committed settings content equals the target JSON with `"enabled": false` (line endings normalized).'
+    - Save has been clicked (commit occurred) and the modal is closed.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          {
+            "enabled": false,
+            "level": "info"
+          }
+        language: json
+        saved: true
+        modal_open: false
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the text but clicking Cancel (no commit).
+  - Saving while leaving `enabled` as true.
+  - Introducing invalid JSON (missing comma/quote) even if `enabled` looks false.
+  expected_interaction_path:
+  - Click "Edit settings" to open the modal.
+  - Edit the JSON to set enabled to false.
+  - Click Save in the modal footer.
+  notes: Checker reads committed value stored in app state (not just transient editor text) and verifies the modal is closed.
+- id: code_editor-mantine-T01
+  name: Set title string
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Paper + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: 'In the editor, set the title to "ComponentBench" so the line reads: export const title = "ComponentBench"; The task will finish automatically when done.'
+  ui_copy: 'In the editor, set the title to "ComponentBench" so the line reads: export const title = "ComponentBench"; The task will finish automatically when done.'
+  setup_description: |-
+    Mantine Paper card centered titled "Title".
+    Composite code editor (CodeMirror 6) sits inside the card with a minimal Mantine toolbar (no language picker).
+    Initial state: editor contains a single line `export const title = "";`.
+    There are no other inputs or overlays.
+    Edits apply immediately; no Save/Apply button.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single-line edit with one clear insertion point; minimal UI and immediate feedback.
+  success_trigger:
+    human_readable:
+    - Editor content equals `export const title = "ComponentBench";` (optional trailing newline allowed).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: export const title = "ComponentBench";
+        language: javascript
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the string empty or using a different title.
+  - Forgetting the semicolon or altering the rest of the line.
+  - Adding extra lines.
+  expected_interaction_path:
+  - Click inside the editor and place cursor between the quotes.
+  - Type ComponentBench.
+  - Ensure the line matches exactly.
+  notes: Mantine wrapper exposes editor value via onChange; checker compares full string.
+- id: code_editor-mantine-T02
+  name: Switch language to YAML
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Paper + Select + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Set the editor Language to YAML. The task will finish automatically when done.
+  ui_copy: Set the editor Language to YAML. The task will finish automatically when done.
+  setup_description: |-
+    Mantine centered card with a composite code editor.
+    A Mantine Select labeled "Language" sits above the editor with options: JavaScript, YAML, JSON, Python.
+    Initial state: Language is JavaScript. The editor contains a short placeholder comment.
+    Selecting a language changes editor mode immediately; no other action required.
+    Single editor instance; no clutter.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Simple dropdown selection among a few similar options.
+  success_trigger:
+    human_readable:
+    - Editor language/mode is set to YAML.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        language: yaml
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting JSON or Python instead of YAML.
+  - Opening the dropdown but not changing the selection.
+  - Changing editor text without switching language.
+  expected_interaction_path:
+  - Open the Language select.
+  - Choose YAML.
+  notes: Checker reads wrapper `language` state bound to Mantine Select.
+- id: code_editor-mantine-T03
+  name: Reset to default snippet
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Paper + Button + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Use Reset to restore the editor to its default snippet. The task will finish automatically when done.
+  ui_copy: Use Reset to restore the editor to its default snippet. The task will finish automatically when done.
+  setup_description: |-
+    Mantine Paper card centered titled "Defaults".
+    Composite CodeMirror 6 editor with a small toolbar including a Reset button.
+    Initial state: the editor currently shows `const enabled = false;` (it has been modified).
+    Clicking Reset immediately restores the built-in default snippet:
+    // Default snippet
+    const enabled = true;
+    There is only one editor instance and no other controls.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single button action to return to a known default; immediate, visible feedback.
+  success_trigger:
+    human_readable:
+    - Editor content equals the default snippet (line endings normalized; trailing whitespace ignored).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          // Default snippet
+          const enabled = true;
+        saved: null
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clearing the editor instead of restoring the default snippet.
+  - Restoring only part of the default snippet (e.g., missing the comment line).
+  - Manually editing text to look similar but not identical.
+  expected_interaction_path:
+  - Click Reset in the toolbar.
+  - Verify the default snippet appears.
+  notes: Default snippet stored in page JS as `defaultValue`; checker uses that same canonical string.
+- id: code_editor-mantine-T04
+  name: Enter TOML config
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Paper + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: |-
+    In the editor, enter this TOML exactly:
+
+    [server]
+    port = 8080
+    host = "127.0.0.1"
+
+    The task will finish automatically when done.
+  ui_copy: |-
+    In the editor, enter this TOML exactly:
+
+    [server]
+    port = 8080
+    host = "127.0.0.1"
+
+    The task will finish automatically when done.
+  setup_description: |-
+    Mantine Paper card centered titled "server.toml".
+    Composite CodeMirror editor configured for TOML-like plain text (monospace) with line numbers.
+    Initial state: editor is empty.
+    A small helper text below the editor says "No extra blank lines".
+    No Save/Apply; content updates live.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Short but strictly formatted multi-line configuration text; minor punctuation or quoting errors fail the equality check.
+  success_trigger:
+    human_readable:
+    - Editor content equals the target TOML (line endings normalized; trailing whitespace ignored).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          [server]
+          port = 8080
+          host = "127.0.0.1"
+        language: toml
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding an extra blank line at the end or between lines.
+  - Removing the quotes around the host value.
+  - Using a different section name or key spelling.
+  expected_interaction_path:
+  - Click in the editor.
+  - Type or paste the three lines exactly.
+  - Stop when it matches.
+  notes: If no TOML mode is available, treat as plain text; checker only validates content string.
+- id: code_editor-mantine-T05
+  name: Replace placeholder token
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_monaco
+  implementation_component: 'Mantine: Paper + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: editor_operation
+  secondary_template: open_overlay
+  browsergym_goal: In the editor, replace `PORT_PLACEHOLDER` with `8080` so the code becomes valid. The task will finish automatically when done.
+  ui_copy: In the editor, replace `PORT_PLACEHOLDER` with `8080` so the code becomes valid. The task will finish automatically when done.
+  setup_description: |-
+    Mantine Paper card centered titled "env.ts".
+    Composite Monaco editor with line numbers.
+    Toolbar includes a Replace button that opens an in-editor replace widget (overlay).
+    Initial content includes the token `PORT_PLACEHOLDER` exactly once.
+    There is no Save/Apply; edits are live.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires a precise token replacement; interacting with an overlay widget adds modest layering and acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - Editor content equals the expected code with `PORT_PLACEHOLDER` replaced by `8080`.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          export const PORT = 8080;
+          export const HOST = "localhost";
+        language: typescript
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Replacing the wrong text (e.g., changing HOST).
+  - Leaving `PORT_PLACEHOLDER` in the file (no replacement).
+  - Accidentally adding quotes around 8080 (changes semantics and content).
+  expected_interaction_path:
+  - Open Replace from the toolbar (or Ctrl+H).
+  - Find `PORT_PLACEHOLDER` and replace with `8080`.
+  - Confirm the file matches the target.
+  notes: Even if the user edits manually, checker only validates final content. Overlay open state is not required.
+- id: code_editor-mantine-T06
+  name: Open Go to line overlay
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Paper + Menu + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Go to line panel in the editor. The task will finish automatically when done.
+  ui_copy: Open the Go to line panel in the editor. The task will finish automatically when done.
+  setup_description: |-
+    Mantine Paper card centered titled "Navigator".
+    Composite CodeMirror editor with a small actions menu.
+    In the toolbar there is a "Actions" menu button (opens a dropdown). One of the menu items is "Go to line…".
+    Initial state: no overlays are open.
+    Selecting "Go to line…" opens a small in-editor overlay with a single input for line number (it appears near the top-right of the editor surface).
+    Only the overlay-open state is checked; no specific line number needs to be entered.
+  scene_context: *id001
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Opening the target overlay requires a dropdown menu selection (extra layering) and choosing the correct item among similar actions.
+  success_trigger:
+    human_readable:
+    - The editor's Go to line overlay is open.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        overlay:
+          type: goto_line
+          open: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening a different overlay (e.g., Find) instead of Go to line.
+  - Opening the Actions menu but not selecting Go to line.
+  - Opening and then closing the Go to line overlay.
+  expected_interaction_path:
+  - Click the Actions menu button.
+  - Choose "Go to line…".
+  - Ensure the go-to-line input overlay appears.
+  notes: Expose overlay state as `{type:'goto_line', open:true}` or check for a data-testid='goto-line-overlay'.
+- id: code_editor-mantine-T07
+  name: Match reference in Backend editor
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Dashboard layout + Button + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Backend editor, make the code exactly match the code shown in the Reference panel, then click Apply for the Backend editor. The task will finish automatically when done.
+  ui_copy: In the Backend editor, make the code exactly match the code shown in the Reference panel, then click Apply for the Backend editor. The task will finish automatically when done.
+  setup_description: |-
+    Dashboard layout with a header and two columns. Left column contains a read-only "Reference" panel showing the target snippet.
+    Right column contains two Mantine code editor cards stacked:
+      1) "Frontend" editor (JavaScript)
+      2) "Backend" editor (Python)
+    Both editors are CodeMirror-based and have their own Apply button.
+    Initial state: both editors contain placeholder comments.
+    Only the Backend editor is the target; Apply commits that editor and shows "Saved" below it.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Exact matching to a visual reference plus selecting the correct editor instance in a dashboard layout with two similar editors.
+  success_trigger:
+    human_readable:
+    - Backend editor content exactly matches the Reference snippet (normalized line endings, exact spacing/indentation).
+    - Backend Apply has been clicked (commit occurred).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-mantine-07
+        target_editor: Backend
+        match_mode: exact
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: false
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: apply-backend
+      require_correct_instance: true
+      target_instance_label_or_id: Backend
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Frontend editor instead of Backend.
+  - Matching the content but not clicking Backend Apply (unsaved).
+  - Minor indentation differences (e.g., 2 spaces instead of 4) relative to the reference.
+  expected_interaction_path:
+  - Read the Reference panel.
+  - Edit the Backend editor to match it exactly.
+  - Click Apply in the Backend editor card.
+  notes: |-
+    Reference panel has data-testid='ref-mantine-07' and contains:
+    def handler(event):
+        return {"ok": True}
+    Backend apply button data-testid='apply-backend'.
+- id: code_editor-mantine-T08
+  name: Discard changes in drawer (2 editors)
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_monaco
+  implementation_component: 'Mantine: Drawer + Modal + Button + Monaco Editor (@monaco-editor/react) [composite]'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the settings drawer, discard the unsaved changes for the Nginx config editor by closing the drawer and choosing Discard when prompted. The task will finish automatically when done.
+  ui_copy: In the settings drawer, discard the unsaved changes for the Nginx config editor by closing the drawer and choosing Discard when prompted. The task will finish automatically when done.
+  setup_description: |-
+    Dark-themed settings page with a drawer already open on the right (drawer_flow).
+    Inside the drawer are two code editor instances:
+      • "Nginx config" (Monaco)
+      • "Notes" (plain text editor, also CodeMirror-based)
+    Only the Nginx config editor matters for this task.
+    Initial state: the Nginx config editor shows an UNSAVED modified version (server_name is `temp.local`).
+    There is a Close (X) icon in the drawer header. Clicking it opens a confirmation dialog "Discard unsaved changes?" with buttons "Discard" and "Keep editing".
+    Choosing Discard closes the drawer and restores the Nginx editor content back to the saved version (server_name `localhost`).
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Nested overlay flow (drawer + confirmation dialog) with two editor instances; user must select the correct destructive action and end in the restored state.
+  success_trigger:
+    human_readable:
+    - The Nginx config editor content equals the saved version (server_name `localhost`).
+    - The drawer is closed (not visible).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          server {
+            listen 80;
+            server_name localhost;
+          }
+        target_editor: Nginx config
+        drawer_open: false
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: Discard
+      require_correct_instance: true
+      target_instance_label_or_id: Nginx config
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing Keep editing (drawer remains open).
+  - Closing the drawer without discarding changes (if allowed) so the modified content persists.
+  - Discarding changes in the wrong editor (e.g., Notes) while Nginx config remains modified.
+  expected_interaction_path:
+  - Click the drawer Close (X) icon.
+  - In the confirmation dialog, click Discard.
+  - Verify the drawer closes and the Nginx content resets.
+  notes: Expose drawer open state and track per-editor saved content. Use data-testid='drawer-close' and data-testid='discard-confirm'.
+- id: code_editor-mantine-T09
+  name: Set font size to 13
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Paper + Slider + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the editor font size to 13 using the Font size control. The task will finish automatically when done.
+  ui_copy: Set the editor font size to 13 using the Font size control. The task will finish automatically when done.
+  setup_description: |-
+    Mantine Paper card anchored near the bottom-left of the viewport.
+    Composite CodeMirror editor with a settings row above it.
+    Settings include a labeled slider "Font size" with discrete steps from 12 to 18 and a numeric value display.
+    Initial state: Font size is 14. Editor contains a short snippet, but content is not checked.
+    Changing the slider updates the editor font size immediately; no Save/Apply.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires setting an exact non-default scalar (13) via small slider/step controls; minor off-by-one errors fail.
+  success_trigger:
+    human_readable:
+    - Editor option `font_size` equals 13.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        options:
+          font_size: 13
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the font size at 14 or setting it to 12/15/other value.
+  - Changing zoom in the browser instead of the editor's font size setting.
+  - Temporarily setting 13 but ending on a different value.
+  expected_interaction_path:
+  - Locate the Font size slider.
+  - Adjust until the displayed value reads 13.
+  - Leave it at 13.
+  notes: Use aria-valuenow on the slider; checker reads fontSize from wrapper state and/or computed style on the editor root.
+- id: code_editor-mantine-T10
+  name: Edit code editor in table cell (Rule B)
+  canonical_type: code_editor
+  implementation_source: mantine
+  implementation_variant: composite_codemirror6
+  implementation_component: 'Mantine: Table + ActionIcon + CodeMirror 6 (@codemirror/view) [composite]'
+  task_template: enter_formatted
+  secondary_template: match_reference
+  browsergym_goal: In the table, edit the Rule B editor so it matches the example patch for X-Trace exactly, then click Save for Rule B. The task will finish automatically when done.
+  ui_copy: In the table, edit the Rule B editor so it matches the example patch for X-Trace exactly, then click Save for Rule B. The task will finish automatically when done.
+  setup_description: |-
+    Table-cell scene: a compact Mantine Table titled "Header rewrite rules" with two rows (Rule A and Rule B).
+    Each row has multiple cells (Name, Enabled toggle, Example) and a small code editor cell (same canonical_type) for "Patch".
+    Editors are rendered in small size inside table cells (limited height, showing ~6 lines). Spacing is compact.
+    The Example cell for each row contains a read-only code block showing the desired patch for that row.
+    Target instance: the "Patch" editor in the Rule B row (second row). It has its own Save icon button at the end of the row.
+    Initial state: Rule B Patch editor contains placeholder `[]`.
+    Clicking Save for Rule B commits that row’s editor content and shows a small inline checkmark "Saved" in the row.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Small, dense table-cell editor plus multiple similar instances require careful targeting and exact formatting; Save is row-scoped and must be applied to the correct row.
+  success_trigger:
+    human_readable:
+    - The Rule B Patch editor content equals the target patch exactly (line endings normalized; trailing whitespace ignored).
+    - Rule B Save has been clicked (commit occurred) and the row reports Saved.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        content: |-
+          [
+            { "op": "add", "path": "/headers/X-Trace", "value": "1" }
+          ]
+        target_editor: Rule B Patch
+        saved: true
+      tolerance:
+        content:
+          normalize_line_endings: true
+          ignore_trailing_whitespace: true
+          allow_trailing_newline: true
+      require_confirm: true
+      confirm_control: save-rule-b
+      require_correct_instance: true
+      target_instance_label_or_id: Rule B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Rule A instead of Rule B (wrong instance).
+  - Patch content is close but not exact (missing brackets, wrong path, wrong quotes, or different spacing/newlines).
+  - Content matches but Save for Rule B is not clicked.
+  expected_interaction_path:
+  - Locate the Rule B row in the table.
+  - Click inside the Patch editor cell and replace `[]` with the patch snippet matching the Example column.
+  - Click Save in the Rule B row.
+  notes: Example code block for Rule B has data-testid='example-rule-b' and matches target_patch. Save button data-testid='save-rule-b'.

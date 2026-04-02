@@ -1,0 +1,4008 @@
+- id: slider_single-antd-v2-T01
+  name: 'Drawer alert tuning: set Secondary to 4 and apply'
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Slider inside Drawer'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open “Notification tuning”. In the drawer, set the slider labeled “Secondary alert level” to 4, leave “Primary
+    alert level” unchanged, and click “Apply changes”. The task will finish automatically when done.
+  ui_copy: Open “Notification tuning”. In the drawer, set the slider labeled “Secondary alert level” to 4, leave “Primary
+    alert level” unchanged, and click “Apply changes”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, medium clutter, and an off-center right drawer. The page
+    background contains a notifications dashboard with status chips, a muted activity list, and a read-only summary card.
+    Clicking “Notification tuning” opens a Drawer containing two Ant Design sliders with the same 1–5 scale and small readouts:
+    “Primary alert level” starts at 2 and “Secondary alert level” starts at 1. A drawer footer contains “Cancel” and “Apply
+    changes”. Slider changes are pending until Apply changes is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: Two nearly identical sliders inside a drawer create wrong-instance and draft-versus-commit pressure
+      without making the semantics artificial.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target value is simple, but selecting the correct slider in a drawer and explicitly committing the
+      change produces strong disambiguation and feedback pressure.
+  success_trigger:
+    human_readable:
+    - The committed value of “Secondary alert level” equals 4.
+    - The committed value of “Primary alert level” remains 2.
+    - The drawer footer control “Apply changes” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 4
+        saved: true
+        target_instance: Secondary alert level
+        non_target_instances_must_remain:
+          Primary alert level: 2
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary alert level
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Setting Primary alert level to 4 instead of Secondary.
+  - Setting Secondary to 4 but closing the drawer or clicking Cancel instead of Apply changes.
+  - Changing both sliders.
+  expected_interaction_path:
+  - Open the drawer from “Notification tuning”.
+  - Adjust only the Secondary alert level slider to 4.
+  - Click “Apply changes” and verify the committed summary updates.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-antd-v2-T02
+  name: EU row tax rate in a dense table
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Slider in Table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Tax overrides” table, set the slider in the “EU / Tax rate” row to 18, leave the other rows unchanged,
+    and click “Save” in the EU row. The task will finish automatically when done.
+  ui_copy: In the “Tax overrides” table, set the slider in the “EU / Tax rate” row to 18, leave the other rows unchanged,
+    and click “Save” in the EU row. The task will finish automatically when done.
+  setup_description: 'Layout uses table_cell with compact spacing, small scale, bottom-right placement, and high clutter.
+    A dense card titled “Tax overrides” contains a table with three rows: US, EU, and APAC. Each row has a small Ant Design
+    slider labeled “Tax rate”, a numeric readout, and a row-local Save button. Initial values are US=7, EU=12, APAC=10. Column
+    headers, search, and export controls add realistic clutter. Only the EU row should change, and only the EU row Save button
+    commits that row.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 3
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Small table-cell sliders and row-local save controls create strong wrong-row risk and make target acquisition
+      meaningfully harder.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: 'This is primarily a grounding and row-scoped commit task: the agent must find the correct small slider,
+      set the exact value, and save only that row.'
+  success_trigger:
+    human_readable:
+    - The committed value in the “EU / Tax rate” row equals 18.
+    - The committed values in the US and APAC rows remain 7 and 10.
+    - The EU row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 18
+        unit: '%'
+        saved: true
+        target_instance: EU / Tax rate
+        non_target_instances_must_remain:
+          US / Tax rate: 7
+          APAC / Tax rate: 10
+      tolerance: 0
+      require_confirm: true
+      confirm_control: save-eu-tax-rate
+      require_correct_instance: true
+      target_instance_label_or_id: EU / Tax rate
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Setting US or APAC to 18 instead of EU.
+  - Dragging EU to 18 but clicking Save in the wrong row.
+  - Changing other rows while saving EU.
+  expected_interaction_path:
+  - Locate the EU row in the table.
+  - Adjust its Tax rate slider to 18 using the row readout as verification.
+  - Click Save in the EU row only.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-antd-v2-T03
+  name: Match the recommendations gauge in a cluttered dashboard
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: visual_reference
+  implementation_component: 'AntD: Slider with adjacent reference gauge'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dashboard, set the slider labeled “Recommendations similarity threshold” to match the reference
+    gauge within ±0.01. Do not adjust the “Search similarity threshold” slider. The task will finish automatically when done.
+  ui_copy: In the dashboard, set the slider labeled “Recommendations similarity threshold” to match the reference gauge within
+    ±0.01. Do not adjust the “Search similarity threshold” slider. The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, bottom-right placement, two slider cards, and high
+    clutter from KPI cards, mini charts, and legend pills. The target card contains an Ant Design slider labeled “Recommendations
+    similarity threshold”; a sibling card contains “Search similarity threshold”. Both sliders share the same 0.00–1.00 scale
+    with step 0.01 and hidden marks. A small reference gauge inside the target card indicates the goal visually. Recommendations
+    starts at 0.70; the reference corresponds to 0.83. During interaction a tooltip appears, and after release the card shows
+    a tiny persistent line reading “Current: 0.xx”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: The target is specified visually while a sibling slider with the same scale sits nearby in a cluttered
+      dashboard, so the task stresses correct-card selection and post-drag verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A fine-grained slider becomes hard when the target is visual-only, the state feedback is delayed until
+      after release, and a near-identical sibling slider is present.
+  success_trigger:
+    human_readable:
+    - The value of “Recommendations similarity threshold” is within ±0.01 of 0.83.
+    - The value of “Search similarity threshold” remains at its initial value.
+    - No extra confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-recommendations-similarity
+        value: 0.83
+        unit: ratio
+      tolerance: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Recommendations similarity threshold
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Adjusting the Search similarity threshold instead of Recommendations.
+  - Stopping at 0.81 or 0.85 or any value outside ±0.01 for Recommendations.
+  - Matching the gauge transiently but releasing at the wrong value.
+  expected_interaction_path:
+  - Locate the Recommendations card, not the Search card.
+  - Use the reference gauge to approximate the target and refine with the Current readout.
+  - Release only when the Recommendations value is within ±0.01 of 0.83.
+  notes: Checker should read the slider's controlled value and instance label from wrapper state, not from transient hover
+    labels alone.
+- id: slider_single-antd-v2-T04
+  name: Below-the-fold smoothing control in advanced settings
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Slider in nested scroll settings panel'
+  task_template: scroll_find
+  secondary_template: set_scalar
+  browsergym_goal: Scroll to the “Advanced processing” section and set the slider labeled “Smoothing” to 7. Leave “Sharpening”
+    and “Contrast” unchanged. The task will finish automatically when done.
+  ui_copy: Scroll to the “Advanced processing” section and set the slider labeled “Smoothing” to 7. Leave “Sharpening” and
+    “Contrast” unchanged. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, top-left placement, three same-size sliders, and high
+    clutter. The page has an outer scroll region and, inside a fixed settings panel, a second scroll region containing “Sharpening”,
+    “Contrast”, and lower down “Smoothing”. Each Ant Design slider uses a 0–10 integer scale with a small persistent readout
+    at the end of its row. Smoothing starts at 4 and is below the fold inside the inner panel. Changes are auto-applied; there
+    is no Save button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - clutter
+    factor_rationale: The task separates page scrolling from panel scrolling and combines that with three similar controls,
+      making the core pressure finding and verifying the correct lower slider.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The value is simple, but nested scrolling plus multiple same-type controls creates substantial search and
+      state-tracking burden.
+  success_trigger:
+    human_readable:
+    - The value of “Smoothing” equals 7.
+    - The values of “Sharpening” and “Contrast” remain unchanged.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 7
+        target_instance: Smoothing
+        non_target_instances_must_remain:
+          Sharpening: 6
+          Contrast: 5
+      tolerance: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Smoothing
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Sharpening or Contrast instead of Smoothing.
+  - Scrolling the outer page but not the inner settings panel, leaving Smoothing unchanged.
+  - Setting Smoothing to 6 or 8.
+  expected_interaction_path:
+  - Scroll within the settings panel to reveal the Advanced processing section.
+  - Adjust the Smoothing slider to 7 using its row readout.
+  - Leave the other sliders untouched.
+  notes: Checker should read the slider's controlled value and instance label from wrapper state, not from transient hover
+    labels alone.
+- id: slider_single-antd-v2-T05
+  name: Vertical detection threshold in a dark modal
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: vertical
+  implementation_component: 'AntD: Vertical Slider inside Modal'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: Open “Detection threshold”. In the modal, set the vertical slider labeled “Detection confidence” to 0.73
+    within ±0.01, then click “Save threshold”. The task will finish automatically when done.
+  ui_copy: Open “Detection threshold”. In the modal, set the vertical slider labeled “Detection confidence” to 0.73 within
+    ±0.01, then click “Save threshold”. The task will finish automatically when done.
+  setup_description: Layout uses modal_flow with compact spacing and medium clutter. The page background shows a detection
+    summary card and a log table. Clicking “Detection threshold” opens a dark modal containing one narrow vertical Ant Design
+    slider labeled “Detection confidence”. The slider runs from 0.00 to 1.00 with step 0.01; a small readout line under it
+    updates only after release. The current value is 0.50. The modal footer contains “Cancel” and “Save threshold”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - scale
+    factor_rationale: A vertical slider in a modal is intrinsically harder to acquire and calibrate, and the explicit save
+      step makes draft-versus-committed state visible.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The control itself is hard to calibrate because it is vertical, narrow, and only shows persistent feedback
+      after release, and the modal adds an explicit commit boundary.
+  success_trigger:
+    human_readable:
+    - The committed value of “Detection confidence” is within ±0.01 of 0.73.
+    - The modal control “Save threshold” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value: 0.73
+        unit: ratio
+        saved: true
+        target_instance: Detection confidence
+      tolerance: 0.01
+      require_confirm: true
+      confirm_control: Save threshold
+      require_correct_instance: true
+      target_instance_label_or_id: Detection confidence
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Dragging to roughly the right position but stopping outside ±0.01.
+  - Leaving the value correct in the modal but clicking Cancel or closing the modal.
+  - Stopping at 0.72 or 0.74 if that is outside the visible tolerance.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust the vertical slider and use the post-release readout to calibrate toward 0.73.
+  - Click “Save threshold”.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-antd-v2-T06
+  name: Reverse semantics in a compact risk drawer
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: reverse + tooltip.open
+  implementation_component: 'AntD: Slider (reverse) inside Drawer'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open “Risk controls”. In the drawer, set the slider labeled “Risk appetite” to 30, leave “Throughput bias”
+    unchanged, and click “Save controls”. The task will finish automatically when done.
+  ui_copy: Open “Risk controls”. In the drawer, set the slider labeled “Risk appetite” to 30, leave “Throughput bias” unchanged,
+    and click “Save controls”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, top_right placement, two sliders, and medium clutter. Clicking
+    “Risk controls” opens a drawer containing “Throughput bias” and “Risk appetite”. Both are Ant Design sliders on a 0–100
+    scale with tooltips always visible while the drawer is open. The Risk appetite slider is configured with reverse semantics
+    so the filled portion grows from right to left, while Throughput bias is standard. Initial values are Throughput bias=55
+    and Risk appetite=70. Drawer footer buttons are “Cancel” and “Save controls”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - guidance
+    factor_rationale: The visual track direction differs from the default while a standard sibling slider sits beside it,
+      so the task pressures control interpretation and correct-instance commit rather than raw dragging alone.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The target number is explicit, but reversed visual semantics plus a similar neighboring slider and a required
+      save step produce meaningful interaction-knowledge and verification pressure.
+  success_trigger:
+    human_readable:
+    - The committed value of “Risk appetite” equals 30.
+    - The committed value of “Throughput bias” remains 55.
+    - The drawer control “Save controls” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 30
+        saved: true
+        target_instance: Risk appetite
+        non_target_instances_must_remain:
+          Throughput bias: 55
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Save controls
+      require_correct_instance: true
+      target_instance_label_or_id: Risk appetite
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Throughput bias instead of Risk appetite.
+  - Misreading the reversed fill and stopping at the wrong value.
+  - Setting Risk appetite correctly but not clicking Save controls.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust only the Risk appetite slider to 30 using the visible tooltip value.
+  - Click “Save controls”.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-antd-v2-T07
+  name: Max requests exact calibration with sibling preserved
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: large_range
+  implementation_component: 'AntD: Slider in settings panel'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Rate limiting” panel, set the slider labeled “Max requests” to 873 within ±1, leave “Burst cap”
+    unchanged, and click “Apply limits”. The task will finish automatically when done.
+  ui_copy: In the “Rate limiting” panel, set the slider labeled “Max requests” to 873 within ±1, leave “Burst cap” unchanged,
+    and click “Apply limits”. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, off-center placement, two sliders, and medium clutter
+    from neighboring toggles and selects. The panel contains “Max requests” and “Burst cap”. Max requests runs from 0 to 1000
+    with step 1 and only coarse marks at 0, 250, 500, 750, and 1000. Burst cap runs from 0 to 100. A small persistent text
+    line under each slider shows the current value after release. Initial values are Max requests=500 and Burst cap=40. The
+    panel footer contains “Apply limits”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: A very large numeric state space with only coarse landmarks makes exact calibration hard, and the sibling
+      slider plus Apply button ensures the task still tests targeted verification instead of one blind drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The exact target is visible, but getting to 873 within ±1 on a 0–1000 slider while preserving a neighboring
+      control and committing the panel state is a genuine hard calibration task.
+  success_trigger:
+    human_readable:
+    - The committed value of “Max requests” is within ±1 of 873.
+    - The committed value of “Burst cap” remains 40.
+    - The “Apply limits” control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value: 873
+        unit: requests
+        saved: true
+        target_instance: Max requests
+        non_target_instances_must_remain:
+          Burst cap: 40
+      tolerance: 1
+      require_confirm: true
+      confirm_control: Apply limits
+      require_correct_instance: true
+      target_instance_label_or_id: Max requests
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Leaving Max requests at 872 or 874 if the final value falls outside the visible ±1 tolerance requirement.
+  - Changing Burst cap while adjusting Max requests.
+  - Finding the right value but not clicking Apply limits.
+  expected_interaction_path:
+  - Focus the Max requests slider.
+  - Coarsely drag toward the upper range and refine with small adjustments until the readout is within ±1 of 873.
+  - Click “Apply limits”.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-antd-v2-T08
+  name: Nested popover marks-only backoff budget
+  canonical_type: slider_single
+  implementation_source: antd
+  implementation_variant: step_null_marks
+  implementation_component: 'AntD: Slider (step=null, marks) inside Popover'
+  task_template: open_overlay
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Advanced backoff”. In the popover, set the slider labeled “Backoff budget” to the mark 8, leave “Retry
+    budget” unchanged, and click “Apply”. The task will finish automatically when done.
+  ui_copy: Open “Advanced backoff”. In the popover, set the slider labeled “Backoff budget” to the mark 8, leave “Retry budget”
+    unchanged, and click “Apply”. The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, off-center placement, nested overlay behavior, and medium
+    clutter from adjacent toggles and chips. The visible surface has a section title “Backoff policy” and a button labeled
+    “Advanced backoff”. Clicking it opens a Popover containing two Ant Design sliders, “Retry budget” and “Backoff budget”.
+    Both use irregular marks only on the scale 1, 2, 4, 8, 16 by configuring step=null with marks. Initial values are Retry
+    budget=4 and Backoff budget=2. The popover footer contains “Cancel” and “Apply”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - precision_surface
+    factor_rationale: A nested popover adds depth, while two mark-constrained sliders with the same irregular scale create
+      a compact disambiguation task that is harder than a single obvious mark click.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The value space is discrete, but irregular marks, a nested popover, and two same-shape sliders make the
+      interaction knowledge and correct-instance burden nontrivial.
+  success_trigger:
+    human_readable:
+    - The committed value of “Backoff budget” equals 8.
+    - The committed value of “Retry budget” remains 4.
+    - The popover control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 8
+        saved: true
+        target_instance: Backoff budget
+        non_target_instances_must_remain:
+          Retry budget: 4
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Backoff budget
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Retry budget instead of Backoff budget.
+  - Stopping on mark 4 or 16 instead of 8.
+  - Selecting 8 but dismissing the popover without clicking Apply.
+  expected_interaction_path:
+  - Open the Advanced backoff popover.
+  - Adjust only the Backoff budget slider to the 8 mark.
+  - Click Apply.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_range-antd-v2-T09
+  name: 'Advanced alerts modal: CPU usage band and apply'
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Slider (range=true) inside Modal'
+  task_template: confirm_cancel
+  secondary_template: set_range
+  browsergym_goal: Open “Advanced alerts”. In the modal, set the slider labeled “CPU usage alert” to 55–85, leave “Memory
+    usage alert” unchanged, and click “Apply”. The task will finish automatically when done.
+  ui_copy: Open “Advanced alerts”. In the modal, set the slider labeled “CPU usage alert” to 55–85, leave “Memory usage alert”
+    unchanged, and click “Apply”. The task will finish automatically when done.
+  setup_description: 'Layout uses modal_flow with compact spacing, center placement, two range sliders, and medium clutter
+    from background cards and status chips. Clicking “Advanced alerts” opens a dark Ant Design modal containing two labeled
+    range sliders: “CPU usage alert” starts at 30–70 and “Memory usage alert” starts at 25–65. Each slider shows a small pending
+    readout that updates while dragging, but the applied summary on the main page does not update until “Apply” is clicked.
+    The modal footer contains “Cancel” and “Apply”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: This preserves one of the best v1 patterns but hardens it with a second range slider, so success depends
+      on dual-thumb control, correct-instance selection, and explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The range itself is straightforward, but the modal draft/apply boundary and the presence of a second similar
+      range slider create significant verification and disambiguation pressure.
+  success_trigger:
+    human_readable:
+    - The committed range for “CPU usage alert” equals 55–85.
+    - The committed range for “Memory usage alert” remains 25–65.
+    - The modal control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 55
+        to: 85
+        unit: '%'
+        saved: true
+        target_instance: CPU usage alert
+        non_target_instances_must_remain:
+          Memory usage alert:
+            from: 25
+            to: 65
+      tolerance:
+        from: 0
+        to: 0
+        unit: '%'
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: CPU usage alert
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Setting the CPU pending value correctly but clicking Cancel or closing the modal.
+  - Adjusting Memory usage alert instead of CPU usage alert.
+  - Changing both ranges.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust only the CPU usage alert range to 55–85.
+  - Click Apply and verify the committed summary changes.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-antd-v2-T10
+  name: Products table price filter with competing range slider
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: table_filter_popover
+  implementation_component: 'AntD: Slider (range=true) inside Table filter popover'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Products table, open “Filters”, set the “Price” range to 50–150, leave the “Weight” range unchanged,
+    and click “Apply”. The task will finish automatically when done.
+  ui_copy: In the Products table, open “Filters”, set the “Price” range to 50–150, leave the “Weight” range unchanged, and
+    click “Apply”. The task will finish automatically when done.
+  setup_description: 'Layout uses table_cell with compact spacing, center placement, two range sliders, and high clutter.
+    A dense Products table includes header menus, row actions, search, and pagination. Clicking “Filters” opens a popover
+    panel with two Ant Design range sliders: “Price ($)” starts at 0–200 with step 5, and “Weight (kg)” starts at 0–50 with
+    step 1. The panel footer contains “Reset” and “Apply”. The table only updates after Apply is clicked.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - clutter
+    factor_rationale: A small table entrypoint plus two same-family controls in one popover creates acquisition, disambiguation,
+      and commit burden while remaining a normal filtering idiom.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is a strong range benchmark because finding the filter entrypoint, selecting the correct slider, and
+      remembering to Apply are all necessary for success.
+  success_trigger:
+    human_readable:
+    - The committed Price range equals 50–150.
+    - The committed Weight range remains 0–50.
+    - The filter panel control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 50
+        to: 150
+        unit: USD
+        saved: true
+        target_instance: Price
+        non_target_instances_must_remain:
+          Weight:
+            from: 0
+            to: 50
+      tolerance:
+        from: 0
+        to: 0
+        unit: USD
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Price
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Weight instead of Price.
+  - Setting Price correctly but not clicking Apply.
+  - Clicking Reset after reaching the correct range.
+  expected_interaction_path:
+  - Open Filters from the table toolbar or header area.
+  - Adjust only the Price range to 50–150.
+  - Click Apply.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-antd-v2-T11
+  name: Quiet-hours fixed-width shift in dashboard drawer
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: range.draggableTrack
+  implementation_component: 'AntD: Slider (range=true, draggableTrack=true)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Schedule tuning”. Move the “Quiet hours” window from 20–40 to 30–50 without changing its width, leave
+    “Noise window” unchanged, and click “Save schedule”. The task will finish automatically when done.
+  ui_copy: Open “Schedule tuning”. Move the “Quiet hours” window from 20–40 to 30–50 without changing its width, leave “Noise
+    window” unchanged, and click “Save schedule”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, bottom_left placement, two range sliders, and high clutter
+    from a calendar card and alert timeline. Clicking “Schedule tuning” opens a drawer with two Ant Design range sliders.
+    “Quiet hours” is configured with range.draggableTrack=true and starts at 20–40. “Noise window” starts at 10–25. A helper
+    line under Quiet hours says “Drag the selected window or move both handles until the width stays 20”. Footer buttons are
+    “Cancel” and “Save schedule”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: 'The task pressures control policy: agents can solve it with track drag or a careful two-thumb sequence,
+      but they must preserve width, ignore the sibling slider, and explicitly save.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Preserving interval width while avoiding the wrong range slider is significantly harder than a basic dual-thumb
+      set task, especially inside a drawer with a save boundary.
+  success_trigger:
+    human_readable:
+    - The committed “Quiet hours” range equals 30–50.
+    - The committed “Noise window” range remains 10–25.
+    - The drawer control “Save schedule” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 30
+        to: 50
+        unit: hours
+        saved: true
+        target_instance: Quiet hours
+        non_target_instances_must_remain:
+          Noise window:
+            from: 10
+            to: 25
+      tolerance:
+        from: 0
+        to: 0
+        unit: hours
+      require_confirm: true
+      confirm_control: Save schedule
+      require_correct_instance: true
+      target_instance_label_or_id: Quiet hours
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Reaching 30–50 by also changing the width during the final state.
+  - Moving Noise window instead of Quiet hours.
+  - Changing Quiet hours correctly but not clicking Save schedule.
+  expected_interaction_path:
+  - Open the drawer.
+  - Shift the Quiet hours interval to 30–50 while preserving width 20.
+  - Click Save schedule.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-antd-v2-T12
+  name: Noise-reduction band match in tuning drawer
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: visual_reference
+  implementation_component: 'AntD: Slider (range=true) with visual reference band'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Audio tuning”. Set the “Noise reduction” range to match the highlighted band within ±1 on each end,
+    leave “Compression band” unchanged, and click “Save tuning”. The task will finish automatically when done.
+  ui_copy: Open “Audio tuning”. Set the “Noise reduction” range to match the highlighted band within ±1 on each end, leave
+    “Compression band” unchanged, and click “Save tuning”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, off-center placement, two range sliders, and medium clutter.
+    Opening “Audio tuning” reveals a drawer containing a read-only highlighted reference bar above the target range slider
+    “Noise reduction”, plus a sibling range slider “Compression band”. Both sliders run 0–100 with step 1 and show a live
+    readout under the track. Noise reduction starts at 0–100; the highlighted band corresponds to 32–56. Footer controls are
+    “Cancel” and “Save tuning”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: 'A visual target band and a competing sibling range slider create the intended no-bypass dual-thumb
+      benchmark: the agent must align both ends, verify with the readout, and save the correct widget.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The target is not given as source numbers in the UI, and the save boundary means the agent has to use the
+      readout for verification before committing.
+  success_trigger:
+    human_readable:
+    - The committed Noise reduction range is within ±1 of 32–56.
+    - The committed Compression band remains unchanged.
+    - The drawer control “Save tuning” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 32
+        to: 56
+        unit: pts
+        saved: true
+        target_instance: Noise reduction
+        non_target_instances_must_remain:
+          Compression band:
+            from: 20
+            to: 80
+      tolerance:
+        from: 1
+        to: 1
+        unit: pts
+      require_confirm: true
+      confirm_control: Save tuning
+      require_correct_instance: true
+      target_instance_label_or_id: Noise reduction
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Matching only one end of the band.
+  - Adjusting Compression band instead of Noise reduction.
+  - Aligning the target in draft state but closing without Save tuning.
+  expected_interaction_path:
+  - Open Audio tuning.
+  - Match both edges of the highlighted band using the live readout to verify.
+  - Click Save tuning.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-antd-v2-T13
+  name: Streaming buffer below the fold with section apply
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Slider (range=true) in nested scroll section'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Streaming” section, set the slider labeled “Buffer range” to 2–6 seconds, leave “Retry window”
+    unchanged, and click “Apply section”. The task will finish automatically when done.
+  ui_copy: In the “Streaming” section, set the slider labeled “Buffer range” to 2–6 seconds, leave “Retry window” unchanged,
+    and click “Apply section”. The task will finish automatically when done.
+  setup_description: 'Layout uses nested_scroll with compact spacing, off-center placement, two range sliders, and medium
+    clutter. The page has an outer scrollable dashboard and an inner settings panel with sections. In the below-the-fold “Streaming”
+    section there are two Ant Design range sliders: “Buffer range” (0–10, step 1, starts 1–4) and “Retry window” (0–10, step
+    1, starts 3–7). A section-local button labeled “Apply section” commits only the Streaming section.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: The intended pressure comes from locating the right section inside nested scrolling, then editing only
+      the correct range slider and committing at the section scope.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Nested scrolling plus a second nearby range slider makes this much more diagnostic than a single visible
+      range on a bare card.
+  success_trigger:
+    human_readable:
+    - The committed Buffer range equals 2–6 seconds.
+    - The committed Retry window remains 3–7 seconds.
+    - The section-local Apply section button has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 2
+        to: 6
+        unit: s
+        saved: true
+        target_instance: Buffer range
+        non_target_instances_must_remain:
+          Retry window:
+            from: 3
+            to: 7
+      tolerance:
+        from: 0
+        to: 0
+        unit: s
+      require_confirm: true
+      confirm_control: Apply section
+      require_correct_instance: true
+      target_instance_label_or_id: Buffer range
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Scrolling the page but not reaching the Streaming section.
+  - Changing Retry window instead of Buffer range.
+  - Setting Buffer range correctly but not clicking Apply section.
+  expected_interaction_path:
+  - Scroll to the Streaming section inside the settings panel.
+  - Adjust only the Buffer range slider to 2–6.
+  - Click Apply section.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-antd-v2-T14
+  name: Gateway row retry window in dense operations table
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Slider (range=true) in Table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Service windows” table, set the “Retry window” range in the “Gateway” row to 20–60, leave the “Billing”
+    row unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  ui_copy: In the “Service windows” table, set the “Retry window” range in the “Gateway” row to 20–60, leave the “Billing”
+    row unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, small scale, two row-scoped range sliders, and high clutter.
+    The “Service windows” table shows at least two rows, “Gateway” and “Billing”. Each row contains a small Ant Design range
+    slider labeled “Retry window”, a textual readout, and a row-local Save button. Initial values are Gateway=10–50 and Billing=15–45.
+    Table search, status chips, and export controls add clutter. Only Gateway should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Dense row layout with two visually similar dual-thumb controls creates exactly the kind of grounded
+      disambiguation and row-local commit pressure that v1 under-covered.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The motor requirement is moderate, but finding the correct row, operating the right small range slider,
+      and saving that row only makes this a high-value hard task.
+  success_trigger:
+    human_readable:
+    - The committed Gateway retry window is within ±1 of 20–60.
+    - The committed Billing retry window remains 15–45.
+    - The Gateway row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 20
+        to: 60
+        unit: s
+        saved: true
+        target_instance: Gateway / Retry window
+        non_target_instances_must_remain:
+          Billing / Retry window:
+            from: 15
+            to: 45
+      tolerance:
+        from: 0
+        to: 0
+        unit: s
+      require_confirm: true
+      confirm_control: save-gateway-retry-window
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway / Retry window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Setting Billing to 20–60 instead of Gateway.
+  - Changing Gateway correctly but clicking Save in the wrong row.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate the Gateway row in the Service windows table.
+  - Adjust its Retry window to 20–60 using the row readout for verification.
+  - Click Save in the Gateway row.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-antd-v2-T15
+  name: Release window on irregular marks in a crowded dashboard
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: step_null_marks
+  implementation_component: 'AntD: Slider (range=true, step=null, marks)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the “Release controls” dashboard card, set the slider labeled “Release window” to the marks 35 and 80.
+    Do not change the other range sliders. The task will finish automatically when done.
+  ui_copy: In the “Release controls” dashboard card, set the slider labeled “Release window” to the marks 35 and 80. Do not
+    change the other range sliders. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, four or more range sliders, and
+    high clutter. One card titled “Release controls” contains an Ant Design range slider labeled “Release window”. It uses
+    step=null with irregular marks at 5, 15, 25, 35, 70, 80, and 90, so valid values are marks only. Three other dashboard
+    cards contain other range sliders with similar compact visuals. Release window starts at 5–90 and updates immediately;
+    there is no Apply button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 4_plus
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - precision_surface
+    factor_rationale: A crowded dashboard and irregular mark-constrained values create a hard dual-thumb disambiguation task
+      without relying on hidden tolerance or extra form controls.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the target is one range slider among many, and the allowed values are a confusable
+      irregular mark set rather than a smooth scale.
+  success_trigger:
+    human_readable:
+    - The Release window range equals 35–80 exactly.
+    - The other range sliders remain unchanged.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 35
+        to: 80
+        unit: units
+        target_instance: Release window
+      tolerance:
+        from: 0
+        to: 0
+        unit: units
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Release window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Choosing 35–90 or 25–80 due to mark confusion.
+  - Changing a different dashboard range slider.
+  - Leaving Release window at 5–90.
+  expected_interaction_path:
+  - Locate the Release controls card.
+  - Move the left thumb to mark 35 and the right thumb to mark 80.
+  - Verify the readout shows 35–80.
+  notes: Checker should read the committed range value array and correct target instance from wrapper state.
+- id: slider_range-antd-v2-T16
+  name: Exact decimal quality band with sibling slider and save
+  canonical_type: slider_range
+  implementation_source: antd
+  implementation_variant: decimal_range
+  implementation_component: 'AntD: Slider (range=true, 0-1 scale)'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Quality controls” drawer, set the slider labeled “Quality band” to 0.24–0.63 within ±0.01 on each
+    end, leave “Safety band” unchanged, and click “Save controls”. The task will finish automatically when done.
+  ui_copy: In the “Quality controls” drawer, set the slider labeled “Quality band” to 0.24–0.63 within ±0.01 on each end,
+    leave “Safety band” unchanged, and click “Save controls”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, top_right placement, two range sliders, and medium clutter.
+    Clicking “Quality controls” opens a drawer containing “Quality band” and “Safety band”, both on a 0.00–1.00 scale with
+    step 0.01. A small persistent readout under each slider shows the current pair after release. Initial values are Quality
+    band=0.10–0.80 and Safety band=0.20–0.70. Footer buttons are “Cancel” and “Save controls”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: 'This is the no-bypass exact-decimal variant for range sliders: fine calibration remains human-feasible
+      because the readout is visible, but a sibling slider and save boundary stop it from collapsing into a single direct
+      set.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The exact decimals are hard but feasible because the readout is explicit; the real challenge is calibrating
+      both thumbs without changing the sibling slider and then saving the committed state.
+  success_trigger:
+    human_readable:
+    - The committed Quality band range is within ±0.01 of 0.24–0.63.
+    - The committed Safety band remains 0.20–0.70.
+    - The drawer control “Save controls” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 0.24
+        to: 0.63
+        unit: ratio
+        saved: true
+        target_instance: Quality band
+        non_target_instances_must_remain:
+          Safety band:
+            from: 0.2
+            to: 0.7
+      tolerance:
+        from: 0.01
+        to: 0.01
+        unit: ratio
+      require_confirm: true
+      confirm_control: Save controls
+      require_correct_instance: true
+      target_instance_label_or_id: Quality band
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Stopping outside ±0.01 on either endpoint.
+  - Changing Safety band while adjusting Quality band.
+  - Leaving the draft correct but closing without Save controls.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust both Quality band thumbs using the readout until each end is within ±0.01 of target.
+  - Click Save controls.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_single-mui-v2-T17
+  name: 'Dialog monitors: set Secondary brightness and apply'
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Slider inside Dialog'
+  task_template: confirm_cancel
+  secondary_template: open_overlay
+  browsergym_goal: Open “Adjust monitors”. In the dialog, set the slider labeled “Secondary monitor brightness” to 65, leave
+    “Main monitor brightness” unchanged, and click “Apply”. The task will finish automatically when done.
+  ui_copy: Open “Adjust monitors”. In the dialog, set the slider labeled “Secondary monitor brightness” to 65, leave “Main
+    monitor brightness” unchanged, and click “Apply”. The task will finish automatically when done.
+  setup_description: 'Layout uses modal_flow with compact spacing, center placement, two sliders, and medium clutter from
+    a display summary card and color-profile chips behind the dialog. Clicking “Adjust monitors” opens a Material UI Dialog
+    containing two sliders: “Main monitor brightness” starts at 80 and “Secondary monitor brightness” starts at 50. Value
+    labels appear only while dragging. The dialog footer contains “Apply” and “Cancel”; changes are only committed after Apply.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: The values are simple, but two adjacent sliders with weak persistent feedback inside a commit-gated
+      dialog force the agent to verify both instance and final state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: 'The dialog and twin-slider setup make this more than a basic brightness change: the challenge is selecting
+      the correct control and confirming it committed.'
+  success_trigger:
+    human_readable:
+    - The committed value of “Secondary monitor brightness” equals 65.
+    - The committed value of “Main monitor brightness” remains 80.
+    - The dialog control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 65
+        unit: '%'
+        saved: true
+        target_instance: Secondary monitor brightness
+        non_target_instances_must_remain:
+          Main monitor brightness: 80
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary monitor brightness
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Setting Main monitor brightness to 65 instead of Secondary.
+  - Adjusting Secondary correctly but dismissing the dialog without Apply.
+  - Changing both sliders.
+  expected_interaction_path:
+  - Open the dialog.
+  - Adjust only the Secondary monitor brightness slider to 65.
+  - Click Apply.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mui-v2-T18
+  name: Advanced smoothing below the fold in dark settings
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Slider in nested settings panel'
+  task_template: scroll_find
+  secondary_template: set_scalar
+  browsergym_goal: Scroll to the “Advanced” section and set the slider labeled “Smoothing” to 7. Leave “Sharpening” and “Contrast”
+    unchanged. The task will finish automatically when done.
+  ui_copy: Scroll to the “Advanced” section and set the slider labeled “Smoothing” to 7. Leave “Sharpening” and “Contrast”
+    unchanged. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, top_left placement, three sliders, dark theme, and high
+    clutter. The page shows a long settings panel with inner scrolling. “Sharpening” and “Contrast” appear first; “Smoothing”
+    is lower in an Advanced subsection and is offscreen at load. Each Material UI slider uses a 0–10 integer scale with a
+    row readout. Changes apply immediately; there is no Save button.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: nested_scroll
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - clutter
+    factor_rationale: 'This is a pure search-and-verify single-slider task: the hard part is not setting 7 but finding the
+      right lower slider inside a cluttered nested scroll region.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target value is easy, but reaching the correct control within a nested dark settings panel makes this
+      a strong grounding-heavy task.
+  success_trigger:
+    human_readable:
+    - The value of “Smoothing” equals 7.
+    - The values of “Sharpening” and “Contrast” remain unchanged.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 7
+        target_instance: Smoothing
+        non_target_instances_must_remain:
+          Sharpening: 6
+          Contrast: 5
+      tolerance: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Smoothing
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Sharpening or Contrast instead of Smoothing.
+  - Scrolling the outer page but not the inner settings panel.
+  - Leaving Smoothing at 6 or 8.
+  expected_interaction_path:
+  - Scroll within the settings panel to the Advanced section.
+  - Adjust only Smoothing to 7.
+  - Verify via the row readout.
+  notes: Checker should read the slider's controlled value and instance label from wrapper state, not from transient hover
+    labels alone.
+- id: slider_single-mui-v2-T19
+  name: Max requests exact calibration in a rate-limit drawer
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: large_range
+  implementation_component: 'MUI: Slider inside Drawer'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Rate-limit controls”. In the drawer, set the slider labeled “Max requests” to 875 within ±2, leave
+    “Burst cap” unchanged, and click “Save limits”. The task will finish automatically when done.
+  ui_copy: Open “Rate-limit controls”. In the drawer, set the slider labeled “Max requests” to 875 within ±2, leave “Burst
+    cap” unchanged, and click “Save limits”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, top_right placement, two sliders, and medium clutter. The
+    drawer contains “Max requests” on a 0–1000 scale with coarse marks at 0, 250, 500, 750, and 1000, plus “Burst cap” on
+    a 0–100 scale. MUI value labels appear while dragging; a small text line under each slider shows the post-release value.
+    Initial values are Max requests=500 and Burst cap=40. Footer buttons are “Cancel” and “Save limits”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: The large numeric range tests exact calibration with visible state, while the sibling slider and save
+      boundary stop the task from collapsing into a one-control toy.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The agent must combine coarse positioning with fine correction to hit a near-unique target, preserve a
+      sibling slider, and commit the result.
+  success_trigger:
+    human_readable:
+    - The committed value of “Max requests” is within ±2 of 875.
+    - The committed value of “Burst cap” remains 40.
+    - The drawer control “Save limits” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value: 875
+        unit: requests
+        saved: true
+        target_instance: Max requests
+        non_target_instances_must_remain:
+          Burst cap: 40
+      tolerance: 1
+      require_confirm: true
+      confirm_control: Save limits
+      require_correct_instance: true
+      target_instance_label_or_id: Max requests
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Stopping outside ±2 of 875.
+  - Changing Burst cap during the attempt.
+  - Getting the value right but not clicking Save limits.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust Max requests until the post-release readout is within ±2 of 875.
+  - Click Save limits.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mui-v2-T20
+  name: Recommendations weight from a visual fill gauge
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: visual_reference
+  implementation_component: 'MUI: Slider with adjacent reference gauge'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dashboard, set the slider labeled “Recommendations weight” to match the reference gauge within ±1.
+    Do not adjust “Search weight”. The task will finish automatically when done.
+  ui_copy: In the dashboard, set the slider labeled “Recommendations weight” to match the reference gauge within ±1. Do not
+    adjust “Search weight”. The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, bottom_right placement, two sliders, and high clutter.
+    The dashboard has two similar cards, “Search weight” and “Recommendations weight”, each with a Material UI slider on a
+    0–100 scale. The target card includes a small reference bar indicating the desired position visually; the target corresponds
+    to 45. Recommendations weight starts at 30, Search weight starts at 60. The card shows a tiny persistent “Current: XX”
+    line after release. No Apply button is present.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: The task turns a simple scalar target into a harder benchmark by making the goal visual, placing a sibling
+      slider nearby, and forcing the agent to verify the released value in a cluttered dashboard.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A visual gauge and two similar cards push this task toward grounding and verification rather than raw numeric
+      entry.
+  success_trigger:
+    human_readable:
+    - The value of “Recommendations weight” is within ±1 of 45.
+    - The value of “Search weight” remains 60.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-recommendations-weight
+        value: 45
+        unit: pct
+      tolerance: 1
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Recommendations weight
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Adjusting Search weight instead of Recommendations weight.
+  - Stopping outside ±1 of 45.
+  - Matching the gauge only transiently while dragging.
+  expected_interaction_path:
+  - Locate the Recommendations card and inspect its reference gauge.
+  - Adjust the Recommendations slider and verify the post-release Current line.
+  - Leave Search weight unchanged.
+  notes: Checker should read the slider's controlled value and instance label from wrapper state, not from transient hover
+    labels alone.
+- id: slider_single-mui-v2-T21
+  name: Vertical detection confidence in a dark drawer
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: vertical
+  implementation_component: 'MUI: Vertical Slider inside Drawer'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: Open “Detection controls”. In the drawer, set the vertical slider labeled “Detection confidence” to 0.73
+    within ±0.01, then click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Detection controls”. In the drawer, set the vertical slider labeled “Detection confidence” to 0.73 within
+    ±0.01, then click “Save”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, top_right placement, one vertical slider, dark theme,
+    and medium clutter. Clicking “Detection controls” opens a narrow drawer containing a Material UI Slider with orientation="vertical".
+    The scale is 0.00–1.00 with step 0.01. The drawer shows a small readout line “Selected: 0.xx” that updates after release.
+    Initial value is 0.50. Footer controls are “Close” and “Save”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - scale
+    factor_rationale: Vertical orientation and narrow drawer geometry make acquisition and correction harder, while the explicit
+      save step forces a post-adjustment verification cycle.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: This is an intrinsically hard calibration task because the vertical control is narrow and decimal, and
+      the change only counts after Save.
+  success_trigger:
+    human_readable:
+    - The committed value of “Detection confidence” is within ±0.01 of 0.73.
+    - The drawer control “Save” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value: 0.73
+        unit: ratio
+        saved: true
+        target_instance: Detection confidence
+      tolerance: 0.01
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Detection confidence
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Stopping outside ±0.01 of 0.73.
+  - Closing the drawer without clicking Save.
+  - Relying on a transient drag label without verifying the released Selected readout.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust the vertical slider to 0.73 within ±0.01.
+  - Click Save.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mui-v2-T22
+  name: Inverted-track risk appetite with sibling preserved
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: track_inverted
+  implementation_component: 'MUI: Slider (track="inverted") inside Modal'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open “Policy controls”. In the modal, set the slider labeled “Risk appetite” to 30, leave “Throughput bias”
+    unchanged, and click “Save policy”. The task will finish automatically when done.
+  ui_copy: Open “Policy controls”. In the modal, set the slider labeled “Risk appetite” to 30, leave “Throughput bias” unchanged,
+    and click “Save policy”. The task will finish automatically when done.
+  setup_description: 'Layout uses modal_flow with compact spacing, center placement, two sliders, and medium clutter. The
+    modal contains two Material UI sliders: “Throughput bias” and “Risk appetite”, both on a 0–100 scale. Risk appetite uses
+    track="inverted", so the colored track appears inverted relative to the default. Throughput bias is standard. Initial
+    values are Throughput bias=55 and Risk appetite=70. Small numeric readouts appear below both controls. Footer buttons
+    are “Cancel” and “Save policy”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - guidance
+    factor_rationale: 'This is a semantics-sensitive task: an inverted track can mislead visual control policy, especially
+      when a standard sibling slider sits beside it and both are saved together.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The number target is easy, but the inverted track and the neighboring standard slider create a realistic
+      interaction-knowledge trap.
+  success_trigger:
+    human_readable:
+    - The committed value of “Risk appetite” equals 30.
+    - The committed value of “Throughput bias” remains 55.
+    - The modal control “Save policy” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 30
+        saved: true
+        target_instance: Risk appetite
+        non_target_instances_must_remain:
+          Throughput bias: 55
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Save policy
+      require_correct_instance: true
+      target_instance_label_or_id: Risk appetite
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Adjusting Throughput bias instead of Risk appetite.
+  - Misreading the inverted fill and stopping at the wrong value.
+  - Setting the correct value but not clicking Save policy.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust only Risk appetite to 30 using the numeric readout, not the filled-track intuition alone.
+  - Click Save policy.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mui-v2-T23
+  name: EU tax row in a compact table
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: table_row_save
+  implementation_component: 'MUI: Slider in Table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Regional tax rates” table, set the slider in the “EU / Tax rate” row to 18, leave the other rows
+    unchanged, and click “Save” in the EU row. The task will finish automatically when done.
+  ui_copy: In the “Regional tax rates” table, set the slider in the “EU / Tax rate” row to 18, leave the other rows unchanged,
+    and click “Save” in the EU row. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, off-center placement, small scale, three sliders, and high
+    clutter. The table has US, EU, and APAC rows, each with a Material UI slider labeled “Tax rate”, a numeric text readout,
+    and a row-local Save button. Initial values are US=7, EU=12, and APAC=10. Toolbar search, chip filters, and pagination
+    add clutter. Only EU should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: The core pressure is grounded row selection among three same-family controls, plus a row-local save
+      that must be associated with the correct instance.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Dense table geometry and a local save button make this a strong disambiguation-heavy single-slider task.
+  success_trigger:
+    human_readable:
+    - The committed EU tax rate equals 18.
+    - The committed US and APAC tax rates remain 7 and 10.
+    - The EU row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 18
+        unit: '%'
+        saved: true
+        target_instance: EU / Tax rate
+        non_target_instances_must_remain:
+          US / Tax rate: 7
+          APAC / Tax rate: 10
+      tolerance: 0
+      require_confirm: true
+      confirm_control: save-eu-tax-rate
+      require_correct_instance: true
+      target_instance_label_or_id: EU / Tax rate
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing the wrong row.
+  - Changing EU correctly but clicking Save in another row.
+  - Adjusting EU to 17 or 19.
+  expected_interaction_path:
+  - Locate the EU row.
+  - Set its Tax rate slider to 18.
+  - Click the EU row Save control.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mui-v2-T24
+  name: Irregular-marks backoff mode in a popover
+  canonical_type: slider_single
+  implementation_source: mui
+  implementation_variant: step_null_marks
+  implementation_component: 'MUI: Slider (step=null, marks) inside Popover'
+  task_template: open_overlay
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Advanced backoff”. In the popover, set the slider labeled “Backoff mode” to the mark 37, leave “Retry
+    mode” unchanged, and click “Apply”. The task will finish automatically when done.
+  ui_copy: Open “Advanced backoff”. In the popover, set the slider labeled “Backoff mode” to the mark 37, leave “Retry mode”
+    unchanged, and click “Apply”. The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, off-center placement, two sliders, and medium clutter.
+    A policy card contains a button labeled “Advanced backoff”. Clicking it opens a Material UI Popover with two sliders,
+    “Retry mode” and “Backoff mode”. Both use step=null with irregular marks at 0, 26, 37, and 100. Initial values are Retry
+    mode=26 and Backoff mode=0. A popover footer contains “Cancel” and “Apply”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - precision_surface
+    factor_rationale: The popover adds depth while the irregular marks and sibling slider make the correct control strategy
+      and instance choice meaningful.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Although the allowed values are discrete, irregular marks plus a nested popover and two similar sliders
+      keep the task diagnostically strong.
+  success_trigger:
+    human_readable:
+    - The committed value of “Backoff mode” equals 37.
+    - The committed value of “Retry mode” remains 26.
+    - The popover control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 37
+        saved: true
+        target_instance: Backoff mode
+        non_target_instances_must_remain:
+          Retry mode: 26
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Backoff mode
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Selecting 26 or 100 instead of 37.
+  - Changing Retry mode instead of Backoff mode.
+  - Closing the popover without Apply.
+  expected_interaction_path:
+  - Open the Advanced backoff popover.
+  - Move only Backoff mode to the 37 mark.
+  - Click Apply.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_range-mui-v2-T25
+  name: 'Products filter panel: set Price and apply'
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: filters_panel
+  implementation_component: 'MUI: Slider (range) inside Filters popover'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Products table, open “Filters”, set the “Price” range to 50–150, leave “Weight” unchanged, and click
+    “Apply”. The task will finish automatically when done.
+  ui_copy: In the Products table, open “Filters”, set the “Price” range to 50–150, leave “Weight” unchanged, and click “Apply”.
+    The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, center placement, two range sliders, and high clutter.
+    Above a Products table sits a toolbar with search, export, and chip filters. Clicking “Filters” opens a compact MUI panel
+    containing two range sliders: “Price ($)” starts at 0–200 with step 5, and “Weight (kg)” starts at 0–50 with step 1. Readouts
+    update live, but results do not commit until “Apply” is clicked. The panel footer contains “Reset” and “Apply”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - clutter
+    factor_rationale: A crowded dashboard plus a compact filter panel with two same-family controls produces a high-value
+      acquisition and commit benchmark without any alternate input bypass.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The range itself is easy, but finding and using the correct control in a cluttered filter panel and remembering
+      to Apply is the core challenge.
+  success_trigger:
+    human_readable:
+    - The committed Price range equals 50–150.
+    - The committed Weight range remains 0–50.
+    - The filter panel control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 50
+        to: 150
+        unit: USD
+        saved: true
+        target_instance: Price
+        non_target_instances_must_remain:
+          Weight:
+            from: 0
+            to: 50
+      tolerance:
+        from: 0
+        to: 0
+        unit: USD
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Price
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Weight instead of Price.
+  - Setting Price correctly but not clicking Apply.
+  - Using Reset after reaching the target.
+  expected_interaction_path:
+  - Open the Filters panel.
+  - Set only the Price range to 50–150.
+  - Click Apply.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T26
+  name: Vertical anomaly band in a dark thresholds drawer
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: vertical
+  implementation_component: 'MUI: Vertical Slider (range) inside Drawer'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: Open “Advanced thresholds”. In the drawer, set the vertical slider labeled “Anomaly band” to 0.25–0.75,
+    then click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Advanced thresholds”. In the drawer, set the vertical slider labeled “Anomaly band” to 0.25–0.75, then click
+    “Save”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, top_right placement, one range slider, dark theme, and
+    medium clutter. The drawer contains a single vertical MUI range slider labeled “Anomaly band” with a 0.00–1.00 scale and
+    step 0.01. A narrow readout line displays the selected range after release. Initial range is 0.10–0.90. Footer controls
+    are “Close” and “Save”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - scale
+    factor_rationale: A vertical dual-thumb control is intrinsically harder to acquire and verify than a standard horizontal
+      one, and the drawer-local save step makes committed state explicit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The target range is simple, but vertical dual-thumb control with explicit save is a strong hard task even
+      without additional same-type distractors.
+  success_trigger:
+    human_readable:
+    - The committed Anomaly band range equals 0.25–0.75.
+    - The drawer control “Save” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 0.25
+        to: 0.75
+        unit: ratio
+        saved: true
+        target_instance: Anomaly band
+      tolerance:
+        from: 0
+        to: 0
+        unit: ratio
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Anomaly band
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Leaving one thumb at the initial value.
+  - Reaching the correct range in the drawer but closing without Save.
+  - Stopping at 0.24–0.75 or 0.25–0.74.
+  expected_interaction_path:
+  - Open the thresholds drawer.
+  - Adjust both vertical thumbs to 0.25 and 0.75.
+  - Click Save.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T27
+  name: Minimum-distance comfort zone with sibling preserved
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: disableSwap_min_distance
+  implementation_component: 'MUI: Slider (range) with disableSwap and minimum-distance logic'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Environment” panel, set the slider labeled “Comfort zone” to 25–40, leave “Humidity range” unchanged,
+    and click “Apply panel”. The task will finish automatically when done.
+  ui_copy: In the “Environment” panel, set the slider labeled “Comfort zone” to 25–40, leave “Humidity range” unchanged, and
+    click “Apply panel”. The task will finish automatically when done.
+  setup_description: 'Layout uses settings_panel with compact spacing, off-center placement, two range sliders, and medium
+    clutter. The panel contains “Comfort zone (°C)” and “Humidity range (%)”. Comfort zone uses a MUI range slider with a
+    10-unit minimum distance enforced in onChange and disableSwap enabled. It starts at 20–37 and shows a helper line “Minimum
+    gap: 10°”. Humidity range starts at 30–60. A footer button labeled “Apply panel” commits both controls.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: The no-swap minimum-distance behavior creates real range-specific control pressure, and the sibling
+      slider plus panel Apply step ensures the task measures policy and verification rather than one isolated drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Minimum-distance logic can frustrate naive thumb movement, and the panel-level commit plus sibling slider
+      creates additional state-tracking burden.
+  success_trigger:
+    human_readable:
+    - The committed Comfort zone range equals 25–40.
+    - The committed Humidity range remains 30–60.
+    - The panel control “Apply panel” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 25
+        to: 40
+        unit: °C
+        saved: true
+        target_instance: Comfort zone
+        non_target_instances_must_remain:
+          Humidity range:
+            from: 30
+            to: 60
+      tolerance:
+        from: 0
+        to: 0
+        unit: °C
+      require_confirm: true
+      confirm_control: Apply panel
+      require_correct_instance: true
+      target_instance_label_or_id: Comfort zone
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Trying to cross thumbs and ending in an invalid or wrong configuration.
+  - Changing Humidity range instead of Comfort zone.
+  - Getting Comfort zone right but not clicking Apply panel.
+  expected_interaction_path:
+  - Adjust the Comfort zone range to 25–40 while respecting the minimum-distance constraint.
+  - Leave Humidity range alone.
+  - Click Apply panel.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T28
+  name: Luminance window from a mini-chart reference
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: visual_reference
+  implementation_component: 'MUI: Slider (range) with chart reference'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Rendering controls” panel, set the slider labeled “Luminance range” to match the highlighted band
+    within ±2 on each end, leave “Contrast range” unchanged, and click “Apply tuning”. The task will finish automatically
+    when done.
+  ui_copy: In the “Rendering controls” panel, set the slider labeled “Luminance range” to match the highlighted band within
+    ±2 on each end, leave “Contrast range” unchanged, and click “Apply tuning”. The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, bottom_left placement, two range sliders, and high
+    clutter. The Rendering controls card contains two range sliders: “Luminance range” and “Contrast range”. Above Luminance
+    range is a mini histogram with a semi-transparent highlighted target band corresponding to 42–68. Both sliders show a
+    small Selected readout. Initial values are Luminance=0–100 and Contrast=20–80. The card footer contains “Apply tuning”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - clutter
+    factor_rationale: The target is visual, not text-first, and the card includes a sibling range slider plus a commit button,
+      which forces the agent to verify both endpoints before saving.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The chart-based target makes the task perceptual, but the live readout keeps it human-feasible; clutter
+      and a second range slider make it harder in the right way.
+  success_trigger:
+    human_readable:
+    - The committed Luminance range is within ±2 of 42–68.
+    - The committed Contrast range remains 20–80.
+    - The card control “Apply tuning” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 42
+        to: 68
+        unit: pts
+        saved: true
+        target_instance: Luminance range
+        non_target_instances_must_remain:
+          Contrast range:
+            from: 20
+            to: 80
+      tolerance:
+        from: 2
+        to: 2
+        unit: pts
+      require_confirm: true
+      confirm_control: Apply tuning
+      require_correct_instance: true
+      target_instance_label_or_id: Luminance range
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Matching only one edge of the target band.
+  - Changing Contrast range instead of Luminance range.
+  - Aligning the draft but not clicking Apply tuning.
+  expected_interaction_path:
+  - Inspect the highlighted band in the mini chart.
+  - Adjust Luminance range until the Selected readout is within ±2 on each end.
+  - Click Apply tuning.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T29
+  name: Inverted-track allocation window in a dark modal
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: track_inverted
+  implementation_component: 'MUI: Slider (range, track="inverted") inside Modal'
+  task_template: confirm_cancel
+  secondary_template: set_range
+  browsergym_goal: Open “Advanced allocation”. In the modal, set the slider labeled “Allocation window” to 30–70, leave “Fallback
+    window” unchanged, and click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Advanced allocation”. In the modal, set the slider labeled “Allocation window” to 30–70, leave “Fallback
+    window” unchanged, and click “Save”. The task will finish automatically when done.
+  setup_description: Layout uses modal_flow with compact spacing, center placement, two range sliders, dark theme, and medium
+    clutter. The modal contains “Allocation window” and “Fallback window”, both on a 0–100 scale. Allocation window uses track="inverted",
+    so the colored range behaves visually opposite to the usual filled segment. Fallback window uses the standard track. Initial
+    values are Allocation=20–80 and Fallback=10–40. The modal footer has “Cancel” and “Save”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - guidance
+    factor_rationale: An inverted range track changes the visual idiom while a standard sibling slider remains in the same
+      modal, so the task probes whether the agent trusts visible numerics over misleading track intuition.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: This is hard because the interface looks atypical while the correct solution still requires exact numeric
+      control and a save step.
+  success_trigger:
+    human_readable:
+    - The committed Allocation window equals 30–70.
+    - The committed Fallback window remains 10–40.
+    - The modal control “Save” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 30
+        to: 70
+        unit: units
+        saved: true
+        target_instance: Allocation window
+        non_target_instances_must_remain:
+          Fallback window:
+            from: 10
+            to: 40
+      tolerance:
+        from: 0
+        to: 0
+        unit: units
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Allocation window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Fallback window instead of Allocation window.
+  - Stopping at 30–80 or 20–70.
+  - Getting the target in the modal but not clicking Save.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust only Allocation window to 30–70.
+  - Click Save.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T30
+  name: Streaming buffer range below the fold
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Slider (range) in nested scroll section'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the below-the-fold “Streaming” section, set the slider labeled “Buffer range” to 2–6, leave “Retry jitter”
+    unchanged, and click “Apply section”. The task will finish automatically when done.
+  ui_copy: In the below-the-fold “Streaming” section, set the slider labeled “Buffer range” to 2–6, leave “Retry jitter” unchanged,
+    and click “Apply section”. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, off-center placement, two range sliders, and medium clutter.
+    A large page contains an inner settings column that scrolls independently. In the lower “Streaming” section are two MUI
+    range sliders, “Buffer range” starting at 1–4 and “Retry jitter” starting at 2–5. A section-local Apply section button
+    commits only these two controls. The section is below the fold when the page loads.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: The task combines nested-scroll acquisition with a section-local commit boundary and a competing range
+      slider, making it a clean test of grounded range editing rather than generic dragging.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Finding the correct section and remembering to use the section-local Apply control makes this meaningfully
+      harder than an isolated range slider.
+  success_trigger:
+    human_readable:
+    - The committed Buffer range equals 2–6.
+    - The committed Retry jitter remains 2–5.
+    - The section control “Apply section” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 2
+        to: 6
+        unit: s
+        saved: true
+        target_instance: Buffer range
+        non_target_instances_must_remain:
+          Retry jitter:
+            from: 2
+            to: 5
+      tolerance:
+        from: 0
+        to: 0
+        unit: s
+      require_confirm: true
+      confirm_control: Apply section
+      require_correct_instance: true
+      target_instance_label_or_id: Buffer range
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Retry jitter instead of Buffer range.
+  - Scrolling the wrong region and never reaching the Streaming section.
+  - Adjusting Buffer range correctly but not clicking Apply section.
+  expected_interaction_path:
+  - Scroll within the settings column to the Streaming section.
+  - Adjust Buffer range to 2–6 and leave Retry jitter alone.
+  - Click Apply section.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T31
+  name: Gateway row retry band in a compact table
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: table_row_save
+  implementation_component: 'MUI: Slider (range) in Table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Service windows” table, set the “Retry band” range in the “Gateway” row to 20–60, leave the “Billing”
+    row unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  ui_copy: In the “Service windows” table, set the “Retry band” range in the “Gateway” row to 20–60, leave the “Billing” row
+    unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, bottom_right placement, small scale, two row-scoped range
+    sliders, and high clutter. The Service windows table has at least Gateway and Billing rows. Each row contains a MUI range
+    slider labeled “Retry band”, a compact Selected readout, and a row-local Save button. Initial values are Gateway=10–50
+    and Billing=15–45. Toolbar chips and row menus add clutter.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: Small row-scoped dual-thumb controls are hard to ground accurately, and the Save action must be associated
+      with the correct row.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is a high-disambiguation hard range task because the agent must pick the correct row, manipulate the
+      correct dual-thumb control, and save that row only.
+  success_trigger:
+    human_readable:
+    - The committed Gateway retry band equals 20–60.
+    - The committed Billing retry band remains 15–45.
+    - The Gateway row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 20
+        to: 60
+        unit: s
+        saved: true
+        target_instance: Gateway / Retry band
+        non_target_instances_must_remain:
+          Billing / Retry band:
+            from: 15
+            to: 45
+      tolerance:
+        from: 0
+        to: 0
+        unit: s
+      require_confirm: true
+      confirm_control: save-gateway-retry-band
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway / Retry band
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Editing Billing instead of Gateway.
+  - Saving the wrong row.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate the Gateway row.
+  - Set Retry band to 20–60.
+  - Click Save in the Gateway row.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mui-v2-T32
+  name: Irregular marked release window in a crowded dashboard
+  canonical_type: slider_range
+  implementation_source: mui
+  implementation_variant: marks
+  implementation_component: 'MUI: Slider (range) with custom marks'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the “Release controls” card, set the slider labeled “Release window” to the marks 35 and 80. Do not
+    change the other range sliders. The task will finish automatically when done.
+  ui_copy: In the “Release controls” card, set the slider labeled “Release window” to the marks 35 and 80. Do not change the
+    other range sliders. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, four or more range sliders, and
+    high clutter. One card titled “Release controls” contains a MUI range slider with custom marks at 5, 15, 25, 35, 70, 80,
+    and 90. The target slider starts at 5–90. Three other dashboard cards contain other range sliders of similar size. A tiny
+    readout under Release window updates live; there is no Apply button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 4_plus
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - precision_surface
+    factor_rationale: The hard part is selecting the correct card and the correct pair of irregular marks amid many same-family
+      controls.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Dense dashboard context plus an irregular mark set turns a nominally discrete task into a strong grounding
+      and control-choice benchmark.
+  success_trigger:
+    human_readable:
+    - The Release window range equals 35–80 exactly.
+    - The other range sliders remain unchanged.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 35
+        to: 80
+        unit: units
+        target_instance: Release window
+      tolerance:
+        from: 0
+        to: 0
+        unit: units
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Release window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Choosing 35–90 or 25–80.
+  - Changing a non-target range slider.
+  - Leaving Release window unchanged.
+  expected_interaction_path:
+  - Locate the Release controls card.
+  - Move the thumbs to the 35 and 80 marks.
+  - Verify the readout shows 35–80.
+  notes: Checker should read the committed range value array and correct target instance from wrapper state.
+- id: slider_single-mantine-v2-T33
+  name: 'Notification tuning drawer: set Secondary and apply'
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Slider inside Drawer'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open “Notification tuning”. In the drawer, set the slider labeled “Secondary alert level” to 4, leave “Primary
+    alert level” unchanged, and click “Apply changes”. The task will finish automatically when done.
+  ui_copy: Open “Notification tuning”. In the drawer, set the slider labeled “Secondary alert level” to 4, leave “Primary
+    alert level” unchanged, and click “Apply changes”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, off-center placement, two sliders, and medium clutter.
+    Clicking “Notification tuning” opens a Mantine Drawer containing two sliders on a 1–5 scale, “Primary alert level” and
+    “Secondary alert level”. Initial values are Primary=2 and Secondary=1. Small readouts appear at the end of each row. The
+    drawer footer contains “Cancel” and “Apply changes”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: 'This is a strong baseline hard slider-single pattern for Mantine: correct instance selection inside
+      a commit-gated drawer.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target value is easy, but the drawer and sibling slider create the right kind of commit and disambiguation
+      pressure.
+  success_trigger:
+    human_readable:
+    - The committed value of “Secondary alert level” equals 4.
+    - The committed value of “Primary alert level” remains 2.
+    - The drawer control “Apply changes” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 4
+        saved: true
+        target_instance: Secondary alert level
+        non_target_instances_must_remain:
+          Primary alert level: 2
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary alert level
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Primary instead of Secondary.
+  - Getting Secondary to 4 but dismissing the drawer without Apply changes.
+  - Changing both sliders.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust only Secondary alert level to 4.
+  - Click Apply changes.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mantine-v2-T34
+  name: Gamma exact calibration with reduced feedback
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: label_null
+  implementation_component: 'Mantine: Slider (label=null) in settings panel'
+  task_template: set_scalar
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Color correction” panel, set the slider labeled “Gamma” to 1.37 within ±0.01, leave “Temperature
+    offset” unchanged, and click “Save correction”. The task will finish automatically when done.
+  ui_copy: In the “Color correction” panel, set the slider labeled “Gamma” to 1.37 within ±0.01, leave “Temperature offset”
+    unchanged, and click “Save correction”. The task will finish automatically when done.
+  setup_description: 'Layout uses settings_panel with compact spacing, off-center placement, two sliders, and medium clutter.
+    The panel contains a Mantine slider labeled “Gamma” with range 1.00–2.00 and step 0.01. Its floating label is disabled
+    with label=null, so the only persistent feedback is a small line under the slider that updates after release. A second
+    slider labeled “Temperature offset” starts at 0.20 and must remain unchanged. Gamma starts at 1.20. Footer button: “Save
+    correction”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: Fine-grained calibration becomes much harder when live labels are suppressed; adding a sibling slider
+      and explicit save keeps the task from collapsing into a trivial one-control drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This is a hard exact-value task because the final state is precise, the live label is absent, and the panel
+      still requires instance control and an explicit save.
+  success_trigger:
+    human_readable:
+    - The committed value of “Gamma” is within ±0.01 of 1.37.
+    - The committed value of “Temperature offset” remains 0.20.
+    - The panel control “Save correction” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value: 1.37
+        saved: true
+        target_instance: Gamma
+        non_target_instances_must_remain:
+          Temperature offset: 0.2
+      tolerance: 0.01
+      require_confirm: true
+      confirm_control: Save correction
+      require_correct_instance: true
+      target_instance_label_or_id: Gamma
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Stopping outside ±0.01 of 1.37.
+  - Changing Temperature offset.
+  - Reaching the target but not clicking Save correction.
+  expected_interaction_path:
+  - Adjust Gamma and use the post-release Current line to calibrate.
+  - Leave Temperature offset unchanged.
+  - Click Save correction.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mantine-v2-T35
+  name: Recommendations similarity from a gauge in a busy dashboard
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: visual_reference
+  implementation_component: 'Mantine: Slider with reference gauge'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dashboard, set the slider labeled “Recommendations similarity threshold” to match the reference
+    gauge within ±0.01. Do not adjust “Search similarity threshold”. The task will finish automatically when done.
+  ui_copy: In the dashboard, set the slider labeled “Recommendations similarity threshold” to match the reference gauge within
+    ±0.01. Do not adjust “Search similarity threshold”. The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, bottom_right placement, two sliders, and high clutter.
+    Two cards contain Mantine sliders labeled “Search similarity threshold” and “Recommendations similarity threshold”. Both
+    use a 0.00–1.00 scale with step 0.01 and hidden marks. The Recommendations card includes a small reference gauge corresponding
+    to 0.83. Recommendations starts at 0.70. After release, a tiny “Current: 0.xx” line appears on the card. There is no Apply
+    button.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: This deliberately reuses one of the strongest Mantine idioms from v1 but relocates it into a higher-pressure
+      dashboard context with a sibling slider that must stay untouched.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: A visual-only target on a fine-grained scale is hard enough; the nearby sibling card and clutter make it
+      a clean disambiguation-heavy benchmark.
+  success_trigger:
+    human_readable:
+    - The value of “Recommendations similarity threshold” is within ±0.01 of 0.83.
+    - The value of “Search similarity threshold” remains unchanged.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-reco-similarity
+        value: 0.83
+        unit: ratio
+      tolerance: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Recommendations similarity threshold
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Adjusting Search similarity threshold instead of Recommendations.
+  - Stopping outside ±0.01 of 0.83.
+  - Matching the gauge transiently but ending at the wrong value.
+  expected_interaction_path:
+  - Inspect the reference gauge in the Recommendations card.
+  - Adjust that slider and verify the tiny Current line after release.
+  - Leave Search similarity threshold unchanged.
+  notes: Checker should read the slider's controlled value and instance label from wrapper state, not from transient hover
+    labels alone.
+- id: slider_single-mantine-v2-T36
+  name: EU tax row with row-local save
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: table_row_save
+  implementation_component: 'Mantine: Slider in Table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Regional tax rates” table, set the slider in the “EU / Tax rate” row to 18, leave the other rows
+    unchanged, and click “Save” in the EU row. The task will finish automatically when done.
+  ui_copy: In the “Regional tax rates” table, set the slider in the “EU / Tax rate” row to 18, leave the other rows unchanged,
+    and click “Save” in the EU row. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, off-center placement, three sliders, and high clutter. The
+    table has US, EU, and APAC rows. Each row contains a Mantine slider labeled “Tax rate”, a small numeric readout, and a
+    row-local Save button. Initial values are US=7, EU=12, and APAC=10. Search and export controls add clutter.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - clutter
+    factor_rationale: Three same-family controls in dense rows create the intended grounding pressure; the row-local save
+      enforces row-level state tracking.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The numeric target is easy, but row selection and row-local commit are the real bottlenecks.
+  success_trigger:
+    human_readable:
+    - The committed EU tax rate equals 18.
+    - The committed US and APAC tax rates remain 7 and 10.
+    - The EU row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 18
+        unit: '%'
+        saved: true
+        target_instance: EU / Tax rate
+        non_target_instances_must_remain:
+          US / Tax rate: 7
+          APAC / Tax rate: 10
+      tolerance: 0
+      require_confirm: true
+      confirm_control: save-eu-tax-rate
+      require_correct_instance: true
+      target_instance_label_or_id: EU / Tax rate
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing the wrong row.
+  - Getting EU right but clicking Save in another row.
+  - Changing multiple rows.
+  expected_interaction_path:
+  - Locate the EU row.
+  - Adjust its Tax rate to 18.
+  - Click the EU row Save control.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mantine-v2-T37
+  name: Marks-only escalation level in an advanced popover
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: restrictToMarks
+  implementation_component: 'Mantine: Slider (restrictToMarks) inside Popover'
+  task_template: open_overlay
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Advanced escalation”. In the popover, set the slider labeled “Escalation level” to the mark 75, leave
+    “Retry level” unchanged, and click “Apply”. The task will finish automatically when done.
+  ui_copy: Open “Advanced escalation”. In the popover, set the slider labeled “Escalation level” to the mark 75, leave “Retry
+    level” unchanged, and click “Apply”. The task will finish automatically when done.
+  setup_description: 'Layout uses inline_surface with compact spacing, off-center placement, two sliders, and medium clutter.
+    A compact policy card has a button labeled “Advanced escalation”. Its popover contains two Mantine sliders: “Retry level”
+    and “Escalation level”. Both use restrictToMarks with marks at 5, 15, 35, 55, 75, and 95. Initial values are Retry level=35
+    and Escalation level=15. The popover footer contains “Cancel” and “Apply”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - overlay_model
+    - instances
+    - precision_surface
+    factor_rationale: Restrict-to-marks removes micro-motor difficulty but replaces it with a denser choice set, nested-overlay
+      depth, and strong same-family disambiguation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: This is hard because the mark set is irregular and the correct slider is inside a popover with a sibling
+      that must stay fixed.
+  success_trigger:
+    human_readable:
+    - The committed value of “Escalation level” equals 75.
+    - The committed value of “Retry level” remains 35.
+    - The popover control “Apply” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 75
+        saved: true
+        target_instance: Escalation level
+        non_target_instances_must_remain:
+          Retry level: 35
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Escalation level
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Stopping on 55 or 95 instead of 75.
+  - Changing Retry level instead of Escalation level.
+  - Closing the popover without Apply.
+  expected_interaction_path:
+  - Open the Advanced escalation popover.
+  - Move Escalation level to the 75 mark and leave Retry level alone.
+  - Click Apply.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mantine-v2-T38
+  name: Inverted grade threshold in a dark modal
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: inverted
+  implementation_component: 'Mantine: Slider (inverted) inside Modal'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open “Advanced grading”. In the modal, set the slider labeled “Grade threshold” to 30, leave “Curve strength”
+    unchanged, and click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Advanced grading”. In the modal, set the slider labeled “Grade threshold” to 30, leave “Curve strength” unchanged,
+    and click “Save”. The task will finish automatically when done.
+  setup_description: Layout uses modal_flow with compact spacing, center placement, two sliders, dark theme, and medium clutter.
+    The modal contains “Grade threshold” and “Curve strength”, both on 0–100 scales. Grade threshold uses Mantine's inverted
+    prop; Curve strength is standard. Initial values are Grade threshold=60 and Curve strength=45. Small readouts are visible
+    below the controls. Footer buttons are “Cancel” and “Save”.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - guidance
+    factor_rationale: Atypical inverted track semantics plus a standard sibling slider in the same modal creates a clean interaction-knowledge
+      test with explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The value target is simple, but the inverted visual track and sibling-slider context make it easy to manipulate
+      the wrong thing or misread the control.
+  success_trigger:
+    human_readable:
+    - The committed value of “Grade threshold” equals 30.
+    - The committed value of “Curve strength” remains 45.
+    - The modal control “Save” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 30
+        saved: true
+        target_instance: Grade threshold
+        non_target_instances_must_remain:
+          Curve strength: 45
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Grade threshold
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Curve strength instead of Grade threshold.
+  - Misreading the inverted track and stopping at the wrong value.
+  - Setting the target correctly but clicking Cancel.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust only Grade threshold to 30 using the numeric readout.
+  - Click Save.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mantine-v2-T39
+  name: Small-thumb opacity below the fold
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: thumbSize_small
+  implementation_component: 'Mantine: Slider (thumbSize=14) in nested settings panel'
+  task_template: scroll_find
+  secondary_template: set_scalar
+  browsergym_goal: In the lower “Effects” section, set the slider labeled “Opacity” to 62, leave “Blur amount” unchanged,
+    and click “Apply effects”. The task will finish automatically when done.
+  ui_copy: In the lower “Effects” section, set the slider labeled “Opacity” to 62, leave “Blur amount” unchanged, and click
+    “Apply effects”. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, top_left placement, two sliders, and medium clutter.
+    A long settings panel contains an upper slider labeled “Blur amount” and, below the fold in the Effects section, a Mantine
+    slider labeled “Opacity” with thumbSize=14 to keep the target realistic but small. Both sliders use a 0–100 scale and
+    row readouts. Initial values are Blur amount=20 and Opacity=40. A section footer contains “Apply effects”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - scale
+    - confirmation_model
+    factor_rationale: The task combines lower-section discovery with a slightly smaller target and a section-level apply boundary,
+      which raises acquisition and verification pressure without becoming adversarial.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: A small but realistic thumb plus nested scrolling and an explicit Apply step create a substantial but human-solvable
+      hard task.
+  success_trigger:
+    human_readable:
+    - The committed value of “Opacity” equals 62.
+    - The committed value of “Blur amount” remains 20.
+    - The section control “Apply effects” has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value: 62
+        saved: true
+        target_instance: Opacity
+        non_target_instances_must_remain:
+          Blur amount: 20
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Apply effects
+      require_correct_instance: true
+      target_instance_label_or_id: Opacity
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Blur amount instead of Opacity.
+  - Scrolling the wrong region and never reaching the Effects section.
+  - Setting Opacity correctly but not clicking Apply effects.
+  expected_interaction_path:
+  - Scroll to the Effects section within the panel.
+  - Set Opacity to 62 and leave Blur amount unchanged.
+  - Click Apply effects.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_single-mantine-v2-T40
+  name: Always-visible label with non-linear scale
+  canonical_type: slider_single
+  implementation_source: mantine
+  implementation_variant: scale + labelAlwaysOn
+  implementation_component: 'Mantine: Slider (scale, labelAlwaysOn)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Cache controls” drawer, set the slider labeled “Cache size” to match the reference badge “1 GB”,
+    leave “Log retention” unchanged, and click “Save controls”. The task will finish automatically when done.
+  ui_copy: In the “Cache controls” drawer, set the slider labeled “Cache size” to match the reference badge “1 GB”, leave
+    “Log retention” unchanged, and click “Save controls”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, off-center placement, two sliders, and medium clutter.
+    The drawer contains a Mantine slider labeled “Cache size” that uses a scale prop to display storage units rather than
+    raw values; its labelAlwaysOn bubble shows the scaled unit string. A small reference badge in the same row reads “Target:
+    1 GB”. A sibling slider labeled “Log retention” uses a standard numeric scale and must remain unchanged. Initial Cache
+    size is 256 MB. Footer buttons are “Cancel” and “Save controls”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - confirmation_model
+    factor_rationale: A non-linear displayed scale makes the task about interpreting visible state correctly rather than trusting
+      raw geometry, while the sibling slider and save boundary preserve grounded control pressure.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: The always-visible scaled label keeps the task human-feasible, but the non-linear display plus a sibling
+      slider and explicit save make it a strong semantic-observability test.
+  success_trigger:
+    human_readable:
+    - The committed displayed value of “Cache size” matches the reference target 1 GB.
+    - The committed value of “Log retention” remains unchanged.
+    - The drawer control “Save controls” has been clicked.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-cache-size
+        value: 1 GB
+      tolerance: 0
+      require_confirm: true
+      confirm_control: Save controls
+      require_correct_instance: true
+      target_instance_label_or_id: Cache size
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Adjusting Log retention instead of Cache size.
+  - Landing on a visually nearby but different storage unit.
+  - Matching the badge in draft state but not clicking Save controls.
+  expected_interaction_path:
+  - Open the drawer.
+  - Adjust Cache size until the labelAlwaysOn bubble reads 1 GB.
+  - Click Save controls.
+  notes: Checker should validate the committed post-Apply state, not the transient in-overlay value.
+- id: slider_range-mantine-v2-T41
+  name: Bandwidth allocation with minRange and no push
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: minRange_pushOff
+  implementation_component: 'Mantine: RangeSlider (minRange, pushOnOverlap=false)'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Network tuning” panel, set the slider labeled “Bandwidth allocation” to 30–50, leave “Backup window”
+    unchanged, and click “Apply panel”. The task will finish automatically when done.
+  ui_copy: In the “Network tuning” panel, set the slider labeled “Bandwidth allocation” to 30–50, leave “Backup window” unchanged,
+    and click “Apply panel”. The task will finish automatically when done.
+  setup_description: 'Layout uses settings_panel with compact spacing, off-center placement, two range sliders, and medium
+    clutter. The panel contains a Mantine RangeSlider labeled “Bandwidth allocation” configured with minRange=20 and pushOnOverlap=false.
+    It starts at 10–40 and shows a helper line “Minimum width: 20”. A sibling RangeSlider labeled “Backup window” starts at
+    15–35 and must remain unchanged. The panel footer contains “Apply panel”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: The minRange and no-push behavior create a real range-control constraint, while the sibling slider and
+      apply step make the task about deliberate thumb selection and committed state verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Constraint-aware thumb movement is harder than an unconstrained range edit, and the panel-level Apply plus
+      sibling slider adds state-tracking burden.
+  success_trigger:
+    human_readable:
+    - The committed Bandwidth allocation range equals 30–50.
+    - The committed Backup window remains 15–35.
+    - The panel control “Apply panel” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 30
+        to: 50
+        unit: units
+        saved: true
+        target_instance: Bandwidth allocation
+        non_target_instances_must_remain:
+          Backup window:
+            from: 15
+            to: 35
+      tolerance:
+        from: 0
+        to: 0
+        unit: units
+      require_confirm: true
+      confirm_control: Apply panel
+      require_correct_instance: true
+      target_instance_label_or_id: Bandwidth allocation
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Violating the minimum width and leaving the slider in a snapped-back or wrong state.
+  - Changing Backup window instead of Bandwidth allocation.
+  - Getting the range right but not clicking Apply panel.
+  expected_interaction_path:
+  - Adjust Bandwidth allocation while respecting the minRange behavior.
+  - Leave Backup window unchanged.
+  - Click Apply panel.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mantine-v2-T42
+  name: Quality gate from a visual acceptable band
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: visual_reference
+  implementation_component: 'Mantine: RangeSlider with reference band'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: In the dashboard, set the slider labeled “Quality gate” to match the highlighted acceptable band within
+    ±2 on each end, leave “Stability gate” unchanged, and click “Apply gates”. The task will finish automatically when done.
+  ui_copy: In the dashboard, set the slider labeled “Quality gate” to match the highlighted acceptable band within ±2 on each
+    end, leave “Stability gate” unchanged, and click “Apply gates”. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, bottom_right placement, two range sliders, and high
+    clutter. The target card contains a Mantine RangeSlider labeled “Quality gate” and a thin highlighted reference band above
+    it corresponding to 15–45. A sibling card contains “Stability gate”. Quality gate starts at 0–100, Stability gate starts
+    at 20–80. Each card shows a Selected readout. The dashboard footer for this control cluster contains “Apply gates”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - clutter
+    factor_rationale: A visual band target plus a competing sibling range slider in a high-clutter dashboard creates a strong
+      no-bypass dual-thumb benchmark with explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The range itself is simple, but the target is visual and the cluttered dashboard plus sibling slider make
+      correct-instance verification essential.
+  success_trigger:
+    human_readable:
+    - The committed Quality gate range is within ±2 of 15–45.
+    - The committed Stability gate remains 20–80.
+    - The control cluster button “Apply gates” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 15
+        to: 45
+        unit: pts
+        saved: true
+        target_instance: Quality gate
+        non_target_instances_must_remain:
+          Stability gate:
+            from: 20
+            to: 80
+      tolerance:
+        from: 2
+        to: 2
+        unit: pts
+      require_confirm: true
+      confirm_control: Apply gates
+      require_correct_instance: true
+      target_instance_label_or_id: Quality gate
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Matching only one edge of the acceptable band.
+  - Changing Stability gate instead of Quality gate.
+  - Reaching the target in draft state but not clicking Apply gates.
+  expected_interaction_path:
+  - Inspect the acceptable band above Quality gate.
+  - Adjust both Quality gate thumbs and verify with the Selected readout.
+  - Click Apply gates.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mantine-v2-T43
+  name: Small-thumb opacity window in a compact panel
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: size_xs
+  implementation_component: 'Mantine: RangeSlider (size=''xs'') in settings panel'
+  task_template: set_range
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Effects” panel, set the slider labeled “Opacity window” to 0.30–0.60 within ±0.01 on each end,
+    leave “Blur window” unchanged, and click “Save effects”. The task will finish automatically when done.
+  ui_copy: In the “Effects” panel, set the slider labeled “Opacity window” to 0.30–0.60 within ±0.01 on each end, leave “Blur
+    window” unchanged, and click “Save effects”. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, top_left placement, two range sliders, and medium clutter.
+    The target Mantine RangeSlider “Opacity window” is rendered with size='xs' on a 0.00–1.00 scale with step 0.01; it starts
+    at 0.10–0.90. A sibling slider “Blur window” starts at 0.20–0.80. Readouts below each slider show the selected interval
+    after release. A footer button labeled “Save effects” commits the panel state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: small
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - scale
+    - instances
+    - confirmation_model
+    factor_rationale: Smaller thumbs raise acquisition difficulty, but the sibling slider and explicit save are what make
+      the task diagnostically meaningful rather than merely fiddly.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This is a hard but fair calibration task because the thumbs are small, the range is decimal, and the panel
+      requires committed state with a second slider preserved.
+  success_trigger:
+    human_readable:
+    - The committed Opacity window range is within ±0.01 of 0.30–0.60.
+    - The committed Blur window remains 0.20–0.80.
+    - The panel control “Save effects” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 0.3
+        to: 0.6
+        unit: ratio
+        saved: true
+        target_instance: Opacity window
+        non_target_instances_must_remain:
+          Blur window:
+            from: 0.2
+            to: 0.8
+      tolerance:
+        from: 0.01
+        to: 0.01
+        unit: ratio
+      require_confirm: true
+      confirm_control: Save effects
+      require_correct_instance: true
+      target_instance_label_or_id: Opacity window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Stopping outside ±0.01 on either end.
+  - Changing Blur window instead of Opacity window.
+  - Leaving the draft correct but not clicking Save effects.
+  expected_interaction_path:
+  - Adjust Opacity window to 0.30–0.60 using the readout to verify.
+  - Leave Blur window unchanged.
+  - Click Save effects.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mantine-v2-T44
+  name: Release window on irregular marks in a crowded dashboard
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: restrictToMarks
+  implementation_component: 'Mantine: RangeSlider (restrictToMarks)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the “Release controls” dashboard card, set the slider labeled “Release window” to the marks 35 and 80.
+    Do not change the other range sliders. The task will finish automatically when done.
+  ui_copy: In the “Release controls” dashboard card, set the slider labeled “Release window” to the marks 35 and 80. Do not
+    change the other range sliders. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, four or more range sliders, and
+    high clutter. The target card contains a Mantine RangeSlider labeled “Release window” with restrictToMarks enabled and
+    marks at 5, 15, 25, 35, 70, 80, and 90. It starts at 5–90. Several other cards contain additional RangeSliders of similar
+    size. The Release window card shows a Selected readout; there is no Save button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 4_plus
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - precision_surface
+    factor_rationale: This keeps the strongest Mantine mark-only idea but moves it into a harder scene where the main challenge
+      is choosing the right control and the right discrete endpoints.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The allowed values are exact and human-readable, but a crowded dashboard with multiple similar range sliders
+      creates high disambiguation pressure.
+  success_trigger:
+    human_readable:
+    - The Release window range equals 35–80 exactly.
+    - The other range sliders remain unchanged.
+    - No additional confirmation is required.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 35
+        to: 80
+        unit: units
+        target_instance: Release window
+      tolerance:
+        from: 0
+        to: 0
+        unit: units
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Release window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Picking 25–80 or 35–90 instead of 35–80.
+  - Changing a different dashboard range slider.
+  - Leaving Release window unchanged.
+  expected_interaction_path:
+  - Locate the Release controls card.
+  - Move the thumbs to the 35 and 80 marks.
+  - Verify the Selected readout.
+  notes: Checker should read the committed range value array and correct target instance from wrapper state.
+- id: slider_range-mantine-v2-T45
+  name: Signal threshold exact decimal reference line
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: decimal_reference
+  implementation_component: 'Mantine: RangeSlider (decimal values, minRange)'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Signal tuning”. Set the slider labeled “Signal threshold” to match the reference values 0.125–0.555
+    within ±0.010 on each end, leave “Noise threshold” unchanged, and click “Save tuning”. The task will finish automatically
+    when done.
+  ui_copy: Open “Signal tuning”. Set the slider labeled “Signal threshold” to match the reference values 0.125–0.555 within
+    ±0.010 on each end, leave “Noise threshold” unchanged, and click “Save tuning”. The task will finish automatically when
+    done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, center placement, two range sliders, and medium clutter.
+    The drawer contains two Mantine RangeSliders displayed as decimals from 0.000 to 1.000. “Signal threshold” uses min=0,
+    max=1000, step=1, a decimal formatter, and a minRange equivalent to 0.100. A visible line above it reads “Reference: 0.125
+    – 0.555”. It starts at 0.200–0.800. A sibling slider “Noise threshold” starts at 0.150–0.650 and must remain unchanged.
+    Footer buttons are “Cancel” and “Save tuning”.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - precision_surface
+    - instances
+    - confirmation_model
+    factor_rationale: 'This is the repaired precise-decimal Mantine task: the visible tolerance and reference line make it
+      honest, while the sibling slider and save step keep it squarely in the slider family.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 5
+      disambiguation_load: 4
+    justification: The exact decimals are hard but explicitly observable; the true difficulty is calibrating both endpoints
+      carefully and committing only the correct slider.
+  success_trigger:
+    human_readable:
+    - The committed Signal threshold range is within ±0.010 of 0.125–0.555 on each end.
+    - The committed Noise threshold remains 0.150–0.650.
+    - The drawer control “Save tuning” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 0.125
+        to: 0.555
+        unit: ratio
+        saved: true
+        target_instance: Signal threshold
+        non_target_instances_must_remain:
+          Noise threshold:
+            from: 0.15
+            to: 0.65
+      tolerance:
+        from: 0.01
+        to: 0.01
+        unit: ratio
+      require_confirm: true
+      confirm_control: Save tuning
+      require_correct_instance: true
+      target_instance_label_or_id: Signal threshold
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Using hidden tighter precision than the visible ±0.010 tolerance.
+  - Changing Noise threshold instead of Signal threshold.
+  - Leaving the draft in tolerance but not clicking Save tuning.
+  expected_interaction_path:
+  - Open the drawer and read the visible reference line.
+  - Adjust both Signal threshold endpoints until each is within ±0.010.
+  - Click Save tuning.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mantine-v2-T46
+  name: Inverted grade window in a dark modal
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: inverted
+  implementation_component: 'Mantine: RangeSlider (inverted) inside Modal'
+  task_template: confirm_cancel
+  secondary_template: set_range
+  browsergym_goal: Open “Advanced grading”. In the modal, set the slider labeled “Grade window” to 60–90, leave “Pass band”
+    unchanged, and click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Advanced grading”. In the modal, set the slider labeled “Grade window” to 60–90, leave “Pass band” unchanged,
+    and click “Save”. The task will finish automatically when done.
+  setup_description: 'Layout uses modal_flow with compact spacing, center placement, two range sliders, dark theme, and medium
+    clutter. The modal contains two Mantine RangeSliders: “Grade window” and “Pass band”. Grade window uses the inverted prop
+    and starts at 40–80. Pass band is standard and starts at 20–60. Each has a Selected readout. The modal footer contains
+    “Cancel” and “Save”.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - guidance
+    factor_rationale: The inverted track changes the visual cue while a standard sibling range slider sits beside it, so the
+      task stresses correct interpretation and explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The numeric target is straightforward, but inverted-track semantics plus a standard sibling and a save
+      step make this more diagnostic than a plain modal range edit.
+  success_trigger:
+    human_readable:
+    - The committed Grade window range equals 60–90.
+    - The committed Pass band remains 20–60.
+    - The modal control “Save” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 60
+        to: 90
+        unit: grade
+        saved: true
+        target_instance: Grade window
+        non_target_instances_must_remain:
+          Pass band:
+            from: 20
+            to: 60
+      tolerance:
+        from: 0
+        to: 0
+        unit: grade
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Grade window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Pass band instead of Grade window.
+  - Stopping at 60–80 or 50–90.
+  - Getting the draft right but cancelling instead of saving.
+  expected_interaction_path:
+  - Open the modal.
+  - Adjust only Grade window to 60–90.
+  - Click Save.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mantine-v2-T47
+  name: Gateway retry window in a dense operations table
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: table_row_save
+  implementation_component: 'Mantine: RangeSlider in Table row'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the “Service windows” table, set the “Retry window” range in the “Gateway” row to 20–60, leave the “Billing”
+    row unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  ui_copy: In the “Service windows” table, set the “Retry window” range in the “Gateway” row to 20–60, leave the “Billing”
+    row unchanged, and click “Save” in the Gateway row. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, bottom_right placement, small scale, two range sliders,
+    and high clutter. The Service windows table includes Gateway and Billing rows. Each row has a Mantine RangeSlider labeled
+    “Retry window”, a compact Selected readout, and a row-local Save button. Initial values are Gateway=10–50 and Billing=15–45.
+    Toolbar actions and row menus add clutter.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: The task focuses on row-level range disambiguation in a small dense table, where the save affordance
+      is local and must be tied to the right row.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small row controls and row-local save semantics create a strong grounding-heavy hard task for the range
+      family.
+  success_trigger:
+    human_readable:
+    - The committed Gateway retry window is within ±1 of 20–60.
+    - The committed Billing retry window remains 15–45.
+    - The Gateway row Save control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 20
+        to: 60
+        unit: s
+        saved: true
+        target_instance: Gateway / Retry window
+        non_target_instances_must_remain:
+          Billing / Retry window:
+            from: 15
+            to: 45
+      tolerance:
+        from: 1
+        to: 1
+        unit: s
+      require_confirm: true
+      confirm_control: save-gateway-retry-window
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway / Retry window
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Billing instead of Gateway.
+  - Saving the wrong row.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate the Gateway row.
+  - Set Retry window to 20–60.
+  - Click Save in the Gateway row.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.
+- id: slider_range-mantine-v2-T48
+  name: Below-the-fold buffer range with section apply
+  canonical_type: slider_range
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: RangeSlider in nested settings panel'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: In the lower “Streaming” section, set the slider labeled “Buffer range” to 2–6, leave “Retry window” unchanged,
+    and click “Apply section”. The task will finish automatically when done.
+  ui_copy: In the lower “Streaming” section, set the slider labeled “Buffer range” to 2–6, leave “Retry window” unchanged,
+    and click “Apply section”. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, off-center placement, two range sliders, and medium clutter.
+    A long settings panel has an inner scroll region. In the lower Streaming section there are two Mantine RangeSliders, “Buffer
+    range” starting at 1–4 and “Retry window” starting at 3–7. The section footer contains “Apply section”. The Streaming
+    section is below the fold at load.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: Nested scrolling plus a section-local commit step and a sibling range slider create a solid grounded
+      recovery-and-verification task without adding irrelevant carrier complexity.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The lower section location and local Apply step are the main sources of difficulty; the range edit itself
+      stays human-solvable and clear.
+  success_trigger:
+    human_readable:
+    - The committed Buffer range equals 2–6.
+    - The committed Retry window remains 3–7.
+    - The section control “Apply section” has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        from: 2
+        to: 6
+        unit: s
+        saved: true
+        target_instance: Buffer range
+        non_target_instances_must_remain:
+          Retry window:
+            from: 3
+            to: 7
+      tolerance:
+        from: 0
+        to: 0
+        unit: s
+      require_confirm: true
+      confirm_control: Apply section
+      require_correct_instance: true
+      target_instance_label_or_id: Buffer range
+      terminal_condition: task ends when predicate holds
+      state_scope: committed
+  negative_cases:
+  - Changing Retry window instead of Buffer range.
+  - Not scrolling far enough to reach the Streaming section.
+  - Setting Buffer range correctly but not clicking Apply section.
+  expected_interaction_path:
+  - Scroll within the settings panel to the Streaming section.
+  - Adjust Buffer range to 2–6 and leave Retry window unchanged.
+  - Click Apply section.
+  notes: Checker should validate the committed post-Save state, not the transient pending values shown during drag.

@@ -1,0 +1,3300 @@
+- id: context_menu-antd-v2-T01
+  name: 'Gamma cell: scroll to Export as CSV from compact table menu'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the compact table, open the context menu on the Gamma row’s Total cell and select “Export as CSV”. The task will finish automatically when done.
+  ui_copy: In the compact table, open the context menu on the Gamma row’s Total cell and select “Export as CSV”. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, small text, off-center placement, and medium clutter from filter chips and a summary strip. The table has four rows (Alpha, Beta, Gamma, Delta); only the Total cell in the Gamma row opens a custom context menu on right-click. The AntD Dropdown uses trigger=['contextMenu'] and is attached to the cell, with a fixed-height Menu that scrolls internally. The menu contains about 22 actions, including Copy, Copy as JSON, Pin column, Hide column, Sort ascending, Sort descending, Export as PDF, and Export as CSV near the bottom. Export as CSV is not initially visible. The browser’s native context menu must not count. Activating an item closes the menu and records the activated path.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - spacing
+    factor_rationale: This task uses a dense table-cell carrier and an internally scrollable context menu so the challenge comes from correct right-click invocation, overlay-specific scrolling, and avoiding page scroll or wrong-cell activation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The menu target is hidden below the fold inside a compact overlay, and the table context adds acquisition noise even though the final action is discrete.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Export as CSV'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Export as CSV
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Gamma__Total
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Right-clicking a different Gamma cell or any cell in another row.
+  - Scrolling the page instead of the menu overlay.
+  - Selecting “Export as PDF” or any other nearby export action.
+  - Opening the browser’s native context menu instead of the custom AntD menu.
+  expected_interaction_path:
+  - Right-click the Total cell in the Gamma row.
+  - Scroll inside the context menu until “Export as CSV” is visible.
+  - Click “Export as CSV”.
+  notes: Expose a dedicated menu scroll container and the last_activated_item_path; the checker should also validate the target cell instance.
+- id: context_menu-antd-v2-T02
+  name: 'Shard node: Move → Under Archive → As child'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + nested Menu'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the service tree, open the context menu for “Shard 3” and select Move → Under Archive → As child. The task will finish automatically when done.
+  ui_copy: In the service tree, open the context menu for “Shard 3” and select Move → Under Archive → As child. The task will finish automatically when done.
+  setup_description: 'Layout uses inline_surface inside a settings panel with compact spacing, high clutter, and top-left placement. A small service tree is embedded between unrelated toggles and status banners. The visible nodes include Cluster A, Shard 1, Shard 2, Shard 3, and Archive. Right-clicking a node opens an AntD context menu. The menu uses nested submenus: Move ▸, Under Archive ▸, then leaf items As sibling and As child. Submenus open as separate popouts; because the tree is near the left side, the top-level menu opens to the right and the third panel stays narrow. Only Shard 3 is the target node.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - overlay_model
+    factor_rationale: The key pressure is choosing the correct tree node in a crowded settings surface and then tracking a three-step submenu path across multiple popout overlays.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Three overlay levels plus a crowded tree carrier make this a high-layering, high-disambiguation path-selection task.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Move', 'Under Archive', 'As child'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Move
+        - Under Archive
+        - As child
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Shard 3
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the menu on Shard 1, Shard 2, Archive, or Cluster A instead of Shard 3.
+  - Selecting Move → Under Archive → As sibling.
+  - Opening Move or Under Archive but never activating the final leaf item.
+  - Selecting a top-level action like Rename or Inspect instead.
+  expected_interaction_path:
+  - Right-click the Shard 3 tree node.
+  - Open Move, then Under Archive.
+  - Click As child.
+  notes: Record the full activated path and the target node label separately so submenu success cannot be credited to the wrong node.
+- id: context_menu-antd-v2-T03
+  name: 'Sandbox B editor: set four View toggles'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (submenu with checkable items)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: Open the context menu for the editor labeled “Sandbox B” and in View set Line numbers ON, Word wrap ON, Diagnostics ON, and Minimap OFF. Then leave the menu state committed. The task will finish automatically when done.
+  ui_copy: Open the context menu for the editor labeled “Sandbox B” and in View set Line numbers ON, Word wrap ON, Diagnostics ON, and Minimap OFF. Then leave the menu state committed. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, off-center placement, and medium clutter. A right-side drawer titled “Editor preferences” is already open and contains two code-preview panes labeled Sandbox A and Sandbox B. Right-clicking inside either pane opens an AntD context menu. The View submenu stays open while toggling checkable items and is configured so item clicks do not close the parent menu. In Sandbox B, the initial View state is Line numbers OFF, Word wrap OFF, Diagnostics OFF, Minimap ON. Sandbox A has a different starting state and must not be changed. The drawer footer has a non-interactive Close button only; the toggles auto-apply.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: '2'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - spacing
+    factor_rationale: The challenge is not one toggle; it is targeting the correct editor inside a drawer, opening the correct submenu, and finishing with an exact four-flag state while the sibling editor remains untouched.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because it combines duplicate editor disambiguation with a submenu that must remain open across multiple state changes.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Sandbox B', the View checked states match Line numbers=true, Word wrap=true, Diagnostics=true, Minimap=false.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Line numbers: true
+          Word wrap: true
+          Diagnostics: true
+          Minimap: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Sandbox B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the required toggles to Sandbox A instead of Sandbox B.
+  - Setting only some of the required flags or leaving Minimap ON.
+  - Closing the menu before the final state matches.
+  - Changing unrelated submenu sections such as Theme or Indentation instead.
+  expected_interaction_path:
+  - Right-click inside Sandbox B.
+  - Open the View submenu.
+  - Toggle the four required options until the final state matches exactly.
+  notes: Check only the four named View keys for success; incidental changes elsewhere should not count toward completion.
+- id: context_menu-antd-v2-T04
+  name: 'Dashboard preview: Reset layout and confirm'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu + inline confirm row'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Dashboard preview” area, click “Reset layout…”, then click “Reset” to confirm. The task will finish automatically when done.
+  ui_copy: Open the context menu for the “Dashboard preview” area, click “Reset layout…”, then click “Reset” to confirm. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, off-center placement, and high clutter from sliders, switch rows, drag handles, and widget chips. A central preview rectangle labeled “Dashboard preview” supports a custom right-click menu. The AntD menu contains Add widget, Arrange automatically, and Reset layout…. Choosing Reset layout… does not finish the task; instead, the same overlay grows an inline destructive confirmation footer with Cancel and Reset buttons. The action only commits when Reset is clicked in that footer.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - confirmation_model
+    - layout
+    factor_rationale: The menu is embedded in a busy settings surface and the destructive action requires a second explicit confirmation inside the same transient overlay, so the task tests menu persistence and post-selection verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The visible action is easy to name, but confirming the destructive action inside a noisy settings surface is exactly the kind of transient-overlay tracking v1 under-tested.
+  success_trigger:
+    human_readable:
+    - The pending action ['Reset layout'] is confirmed via the 'Reset' control inside the context menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmed_action_path:
+        - Reset layout
+        confirmation_result: confirmed
+      tolerance: null
+      require_confirm: true
+      confirm_control: Reset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Reset layout… and then dismissing the menu without pressing Reset.
+  - Clicking Cancel instead of Reset.
+  - Choosing Arrange automatically or Add widget.
+  - Opening the menu on some other element in the settings panel.
+  expected_interaction_path:
+  - Right-click the Dashboard preview area.
+  - Click Reset layout….
+  - Click Reset in the inline confirmation footer.
+  notes: Keep the confirmation footer inside the same AntD overlay so the primary component remains the context menu.
+- id: context_menu-antd-v2-T05
+  name: 'API key C9D1: revoke flow must be cancelled'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu + inline confirm row'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the token drawer, open the context menu for “API key C9D1”, choose “Revoke key…”, and then click “Cancel”. The task will finish automatically when done.
+  ui_copy: In the token drawer, open the context menu for “API key C9D1”, choose “Revoke key…”, and then click “Cancel”. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow in dark theme with compact spacing and medium clutter. A left-side drawer titled “Service tokens” is open and lists four keys: A1B2, B7E4, C9D1, and D3K8. Each row supports a context menu on right-click. The menu contains Copy key ID, Rename, and Revoke key…. Selecting Revoke key… reveals Cancel and Revoke in the same overlay footer. The goal is specifically to cancel the revoke flow for C9D1; the other keys must not be targeted.'
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - theme
+    - confirmation_model
+    factor_rationale: The hard part is choosing the correct key in a compact dark drawer and then taking the non-destructive branch of a destructive confirmation flow.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This combines high instance confusion with a two-step confirmation where the correct end state is cancellation, not confirmation.
+  success_trigger:
+    human_readable:
+    - The pending action ['Revoke key'] is cancelled via the 'Cancel' control inside the context menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        cancelled_action_path:
+        - Revoke key
+        confirmation_result: cancelled
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: API key C9D1
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Revoke is confirmed instead of cancelled.
+  - The revoke flow is opened for A1B2, B7E4, or D3K8 instead of C9D1.
+  - The menu is dismissed without pressing Cancel.
+  - Only the row is selected but no confirmation footer action is taken.
+  expected_interaction_path:
+  - Right-click the row for API key C9D1.
+  - Click Revoke key….
+  - Click Cancel in the footer.
+  notes: Expose both the open_target label and the cancellation result so success cannot be awarded to the wrong token row.
+- id: context_menu-antd-v2-T06
+  name: 'Reference shortcut: choose Copy signed URL'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu with shortcut text'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “bundle.tar.gz” and choose the item whose shortcut matches the Reference pill “Ctrl+Shift+U” (Copy signed URL). The task will finish automatically when done.
+  ui_copy: Open the context menu for “bundle.tar.gz” and choose the item whose shortcut matches the Reference pill “Ctrl+Shift+U” (Copy signed URL). The task will finish automatically when done.
+  setup_description: 'Layout uses inline_surface with compact spacing, top_right placement, and medium clutter from neighboring file rows and metadata badges. The target row is bundle.tar.gz. A small non-interactive Reference pill above the file list shows the shortcut text Ctrl+Shift+U. Right-clicking bundle.tar.gz opens an AntD menu with right-aligned shortcut hints: Copy — Ctrl+C, Copy path — Ctrl+Shift+P, Copy signed URL — Ctrl+Shift+U, Copy as Markdown — Ctrl+M, and Open in new tab — Ctrl+Enter. The menu closes after activation and records the activated label.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: '3'
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - instances
+    factor_rationale: The menu is not long, but it sits in a crowded inline surface near the viewport edge and requires matching a shortcut cue to one of several semantically similar copy actions.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This is hard because several sibling actions are near-duplicates, and the agent must use the shortcut cue rather than just picking the first copy-like action.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Copy signed URL'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Copy signed URL
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: bundle.tar.gz
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Copy, Copy path, or Copy as Markdown instead of Copy signed URL.
+  - Opening the menu on a neighboring file row.
+  - Matching the shortcut cue mentally but never activating the item.
+  - Opening the browser native context menu instead of the AntD overlay.
+  expected_interaction_path:
+  - Right-click bundle.tar.gz.
+  - Locate the item whose shortcut is Ctrl+Shift+U.
+  - Click Copy signed URL.
+  notes: Include the shortcut text in the rendered item text or accessible name so the cue is observable in multiple modes.
+- id: context_menu-antd-v2-T07
+  name: 'Incident board card 3: set Priority radio to Critical'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu with radio-style section'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the incident board, open the context menu for “Card 3” and set Priority to “Critical”. The task will finish automatically when done.
+  ui_copy: On the incident board, open the context menu for “Card 3” and set Priority to “Critical”. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, and high clutter from swimlane headers, assignee pills, and timestamps. Four incident cards (Card 1–Card 4) appear in one lane; each card supports a context menu. The AntD menu includes Open, Priority (radio group rendered inside the menu), Assign, and Archive. The Priority group contains Low, Medium, High, and Critical, with exactly one selected at a time. All four cards start at High. The menu remains open while radio selection changes so the selected marker is visible.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - scale
+    factor_rationale: The board layout makes acquisition and instance tracking harder, but the semantic burden is also meaningful because the agent must interact with a radio-style section rather than a flat one-shot item.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The state change is discrete, but the cluttered board and four visually similar cards create high target-selection pressure.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Card 3', the selected radio value in group 'Priority' equals 'Critical'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        radio_groups:
+          Priority: Critical
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Card 3
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Priority to Critical on Card 1, Card 2, or Card 4 instead of Card 3.
+  - Selecting High, Medium, or Low instead of Critical.
+  - Opening or archiving the card without changing the radio group.
+  - Focusing Critical without actually selecting it.
+  expected_interaction_path:
+  - Right-click Card 3.
+  - In the Priority section, select Critical.
+  notes: Expose radio_groups state per card instance so the checker can evaluate the correct card only.
+- id: context_menu-antd-v2-T08
+  name: 'Server 2: choose the closed-lock action from icon-only reference'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + icon menu'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Server 2” and choose the option that matches the Reference icon (closed lock). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Server 2” and choose the option that matches the Reference icon (closed lock). The task will finish automatically when done.
+  setup_description: 'Layout uses inline_surface with compact spacing and medium clutter. Four server rows appear in a deployment panel: Server 1, Server 2, Server 3, and Server 4. A small non-interactive Reference box above the list shows only a closed-lock icon, with no text. Right-clicking a row opens an AntD context menu with icon + label items: Lock (closed lock), Unlock (open lock), Restart (circular arrow), and Shut down (power). Only Server 2 is the target row. The menu opens at the cursor and closes after selection.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 4_plus
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: 'This task stresses visual guidance and instance disambiguation together: the agent must choose the correct row and distinguish lock from unlock using icon shape, not just keyword overlap.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The action itself is one leaf selection, but the icon-only cue and four similar target rows make it nontrivial in a grounded way.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Lock'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Lock
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Server 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Lock on Server 1, Server 3, or Server 4.
+  - Choosing Unlock instead of Lock.
+  - Choosing Restart or Shut down.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click the row labeled Server 2.
+  - Match the closed-lock icon to the Lock item.
+  - Click Lock.
+  notes: Ensure lock and unlock icons remain visually distinct in all themes; expose the row label and activated path per instance.
+- id: context_menu-antd-v2-T09
+  name: 'Revenue heatmap widget: scroll to Open diagnostics'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (scrollable grouped menu)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the analytics dashboard, open the context menu for the “Revenue heatmap” widget and select “Open diagnostics”. The task will finish automatically when done.
+  ui_copy: On the analytics dashboard, open the context menu for the “Revenue heatmap” widget and select “Open diagnostics”. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, top_right placement, and high clutter from neighboring widgets, filter chips, and a right rail of KPI tiles. Only the widget titled “Revenue heatmap” supports a custom context menu in this scene. Right-clicking it opens an AntD menu with roughly 20 grouped actions and a fixed max height; the menu itself scrolls. The target action, Open diagnostics, sits near the bottom below Change visualization, Duplicate widget, Add annotation, and Open settings. It is not visible until the overlay is scrolled.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - internal_scroll_region
+    - placement
+    factor_rationale: This uses one intrinsically hard widget target near a corner plus an internally scrollable menu, so the pressure is on right-click grounding, overlay tracking, and offscreen action retrieval.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The action list is dense and offscreen, and the top-right placement increases the burden of acquiring and tracking the transient overlay.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Open diagnostics'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Open diagnostics
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Open settings or Change visualization instead of Open diagnostics.
+  - Scrolling the page or dashboard lane rather than the menu overlay.
+  - Right-clicking a different widget that does not own the custom menu.
+  - Opening the menu but never activating an item.
+  expected_interaction_path:
+  - Right-click the Revenue heatmap widget.
+  - Scroll within the menu overlay until Open diagnostics appears.
+  - Click Open diagnostics.
+  notes: Keep non-target widgets free of custom context menus so the task is about locating one target overlay, not arbitrary widget sampling.
+- id: context_menu-antd-v2-T10
+  name: 'Report Q4: compact submenu path near viewport edge'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + nested Menu'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Report Q4” and select Move to → Archive. The task will finish automatically when done.
+  ui_copy: Open the context menu for “Report Q4” and select Move to → Archive. The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, bottom_right placement, and medium clutter from neighboring file chips and action pills. The file row Report Q4 sits very close to the viewport edge. The AntD context menu uses compact styling and small item height. The top-level menu contains Open, Move to ▸, Share ▸, and Rename. The Move to submenu contains Inbox, Archive, and Trash. Because the target row is near the bottom-right edge, the menu repositions and the submenu opens leftward rather than extending offscreen.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - placement
+    - spacing
+    - overlay_model
+    factor_rationale: This is a corner-placement submenu task where the menu must remain trackable as it repositions and opens a compact child overlay in the only direction that fits.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The path is short, but small compact targets and corner-triggered repositioning make the overlay behavior much harder to follow than a centered submenu.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Move to', 'Archive'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Move to
+        - Archive
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Move to → Inbox or Move to → Trash.
+  - Opening the Share submenu instead of Move to.
+  - Clicking Move to without activating a child item.
+  - Losing the submenu because of incorrect pointer/overlay tracking.
+  expected_interaction_path:
+  - Right-click Report Q4.
+  - Open Move to.
+  - Click Archive.
+  notes: Enable AntD overflow adjustment so the task remains human-solvable while still forcing the agent to track a repositioned child overlay.
+- id: context_menu-antd-v2-T11
+  name: 'Gamma row: exact Columns toggle set in compact submenu'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + nested Menu with checkable items'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the compact table, open the context menu for the row “Gamma”, open Columns, and set Owner ON, Status OFF, Due date ON, and Cost center OFF. The task will finish automatically when done.
+  ui_copy: In the compact table, open the context menu for the row “Gamma”, open Columns, and set Owner ON, Status OFF, Due date ON, and Cost center OFF. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, small scale, and medium clutter. Four table rows (Alpha, Beta, Gamma, Delta) each support a row-level context menu. The AntD menu contains View details, Columns ▸, and Export row. The Columns submenu stays open while toggling checkable items. In the Gamma row, initial states are Owner OFF, Status ON, Due date OFF, Cost center ON, Tags ON. Only the four named keys matter for success. The row is in the middle of the table, so the pointer must land precisely in the correct row before the submenu sequence begins.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - overlay_model
+    factor_rationale: This combines row disambiguation, submenu navigation, and exact multi-toggle end-state verification in a compact table carrier instead of a clean isolated card.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The task is hard because it demands the exact final configuration of four toggles on the correct row while navigating a compact submenu tree.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Gamma', the Columns checked states match Owner=true, Status=false, Due date=true, Cost center=false.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Owner: true
+          Status: false
+          Due date: true
+          Cost center: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Gamma
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the correct toggles on Alpha, Beta, or Delta instead of Gamma.
+  - Leaving any one of the four required keys in the wrong state.
+  - Closing the submenu before the final state matches.
+  - Treating Tags as a required key or relying on incidental toggles.
+  expected_interaction_path:
+  - Right-click the Gamma row.
+  - Open Columns.
+  - Toggle the four required entries until the final state matches.
+  notes: Check only the four named keys; Tags may vary and should not affect the result.
+- id: context_menu-antd-v2-T12
+  name: 'Secondary document: duplicate from the correct tile in a crowded shelf'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the document shelf, open the context menu for the tile labeled “Secondary draft” and click “Duplicate”. The task will finish automatically when done.
+  ui_copy: In the document shelf, open the context menu for the tile labeled “Secondary draft” and click “Duplicate”. The task will finish automatically when done.
+  setup_description: 'Layout uses nested_scroll with compact spacing, off-center placement, and high clutter. The page contains a scrollable shelf of four document tiles: Primary spec, Secondary draft, Notes, and Archive copy. Each tile is small and visually similar, with a file icon, a status badge, and a three-line preview. Right-clicking a tile opens an AntD context menu with Open, Duplicate, Rename, and Delete. Only Secondary draft is the target. The shelf itself is inside a scroll region, but the tiles are all visible at load.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - scale
+    factor_rationale: This keeps a simple leaf action but raises difficulty through dense same-type targets in a cluttered scrollable shelf, which directly pressures right-click target acquisition and instance tracking.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The action is shallow, but the shelf has four very similar small targets and no forgiving carrier geometry.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Duplicate'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Duplicate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary draft
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Duplicating Primary spec, Notes, or Archive copy instead of Secondary draft.
+  - Selecting Open, Rename, or Delete instead of Duplicate.
+  - Opening a menu on the correct tile but not activating any item.
+  - Triggering the browser native menu instead of the AntD overlay.
+  expected_interaction_path:
+  - Right-click the Secondary draft tile.
+  - Click Duplicate.
+  notes: 'This is intentionally a short path but not a toy task: the difficulty is almost entirely grounded in instance disambiguation and small-target acquisition.'
+- id: context_menu-antd-v2-T13
+  name: 'Press kit package: Share → Copy public link by icon cue'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + nested Menu with icons'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “press-kit.zip” and select Share → Copy public link (the item with the globe icon). The task will finish automatically when done.
+  ui_copy: Open the context menu for “press-kit.zip” and select Share → Copy public link (the item with the globe icon). The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing and medium clutter. Three package rows are visible in one downloads panel. A small non-interactive Reference box above the list shows a globe icon and the words Copy public link. Right-clicking press-kit.zip opens an AntD context menu with Open, Share ▸, Rename, and Delete. The Share submenu contains Copy public link (globe icon), Copy private link (lock icon), and Email link (envelope icon). The target row is near the middle of the panel, with enough clutter to make row acquisition nontrivial but not adversarial.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: '3'
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - overlay_model
+    factor_rationale: The agent must combine row disambiguation with icon-guided submenu disambiguation between public and private link actions, which is more diagnostic than a flat text-only leaf selection.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The submenu path is not long, but the key challenge is distinguishing similar leaf actions using icon + label evidence on the correct row.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Share', 'Copy public link'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Share
+        - Copy public link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: press-kit.zip
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Share → Copy private link or Share → Email link.
+  - Opening the Share submenu on a neighboring package row.
+  - Opening Share but never activating a leaf item.
+  - Selecting Rename or Delete instead of entering the submenu.
+  expected_interaction_path:
+  - Right-click press-kit.zip.
+  - Open Share.
+  - Click Copy public link.
+  notes: Ensure public vs private link icons are visually distinct and stable across themes.
+- id: context_menu-antd-v2-T14
+  name: 'Canvas shape: Transform → Rotate → 90° clockwise'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + multi-level Menu'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for the shape “Rectangle 1” and select Transform → Rotate → 90° clockwise. The task will finish automatically when done.
+  ui_copy: Open the context menu for the shape “Rectangle 1” and select Transform → Rotate → 90° clockwise. The task will finish automatically when done.
+  setup_description: Layout uses isolated_card with compact spacing, small scale, bottom_left placement, and medium clutter from a toolbar, coordinate readout, and layer chips. The target is a small canvas object labeled Rectangle 1. Right-clicking directly on the shape opens an AntD context menu. The menu contains Duplicate, Transform ▸, and Delete. Transform opens Rotate ▸ and Flip ▸, and Rotate opens 90° clockwise, 90° counterclockwise, and 180°. Because the target is small and close to the bottom-left of the viewport, the multi-level menus occupy tight but valid space and require precise pointer or keyboard tracking.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_left
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - scale
+    - placement
+    - overlay_model
+    factor_rationale: 'This is one of the few justified isolated-card scenes: the hidden affordance is already hard, and the real pressure comes from a small target plus a three-level path in a corner-biased overlay stack.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: A small hit target and a three-level submenu path make this a pure interaction-knowledge and target-acquisition stress test.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Transform', 'Rotate', '90° clockwise'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Transform
+        - Rotate
+        - 90° clockwise
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting 90° counterclockwise or 180° instead of 90° clockwise.
+  - Selecting Transform → Flip → Horizontal or Vertical.
+  - Right-clicking the canvas background rather than Rectangle 1.
+  - Opening Transform or Rotate without activating the final leaf item.
+  expected_interaction_path:
+  - Right-click Rectangle 1.
+  - Open Transform, then Rotate.
+  - Click 90° clockwise.
+  notes: Although the carrier is isolated_card, the factor floor is compensated by small scale, corner placement, medium clutter, and three overlay levels.
+- id: context_menu-antd-v2-T15
+  name: 'Photo card 3: turn Pinned ON in Display submenu'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu with checkable submenu items'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: On the photo board, open the context menu for “Photo card 3”, open Display, and turn Pinned ON. The task will finish automatically when done.
+  ui_copy: On the photo board, open the context menu for “Photo card 3”, open Display, and turn Pinned ON. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, and medium clutter. Four photo cards sit in a masonry-like board. Each card supports a context menu on right-click. The AntD menu contains Open, Display ▸, and Remove. The Display submenu contains Pinned (checkable), Show caption (checkable), and Show histogram (checkable). For Photo card 3, Pinned starts OFF; the other cards have different states and are irrelevant. The submenu remains visible while check items change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - overlay_model
+    factor_rationale: This is a toggle-state task that only becomes hard because the correct card must be found in a cluttered board and the state change lives one submenu level down, not at the top level.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The final state is simple, but acquiring the right card and entering the correct submenu makes it a meaningful hard toggle task.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Photo card 3', the checked state for Pinned is true (ON).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Pinned: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Photo card 3
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Turning Pinned ON for Photo card 1, 2, or 4 instead of Photo card 3.
+  - Turning on Show caption or Show histogram without setting Pinned.
+  - Opening the correct submenu but leaving Pinned OFF.
+  - Closing the submenu before the final state changes.
+  expected_interaction_path:
+  - Right-click Photo card 3.
+  - Open Display.
+  - Click Pinned so it becomes ON.
+  notes: Expose checked_items per card instance; only the Pinned key should be evaluated for success.
+- id: context_menu-antd-v2-T16
+  name: 'Build row: scroll to Compare with previous snapshot'
+  canonical_type: context_menu
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Dropdown (trigger=contextMenu) + Menu (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the build history panel, open the context menu for “Build 217” and select “Compare with previous snapshot”. The task will finish automatically when done.
+  ui_copy: In the build history panel, open the context menu for “Build 217” and select “Compare with previous snapshot”. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, bottom_right placement, and high clutter. A build-history side panel lists many build rows and sits beside a page-level deployment summary. Only Build 217 supports a custom right-click menu in this scene. The AntD menu is long and grouped, with a fixed max height and an internal scroll region. Items include Open build, Copy SHA, Diff to baseline, Compare with latest, Compare with previous snapshot, Re-run, and Archive. Compare with previous snapshot appears below the initially visible portion of the menu.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - clutter
+    factor_rationale: 'The nested-scroll carrier and long grouped overlay are intentional: they force the agent to keep page scroll, panel scroll, and menu scroll distinct while searching a semantically similar cluster of diff-related actions.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: This is hard mainly because several compare/diff actions are semantically adjacent and the right one is only visible after overlay scrolling in a crowded side panel.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Compare with previous snapshot'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Compare with previous snapshot
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Build 217
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Compare with latest or Diff to baseline instead of Compare with previous snapshot.
+  - Scrolling the surrounding panel rather than the context-menu overlay.
+  - Opening a menu on a different build row.
+  - Opening the menu and leaving it without activating an item.
+  expected_interaction_path:
+  - Right-click Build 217.
+  - Scroll inside the menu until Compare with previous snapshot is visible.
+  - Click Compare with previous snapshot.
+  notes: This is intentionally a semantically confusable long-menu task; the checker should rely on the activated path and row label.
+- id: context_menu-mui-v2-T01
+  name: 'Sales chart widget: scroll to Open settings'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu (anchorPosition) + MenuList (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, open the context menu for the “Sales chart” widget and select “Open settings”. The task will finish automatically when done.
+  ui_copy: On the dashboard, open the context menu for the “Sales chart” widget and select “Open settings”. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, and high clutter from neighboring widgets, a filter bar, and an insights sidebar. Only the widget titled “Sales chart” opens a custom context menu. The menu is implemented with MUI Menu anchored to cursor coordinates using anchorPosition and has a max height, so the MenuList scrolls internally. Visible items near the top include Refresh, Duplicate widget, Move up, Move down, and Change visualization; Open settings appears near the bottom and is not visible until the overlay is scrolled.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - internal_scroll_region
+    - layout
+    factor_rationale: This task keeps the right-click affordance central and uses a long MUI menu with internal scrolling inside a busy dashboard panel, which is more diagnostic than a short centered menu.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The list is semantically dense and offscreen in a cluttered dashboard carrier, so finding the correct item requires overlay-specific scrolling and careful action discrimination.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Open settings'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Open settings
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Change visualization, Edit widget, or another nearby action instead of Open settings.
+  - Scrolling the page rather than the menu overlay.
+  - Right-clicking a non-target widget.
+  - Opening the menu without activating any item.
+  expected_interaction_path:
+  - Right-click the Sales chart widget.
+  - Scroll inside the MUI menu until Open settings is visible.
+  - Click Open settings.
+  notes: Use MUI Menu with a max-height MenuList so the overlay itself becomes the scroll region.
+- id: context_menu-mui-v2-T02
+  name: 'Link preview: choose item by shortcut reference'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu with right-aligned shortcut hints'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Link preview” and choose the option whose shortcut matches the Reference pill “Ctrl+Shift+L” (Copy link). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Link preview” and choose the option whose shortcut matches the Reference pill “Ctrl+Shift+L” (Copy link). The task will finish automatically when done.
+  setup_description: 'Layout uses inline_surface with compact spacing, top_right placement, and medium clutter from nearby cards and metadata chips. A small Reference pill above the preview shows Ctrl+Shift+L. Right-clicking inside the Link preview opens a MUI menu anchored at cursor position. The menu items display right-aligned shortcut hints: Copy — Ctrl+C, Copy link — Ctrl+Shift+L, Copy as Markdown — Ctrl+M, and Open in new tab — Ctrl+Enter. The target must be chosen by shortcut, not by the fact that multiple labels start with Copy.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: '1'
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - clutter
+    factor_rationale: Several leaf labels are near-duplicates, so the explicit shortcut cue creates a diagnostic mixed-guidance task without needing a deeper submenu.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This is hard because the item set is semantically confusable and the target is specified by shortcut cue within a small corner-placed overlay.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Copy link'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Copy link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Copy or Copy as Markdown instead of Copy link.
+  - Opening the menu on a neighboring card rather than the preview surface.
+  - Focusing the right item but never activating it.
+  - Using the browser native context menu.
+  expected_interaction_path:
+  - Right-click inside the Link preview.
+  - Locate the menu item with shortcut Ctrl+Shift+L.
+  - Click Copy link.
+  notes: Make the shortcut text part of the rendered item content or accessible name so it is observable across modes.
+- id: context_menu-mui-v2-T03
+  name: 'Photo 7: Share → Email in dark modal surface'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + nested Popover/Menu submenu'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In dark theme, open the context menu for “Photo 7” and select Share → Email. The task will finish automatically when done.
+  ui_copy: In dark theme, open the context menu for “Photo 7” and select Share → Email. The task will finish automatically when done.
+  setup_description: Layout uses modal_flow with dark theme, compact spacing, and medium clutter. A media-picker dialog is already open, showing a grid of photo tiles and filter chips; only Photo 7 supports the custom menu in this scene. Right-clicking the tile opens a MUI Menu at cursor position. The parent menu contains Open, Share ▸, Copy metadata, and Delete. Share opens a second Popover/Menu with Email and Copy link. The tile sits close to the right edge of the dialog body, so the submenu has to remain trackable within constrained space.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: off_center
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - theme
+    - overlay_model
+    - layout
+    factor_rationale: 'The dialog carrier and second overlay matter more than the leaf label: the task tests whether the agent can keep track of a nested MUI submenu inside a dark, constrained modal surface.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: This is a layered submenu task in a dark modal where the challenge is maintaining overlay state, not just reading the target label.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Share', 'Email'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Share
+        - Email
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Share → Copy link instead of Email.
+  - Selecting Open, Copy metadata, or Delete.
+  - Opening Share without activating a leaf item.
+  - Right-clicking a non-target tile in the dialog.
+  expected_interaction_path:
+  - Right-click Photo 7.
+  - Open Share.
+  - Click Email.
+  notes: Use a second MUI Menu or Popover for the child overlay and record the full path regardless of whether the submenu opened by hover or keyboard.
+- id: context_menu-mui-v2-T04
+  name: 'Gamma row: exact Columns toggle set'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + nested submenu with checkable items'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the compact table, open the context menu for the row “Gamma”, open Columns, and set Owner ON, Status OFF, Due date ON, and Tags OFF. The task will finish automatically when done.
+  ui_copy: In the compact table, open the context menu for the row “Gamma”, open Columns, and set Owner ON, Status OFF, Due date ON, and Tags OFF. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, small scale, and medium clutter. Four rows (Alpha, Beta, Gamma, Delta) are visible. Right-clicking a row opens a MUI Menu at cursor position. The menu contains View details, Columns ▸, and Export row. The Columns child menu contains Owner, Status, Due date, and Tags as checkable items. In Gamma, initial states are Owner OFF, Status ON, Due date OFF, Tags ON. The submenu stays open while toggles change. Other rows must be ignored.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - overlay_model
+    factor_rationale: The table carrier provides the acquisition burden, while the submenu and four-key exact end state turn a simple row menu into a real recovery and verification task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Multi-toggle submenu work on the correct row is substantially harder than a one-shot row action, especially in a compact table.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Gamma', the Columns checked states match Owner=true, Status=false, Due date=true, Tags=false.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Owner: true
+          Status: false
+          Due date: true
+          Tags: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Gamma
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the required toggle set on Alpha, Beta, or Delta instead of Gamma.
+  - Leaving any one required key in the wrong state.
+  - Closing the menu before the final state matches.
+  - Exporting the row or opening View details instead of staying in Columns.
+  expected_interaction_path:
+  - Right-click the Gamma row.
+  - Open Columns.
+  - Toggle the four required items until the final state matches.
+  notes: Expose checked_items and the open target label separately so the checker can distinguish wrong-row success from correct-row success.
+- id: context_menu-mui-v2-T05
+  name: 'Dashboard preview: reset layout and confirm'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + inline confirmation footer'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Dashboard preview” area, click “Reset layout…”, then click “Reset” to confirm. The task will finish automatically when done.
+  ui_copy: Open the context menu for the “Dashboard preview” area, click “Reset layout…”, then click “Reset” to confirm. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, center placement, and high clutter. The central preview area is labeled Dashboard preview and is surrounded by sliders, widget chips, and visibility toggles. Right-clicking inside the preview opens a MUI Menu. Its items are Add widget, Arrange automatically, and Reset layout…. Choosing Reset layout… keeps the menu open and reveals an inline footer inside the same overlay with Cancel and Reset buttons. The action only counts if Reset is clicked there.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - confirmation_model
+    - layout
+    factor_rationale: The menu action is embedded in a busy settings surface and requires an explicit second-stage confirmation inside the same transient overlay, which is exactly where context-menu state tracking often breaks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The clutter and confirm footer make this much harder than a plain leaf-item selection even though the target text is clear.
+  success_trigger:
+    human_readable:
+    - The pending action ['Reset layout'] is confirmed via the 'Reset' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmed_action_path:
+        - Reset layout
+        confirmation_result: confirmed
+      tolerance: null
+      require_confirm: true
+      confirm_control: Reset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Reset layout… but dismissing the overlay instead of confirming.
+  - Clicking Cancel instead of Reset.
+  - Choosing Add widget or Arrange automatically.
+  - Opening the menu on a non-target settings element.
+  expected_interaction_path:
+  - Right-click the Dashboard preview area.
+  - Click Reset layout….
+  - Click Reset in the inline confirmation footer.
+  notes: Keep the confirmation UI within the menu overlay so the primary interaction remains a context menu, not a separate dialog.
+- id: context_menu-mui-v2-T06
+  name: 'Rectangle 1: Transform → Rotate → 90° clockwise'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + multi-level nested submenus'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for the shape “Rectangle 1” and select Transform → Rotate → 90° clockwise. The task will finish automatically when done.
+  ui_copy: Open the context menu for the shape “Rectangle 1” and select Transform → Rotate → 90° clockwise. The task will finish automatically when done.
+  setup_description: Layout uses isolated_card with compact spacing, small scale, bottom_right placement, and medium clutter from layer chips and a coordinate badge. Rectangle 1 is a small shape inside a canvas card. Right-clicking directly on the shape opens a MUI Menu at cursor position. The menu contains Duplicate, Transform ▸, and Delete. Transform opens Rotate ▸ and Flip ▸. Rotate opens 90° clockwise, 90° counterclockwise, and 180°. The target sits close to the viewport edge, so the nested menus have to remain trackable in constrained space.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - scale
+    - placement
+    - overlay_model
+    factor_rationale: This is a justified isolated-card task because the difficulty comes from a small right-click target plus a three-level nested menu path near the viewport boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: A small shape and a deep submenu tree produce a strong interaction-knowledge test even without heavy scene clutter.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Transform', 'Rotate', '90° clockwise'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Transform
+        - Rotate
+        - 90° clockwise
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting 90° counterclockwise or 180° instead of 90° clockwise.
+  - Entering Flip instead of Rotate.
+  - Right-clicking the canvas background instead of Rectangle 1.
+  - Opening Transform or Rotate without choosing the final item.
+  expected_interaction_path:
+  - Right-click Rectangle 1.
+  - Open Transform, then Rotate.
+  - Click 90° clockwise.
+  notes: MUI Popover-based positioning should remain enabled so the menu is visible even near the viewport edge.
+- id: context_menu-mui-v2-T07
+  name: 'Task A: set Priority to High in dense radio section'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu with dense radio-style section'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Task A” and set Priority to “High”. The task will finish automatically when done.
+  ui_copy: Open the context menu for “Task A” and set Priority to “High”. The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, off-center placement, and medium clutter. Three task cards labeled Task A, Task B, and Task C are shown inside a sprint strip. Right-clicking a card opens a dense MUI menu with Open, Priority (radio-style section), Assign, and Delete. Priority contains Low, Medium, and High. All three tasks start at Medium. The menu is rendered with the dense prop, so item padding and text size are reduced. The selection updates immediately and remains visible while the menu stays open.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: '3'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - spacing
+    - instances
+    - scale
+    factor_rationale: Dense menu styling and three similar instances raise acquisition and disambiguation pressure without changing the semantic simplicity of a radio selection.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The target state is discrete, but the dense menu and three-instance sprint strip make the correct radio selection materially harder.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Task A', the selected radio value in group 'Priority' equals 'High'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        radio_groups:
+          Priority: High
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Task A
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Priority to High on Task B or Task C.
+  - Leaving Task A at Medium or switching it to Low.
+  - Choosing Assign or Delete without changing Priority.
+  - Focusing High without activating it.
+  expected_interaction_path:
+  - Right-click Task A.
+  - Select High in the Priority section.
+  notes: Use selected menu-item state that remains visible after selection; record radio_groups per task instance.
+- id: context_menu-mui-v2-T08
+  name: 'Bookmark 4: turn Pin to top ON from Options submenu'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + nested submenu with checkable item'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the bookmarks drawer, open the context menu for “Bookmark 4”, open Options, and turn “Pin to top” ON. The task will finish automatically when done.
+  ui_copy: In the bookmarks drawer, open the context menu for “Bookmark 4”, open Options, and turn “Pin to top” ON. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, off-center placement, and medium clutter. A drawer titled Bookmarks is open and lists four rows: Bookmark 1–4. Each row supports a right-click menu. The top-level MUI menu contains Open, Options ▸, and Remove. Options opens a second menu with checkable items Pin to top, Show favicon, and Open in compact mode. For Bookmark 4, Pin to top starts OFF. The submenu remains open while check state changes.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - layout
+    factor_rationale: A single toggle becomes hard when it sits one submenu level down inside a compact drawer with four nearly identical rows.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The toggle itself is simple, but the right row and right submenu must both be identified correctly in a dense drawer carrier.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Bookmark 4', the checked state for Pin to top is true (ON).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Pin to top: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Bookmark 4
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Turning Pin to top ON for Bookmark 1, 2, or 3 instead of Bookmark 4.
+  - Opening Options but leaving Pin to top OFF.
+  - Changing Show favicon or Open in compact mode without turning on Pin to top.
+  - Selecting Remove or Open instead of staying in Options.
+  expected_interaction_path:
+  - Right-click Bookmark 4.
+  - Open Options.
+  - Turn Pin to top ON.
+  notes: Expose checked_items per bookmark row and the open target label for the checker.
+- id: context_menu-mui-v2-T09
+  name: 'Server cache row: purge flow must be cancelled'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + inline confirmation footer'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Cache shard 2”, click “Purge cache…”, and then click “Cancel”. The task will finish automatically when done.
+  ui_copy: Open the context menu for “Cache shard 2”, click “Purge cache…”, and then click “Cancel”. The task will finish automatically when done.
+  setup_description: Layout uses modal_flow with dark theme, compact spacing, and high clutter. A server-maintenance dialog is open, listing three cache shards. Right-clicking a row opens a MUI context menu. The menu contains Copy shard ID, Open metrics, and Purge cache…. Selecting Purge cache… keeps the overlay open and reveals Cancel and Purge footer buttons in the same overlay. The target row is Cache shard 2; the correct outcome is cancellation, not confirmation.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: '3'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - theme
+    - instances
+    - confirmation_model
+    factor_rationale: This task tests a non-destructive branch in a destructive confirmation flow while the target must be chosen from several similar server rows in a crowded modal surface.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Cancelling the right purge action in a dark crowded modal is meaningfully harder than confirming an obvious one-row action.
+  success_trigger:
+    human_readable:
+    - The pending action ['Purge cache'] is cancelled via the 'Cancel' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        cancelled_action_path:
+        - Purge cache
+        confirmation_result: cancelled
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: true
+      target_instance_label_or_id: Cache shard 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Purging instead of cancelling.
+  - Opening the purge flow for Cache shard 1 or Cache shard 3.
+  - Dismissing the overlay without clicking Cancel.
+  - Choosing Open metrics or Copy shard ID instead.
+  expected_interaction_path:
+  - Right-click Cache shard 2.
+  - Click Purge cache….
+  - Click Cancel in the footer.
+  notes: Expose the row label alongside confirmation_result so success is bound to the correct shard.
+- id: context_menu-mui-v2-T10
+  name: 'prod-us-east node: Move → Under Archive → As child'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + nested Popover/Menu submenus'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the deployment tree, open the context menu for “prod-us-east” and select Move → Under Archive → As child. The task will finish automatically when done.
+  ui_copy: In the deployment tree, open the context menu for “prod-us-east” and select Move → Under Archive → As child. The task will finish automatically when done.
+  setup_description: 'Layout uses settings_panel with compact spacing, top_left placement, and high clutter. A deployment tree is embedded between rollout toggles and status strips. Visible nodes include staging, prod-us-east, prod-us-west, archive, and backup. Right-clicking a node opens a MUI context menu at cursor position. The menu uses nested Popover/Menu composition: Move ▸, then Under Archive ▸, then leaves As sibling and As child. Only prod-us-east is the target node.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - overlay_model
+    factor_rationale: The tree carrier creates substantial wrong-node risk, and the three-level path forces the agent to track multiple MUI overlay panels rather than a single flat list.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: This is a deep overlay-stack task on a crowded tree surface, with high disambiguation and layering pressure.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Move', 'Under Archive', 'As child'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Move
+        - Under Archive
+        - As child
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: prod-us-east
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the path on staging, prod-us-west, archive, or backup instead of prod-us-east.
+  - Choosing As sibling instead of As child.
+  - Opening Move or Under Archive without choosing the final leaf item.
+  - Selecting Rename or Inspect instead of entering the path.
+  expected_interaction_path:
+  - Right-click prod-us-east.
+  - Open Move and then Under Archive.
+  - Click As child.
+  notes: Treat the nested Popover/Menu chain as one logical context-menu interaction for scoring.
+- id: context_menu-mui-v2-T11
+  name: 'Revenue table cell: scroll to Export as JSON'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu (anchorPosition) with max-height scroll'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the revenue table, open the context menu on the “Net” cell in the Delta row and select “Export as JSON”. The task will finish automatically when done.
+  ui_copy: In the revenue table, open the context menu on the “Net” cell in the Delta row and select “Export as JSON”. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, off-center placement, and medium clutter. A small revenue table contains rows Alpha, Beta, Gamma, and Delta. Only the Net cell in the Delta row opens a custom menu. The MUI menu is long and internally scrollable, with a max-height overlay. Top-visible options include Copy value, Copy row, Copy as CSV, and Pin column. Export as JSON is near the bottom and initially hidden.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - placement
+    factor_rationale: This task mirrors a realistic cell-level context action but moves the target offscreen inside the menu to force overlay scrolling and exact cell grounding.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The combination of correct cell targeting and hidden menu action yields substantial grounded interaction pressure.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Export as JSON'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Export as JSON
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Delta__Net
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Right-clicking another cell or another row.
+  - Selecting Copy as CSV or Export as CSV instead of Export as JSON.
+  - Scrolling the page rather than the menu.
+  - Opening the menu without activating any item.
+  expected_interaction_path:
+  - Right-click the Delta row’s Net cell.
+  - Scroll within the menu until Export as JSON is visible.
+  - Click Export as JSON.
+  notes: Expose the precise cell instance label and ensure only the menu overlay, not the page, is the scroll region.
+- id: context_menu-mui-v2-T12
+  name: 'Reference shortcut: choose Export JSON'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu with right-aligned shortcut hints'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Payload preview” and choose the option whose shortcut matches the Reference pill “Ctrl+Alt+J” (Export JSON). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Payload preview” and choose the option whose shortcut matches the Reference pill “Ctrl+Alt+J” (Export JSON). The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, top_right placement, and medium clutter. A payload preview card is embedded among log widgets and small summary chips. A Reference pill above the card displays Ctrl+Alt+J. Right-clicking inside the preview opens a MUI menu with shortcut hints: Copy value — Ctrl+C, Copy path — Ctrl+Shift+P, Export JSON — Ctrl+Alt+J, and Export CSV — Ctrl+Alt+C. The labels are intentionally similar.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: small
+    instances: '1'
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - clutter
+    factor_rationale: Several export-like items compete here, so the shortcut cue is the only reliable way to pick the right one inside a crowded dashboard carrier.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The semantic interference among copy/export items is high even though the path length is shallow.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Export JSON'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Export JSON
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Copy value, Copy path, or Export CSV instead of Export JSON.
+  - Ignoring the shortcut cue and clicking the wrong export item.
+  - Opening the menu but not activating an item.
+  - Right-clicking the surrounding card chrome rather than the preview surface if that does not own the menu.
+  expected_interaction_path:
+  - Right-click inside the Payload preview.
+  - Find the item with shortcut Ctrl+Alt+J.
+  - Click Export JSON.
+  notes: Keep the shortcut text visible in the item content; the checker only needs the activated path.
+- id: context_menu-mui-v2-T13
+  name: 'Card 2: Visibility must become Internal'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu with selected state section'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Card 2” and set Visibility to “Internal”. The task will finish automatically when done.
+  ui_copy: Open the context menu for “Card 2” and set Visibility to “Internal”. The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, off-center placement, and medium clutter. Three project cards (Card 1, Card 2, Card 3) sit in a horizontal board. Each card opens a context menu on right-click. The MUI menu includes Open, Visibility (selected-state section), Move, and Archive. Visibility contains Public, Internal, and Private; Public is initially selected for all three cards. The selected item remains highlighted when changed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: '3'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - semantic_observability
+    factor_rationale: The menu selection itself is simple, but the board makes wrong-card errors likely and the selected-state semantics require the agent to verify the value rather than only click an item text once.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: A selected-state section is more verify-heavy than a one-shot action, especially on a compact multi-card board.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Card 2', the selected value in group 'Visibility' equals 'Internal'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        radio_groups:
+          Visibility: Internal
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Card 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Visibility to Internal on Card 1 or Card 3.
+  - Selecting Private or leaving the card at Public.
+  - Moving or archiving the card without changing Visibility.
+  - Focusing Internal without selecting it.
+  expected_interaction_path:
+  - Right-click Card 2.
+  - Choose Internal in the Visibility section.
+  notes: Use selected-state rendering consistent with MUI selected menu items so the final value is observable.
+- id: context_menu-mui-v2-T14
+  name: 'Inspector surface: exact View toggle set'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu + submenu with checkable items'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the inspector surface, open the context menu for “Panel B”, open View, and set Preview ON, Toolbar OFF, Word wrap ON, and Errors ON. The task will finish automatically when done.
+  ui_copy: In the inspector surface, open the context menu for “Panel B”, open View, and set Preview ON, Toolbar OFF, Word wrap ON, and Errors ON. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, off-center placement, and high clutter. The center panel contains two labeled surfaces, Panel A and Panel B, both of which open a custom context menu on right-click. The top-level MUI menu contains Refresh, View ▸, and Open in split view. View opens a child menu with Preview, Toolbar, Word wrap, and Errors as checkable items. In Panel B, initial states are Preview OFF, Toolbar ON, Word wrap OFF, Errors OFF. The child menu stays open while toggling.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: '2'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - clutter
+    factor_rationale: 'This is a menu-state verification task in a noisy settings surface: the correct panel must be chosen and the exact four-toggle pattern must be reached inside a child overlay.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Exact multi-toggle end states and wrong-panel risk make this a high-disambiguation, high-verification submenu task.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Panel B', the View checked states match Preview=true, Toolbar=false, Word wrap=true, Errors=true.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Preview: true
+          Toolbar: false
+          Word wrap: true
+          Errors: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Panel B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the toggle set to Panel A instead of Panel B.
+  - Leaving any required key in the wrong state.
+  - Choosing Open in split view or Refresh instead of using View.
+  - Closing the menu before the final state matches.
+  expected_interaction_path:
+  - Right-click Panel B.
+  - Open View.
+  - Toggle the four listed options until the final state matches.
+  notes: The checker should evaluate only the four named keys.
+- id: context_menu-mui-v2-T15
+  name: 'Tile 4: choose Print by printer icon'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu with icons'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Tile 4” and choose the option that matches the printer icon shown in the Reference box. The task will finish automatically when done.
+  ui_copy: Open the context menu for “Tile 4” and choose the option that matches the printer icon shown in the Reference box. The task will finish automatically when done.
+  setup_description: 'Layout uses dashboard_panel with compact spacing, bottom_left placement, and medium clutter. Four media tiles labeled Tile 1–4 appear in a board. A small Reference box above the board shows a printer icon with no text. Right-clicking a tile opens a MUI menu with icon + label items: Open (folder icon), Download (arrow icon), Print (printer icon), Share (link icon). Only Tile 4 is the target. The menu closes after activation.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 4_plus
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - placement
+    factor_rationale: The task is short but still hard because the target tile sits in a cluttered board and the target action is given only by icon, not by a strongly distinctive text cue.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Visual-icon matching plus four-instance disambiguation is enough to make this a grounded hard task without adding artificial depth.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Print'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Print
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Tile 4
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Print on Tile 1, 2, or 3 instead of Tile 4.
+  - Selecting Download or Share instead of Print.
+  - Opening the correct menu but not activating any item.
+  - Using text heuristics on the wrong tile because the icon cue was ignored.
+  expected_interaction_path:
+  - Right-click Tile 4.
+  - Match the printer icon to Print.
+  - Click Print.
+  notes: Make the iconography stable and visually separable at small scale.
+- id: context_menu-mui-v2-T16
+  name: 'Route 4 row: Open in split view from the correct row menu'
+  canonical_type: context_menu
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Menu (anchorPosition) + MenuItem'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the routes list, open the context menu for “Route 4” and click “Open in split view”. The task will finish automatically when done.
+  ui_copy: In the routes list, open the context menu for “Route 4” and click “Open in split view”. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, off-center placement, and high clutter. A scrollable routes list shows Route 1 through Route 6 with status badges and timestamps. Each row supports a context menu on right-click. The MUI menu contains Open, Open in split view, Duplicate, and Archive. All route rows look similar, and the list sits inside a surrounding activity panel with its own scrollbar. Route 4 is visible at load but not isolated from neighboring rows.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - clutter
+    factor_rationale: This is a deliberately short path whose difficulty comes almost entirely from correct row grounding inside a dense nested-scroll carrier rather than from extra menu depth.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Even a flat action can be diagnostically hard when the row target is one of many similar entries in a nested scroll surface.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Open in split view'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Open in split view
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Route 4
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening Route 1, 2, 3, 5, or 6 instead of Route 4.
+  - Selecting Open, Duplicate, or Archive instead of Open in split view.
+  - Triggering the route row without opening its custom menu.
+  - Opening the correct menu but not activating any item.
+  expected_interaction_path:
+  - Right-click Route 4.
+  - Click Open in split view.
+  notes: 'This is intentionally shallow but not trivial: the nested-scroll carrier and high instance count do the diagnostic work.'
+- id: context_menu-mantine-v2-T01
+  name: 'Press kit.zip: Share → Copy public link by globe cue'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + Menu.Sub (click-hover submenus) with icons'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Press kit.zip” and select Share → Copy public link (the item with the globe icon shown in the Reference box). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Press kit.zip” and select Share → Copy public link (the item with the globe icon shown in the Reference box). The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, off-center placement, and medium clutter. The target row Press kit.zip appears within a small downloads panel beside two other package rows. A Reference box above the list shows a globe icon and the text Copy public link. Right-clicking the row opens a Mantine Menu at cursor position. The menu includes Open, Share ▸, Rename, and Delete. Share is implemented with Menu.Sub using click-hover behavior and modest open/close delay. Its child items are Copy public link (globe), Copy private link (lock), and Email link (envelope).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: '3'
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - instances
+    factor_rationale: The public/private distinction is easy to name but easy to misfire; the task becomes diagnostic because the correct row, submenu, and icon-guided leaf item must all be tracked across a Mantine click-hover submenu.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: A two-level path with icon-guided leaf selection becomes meaningfully hard once the correct row must also be isolated in a compact inline panel.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Share', 'Copy public link'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Share
+        - Copy public link
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Press kit.zip
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Share → Copy private link or Share → Email link.
+  - Opening the Share submenu on the wrong package row.
+  - Opening Share but not activating the final leaf item.
+  - Choosing Rename or Delete instead.
+  expected_interaction_path:
+  - Right-click Press kit.zip.
+  - Open Share.
+  - Click Copy public link.
+  notes: Use Mantine Menu.Sub and preserve the full activated path for the checker.
+- id: context_menu-mantine-v2-T02
+  name: 'Monthly report widget: scroll to Download as PDF'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu dropdown (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: On the dashboard, open the context menu for the “Monthly report” widget and select “Download as PDF”. The task will finish automatically when done.
+  ui_copy: On the dashboard, open the context menu for the “Monthly report” widget and select “Download as PDF”. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, and high clutter. A dashboard board contains several widgets plus a side rail. Only the Monthly report widget supports a custom right-click menu. The Mantine dropdown is opened by onContextMenu at cursor position and has a fixed max height, making the dropdown itself scrollable. About 20 grouped actions are present; Download as PDF sits near the bottom below more common actions like Refresh, Change timeframe, Export data, and Download as CSV.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - internal_scroll_region
+    - layout
+    factor_rationale: 'This preserves the strongest old Mantine pattern but raises the factor floor: cluttered dashboard, compact spacing, and a long internal menu scroll are all active rather than optional.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The hard part is overlay-local scrolling in a long grouped list while keeping the correct widget and action distinct in a busy dashboard.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Download as PDF'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Download as PDF
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Download as CSV or Export data instead of Download as PDF.
+  - Scrolling the page or dashboard container rather than the menu overlay.
+  - Opening the menu on a non-target widget.
+  - Opening the menu without activating an item.
+  expected_interaction_path:
+  - Right-click the Monthly report widget.
+  - Scroll inside the Mantine dropdown until Download as PDF is visible.
+  - Click Download as PDF.
+  notes: Ensure the dropdown itself, not the page, is the scroll region.
+- id: context_menu-mantine-v2-T03
+  name: 'API token A1B2: revoke flow must be cancelled'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + inline confirm footer'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for “API token A1B2”, click “Revoke token…”, then click “Cancel”. The task will finish automatically when done.
+  ui_copy: Open the context menu for “API token A1B2”, click “Revoke token…”, then click “Cancel”. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with dark theme, compact spacing, and medium clutter. A token-management card is embedded in a larger settings panel with unrelated buttons and switches. The row API token A1B2 supports a custom context menu on right-click. The Mantine menu contains Copy token ID and Revoke token…. Selecting Revoke token… keeps the menu open and reveals an inline confirmation footer with Cancel and Revoke inside the same overlay. The correct outcome is cancellation.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - confirmation_model
+    - clutter
+    factor_rationale: This task forces the agent to stay inside the same transient overlay and choose the safe branch of a destructive flow in a dark settings surface.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The leaf labels are simple, but confirming the cancellation path rather than the destructive one is a meaningful feedback-dynamics test.
+  success_trigger:
+    human_readable:
+    - The pending action ['Revoke token'] is cancelled via the 'Cancel' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        cancelled_action_path:
+        - Revoke token
+        confirmation_result: cancelled
+      tolerance: null
+      require_confirm: true
+      confirm_control: Cancel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking Revoke instead of Cancel.
+  - Opening Revoke token… and then dismissing the menu without pressing Cancel.
+  - Never opening the confirmation footer.
+  - Using the browser native context menu.
+  expected_interaction_path:
+  - Right-click API token A1B2.
+  - Click Revoke token….
+  - Click Cancel.
+  notes: Expose both pending_action_path and confirmation_result for the checker.
+- id: context_menu-mantine-v2-T04
+  name: 'Playlist item 12: Sort → By date → Newest first'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + multi-level Menu.Sub chain'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Playlist item 12” and select Sort → By date → Newest first. The task will finish automatically when done.
+  ui_copy: Open the context menu for “Playlist item 12” and select Sort → By date → Newest first. The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, bottom_left placement, and medium clutter. A playlist panel lists several items; only Playlist item 12 is the target. Right-clicking the row opens a Mantine Menu at cursor position. The menu contains Open, Sort ▸, Queue next, and Remove. Sort opens By date ▸ and By title ▸. By date opens Newest first and Oldest first. The submenu chain uses Menu.Sub and small item height. The target row sits near the bottom-left of the viewport, creating tight but valid overlay geometry.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - overlay_model
+    factor_rationale: This is a compact, corner-biased three-level path where the main difficulty is tracking a small Mantine submenu chain rather than reading the final leaf label.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Three overlay levels and small targets near a corner make this a strong transient-menu control test.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Sort', 'By date', 'Newest first'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Sort
+        - By date
+        - Newest first
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Oldest first instead of Newest first.
+  - Opening By title instead of By date.
+  - Selecting Queue next or Remove instead of entering Sort.
+  - Opening the right submenu chain but never activating the leaf.
+  expected_interaction_path:
+  - Right-click Playlist item 12.
+  - Open Sort, then By date.
+  - Click Newest first.
+  notes: Use click-hover or click submenus consistently so the task stays human-solvable at small scale.
+- id: context_menu-mantine-v2-T05
+  name: 'Server 2: choose the closed-lock action'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu items with icons'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Server 2” and choose the option that matches the Reference icon (closed lock). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Server 2” and choose the option that matches the Reference icon (closed lock). The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, center placement, and medium clutter. Three server rows (Server 1–3) are embedded in a deployment widget. A small Reference box above the rows shows only a closed-lock icon. Right-clicking a row opens a Mantine menu with Lock (closed lock), Unlock (open lock), Restart, and Shut down. Only Server 2 is correct.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: small
+    instances: '3'
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: The icon-only cue and three same-type targets keep this short path grounded and diagnostic without relying on hidden tolerances or wording tricks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The core pressure is correct-instance selection plus icon disambiguation between lock and unlock.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Lock'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Lock
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Server 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Lock on Server 1 or Server 3.
+  - Selecting Unlock instead of Lock.
+  - Choosing Restart or Shut down.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click Server 2.
+  - Match the closed-lock icon to Lock.
+  - Click Lock.
+  notes: Ensure lock and unlock icons remain visually distinct at small size.
+- id: context_menu-mantine-v2-T06
+  name: 'Inspector B: exact View toggle set'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + Menu.Sub with checkable items'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: Open the context menu for the editor labeled “Inspector B”, open View, and set Show preview ON, Show toolbar OFF, Spell check ON, and Word wrap ON. The task will finish automatically when done.
+  ui_copy: Open the context menu for the editor labeled “Inspector B”, open View, and set Show preview ON, Show toolbar OFF, Spell check ON, and Word wrap ON. The task will finish automatically when done.
+  setup_description: 'Layout uses drawer_flow with compact spacing, off-center placement, and medium clutter. A side drawer titled Preview settings is open and contains two editor-like preview surfaces: Inspector A and Inspector B. Right-clicking either opens a Mantine menu. The menu has Undo, View ▸, and Inspect DOM. View opens a Mantine child menu containing Show preview, Show toolbar, Spell check, and Word wrap as checkable items. For Inspector B, initial states are Show preview OFF, Show toolbar ON, Spell check OFF, Word wrap OFF. The child menu stays open while toggling.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: '2'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - spacing
+    factor_rationale: This is a hard state-tracking task because the agent must stay within a submenu, achieve an exact four-toggle pattern, and avoid editing the sibling surface.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Exact end-state verification across four toggles and two similar surfaces makes this a strong hard submenu task.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Inspector B', the View checked states match Show preview=true, Show toolbar=false, Spell check=true, Word wrap=true.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Show preview: true
+          Show toolbar: false
+          Spell check: true
+          Word wrap: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Inspector B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the toggle set to Inspector A instead of Inspector B.
+  - Leaving Show toolbar ON or any other required key incorrect.
+  - Choosing Inspect DOM instead of entering View.
+  - Closing the child menu before the final state matches.
+  expected_interaction_path:
+  - Right-click Inspector B.
+  - Open View.
+  - Toggle the four required items until the final state matches.
+  notes: Use checked_items keyed by label and the open target label for robust checking.
+- id: context_menu-mantine-v2-T07
+  name: 'Archive node: Create → Markdown file'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + Menu.Sub chain'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the document tree, open the context menu for “Archive” and select Create → Markdown file. The task will finish automatically when done.
+  ui_copy: In the document tree, open the context menu for “Archive” and select Create → Markdown file. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, top_left placement, and high clutter. A small document tree is embedded among unrelated settings rows. Nodes include Docs, Drafts, Archive, and Images. Right-clicking Archive opens a Mantine menu with Open, Create ▸, Rename, and Delete. Create opens Markdown file, Folder, and JSON file. The node cluster is dense and close together, increasing wrong-node risk.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - overlay_model
+    factor_rationale: 'The task is intentionally tree-centric: correct node selection and a one-level child submenu together create grounded but human-solvable pressure.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: This is a hard disambiguation task despite the short path because the node cluster is dense and the wrong-node error is easy to make.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Create', 'Markdown file'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Create
+        - Markdown file
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archive
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Create → Folder or Create → JSON file.
+  - Opening the menu on Docs, Drafts, or Images instead of Archive.
+  - Selecting Rename or Delete instead of Create.
+  - Opening Create but not clicking a leaf item.
+  expected_interaction_path:
+  - Right-click Archive.
+  - Open Create.
+  - Click Markdown file.
+  notes: This path is shorter than some others, but the high-clutter tree carrier keeps it within the hard bucket.
+- id: context_menu-mantine-v2-T08
+  name: 'Widget preview: reset tiles and confirm'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + inline confirm footer'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Open the context menu for the “Widget preview” area, click “Reset tiles…”, then click “Reset”. The task will finish automatically when done.
+  ui_copy: Open the context menu for the “Widget preview” area, click “Reset tiles…”, then click “Reset”. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, off-center placement, and high clutter. A Widget preview rectangle sits among tile toggles, spacing sliders, and color selectors. Right-clicking inside the preview opens a Mantine context menu with Add tile, Auto-arrange, and Reset tiles…. Selecting Reset tiles… reveals an inline confirmation footer with Cancel and Reset inside the same overlay. The action only commits if Reset is pressed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - clutter
+    - confirmation_model
+    - placement
+    factor_rationale: 'The cluttered settings surface is deliberate: it makes the right-click affordance and the confirm footer easy to lose unless the agent tracks overlay state carefully.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: The destructive confirmation step in a busy settings surface adds substantial feedback and recovery burden.
+  success_trigger:
+    human_readable:
+    - The pending action ['Reset tiles'] is confirmed via the 'Reset' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmed_action_path:
+        - Reset tiles
+        confirmation_result: confirmed
+      tolerance: null
+      require_confirm: true
+      confirm_control: Reset
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Reset tiles… but then clicking Cancel or dismissing the menu.
+  - Selecting Add tile or Auto-arrange instead.
+  - Opening the menu on an unrelated settings control.
+  - Never opening the confirmation footer.
+  expected_interaction_path:
+  - Right-click the Widget preview.
+  - Click Reset tiles….
+  - Click Reset.
+  notes: Keep the confirmation UI inside the same Mantine dropdown subtree for single-component purity.
+- id: context_menu-mantine-v2-T09
+  name: 'Shortcut cue: choose Copy key'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu with shortcut text'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Key preview” and choose the option whose shortcut matches the Reference pill “Ctrl+Shift+K” (Copy key). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Key preview” and choose the option whose shortcut matches the Reference pill “Ctrl+Shift+K” (Copy key). The task will finish automatically when done.
+  setup_description: 'Layout uses inline_surface with compact spacing, top_right placement, and medium clutter. A Key preview card sits beside other small preview cards. A Reference pill above it shows Ctrl+Shift+K. Right-clicking the preview opens a Mantine menu with shortcut text on the right: Copy value — Ctrl+C, Copy key — Ctrl+Shift+K, Copy path — Ctrl+Shift+P, and Open in new tab — Ctrl+Enter. The labels are intentionally similar and the menu appears close to the right edge.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: '1'
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - spacing
+    factor_rationale: 'This is a small but nontrivial item-identification task: the correct action is specified by shortcut cue among several copy-like options in a small corner-placed overlay.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The main pressure is semantic interference among similar items, not raw path length.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Copy key'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Copy key
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Copy value or Copy path instead of Copy key.
+  - Ignoring the shortcut cue and choosing the wrong copy-like item.
+  - Opening the menu but not activating an item.
+  - Opening the menu on a neighboring preview card.
+  expected_interaction_path:
+  - Right-click Key preview.
+  - Find the item with shortcut Ctrl+Shift+K.
+  - Click Copy key.
+  notes: Shortcut text should be part of the rendered item content or accessible name.
+- id: context_menu-mantine-v2-T10
+  name: 'Alert row 3: turn Mark critical ON'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + submenu with checkable item'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the alerts panel, open the context menu for “Alert row 3”, open Status, and turn “Mark critical” ON. The task will finish automatically when done.
+  ui_copy: In the alerts panel, open the context menu for “Alert row 3”, open Status, and turn “Mark critical” ON. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, off-center placement, and high clutter. A vertically scrollable alerts panel lists Alert row 1–4 with severity chips and timestamps. Each row supports a context menu. Right-clicking a row opens a Mantine menu with Open, Status ▸, Assign, and Mute. Status opens a child menu with Mark critical, Acknowledge, and Suppress as checkable items. For Alert row 3, Mark critical starts OFF. The surrounding panel has its own scrollbar, but all four rows are visible at load.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - overlay_model
+    factor_rationale: A single toggle becomes hard when it sits inside a child menu for one row among many in a high-clutter nested-scroll carrier.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The correct state is simple, but reaching it on the right row through the right submenu is a genuine grounded challenge.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Alert row 3', the checked state for Mark critical is true (ON).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Mark critical: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Alert row 3
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Turning Mark critical ON for Alert row 1, 2, or 4 instead of Alert row 3.
+  - Opening Status but leaving Mark critical OFF.
+  - Choosing Assign or Mute instead of Status.
+  - Toggling Acknowledge or Suppress without setting Mark critical.
+  expected_interaction_path:
+  - Right-click Alert row 3.
+  - Open Status.
+  - Click Mark critical so it becomes ON.
+  notes: Check only the Mark critical key for success.
+- id: context_menu-mantine-v2-T11
+  name: 'Board card 2: set Priority to Blocker'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu with radio-style section'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the planning board, open the context menu for “Card 2” and set Priority to “Blocker”. The task will finish automatically when done.
+  ui_copy: On the planning board, open the context menu for “Card 2” and set Priority to “Blocker”. The task will finish automatically when done.
+  setup_description: Layout uses dashboard_panel with compact spacing, off-center placement, and medium clutter. Three board cards are visible in one lane. Right-clicking a card opens a Mantine menu with Open, Priority, Move, and Archive. Priority is rendered as an in-menu radio-style section with Low, Medium, High, and Blocker. All cards start at High. The menu remains open while the selected indicator moves.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: '3'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - clutter
+    factor_rationale: This pairs same-type board cards with a radio section so the correct task is to update one local state, not just activate a leaf item.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Wrong-card errors are likely, and the radio-style section demands an observable final selection rather than a fire-and-forget click.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Card 2', the selected value in group 'Priority' equals 'Blocker'.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        radio_groups:
+          Priority: Blocker
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Card 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Blocker on Card 1 or Card 3 instead of Card 2.
+  - Leaving Card 2 at High or changing it to Low/Medium.
+  - Choosing Move or Archive instead of adjusting Priority.
+  - Focusing Blocker without selecting it.
+  expected_interaction_path:
+  - Right-click Card 2.
+  - Select Blocker in the Priority section.
+  notes: Expose radio_groups per card instance.
+- id: context_menu-mantine-v2-T12
+  name: 'Runtime panel: scroll to Open diagnostics'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu dropdown (scrollable)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the runtime panel, open the context menu for the “Worker metrics” card and select “Open diagnostics”. The task will finish automatically when done.
+  ui_copy: In the runtime panel, open the context menu for the “Worker metrics” card and select “Open diagnostics”. The task will finish automatically when done.
+  setup_description: Layout uses nested_scroll with compact spacing, bottom_right placement, and high clutter. A runtime side panel contains several small metric cards; only Worker metrics opens a custom context menu. The Mantine dropdown is long, grouped, and internally scrollable. The target item Open diagnostics appears near the bottom below Change visualization, Attach note, Export data, and Open settings. The panel and the page both scroll independently, but the card is visible at load.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: '1'
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - placement
+    factor_rationale: The nested-scroll carrier plus long overlay list forces the agent to separate panel scroll from overlay scroll and recover the right path in a semantically dense action list.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: The density of nearby actions and the nested-scroll environment make this a strong overlay-local scrolling task.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Open diagnostics'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Open diagnostics
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Open settings or Export data instead of Open diagnostics.
+  - Scrolling the panel or page rather than the menu.
+  - Opening the menu on a different metrics card.
+  - Opening the menu without activating any item.
+  expected_interaction_path:
+  - Right-click Worker metrics.
+  - Scroll inside the dropdown until Open diagnostics is visible.
+  - Click Open diagnostics.
+  notes: Keep only the dropdown scrollable; non-target cards should not have custom context menus.
+- id: context_menu-mantine-v2-T13
+  name: 'prod-west node: Move → Under Archive → As child'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + Menu.Sub chain (click-hover)'
+  task_template: hierarchical_path_select
+  secondary_template: null
+  browsergym_goal: In the environment tree, open the context menu for “prod-west” and select Move → Under Archive → As child. The task will finish automatically when done.
+  ui_copy: In the environment tree, open the context menu for “prod-west” and select Move → Under Archive → As child. The task will finish automatically when done.
+  setup_description: Layout uses settings_panel with compact spacing, top_left placement, and high clutter. A small environment tree is embedded among release switches and banners. Nodes include staging, prod-east, prod-west, archive, and backup. Right-clicking prod-west opens a Mantine menu with Move ▸, Rename, Inspect, and Delete. Move opens Under Archive ▸ and Under Backup ▸. Under Archive opens As sibling and As child. The child menus use Menu.Sub with click-hover behavior and modest open/close delay.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: tree
+  design_intent:
+    active_factors:
+    - instances
+    - overlay_model
+    - layout
+    factor_rationale: The task combines dense tree-node grounding with a three-stage submenu chain whose panels have to be tracked through Mantine’s click-hover submenu behavior.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: High clutter, many possible nodes, and a three-level click-hover submenu chain make this one of the hardest menu-path tasks in the packet.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Move', 'Under Archive', 'As child'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Move
+        - Under Archive
+        - As child
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: prod-west
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the path on staging, prod-east, archive, or backup instead of prod-west.
+  - Choosing As sibling instead of As child.
+  - Opening Under Backup instead of Under Archive.
+  - Selecting Rename, Inspect, or Delete instead.
+  expected_interaction_path:
+  - Right-click prod-west.
+  - Open Move, then Under Archive.
+  - Click As child.
+  notes: Use Menu.Sub and keep the path scoring independent of whether submenus were opened by click or hover transitions.
+- id: context_menu-mantine-v2-T14
+  name: 'Row Delta: exact Columns toggle set'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + submenu with checkable items'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the compact table, open the context menu for the row “Delta”, open Columns, and set Owner ON, Status OFF, Due date ON, and Tags OFF. The task will finish automatically when done.
+  ui_copy: In the compact table, open the context menu for the row “Delta”, open Columns, and set Owner ON, Status OFF, Due date ON, and Tags OFF. The task will finish automatically when done.
+  setup_description: Layout uses table_cell with compact spacing, small scale, and medium clutter. Four rows (Alpha, Beta, Gamma, Delta) are visible. Right-clicking a row opens a Mantine menu with View details, Columns ▸, and Export row. Columns opens a child dropdown containing Owner, Status, Due date, and Tags as checkable items. In Delta, initial states are Owner OFF, Status ON, Due date OFF, Tags ON. The child dropdown stays open while the check states change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 4_plus
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - overlay_model
+    factor_rationale: This reuses a validated menu-state idiom but puts it in a denser table context and demands an exact four-key final state on the correct row.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Four exact toggle states on the correct row through a submenu is reliably hard for both grounding and verification reasons.
+  success_trigger:
+    human_readable:
+    - For the context menu instance labeled 'Delta', the Columns checked states match Owner=true, Status=false, Due date=true, Tags=false.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        checked_items:
+          Owner: true
+          Status: false
+          Due date: true
+          Tags: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Delta
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the toggle set on Alpha, Beta, or Gamma instead of Delta.
+  - Leaving any one required key in the wrong state.
+  - Choosing Export row or View details instead of Columns.
+  - Closing the menu before the final state matches.
+  expected_interaction_path:
+  - Right-click Delta.
+  - Open Columns.
+  - Toggle the four listed items until the final state matches.
+  notes: The checker should evaluate only the four named keys and the correct row label.
+- id: context_menu-mantine-v2-T15
+  name: 'Draft card 2: Delete draft and confirm'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu + inline confirm footer'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the draft drawer, open the context menu for “Draft 2”, click “Delete draft…”, then click “Delete”. The task will finish automatically when done.
+  ui_copy: In the draft drawer, open the context menu for “Draft 2”, click “Delete draft…”, then click “Delete”. The task will finish automatically when done.
+  setup_description: Layout uses drawer_flow with compact spacing, off-center placement, and medium clutter. A drafts drawer is already open and contains three draft cards. Right-clicking a card opens a Mantine menu with Open, Rename, and Delete draft…. Choosing Delete draft… reveals Cancel and Delete in an inline footer in the same overlay. Only Draft 2 is the target. The correct branch is confirmation, not cancellation.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: '3'
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: This takes a validated confirm flow and adds wrong-instance pressure inside a compact drawer so the menu state must be tracked across both row selection and destructive confirmation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: A destructive confirm flow on the correct card inside a compact drawer is meaningfully hard even though the leaf labels are simple.
+  success_trigger:
+    human_readable:
+    - The pending action ['Delete draft'] is confirmed via the 'Delete' control inside the menu overlay.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        confirmed_action_path:
+        - Delete draft
+        confirmation_result: confirmed
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: true
+      target_instance_label_or_id: Draft 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Deleting Draft 1 or Draft 3 instead of Draft 2.
+  - Clicking Cancel instead of Delete.
+  - Opening Delete draft… and then dismissing the overlay.
+  - Selecting Open or Rename instead of starting the delete flow.
+  expected_interaction_path:
+  - Right-click Draft 2.
+  - Click Delete draft….
+  - Click Delete.
+  notes: Expose open_target, pending_action_path, and confirmation_result per draft card.
+- id: context_menu-mantine-v2-T16
+  name: 'Preview card 2: choose Hide preview from eye icon cue'
+  canonical_type: context_menu
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Menu items with icons'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Open the context menu for “Preview card 2” and choose the option that matches the Reference icon (crossed-out eye). The task will finish automatically when done.
+  ui_copy: Open the context menu for “Preview card 2” and choose the option that matches the Reference icon (crossed-out eye). The task will finish automatically when done.
+  setup_description: Layout uses inline_surface with compact spacing, bottom_right placement, and medium clutter. Two preview cards are shown above a small toolbar. A Reference box above them shows only a crossed-out eye icon. Right-clicking a preview card opens a Mantine menu with Show preview (eye), Hide preview (crossed-out eye), Duplicate, and Delete. Only Preview card 2 is the target. The icon cue is purely visual, and the target row sits near the lower-right corner of the surface.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: '2'
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - instances
+    factor_rationale: 'This is a short but still difficult visual-match task: the agent must choose the correct card and then resolve a subtle icon contrast between show and hide preview.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The visual distinction is subtle and the wrong-instance risk remains real even though the action path is shallow.
+  success_trigger:
+    human_readable:
+    - The activated item path equals ['Hide preview'].
+    canonical_predicate:
+      predicate_type: path_equals
+      target_state:
+        last_activated_item_path:
+        - Hide preview
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Preview card 2
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Choosing Show preview instead of Hide preview.
+  - Selecting the correct icon action on Preview card 1 instead of Preview card 2.
+  - Choosing Duplicate or Delete instead.
+  - Opening the menu but not activating any item.
+  expected_interaction_path:
+  - Right-click Preview card 2.
+  - Match the crossed-out eye reference icon to Hide preview.
+  - Click Hide preview.
+  notes: Ensure eye and crossed-eye icons remain visually distinct at small scale and in corner placement.

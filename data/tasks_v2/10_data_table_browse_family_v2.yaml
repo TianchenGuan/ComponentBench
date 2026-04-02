@@ -1,0 +1,3763 @@
+- id: data_table_filterable-antd-v2-T01
+  name: 'Dashboard approvals: filter Orders, not Returns'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: table_filters
+  implementation_component: 'AntD: Table (column filters with OK/Reset)'
+  task_template: open_and_select
+  secondary_template: table_operation
+  browsergym_goal: On the approvals dashboard, in the Orders table (not Returns), filter Status to "Escalated" and Region to "APAC", then click OK in each filter menu if needed. The task will finish automatically when done.
+  ui_copy: On the approvals dashboard, in the Orders table (not Returns), filter Status to "Escalated" and Region to "APAC", then click OK in each filter menu if needed. The task will finish automatically when done.
+  setup_description: |-
+    A compact, high-clutter dashboard_panel fills the main viewport. KPI chips, a date-range pill group, and a summary rail appear above two Ant Design tables titled “Orders” and “Returns”. Both tables expose the same small header funnel icons for Status and Region and use the standard Ant Design filter dropdowns with OK and Reset buttons.
+    Initial state: both tables are unfiltered. The target is the Orders table only. Status and Region are both visible columns, so the difficulty comes from choosing the correct table, opening two tiny header popovers, and committing both filters without touching Returns.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Two near-identical tables in a dense dashboard create wrong-instance pressure, and the explicit OK step in each header filter menu turns a plausible configuration into a verify-and-commit task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The filters themselves are semantically clear, but tiny header affordances, repeated tables, and explicit apply semantics make this a reliable hard browse-family task.
+  success_trigger:
+    human_readable:
+    - In the Orders table, the active column filters are Status = Escalated and Region = APAC.
+    - The Returns table remains unfiltered.
+    - Both filter states have been applied, not merely selected in an open popover.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          orders:
+            logic_operator: AND
+            column_filters:
+            - column: Status
+              operator: equals
+              value: Escalated
+            - column: Region
+              operator: equals
+              value: APAC
+          returns:
+            logic_operator: AND
+            column_filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering the Returns table instead of Orders.
+  - Applying only one of the two filters.
+  - Selecting the right values but leaving one filter menu unapplied.
+  - Applying extra filters on either table.
+  expected_interaction_path:
+  - Identify the Orders table in the dashboard panel.
+  - Open the Status filter menu on Orders, choose Escalated, and click OK.
+  - Open the Region filter menu on Orders, choose APAC, and click OK.
+  - Verify Returns is unchanged.
+  notes: Checker should bind filters to the correct table instance and inspect applied table state rather than only visible rows.
+- id: data_table_filterable-antd-v2-T02
+  name: 'Drawer inventory: scroll to hidden Region filter and apply'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: fixed_columns_filter_search
+  implementation_component: 'AntD: Table (fixed columns, horizontal scroll, filterSearch)'
+  task_template: scroll_find
+  secondary_template: search_and_select
+  browsergym_goal: Open the Inventory table drawer. In the Inventory table, scroll horizontally to find the Region column, filter Region to "LATAM", and click OK. The task will finish automatically when done.
+  ui_copy: Open the Inventory table drawer. In the Inventory table, scroll horizontally to find the Region column, filter Region to "LATAM", and click OK. The task will finish automatically when done.
+  setup_description: |-
+    A right-anchored Ant Design drawer opens from a compact operations page. Inside it is one wide Inventory table with a fixed first column and many narrow columns; only part of the header is visible at a time, so horizontal scrolling inside the table is required. The far-right Region column has a filterSearch-enabled dropdown with a searchable list of regions and an OK button.
+    Initial state: no filters are active. The drawer footer has Close only; the table filter itself commits through the Ant Design filter menu.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - placement
+    - confirmation_model
+    factor_rationale: The agent must first find the off-screen header inside the table-local scroll region, then use a searchable filter popover and explicitly apply the result inside a drawer context.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The hidden header and compact scroll surface make acquisition hard, and the drawer-plus-popover stack adds layered state and commit pressure.
+  success_trigger:
+    human_readable:
+    - 'The Inventory table has exactly one active column filter: Region = LATAM.'
+    - The filter has been applied via the filter menu OK control.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: inventory
+        logic_operator: AND
+        column_filters:
+        - column: Region
+          operator: equals
+          value: LATAM
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page or drawer but not the table header region.
+  - Selecting LATAM in the filter menu but not clicking OK.
+  - Filtering a nearby column such as Country instead of Region.
+  - Leaving any additional column filters active.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll horizontally within the table until Region is visible.
+  - Open the Region filter dropdown, search or select LATAM, and click OK.
+  - Verify the Region filter indicator is active.
+  notes: Use the table root state for the checker; do not infer success from horizontal scroll position.
+- id: data_table_filterable-antd-v2-T03
+  name: 'Audit modal: created date range with apply'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: date_range_filter
+  implementation_component: 'AntD: Table (custom DatePicker range filter in modal)'
+  task_template: set_range
+  secondary_template: open_overlay
+  browsergym_goal: Open the Audit Events modal. In the Audit Events table, filter Created to 2025-04-01 through 2025-06-30 inclusive, then click Apply filters. The task will finish automatically when done.
+  ui_copy: Open the Audit Events modal. In the Audit Events table, filter Created to 2025-04-01 through 2025-06-30 inclusive, then click Apply filters. The task will finish automatically when done.
+  setup_description: |-
+    The page uses modal_flow. Clicking “Audit Events” opens a centered Ant Design modal containing a compact table titled “Audit Events”. The Created column filter opens a custom range panel with an Ant Design date-range picker and a footer button labeled “Apply filters”. Other modal controls include Close and Cancel, and the background page remains visible but inactive behind the dimmer.
+    Initial state: no filters are active. The range must be applied from the modal’s filter panel, not typed elsewhere on the page.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - overlay_model
+    - confirmation_model
+    factor_rationale: This uses a realistic modal-plus-filter-popover-plus-range-picker stack, so the table remains primary while the agent must track layered state and apply the pending filter explicitly.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 5
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The calendar interaction is exact and nested, and the modal carrier increases both substep count and recovery burden.
+  success_trigger:
+    human_readable:
+    - 'The Audit Events table has exactly one active filter: Created between 2025-04-01 and 2025-06-30 inclusive.'
+    - The range has been applied via the Apply filters control in the filter panel.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: audit_events
+        logic_operator: AND
+        column_filters:
+        - column: Created
+          operator: date_between_inclusive
+          value:
+            start: '2025-04-01'
+            end: '2025-06-30'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting only the start date or only the end date.
+  - Choosing the right dates but not clicking Apply filters.
+  - Entering a nearby quarter such as 2025-01-01 to 2025-03-31.
+  - Closing the modal without applying the filter.
+  expected_interaction_path:
+  - Open the Audit Events modal.
+  - Open the Created filter panel.
+  - Select the start and end dates in the range picker.
+  - Click Apply filters and verify the filter is active.
+  notes: The checker should parse the canonical date range after application and not rely solely on visible row text.
+- id: data_table_filterable-antd-v2-T04
+  name: 'Team settings: filter Members only by two columns'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: multi_column_filters
+  implementation_component: 'AntD: Table (multiple independent column filters)'
+  task_template: table_operation
+  secondary_template: open_and_select
+  browsergym_goal: In the Members table, filter Role to "Reviewer" and Active to "Yes". Do not change the Guests or Invites tables. Click OK in each filter menu if needed. The task will finish automatically when done.
+  ui_copy: In the Members table, filter Role to "Reviewer" and Active to "Yes". Do not change the Guests or Invites tables. Click OK in each filter menu if needed. The task will finish automatically when done.
+  setup_description: |-
+    A compact settings_panel shows three stacked Ant Design tables titled “Members”, “Guests”, and “Invites”. Each table has narrow headers, small filter icons, and the same pair of filterable columns: Role and Active. A help sidebar and two unrelated toggles increase clutter.
+    Initial state: all three tables are unfiltered. The task requires changing only the Members table by applying two column filters; Guests and Invites must remain untouched.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - clutter
+    factor_rationale: Three sibling tables with identical filter affordances create high disambiguation load, and compact spacing makes the correct header controls harder to acquire.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard mainly because of repeated instances and dense header controls, not because the semantic target is obscure.
+  success_trigger:
+    human_readable:
+    - In the Members table, Role = Reviewer and Active = Yes are the only active filters.
+    - Guests and Invites remain unfiltered.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          members:
+            logic_operator: AND
+            column_filters:
+            - column: Role
+              operator: equals
+              value: Reviewer
+            - column: Active
+              operator: equals
+              value: 'Yes'
+          guests:
+            logic_operator: AND
+            column_filters: []
+          invites:
+            logic_operator: AND
+            column_filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Members
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying either filter on Guests or Invites.
+  - Applying only one of the two requested Members filters.
+  - Selecting the correct values but leaving one dropdown unapplied.
+  - Leaving any extra filters active on any of the three tables.
+  expected_interaction_path:
+  - Locate the Members table within the settings panel.
+  - Open the Role filter menu and apply Reviewer.
+  - Open the Active filter menu and apply Yes.
+  - Verify Guests and Invites remain unfiltered.
+  notes: Per-table test hooks are recommended so the checker can require non-target tables to remain unchanged.
+- id: data_table_filterable-antd-v2-T05
+  name: 'Projects board: configure then apply owner filter'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: customized_filter_panel
+  implementation_component: 'AntD: Table (customized filter panel with Apply button)'
+  task_template: search_and_select
+  secondary_template: open_and_select
+  browsergym_goal: In the Projects table, open the Owner filter, search for "Platform", select it, and click Apply filters. The task will finish automatically when done.
+  ui_copy: In the Projects table, open the Owner filter, search for "Platform", select it, and click Apply filters. The task will finish automatically when done.
+  setup_description: |-
+    The page is an admin-style inline_surface anchored off center. It contains one Ant Design table titled “Projects”, plus a metrics strip and a read-only summary card. The Owner column uses a customized filter panel rather than the default simple menu: the popover contains a search input, a long checklist of owners, and two footer buttons: Reset and Apply filters.
+    Initial state: no filters are active. Search text and the selected owner do not affect the table until Apply filters is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - guidance
+    - placement
+    factor_rationale: The filter panel is intentionally configured-but-not-applied until the footer action is used, which separates UI configuration from committed state and makes verification essential.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The long owner list and deferred Apply semantics make this harder than a standard one-click filter even with a single table instance.
+  success_trigger:
+    human_readable:
+    - 'The Projects table has exactly one active column filter: Owner = Platform.'
+    - The filter was committed through the Apply filters control.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: projects
+        logic_operator: AND
+        column_filters:
+        - column: Owner
+          operator: equals
+          value: Platform
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Searching for Platform without selecting it.
+  - Selecting Platform but not clicking Apply filters.
+  - Applying Platform and any extra owner values.
+  - Using a different page search input instead of the filter panel search field.
+  expected_interaction_path:
+  - Open the Owner filter panel.
+  - Type Platform in the panel search box if needed.
+  - Select Platform from the filtered list.
+  - Click Apply filters and verify the table state updates.
+  notes: The checker should read the applied filter model, not temporary panel state.
+- id: data_table_filterable-antd-v2-T06
+  name: 'Alert row subtable: clear and replace severity filter'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: table_cell_subtable
+  implementation_component: 'AntD: Table (subtable with pre-applied filter and OK/Reset)'
+  task_template: clear_reset
+  secondary_template: select_many
+  browsergym_goal: In the Alerts subtable (not the Incidents subtable), clear the current Severity filter and replace it with exactly "Critical" and "High", then click OK. The task will finish automatically when done.
+  ui_copy: In the Alerts subtable (not the Incidents subtable), clear the current Severity filter and replace it with exactly "Critical" and "High", then click OK. The task will finish automatically when done.
+  setup_description: |-
+    A table_cell layout shows two expanded parent rows in a monitoring page. Each expanded row contains a mini-table: one titled “Alerts” and one titled “Incidents”. The Alerts subtable is the target. Both subtables use the same compact Severity filter popover with checkboxes plus Reset and OK.
+    Initial state: Alerts already has Severity = Medium applied; Incidents has no filters. The task requires clearing the existing Alerts filter state and replacing it with the exact set {Critical, High}.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Nested subtables increase grounding difficulty, and the task requires recovery from a pre-existing filter state rather than a clean one-shot selection.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The agent must identify the correct subtable, reset a stale filter, choose an exact two-value set, and commit it in a dense cell context.
+  success_trigger:
+    human_readable:
+    - The Alerts subtable has Severity in {Critical, High} and no other active filters.
+    - The Incidents subtable remains unfiltered.
+    - The change was applied through OK.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          alerts:
+            logic_operator: AND
+            column_filters:
+            - column: Severity
+              operator: in
+              value:
+              - Critical
+              - High
+          incidents:
+            logic_operator: AND
+            column_filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Medium selected in addition to Critical and High.
+  - Updating the Incidents subtable instead of Alerts.
+  - Clicking Reset without replacing the filter values.
+  - Configuring the right values but not clicking OK.
+  expected_interaction_path:
+  - Locate the Alerts subtable in the expanded row area.
+  - Open the Severity filter popover and clear the old state.
+  - Select Critical and High only.
+  - Click OK and verify Incidents is unchanged.
+  notes: Represent multi-select values as an unordered exact set in the checker.
+- id: data_table_filterable-mui-v2-T07
+  name: 'Invite Manager: multi-filter Invited users only'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid_pro
+  implementation_component: 'MUI X DataGrid Pro: toolbar filters in modal'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the Invite Manager dialog. In the Invited users table (not Active users), set Department to "Support" and Status to "Pending". The task will finish automatically when done.
+  ui_copy: Open the Invite Manager dialog. In the Invited users table (not Active users), set Department to "Support" and Status to "Pending". The task will finish automatically when done.
+  setup_description: |-
+    The page uses modal_flow. Clicking “Invite Manager” opens a MUI dialog containing two DataGrid Pro instances stacked vertically: “Active users” on top and “Invited users” below. Each grid has the same toolbar with a Filters button. The filter panel updates the grid automatically; there is no separate Apply button.
+    Initial state: both grids are unfiltered. The task target is only the Invited users grid.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - guidance
+    factor_rationale: This uses the Data Grid toolbar filter workflow inside a modal and forces the agent to keep grid identity straight while creating an exact two-item filter model.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The filters are straightforward, but the stacked modal grids and auto-updating filter panel create layered state and repeated-instance pressure.
+  success_trigger:
+    human_readable:
+    - In Invited users, Department = Support and Status = Pending are the only active filters.
+    - Active users remains unfiltered.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          invited_users:
+            logic_operator: AND
+            column_filters:
+            - column: Department
+              operator: is
+              value: Support
+            - column: Status
+              operator: is
+              value: Pending
+          active_users:
+            logic_operator: OR
+            column_filters: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invited users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the filters to Active users instead of Invited users.
+  - Leaving only one of the two filter items active.
+  - Adding extra filter items in the model.
+  - Closing the panel after configuring the wrong grid.
+  expected_interaction_path:
+  - Open the dialog.
+  - Use the Filters button on Invited users.
+  - Add the Department filter and the Status filter.
+  - Verify Active users remains unfiltered.
+  notes: For MUI, read the grid filterModel including items and logicOperator from the target grid instance.
+- id: data_table_filterable-mui-v2-T08
+  name: 'Accounts grid: hidden Country filter via column menu'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid_pro
+  implementation_component: 'MUI X DataGrid Pro: column-menu filtering with horizontal scroll'
+  task_template: scroll_find
+  secondary_template: open_and_select
+  browsergym_goal: In the Accounts grid, scroll to the Country column, open its column menu, and filter Country to exactly Japan and Korea. The task will finish automatically when done.
+  ui_copy: In the Accounts grid, scroll to the Country column, open its column menu, and filter Country to exactly Japan and Korea. The task will finish automatically when done.
+  setup_description: |-
+    A nested_scroll layout contains a wide MUI DataGrid Pro titled “Accounts”. Only the first several columns are visible at load; Country is off-screen to the right and requires horizontal scrolling inside the grid. Filtering is accessed from the Country header’s 3-dots column menu, and the filter panel updates the grid automatically.
+    Initial state: no filters are active. The page also includes a compact summary rail and two unrelated buttons.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: menu
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - placement
+    - secondary_supporting_primitive
+    factor_rationale: The hard part is finding the hidden header and using the MUI header-menu idiom correctly once it is in view; auto-apply keeps the burden on interaction knowledge rather than a final save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A hidden target column plus the hover/3-dots menu pattern produces strong browse-family pressure even without a confirm step.
+  success_trigger:
+    human_readable:
+    - 'The Accounts grid has exactly one active filter: Country in {Japan, Korea}.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: accounts
+        logic_operator: OR
+        column_filters:
+        - column: Country
+          operator: isAnyOf
+          value:
+          - Japan
+          - Korea
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Failing to scroll far enough and filtering a different visible column.
+  - Filtering to only Japan or only Korea.
+  - Using the right values on the wrong field.
+  - Leaving extra filters active.
+  expected_interaction_path:
+  - Scroll horizontally inside the grid until Country is visible.
+  - Open the Country column menu from the 3-dots icon.
+  - Set the Country filter to Japan and Korea exactly.
+  - Verify the filter is active on Country.
+  notes: The checker should interpret the MUI filter model canonically and ignore menu open/closed state.
+- id: data_table_filterable-mui-v2-T09
+  name: 'Drawer incidents: OR logic through filter panel'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: drawer grid with "is any of" filter'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the Incidents drawer. In the Incidents grid, keep only rows where Priority is P0 or P1. Use the grid filter interface to create that filter with the "is any of" operator. The task will finish automatically when done.
+  ui_copy: Open the Incidents drawer. In the Incidents grid, keep only rows where Priority is P0 or P1. Use the grid filter interface to create that filter with the "is any of" operator. The task will finish automatically when done.
+  setup_description: |-
+    The page uses drawer_flow. Clicking “Incidents” opens a left-side drawer that contains a single DataGrid. The grid toolbar exposes a Filters button that opens the filter panel. The Priority column is type “singleSelect”, which exposes an “is any of” operator that accepts multiple values in one filter row.
+    Initial state: no filters are active. The drawer body is compact and the background remains visible but dimmed.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - theme
+    - guidance
+    factor_rationale: This uses a real MUI Pro idiom—multiple filter items with a logic operator—and wraps it in a drawer to increase layered state and visual load without changing the core filtering semantics.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: 'The key difficulty is interaction knowledge: the requested outcome is not a single checkbox but an exact two-item OR filter model in a compact drawer.'
+  success_trigger:
+    human_readable:
+    - The Incidents grid filter model has exactly two items on Priority, with values P0 and P1, and the logic operator is OR.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: incidents
+        logic_operator: OR
+        column_filters:
+        - column: Priority
+          operator: is
+          value: P0
+        - column: Priority
+          operator: is
+          value: P1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Creating two filter items but leaving the logic operator as AND.
+  - Filtering P0 only or P1 only.
+  - Applying the OR logic on the wrong column.
+  - Adding extra filter items.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open the Filters panel from the grid toolbar.
+  - Add the first Priority filter item for P0 and the second for P1.
+  - Set the logic operator to OR and verify the model.
+  notes: Use the canonical filterModel representation; row text alone is insufficient because different combinations may coincidentally show similar rows.
+- id: data_table_filterable-mui-v2-T10
+  name: 'Contractors grid: filter region + sort seats, not Employees'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: side-by-side grids with filter + sort'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Contractors grid (not Employees), filter Region to "EU" and sort Seats ascending. The task will finish automatically when done.
+  ui_copy: In the Contractors grid (not Employees), filter Region to "EU" and sort Seats ascending. The task will finish automatically when done.
+  setup_description: |-
+    A settings_panel contains two side-by-side MUI DataGrid instances titled “Employees” and “Contractors”. Each grid has the same toolbar with a Filters button and sortable column headers. Region is a single-select column and Seats is numeric.
+    Initial state: both grids are unfiltered and unsorted. The target is Contractors only; Employees must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - scale
+    factor_rationale: Side-by-side grids with the same toolbar controls are a classic wrong-instance trap, and compact small-scale UI makes the filter entry points less forgiving.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the agent must create a correct two-item numeric/string filter model on the correct grid while preserving the sibling grid.
+  success_trigger:
+    human_readable:
+    - The Contractors grid has Region = EU and Seats > 50 as the only active filters.
+    - Employees remains unfiltered.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          contractors:
+            logic_operator: AND
+            column_filters:
+            - column: Region
+              operator: is
+              value: EU
+            - column: Seats
+              operator: '>'
+              value: '50'
+          employees:
+            logic_operator: OR
+            column_filters: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Contractors
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering Employees instead of Contractors.
+  - Using >= 50 instead of > 50 if that produces a different canonical operator.
+  - Applying only one of the two filters.
+  - Leaving any extra filter item active.
+  expected_interaction_path:
+  - Identify the Contractors grid.
+  - Open its Filters panel.
+  - Add Region = EU and Seats > 50.
+  - Verify Employees remains unfiltered.
+  notes: Store filter operators canonically so > and >= are not conflated by the checker.
+- id: data_table_filterable-mui-v2-T11
+  name: 'Activity grid: filter production + sort duration descending'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: column-menu filter + sort in dashboard card'
+  task_template: open_and_select
+  secondary_template: table_operation
+  browsergym_goal: In the Activity grid, filter Environment to "Production" using the column menu, and sort Duration descending by clicking the column header. The task will finish automatically when done.
+  ui_copy: In the Activity grid, filter Environment to "Production" using the column menu, and sort Duration descending by clicking the column header. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel contains one MUI DataGrid titled “Activity” plus KPI counters. The grid has no filter toolbar; filtering is via the column-menu 3-dots icon. Column headers are clickable to sort. Environment is a singleSelect column; Duration is numeric.
+    Initial state: the grid is unfiltered and unsorted.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: menu
+  design_intent:
+    active_factors:
+    - placement
+    - spacing
+    - secondary_supporting_primitive
+    factor_rationale: This pushes on the MUI column-menu idiom in a non-central compact card, so acquisition and interaction knowledge both matter more than the semantic target itself.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The grid is single-instance, but the interaction is still hard because both filters must be reached through hover-dependent header menus in a compact off-center layout.
+  success_trigger:
+    human_readable:
+    - 'The Activity grid has exactly two active filters: Environment = Production and Status = Failed.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: activity
+        logic_operator: AND
+        column_filters:
+        - column: Environment
+          operator: is
+          value: Production
+        - column: Status
+          operator: is
+          value: Failed
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using only one filter.
+  - Applying a near-match such as Environment = Staging or Status = Error.
+  - Opening the column menu on the wrong field.
+  - Leaving a residual third filter active.
+  expected_interaction_path:
+  - Hover or focus the Environment header and open the column menu.
+  - Apply Environment = Production.
+  - Repeat for Status = Failed.
+  - Verify the final filter model has only those two items.
+  notes: MUI DataGrid filters apply immediately, so checker should only inspect the final filter model.
+- id: data_table_filterable-mui-v2-T12
+  name: 'Tickets panel: filter status and sort priority'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: quick filter + column filter + sort'
+  task_template: clear_reset
+  secondary_template: table_operation
+  browsergym_goal: In the Tickets grid, filter Status to "Open" and sort the Priority column. The task will finish automatically when done.
+  ui_copy: In the Tickets grid, filter Status to "Open" and sort the Priority column. The task will finish automatically when done.
+  setup_description: |-
+    An inline_surface work queue contains one DataGrid titled “Tickets”. The grid toolbar exposes a Filters button for column filters. Column headers are clickable to sort.
+    Initial state: no filters or sorting are active. The target requires using the filter panel for Status and clicking the Priority column header to sort.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - spacing
+    - clutter
+    - confirmation_model
+    factor_rationale: This separates global quick-filter state from structured column-filter state, so the agent has to recover from a stale narrowed grid before building the intended final model.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The stale quick filter creates a recovery burden and the final state is only correct if both the global filter is cleared and the two column filters are set exactly.
+  success_trigger:
+    human_readable:
+    - The Tickets grid quick filter is empty.
+    - The structured filter model contains exactly Status = Open and Priority = P1.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: tickets
+        global_filter: null
+        logic_operator: AND
+        column_filters:
+        - column: Status
+          operator: is
+          value: Open
+        - column: Priority
+          operator: is
+          value: P1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the quick filter text active.
+  - Clearing the quick filter but not adding both structured filters.
+  - Adding the filters while the quick filter remains applied.
+  - Using P0 or Closed instead of the requested values.
+  expected_interaction_path:
+  - Clear the quick filter input.
+  - Open the Filters panel.
+  - Add Status = Open and Priority = P1.
+  - Verify there is no remaining global quick filter text.
+  notes: Treat quick-filter text as canonical global filter state in addition to column filter items.
+- id: data_table_filterable-mantine-v2-T13
+  name: 'Admin dashboard: filter Users only, not Projects or Contracts'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: custom header filter popovers'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the admin dashboard, in the Users table only, filter Country to "Brazil" and Status to "Active". Do not change Projects or Contracts. The task will finish automatically when done.
+  ui_copy: On the admin dashboard, in the Users table only, filter Country to "Brazil" and Status to "Active". Do not change Projects or Contracts. The task will finish automatically when done.
+  setup_description: |-
+    A high-clutter dashboard_panel shows three Mantine DataTable cards: “Users”, “Projects”, and “Contracts”. Each card uses the Mantine DataTable column `filter` popover pattern, so a small filter button appears in each filterable header and opens a custom pop-over node built in user code. The popover includes option controls plus an Apply button that closes it.
+    Initial state: all three tables are unfiltered. The target is the Users table only.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Mantine filtering here is intentionally table-composed rather than framework-magic, so the task stresses repeated-instance grounding plus the need to explicitly commit each popover state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The semantic target is easy, but repeated cards, small header buttons, and custom popover apply semantics make this a robust hard task.
+  success_trigger:
+    human_readable:
+    - Users has Country = Brazil and Status = Active as its only active filters.
+    - Projects and Contracts remain unfiltered.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          users:
+            logic_operator: AND
+            column_filters:
+            - column: Country
+              operator: equals
+              value: Brazil
+            - column: Status
+              operator: equals
+              value: Active
+          projects:
+            logic_operator: AND
+            column_filters: []
+          contracts:
+            logic_operator: AND
+            column_filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering Projects or Contracts instead of Users.
+  - Applying only one of the two Users filters.
+  - Selecting the right values but not pressing the popover Apply button.
+  - Leaving any other active filter on any table.
+  expected_interaction_path:
+  - Locate the Users card.
+  - Open the Country filter popover and apply Brazil.
+  - Open the Status filter popover and apply Active.
+  - Verify the other two cards are unchanged.
+  notes: Use the Mantine DataTable composed filter state, not visible rows alone, because user code may debounce rendering.
+- id: data_table_filterable-mantine-v2-T14
+  name: 'Products drawer: search inside category popover and apply'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: custom searchable filter popovers in drawer'
+  task_template: search_and_select
+  secondary_template: open_overlay
+  browsergym_goal: Open the Products drawer. In the Products table, filter Category to "Accessories" and Stock to "Low", then click Apply in each filter popover. The task will finish automatically when done.
+  ui_copy: Open the Products drawer. In the Products table, filter Category to "Accessories" and Stock to "Low", then click Apply in each filter popover. The task will finish automatically when done.
+  setup_description: |-
+    A left-side Mantine drawer opens from a merch dashboard. Inside it is one Mantine DataTable titled “Products”. The Category header filter popover contains a search input and a long option list; Stock uses a smaller select-style filter popover. Each custom popover is wired through the column `filter` property and closes through an explicit Apply button.
+    Initial state: no filters are active.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - spacing
+    - confirmation_model
+    factor_rationale: The drawer carrier plus searchable custom filter popovers add layered state, while the long category list increases interference before the final explicit Apply.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This is hard because the agent must use a drawer-contained custom popover idiom correctly twice in a compact dark scene.
+  success_trigger:
+    human_readable:
+    - The Products table has Category = Accessories and Stock = Low as the only active filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: products
+        logic_operator: AND
+        column_filters:
+        - column: Category
+          operator: equals
+          value: Accessories
+        - column: Stock
+          operator: equals
+          value: Low
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing into the Category search box without selecting Accessories.
+  - Applying only one of the two filters.
+  - Choosing a similar category such as Apparel.
+  - Closing a popover without pressing Apply.
+  expected_interaction_path:
+  - Open the drawer.
+  - Open Category filter, search within the long list, select Accessories, and Apply.
+  - Open Stock filter, choose Low, and Apply.
+  - Verify both filter indicators are active.
+  notes: Since Mantine DataTable filtering is user-composed, the checker should inspect the application state driving records rather than transient popover UI.
+- id: data_table_filterable-mantine-v2-T15
+  name: 'Events table: July range in nested scroll panel'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: custom date-range popover filter'
+  task_template: set_range
+  secondary_template: scroll_find
+  browsergym_goal: In the Events table, scroll if needed to find the Date header, then filter Date to 2024-07-01 through 2024-07-31 inclusive and click Apply filters. The task will finish automatically when done.
+  ui_copy: In the Events table, scroll if needed to find the Date header, then filter Date to 2024-07-01 through 2024-07-31 inclusive and click Apply filters. The task will finish automatically when done.
+  setup_description: |-
+    The page uses nested_scroll: the main content panel is scrollable, and inside it sits a Mantine DataTable titled “Events” with many columns. The Date header is initially below the fold of the outer panel. The Date column’s custom filter popover contains two date inputs and a footer button labeled “Apply filters”.
+    Initial state: no filters are active. The challenge is to reach the right header, open the custom popover, set an exact range, and commit it.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The target header is not immediately visible, so the agent must navigate the panel layout before performing an exact range configuration and explicit apply.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The task combines layout search, exact date endpoints, and a deferred apply step into a single hard browse-family interaction.
+  success_trigger:
+    human_readable:
+    - 'The Events table has exactly one active filter: Date between 2024-07-01 and 2024-07-31 inclusive.'
+    - The range has been applied via Apply filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: events
+        logic_operator: AND
+        column_filters:
+        - column: Date
+          operator: date_between_inclusive
+          value:
+            start: '2024-07-01'
+            end: '2024-07-31'
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting only the start or end date.
+  - Choosing a nearby month such as June or August.
+  - Entering the right dates but not clicking Apply filters.
+  - Applying an extra filter elsewhere in the table.
+  expected_interaction_path:
+  - Scroll the outer panel until the Date header is visible.
+  - Open the Date filter popover.
+  - Set the exact start and end dates.
+  - Click Apply filters.
+  notes: Normalize parsed dates in the checker and do not rely on display formatting differences.
+- id: data_table_filterable-mantine-v2-T16
+  name: 'Leads surface: clear stale owner filter, then exact stage-country pair'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: composed popover filters in inline surface'
+  task_template: clear_reset
+  secondary_template: table_operation
+  browsergym_goal: In the Leads table (not Accounts), clear the existing Owner filter, then set Stage to "Negotiation" and Country to "Canada". Click Apply in the filter popovers. The task will finish automatically when done.
+  ui_copy: In the Leads table (not Accounts), clear the existing Owner filter, then set Stage to "Negotiation" and Country to "Canada". Click Apply in the filter popovers. The task will finish automatically when done.
+  setup_description: |-
+    An inline_surface CRM workspace shows two Mantine DataTable cards side by side: “Leads” and “Accounts”. The Leads card already has Owner = Maya applied; Accounts has no filters. Stage, Country, and Owner all use custom header filter popovers with Apply and Reset buttons.
+    Initial state: Leads is prefiltered by Owner = Maya. The task requires first removing that stale Leads filter, then applying the exact Stage and Country pair while leaving Accounts untouched.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: 'This is a recovery-and-verify variant: the agent must clear a stale target-table filter before building the exact new state, while resisting the sibling-table distraction.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: It is hard because success requires both removing an old filter and building a new exact two-filter state on the correct table.
+  success_trigger:
+    human_readable:
+    - In Leads, the only active filters are Stage = Negotiation and Country = Canada.
+    - Owner is no longer filtered in Leads.
+    - Accounts remains unfiltered.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          leads:
+            logic_operator: AND
+            column_filters:
+            - column: Stage
+              operator: equals
+              value: Negotiation
+            - column: Country
+              operator: equals
+              value: Canada
+          accounts:
+            logic_operator: AND
+            column_filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Leads
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Owner = Maya active in addition to the requested filters.
+  - Applying the requested filters on Accounts instead of Leads.
+  - Clearing the stale filter but adding only one of the new filters.
+  - Selecting the right values but not pressing Apply.
+  expected_interaction_path:
+  - Open the Leads Owner filter and clear the stale owner state.
+  - Open the Stage filter and apply Negotiation.
+  - Open the Country filter and apply Canada.
+  - Verify Accounts remains unchanged.
+  notes: Use exact filter-set equality for Leads so the checker rejects leftover stale owner state.
+- id: data_table_sortable-antd-v2-T01
+  name: 'Renewals board: scroll to hidden Renewal % and sort descending'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: fixed_columns_sort
+  implementation_component: 'AntD: Table (fixed columns, horizontal scroll, sorter)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Renewals table, scroll horizontally to the Renewal % column and sort it from highest to lowest. The task will finish automatically when done.
+  ui_copy: In the Renewals table, scroll horizontally to the Renewal % column and sort it from highest to lowest. The task will finish automatically when done.
+  setup_description: |-
+    A compact nested_scroll panel contains one wide Ant Design table titled “Renewals”. The first column is fixed on the left and several later columns are off-screen. Renewal % sits near the far right, so the table’s own horizontal scroll region must be used before its sortable header can be clicked.
+    Initial state: the table is unsorted. The surrounding panel includes a small summary strip and an inactive export button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - spacing
+    - placement
+    factor_rationale: 'The off-screen header is the intended bottleneck: the agent must operate the table-local scroll region and then hit a compact header control in a non-central layout.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This keeps sorting semantically simple but makes target acquisition substantially harder through hidden columns and compact layout.
+  success_trigger:
+    human_readable:
+    - 'The Renewals table has exactly one active sort key: Renewal % descending.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: renewals
+        sort_model:
+        - column_key: renewal_pct
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Renewal % ascending instead of descending.
+  - Sorting a visible numeric column before finding Renewal %.
+  - Leaving any second sort key active.
+  - Scrolling the page instead of the table and never revealing the target header.
+  expected_interaction_path:
+  - Scroll horizontally inside the table until Renewal % is visible.
+  - Click the Renewal % header until descending is active.
+  - Verify no other column is sorted.
+  notes: Read canonical sort state from the table wrapper; do not infer from viewport position.
+- id: data_table_sortable-antd-v2-T02
+  name: 'Expense Claims: replace stale sort in the correct card'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: single_sort_dashboard
+  implementation_component: 'AntD: Table (single-column sorter in dashboard cards)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Expense Claims table (not Travel Requests), change the active sort so Submitted is newest first. The task will finish automatically when done.
+  ui_copy: In the Expense Claims table (not Travel Requests), change the active sort so Submitted is newest first. The task will finish automatically when done.
+  setup_description: |-
+    A medium-clutter dashboard_panel near the bottom-right shows two Ant Design table cards: “Expense Claims” and “Travel Requests”. Expense Claims starts pre-sorted by Status ascending; Travel Requests is unsorted. Both cards contain a Submitted date column and a Status column with the same sorter icon style.
+    The implementation is single-sort only: when a new sort is activated in a card, the old one in that card clears.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: 'This is not just a visible-header click: the agent must find the correct card, replace an existing sort state, and verify the sibling card stays untouched in a corner-positioned dashboard.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The active stale sort and repeated cards create state-tracking and wrong-instance risk even though the final target sort is conceptually simple.
+  success_trigger:
+    human_readable:
+    - 'Expense Claims has exactly one active sort key: Submitted descending.'
+    - Status is no longer sorted in Expense Claims.
+    - Travel Requests remains unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          expense_claims:
+            sort_model:
+            - column_key: submitted
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          travel_requests:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Expense Claims
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Travel Requests instead of Expense Claims.
+  - Leaving Expense Claims sorted by Status.
+  - Sorting Submitted ascending.
+  - Ending with both cards sorted.
+  expected_interaction_path:
+  - Identify the Expense Claims card.
+  - Activate the Submitted header until descending is active and the stale Status sort clears.
+  - Verify Travel Requests remains unsorted.
+  notes: The checker should explicitly require that the stale Status sort key is gone.
+- id: data_table_sortable-antd-v2-T03
+  name: 'Incidents table: exact two-key multi-sort and apply'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: multiple_sorter
+  implementation_component: 'AntD: Table (multiple sorter priorities)'
+  task_template: table_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Incidents table, sort first by Severity from highest to lowest and then by Updated from oldest to newest, then click Apply view. The task will finish automatically when done.
+  ui_copy: In the Incidents table, sort first by Severity from highest to lowest and then by Updated from oldest to newest, then click Apply view. The task will finish automatically when done.
+  setup_description: |-
+    A compact settings_panel contains one Ant Design table titled “Incidents” plus two unrelated form controls above it. Severity and Updated are both configured with Ant Design multiple-sort priorities, so more than one sort key can be active at once. A footer button labeled “Apply view” commits the current table view state.
+    Initial state: no active sort keys. The target state is a two-key sort in an exact priority order.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - theme
+    - spacing
+    factor_rationale: This presses the validated v1 failure family of compound multi-sort sequences, then adds an explicit view commit so the agent must verify order and direction before finishing.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Compound multi-sort is interaction-knowledge heavy, and the explicit Apply view step turns a plausible partial state into a strict committed state.
+  success_trigger:
+    human_readable:
+    - The Incidents table sort model contains exactly Severity descending as priority 1 and Updated ascending as priority 2.
+    - Apply view has been clicked.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: incidents
+        sort_model:
+        - column_key: severity
+          direction: desc
+          priority: 1
+        - column_key: updated
+          direction: asc
+          priority: 2
+        allow_additional_sort_keys: false
+        saved_view: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply view
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying only one sort key.
+  - Using the right columns with the wrong direction on either key.
+  - Creating the two keys in the wrong priority order.
+  - Reaching the right sort model but not clicking Apply view.
+  expected_interaction_path:
+  - Activate Severity descending.
+  - Add Updated ascending as the second sort key.
+  - Verify both active arrows and their order.
+  - Click Apply view.
+  notes: Read the full canonical sort model, including priorities, from the table wrapper.
+- id: data_table_sortable-antd-v2-T04
+  name: 'Pipelines card: match the visual reference sort'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: reference_preview
+  implementation_component: 'AntD: Table (sorter) with visual reference card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Pipelines table match the Reference preview card. The task will finish automatically when done.
+  ui_copy: Make the Pipelines table match the Reference preview card. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel contains two Ant Design table cards, “Pipelines” and “Accounts”. To the right of the Pipelines card is a compact Reference preview card that shows the Pipelines header “Score” with a downward arrow and a three-row miniature preview of the desired top ordering. The reference uses visible cues only; it does not say “descending” in text.
+    Initial state: both tables are unsorted. Only Pipelines should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - clutter
+    factor_rationale: A visual-only reference pressures mapping from preview to real header in a multi-card dashboard, which separates semantic comprehension from merely reading an explicit text instruction.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The target sort is intentionally visually specified rather than text-labeled, and the second table card raises wrong-instance risk.
+  success_trigger:
+    human_readable:
+    - 'Pipelines has exactly one active sort key: Score descending.'
+    - Accounts remains unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          pipelines:
+            sort_model:
+            - column_key: score
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          accounts:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Pipelines
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Accounts instead of Pipelines.
+  - Sorting Score ascending.
+  - Sorting Last contact or another plausible column based on the preview rows.
+  - Leaving an extra sort key active.
+  expected_interaction_path:
+  - Inspect the Reference preview card.
+  - Map the preview to the Score header in Pipelines.
+  - Activate Score descending and verify Accounts remains unchanged.
+  notes: The checker should use the actual sort model; the reference card itself is not part of success.
+- id: data_table_sortable-antd-v2-T05
+  name: 'Deployments drawer: hidden Rollback ETA ascending'
+  canonical_type: data_table_sortable
+  implementation_source: antd
+  implementation_variant: fixed_columns_sort
+  implementation_component: 'AntD: Table (fixed columns, horizontal scroll, sorter) inside Drawer'
+  task_template: scroll_find
+  secondary_template: open_overlay
+  browsergym_goal: Open the Deployments drawer. In the Deployments table, scroll to the Rollback ETA column and sort it from oldest to newest. The task will finish automatically when done.
+  ui_copy: Open the Deployments drawer. In the Deployments table, scroll to the Rollback ETA column and sort it from oldest to newest. The task will finish automatically when done.
+  setup_description: |-
+    Clicking “Deployments” opens a bottom drawer containing a wide Ant Design table with many operational columns. The leftmost identifier column is fixed. The Rollback ETA column is near the far right and not visible on open. The drawer also contains a short legend and a non-functional refresh icon.
+    Initial state: the table is unsorted. Sorting auto-applies when the header state changes.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - placement
+    factor_rationale: The hidden-header pattern is preserved from the strongest v1 sortable tasks, but the drawer carrier adds more acquisition and state-tracking burden than the old isolated-card variants.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The difficult part is reaching the right hidden header in a drawer-local scroll region and applying the correct ascending state, not understanding the semantic target.
+  success_trigger:
+    human_readable:
+    - 'The Deployments table has exactly one active sort key: Rollback ETA ascending.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: deployments
+        sort_model:
+        - column_key: rollback_eta
+          direction: asc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Rollback ETA descending.
+  - Sorting a nearby time column such as Updated.
+  - Failing to reveal the correct header and sorting a visible distractor column.
+  - Leaving an extra sort key active.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll horizontally within the table until Rollback ETA is visible.
+  - Click the Rollback ETA header until ascending is active.
+  notes: Use canonical sort state from the table adapter; viewport position is not a success condition.
+- id: data_table_sortable-mui-v2-T06
+  name: 'Alerts grid: sort risk descending and filter status to Open'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: sort + filter in single grid'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Alerts grid, sort Risk from highest to lowest and filter Status to "Open". The task will finish automatically when done.
+  ui_copy: In the Alerts grid, sort Risk from highest to lowest and filter Status to "Open". The task will finish automatically when done.
+  setup_description: |-
+    A settings_panel contains one DataGrid titled “Alerts” with a toolbar Filters button and sortable column headers. Risk is numeric; Status is a singleSelect column with options Open, Triaged, Resolved.
+    Initial state: no sort or filter active.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - spacing
+    - guidance
+    - scale
+    factor_rationale: This leverages the MUI multi-sort idiom directly, so the challenge is knowing how to create the exact two-key sort model rather than merely toggling a single header.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: It is hard because the exact final state is a two-key model with specific directions, but the layout stays relatively focused on the sorting skill itself.
+  success_trigger:
+    human_readable:
+    - The Alerts grid sort model is exactly Risk descending then Updated ascending.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: alerts
+        sort_model:
+        - column_key: risk
+          direction: desc
+          priority: 1
+        - column_key: updated
+          direction: asc
+          priority: 2
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting only one of the two columns.
+  - Using the correct columns in the wrong order or wrong directions.
+  - Leaving a third sort key active.
+  - Replacing the risk sort with updated rather than adding it as a second key.
+  expected_interaction_path:
+  - Activate Risk descending.
+  - Add Updated ascending as the second sort criterion.
+  - Verify the grid now shows a two-key sort model.
+  notes: Read the DataGrid sortModel directly; do not infer priority from row order alone.
+- id: data_table_sortable-mui-v2-T07
+  name: 'Users grid: sort Created on through the column menu, not Teams'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: column menu sort in repeated grids'
+  task_template: open_and_select
+  secondary_template: table_operation
+  browsergym_goal: In the Users grid (not Teams), open the Created on column menu and sort it so newest items come first. The task will finish automatically when done.
+  ui_copy: In the Users grid (not Teams), open the Created on column menu and sort it so newest items come first. The task will finish automatically when done.
+  setup_description: |-
+    Two DataGrid cards appear side by side in an inline_surface workspace: “Users” and “Teams”. Each grid uses the same MUI header pattern where a 3-dots column menu appears on hover and offers sorting. The Created on column exists in both grids.
+    Initial state: both grids are unsorted. The task requires using the column menu on Users rather than the easier direct-header path on Teams.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: menu
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - secondary_supporting_primitive
+    factor_rationale: Repeated grids and a hover-dependent 3-dots affordance pressure both target acquisition and instance disambiguation in a way that direct header-click smoke tests do not.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The final state is only a single-key sort, but reaching it through the right grid and the right MUI menu path is significantly harder than a direct header click.
+  success_trigger:
+    human_readable:
+    - 'Users has exactly one active sort key: Created on descending.'
+    - Teams remains unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          users:
+            sort_model:
+            - column_key: created_on
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          teams:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Teams instead of Users.
+  - Sorting Created on ascending.
+  - Using direct header toggles on the wrong grid and finishing with Teams sorted.
+  - Leaving both grids sorted.
+  expected_interaction_path:
+  - Identify the Users grid.
+  - Hover or focus the Created on header and open the 3-dots column menu.
+  - Choose the descending/newest-first sort action.
+  - Verify Teams remains unsorted.
+  notes: Checker should only inspect final sort state; the path through the menu is implied by the UI design but not enforced as an action trace.
+- id: data_table_sortable-mui-v2-T08
+  name: 'Accounts grid: horizontal scroll to Churn risk and sort descending'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid_pro
+  implementation_component: 'MUI X DataGrid Pro: wide grid with horizontal scroll'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Accounts grid, scroll horizontally to Churn risk and sort it from highest to lowest. The task will finish automatically when done.
+  ui_copy: In the Accounts grid, scroll horizontally to Churn risk and sort it from highest to lowest. The task will finish automatically when done.
+  setup_description: |-
+    A nested_scroll analytics panel contains a wide DataGrid Pro titled “Accounts”. The Churn risk column is off-screen to the right at load. The grid footer and surrounding panel add enough clutter that page scrolling and grid scrolling can be confused.
+    Initial state: the grid is unsorted.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - placement
+    factor_rationale: This is a direct continuation of the hidden-header sortable pattern, but in the MUI grid where horizontal scroll and panel scroll can be confused.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Most of the difficulty comes from acquisition and scroll control rather than semantic ambiguity.
+  success_trigger:
+    human_readable:
+    - 'The Accounts grid has exactly one active sort key: Churn risk descending.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: accounts
+        sort_model:
+        - column_key: churn_risk
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Churn risk ascending.
+  - Sorting a visible percentage column such as Discount rate instead of Churn risk.
+  - Scrolling the page but not the grid.
+  - Leaving an extra sort key active.
+  expected_interaction_path:
+  - Scroll horizontally inside the grid until Churn risk is visible.
+  - Click the Churn risk header until descending is active.
+  - Verify no second sort key remains.
+  notes: The checker should ignore viewport state and use canonical sortModel only.
+- id: data_table_sortable-mui-v2-T09
+  name: 'Queued jobs dialog: sort priority in the correct grid'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: two grids in dialog, sort one only'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the Job Manager dialog. In the Queued jobs grid (not Active jobs), sort Priority from highest to lowest. Do not sort the Active jobs grid. The task will finish automatically when done.
+  ui_copy: Open the Job Manager dialog. In the Queued jobs grid (not Active jobs), sort Priority from highest to lowest. Do not sort the Active jobs grid. The task will finish automatically when done.
+  setup_description: |-
+    Opening “Job Manager” reveals a modal with two stacked DataGrid instances: “Active jobs” on top and “Queued jobs” below. Both grids have sortable Priority and Scheduled columns. The target must be applied to the lower grid only; the upper grid must remain unsorted.
+    Initial state: neither grid is sorted.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - guidance
+    factor_rationale: The task combines the MUI multi-sort idiom with repeated modal grids, which pressures both state construction and target identity.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The exact multi-sort model is interaction-knowledge heavy, and the stacked modal grids create a strong wrong-instance hazard.
+  success_trigger:
+    human_readable:
+    - 'Queued jobs has exactly two active sort keys: Priority descending then Scheduled ascending.'
+    - Active jobs remains unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          queued_jobs:
+            sort_model:
+            - column_key: priority
+              direction: desc
+              priority: 1
+            - column_key: scheduled
+              direction: asc
+              priority: 2
+            allow_additional_sort_keys: false
+          active_jobs:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Queued jobs
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Active jobs instead of Queued jobs.
+  - Using the wrong direction on either key.
+  - Adding the keys in the wrong priority order.
+  - Leaving Active jobs sorted as well.
+  expected_interaction_path:
+  - Open the dialog.
+  - Locate the lower Queued jobs grid.
+  - Activate Priority descending and then Scheduled ascending.
+  - Verify Active jobs remains unsorted.
+  notes: The checker should compare the exact sort model and enforce an empty model on the non-target grid.
+- id: data_table_sortable-mui-v2-T10
+  name: 'Leads dashboard: match the visual ordering preview'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: visual reference preview in dashboard cards'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Leads grid match the visual Reference preview. The task will finish automatically when done.
+  ui_copy: Make the Leads grid match the visual Reference preview. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel contains three cards: “Leads”, “Accounts”, and “Contacts”. Only Leads is a grid with a Reference preview card attached on the side. The preview shows the Win probability header with a downward arrow and a tiny top-three ordering. Accounts and Contacts have similar numeric columns, increasing confusability.
+    Initial state: all three cards are unsorted.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - clutter
+    factor_rationale: This turns a nominally simple sort into a grounding-heavy task by specifying the target visually and surrounding it with similar distractor cards.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The hard part is mapping the visual reference to the correct table and column in a cluttered multi-card dashboard.
+  success_trigger:
+    human_readable:
+    - 'Leads has exactly one active sort key: Win probability descending.'
+    - Accounts and Contacts remain unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          leads:
+            sort_model:
+            - column_key: win_probability
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          accounts:
+            sort_model: []
+          contacts:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Leads
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Accounts or Contacts instead of Leads.
+  - Sorting Win probability ascending.
+  - Sorting a different numeric column in Leads.
+  - Leaving any non-target card sorted.
+  expected_interaction_path:
+  - Inspect the Reference preview.
+  - Map it to the Leads card and Win probability header.
+  - Activate the descending sort and verify the other cards remain unchanged.
+  notes: Reference visuals are cues only; the checker should read real grid sort state.
+- id: data_table_sortable-mui-v2-T11
+  name: 'Incidents drawer: replace stale sort with SLA breach descending'
+  canonical_type: data_table_sortable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid_pro
+  implementation_component: 'MUI X DataGrid Pro: drawer grid with stale sort state'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the Incidents drawer. In the Incidents grid, change the active sort from Status to SLA breach so the largest breach is first. The task will finish automatically when done.
+  ui_copy: Open the Incidents drawer. In the Incidents grid, change the active sort from Status to SLA breach so the largest breach is first. The task will finish automatically when done.
+  setup_description: |-
+    A right-side drawer opens from an operations page. Inside it is one DataGrid Pro titled “Incidents”. Status is already sorted ascending when the drawer opens. The SLA breach column is visible and sortable. The drawer body also includes a compact alert legend and a help icon that does nothing.
+    Initial state: exactly one sort key is active—Status ascending.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - theme
+    - confirmation_model
+    factor_rationale: 'The task is designed to force state replacement rather than first-time activation: the old sort must be cleared by the new one, and the drawer carrier increases visual grounding cost.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Replacing a stale active sort in a drawer is more demanding than a clean visible-header toggle because the agent must verify that the old state has actually been removed.
+  success_trigger:
+    human_readable:
+    - 'The Incidents grid has exactly one active sort key: SLA breach descending.'
+    - Status is no longer sorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: incidents
+        sort_model:
+        - column_key: sla_breach
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Status sorted.
+  - Sorting SLA breach ascending.
+  - Adding SLA breach as a second key instead of replacing Status.
+  - Closing the drawer without changing the sort.
+  expected_interaction_path:
+  - Open the drawer.
+  - Activate SLA breach descending.
+  - Verify the stale Status sort is gone.
+  notes: The checker should enforce a single-key final sort model.
+- id: data_table_sortable-mantine-v2-T12
+  name: 'Pipelines dashboard: high-clutter three-table disambiguation'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: sortable table cards in dashboard'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Pipelines table (not Deals or Accounts), sort Win probability from highest to lowest. The task will finish automatically when done.
+  ui_copy: On the dashboard, in the Pipelines table (not Deals or Accounts), sort Win probability from highest to lowest. The task will finish automatically when done.
+  setup_description: |-
+    A dark, high-clutter dashboard_panel shows three Mantine DataTable cards titled “Pipelines”, “Deals”, and “Accounts”. Each card has a percentage-like sortable column with small chevrons. The Pipelines card is the target. The card region begins near the top-left, with a KPI strip and navigation bar above.
+    Initial state: all cards are unsorted.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - theme
+    factor_rationale: 'This directly targets the strongest v1 Mantine sort failure family: correct-card disambiguation in a visually busy dashboard with low-contrast sort affordances.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The sort itself is simple, but identifying the correct card and header among three similar percentage columns is reliably hard.
+  success_trigger:
+    human_readable:
+    - 'Pipelines has exactly one active sort key: Win probability descending.'
+    - Deals and Accounts remain unsorted.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          pipelines:
+            sort_model:
+            - column_key: win_probability
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          deals:
+            sort_model: []
+          accounts:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Pipelines
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Deals or Accounts instead of Pipelines.
+  - Sorting Win probability ascending.
+  - Leaving another card sorted.
+  - Sorting a different percentage-like column in Pipelines.
+  expected_interaction_path:
+  - Identify the Pipelines card title.
+  - Find the Win probability header and activate descending sort.
+  - Verify Deals and Accounts remain unsorted.
+  notes: Mantine sort state should be read from the composed sortStatus driving each card.
+- id: data_table_sortable-mantine-v2-T13
+  name: 'Expense Claims card: replace stale status sort'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: sortable cards with pre-sorted target'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Expense Claims table (not Travel Requests), change the active sort so Submitted is newest first. The task will finish automatically when done.
+  ui_copy: In the Expense Claims table (not Travel Requests), change the active sort so Submitted is newest first. The task will finish automatically when done.
+  setup_description: |-
+    Two Mantine DataTable cards sit side by side in a medium-clutter dashboard_panel positioned toward the bottom-right: “Expense Claims” and “Travel Requests”. Expense Claims begins sorted by Status ascending, while Travel Requests is unsorted. Submitted is a visible date column in both cards.
+    Initial state: only Expense Claims has a sort active.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - confirmation_model
+    factor_rationale: The target state is a replacement, not a fresh sort, so the agent must verify that the old status sort disappeared while staying on the correct card.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Corner placement and repeated cards raise the grounding cost, while the stale initial sort adds recovery pressure.
+  success_trigger:
+    human_readable:
+    - 'Expense Claims has exactly one active sort key: Submitted descending.'
+    - Travel Requests remains unsorted.
+    - Expense Claims is no longer sorted by Status.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          expense_claims:
+            sort_model:
+            - column_key: submitted
+              direction: desc
+              priority: 1
+            allow_additional_sort_keys: false
+          travel_requests:
+            sort_model: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Expense Claims
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Travel Requests instead of Expense Claims.
+  - Leaving Status sorted on Expense Claims.
+  - Sorting Submitted ascending.
+  - Leaving both cards sorted.
+  expected_interaction_path:
+  - Locate the Expense Claims card.
+  - Activate Submitted descending until it replaces the stale Status sort.
+  - Verify Travel Requests remains unchanged.
+  notes: The checker should explicitly reject any remaining Status sort on the target card.
+- id: data_table_sortable-mantine-v2-T14
+  name: 'Deployments table: off-screen Last updated descending'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_scrollarea
+  implementation_component: 'Mantine DataTable: ScrollArea-wrapped sortable table'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Deployments table, scroll horizontally to Last updated and sort it from newest to oldest. The task will finish automatically when done.
+  ui_copy: In the Deployments table, scroll horizontally to Last updated and sort it from newest to oldest. The task will finish automatically when done.
+  setup_description: |-
+    A compact nested_scroll panel contains a Mantine DataTable wrapped in a horizontal ScrollArea. The table has many operational columns and only part of the header row is visible at a time. Last updated is near the far right and must be revealed before its sort chevron can be used.
+    Initial state: unsorted. The panel also contains a short legend and a read-only summary chip group.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - spacing
+    - placement
+    factor_rationale: 'This is the Mantine counterpart of the hidden-header pressure test: the agent must manipulate the ScrollArea correctly before it can use the sort control.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Most failures should come from scroll and header acquisition, not misunderstanding of the requested order.
+  success_trigger:
+    human_readable:
+    - 'The Deployments table has exactly one active sort key: Last updated descending.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: deployments
+        sort_model:
+        - column_key: last_updated
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Last updated ascending.
+  - Sorting a nearby visible column instead.
+  - Failing to reveal the target header at all.
+  - Leaving an extra sort key active.
+  expected_interaction_path:
+  - Scroll horizontally inside the ScrollArea until Last updated is visible.
+  - Click its sort control until descending is active.
+  - Verify no second sort key remains.
+  notes: Use the sortStatus-driven application state for the checker.
+- id: data_table_sortable-mantine-v2-T15
+  name: 'Leads card: match the visual score reference'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_reference_preview
+  implementation_component: 'Mantine DataTable: sortable table with visual reference mini-card'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Make the Leads table match the Reference preview shown on the page. The task will finish automatically when done.
+  ui_copy: Make the Leads table match the Reference preview shown on the page. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel contains a Mantine DataTable card titled “Leads” and a smaller “Reference preview” card to its right. The preview shows the Score header with a downward chevron and a tiny top-three ordering but no textual instruction. A non-functional search box and a stats card act as distractors.
+    Initial state: the Leads table is unsorted.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - placement
+    factor_rationale: The reference is intentionally visual-only, so the agent has to map a rendered ordering cue onto the sortable header instead of following an explicit text target.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: 'The challenge is interpretive rather than mechanical: a near-correct visible sort should still fail if it does not match the reference semantics.'
+  success_trigger:
+    human_readable:
+    - 'The Leads table has exactly one active sort key: Score descending.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: leads
+        sort_model:
+        - column_key: score
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Score ascending.
+  - Sorting Last contact instead of Score.
+  - Leaving the table unsorted.
+  - Activating multi-sort.
+  expected_interaction_path:
+  - Inspect the Reference preview card.
+  - Map its cue to the Score header in the Leads table.
+  - Activate the descending sort.
+  notes: The reference card should not expose hidden machine-readable answer attributes in benchmark mode.
+- id: data_table_sortable-mantine-v2-T16
+  name: 'Manage Sessions modal: sort Last activity newest first'
+  canonical_type: data_table_sortable
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_modal
+  implementation_component: 'Mantine DataTable: sortable table inside modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open Manage Sessions. In the Sessions table, sort Last activity so the newest sessions are first. The task will finish automatically when done.
+  ui_copy: Open Manage Sessions. In the Sessions table, sort Last activity so the newest sessions are first. The task will finish automatically when done.
+  setup_description: |-
+    A centered modal opens over a settings page when “Manage Sessions” is clicked. Inside it is one Mantine DataTable titled “Sessions”. Last activity is sortable, and several non-target columns such as Location and Device are also visible. The modal header includes Close and a help icon, but no extra apply button.
+    Initial state: the table is unsorted.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - theme
+    - clutter
+    factor_rationale: A modal overlay raises the step count without hijacking the task, and the dark theme makes active sort affordances less visually prominent than in a baseline card.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This remains human-solvable, but the modal context and dark compact presentation produce more meaningful grounding pressure than a centered isolated-card sort.
+  success_trigger:
+    human_readable:
+    - 'The Sessions table has exactly one active sort key: Last activity descending.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: sessions
+        sort_model:
+        - column_key: last_activity
+          direction: desc
+          priority: 1
+        allow_additional_sort_keys: false
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting Last activity ascending.
+  - Sorting a different visible column such as Location.
+  - Closing the modal without changing the sort.
+  - Leaving any additional sort key active.
+  expected_interaction_path:
+  - Open the modal.
+  - Click the Last activity header until descending is active.
+  - Verify no second sort key remains.
+  notes: The checker should scope to the modal table subtree.
+- id: data_table_paginated-antd-v2-T01
+  name: 'Archived Orders card: page size then page on the correct table'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: table_pagination_dashboard
+  implementation_component: 'AntD: Table (pagination footer with size changer)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Archived Orders table (not Recent Orders), set rows per page to 25 and then go to page 4. The task will finish automatically when done.
+  ui_copy: On the dashboard, in the Archived Orders table (not Recent Orders), set rows per page to 25 and then go to page 4. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel positioned toward the top-left contains two Ant Design tables titled “Recent Orders” and “Archived Orders”. Each table has its own footer pagination and a page-size changer. A KPI column and small chart card add medium clutter.
+    Initial state: both tables are on page 1 with page size 10. Only Archived Orders should end with page size 25 and current page 4.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - placement
+    factor_rationale: This uses two lookalike paginated tables so the agent must bind both footer controls to the correct instance instead of treating pagination as a generic page-level action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The page-size and page targets are simple, but repeated footers and a corner dashboard layout create meaningful browse-family difficulty.
+  success_trigger:
+    human_readable:
+    - Archived Orders has page size 25 and current page 4.
+    - Recent Orders remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          archived_orders:
+            pagination:
+              page_size: 25
+              page: 4
+          recent_orders:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archived Orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying the changes to Recent Orders instead of Archived Orders.
+  - Changing page size to 25 but leaving the table on page 1.
+  - Going to page 4 with the wrong page size.
+  - Changing both tables.
+  expected_interaction_path:
+  - Locate the Archived Orders card.
+  - Use its rows-per-page control to set 25.
+  - Use its pagination controls to reach page 4.
+  - Verify Recent Orders is unchanged.
+  notes: The checker should use per-table pagination state and require the non-target instance to remain at baseline.
+- id: data_table_paginated-antd-v2-T02
+  name: 'Quick jumper footer: 20 per page and page 7'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: show_quick_jumper_size_changer
+  implementation_component: 'AntD: Pagination (showQuickJumper + showSizeChanger) with Table'
+  task_template: enter_formatted
+  secondary_template: table_operation
+  browsergym_goal: In the Orders table, set rows per page to 20 and use the page jumper to go to page 7. Press Enter if needed. The task will finish automatically when done.
+  ui_copy: In the Orders table, set rows per page to 20 and use the page jumper to go to page 7. Press Enter if needed. The task will finish automatically when done.
+  setup_description: |-
+    A bottom-right inline_surface contains one Ant Design table titled “Orders”. Its footer pagination is compact and exposes both a rows-per-page changer and a quick-jumper input. The surrounding card also has a small refresh icon and a disabled export button.
+    Initial state: page 1, page size 10. Both the page-size changer and the quick-jumper must be used to reach the target state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - spacing
+    factor_rationale: The point is not just pagination semantics but acquiring two small footer controls in a tight bottom-right surface and verifying both parts of the final pagination state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small footer controls and an explicit typed page jump make this much harder than clicking a visible page number.
+  success_trigger:
+    human_readable:
+    - The Orders table has page size 20 and current page 7.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page_size: 20
+          page: 7
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing 7 into the quick jumper without the jump being accepted.
+  - Reaching page 7 while leaving page size at 10.
+  - Changing page size to 20 but landing on the wrong page.
+  - Using any unrelated input outside the table footer.
+  expected_interaction_path:
+  - Open the page-size changer and select 20.
+  - Focus the quick jumper input, enter 7, and confirm it if needed.
+  - Verify the current page indicator shows 7.
+  notes: Use canonical pagination state, not the text currently typed into the jump box.
+- id: data_table_paginated-antd-v2-T03
+  name: 'Invite Manager modal: configure Invited users only'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: table_pagination_modal_two_instances
+  implementation_component: 'AntD: Table (two paginated instances inside modal)'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open Invite Manager. In the Invited users table (not Active users), set rows per page to 10 and go to page 2. The task will finish automatically when done.
+  ui_copy: Open Invite Manager. In the Invited users table (not Active users), set rows per page to 10 and go to page 2. The task will finish automatically when done.
+  setup_description: |-
+    A modal_flow page contains a button labeled “Invite Manager”. Opening it reveals a dialog with two stacked Ant Design tables: “Active users” and “Invited users”. Each has its own footer pagination and page-size changer. The modal header also contains Close and a help icon.
+    Initial state: both tables are on page 1 with page size 25. The target state applies only to Invited users.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - guidance
+    factor_rationale: This directly targets repeated footer control confusion in a modal stack, which was one of the highest-value v1 pagination patterns.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The controls are standard, but the modal stack and repeated footers make it easy to configure the wrong table.
+  success_trigger:
+    human_readable:
+    - Invited users has page size 10 and current page 2.
+    - Active users remains page 1 with page size 25.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          invited_users:
+            pagination:
+              page_size: 10
+              page: 2
+          active_users:
+            pagination:
+              page_size: 25
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invited users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Active users instead of Invited users.
+  - Setting page size correctly but leaving Invited users on page 1.
+  - Reaching page 2 with page size still at 25.
+  - Changing both tables.
+  expected_interaction_path:
+  - Open the modal.
+  - Locate the Invited users table.
+  - Set its rows per page to 10.
+  - Navigate to page 2 and verify Active users is unchanged.
+  notes: Give each table root a stable instance identifier so footer actions are attributed to the correct table.
+- id: data_table_paginated-antd-v2-T04
+  name: Cross-page exact selection in dark compact table
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: preserve_selected_row_keys
+  implementation_component: 'AntD: Table (pagination + multi-row selection preserving keys)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Orders table, select exactly Order IDs A-1064, A-1097, and A-1128. You will need to change pages, and the selected rows must stay selected. The task will finish automatically when done.
+  ui_copy: In the Orders table, select exactly Order IDs A-1064, A-1097, and A-1128. You will need to change pages, and the selected rows must stay selected. The task will finish automatically when done.
+  setup_description: |-
+    A dark, compact settings_panel contains one Ant Design table titled “Orders”. Row selection is enabled and preserves selected keys across pagination. The footer pagination is small and the selection checkboxes are narrow.
+    Initial state: page 1, no rows selected. The three target IDs are on different pages and have nearby distractor IDs.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - precision_surface
+    factor_rationale: This preserves the strongest v1 pagination pattern—exact multi-selection across pages—but raises acquisition cost with compact dark presentation and small row checkboxes.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The exact-set requirement is unforgiving, and compact dark row selection creates the kind of low-level browse-family pressure the benchmark is meant to measure.
+  success_trigger:
+    human_readable:
+    - Selected row IDs are exactly {A-1064, A-1097, A-1128}.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        selection:
+          mode: multi
+          selected_row_ids:
+          - A-1064
+          - A-1097
+          - A-1128
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing one of the three requested IDs.
+  - Selecting any extra row.
+  - Selecting a nearby distractor such as A-1065 instead of A-1064.
+  - Losing earlier selections while paging.
+  expected_interaction_path:
+  - Navigate to the page containing A-1064 and select it.
+  - Navigate to the page containing A-1097 and select it.
+  - Navigate to the page containing A-1128 and select it.
+  - Verify the exact set remains selected.
+  notes: Checker should compare exact selected-row-id sets and ignore selection order.
+- id: data_table_paginated-antd-v2-T05
+  name: 'Pending Orders: apply filter, then paginate and select'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: pagination_plus_filter_selection
+  implementation_component: 'AntD: Table (pagination + filters + row selection)'
+  task_template: table_operation
+  secondary_template: open_and_select
+  browsergym_goal: In the Orders table, filter Status to "Pending" and click OK if needed. Then go to page 3 and select Order ID P-2071. The task will finish automatically when done.
+  ui_copy: In the Orders table, filter Status to "Pending" and click OK if needed. Then go to page 3 and select Order ID P-2071. The task will finish automatically when done.
+  setup_description: |-
+    A compact settings_panel contains one Ant Design table titled “Orders”. The Status header has a standard filter dropdown with OK. Row selection is enabled, and the pagination footer sits below the filtered table. The dataset is constructed so P-2071 only appears on page 3 after the Pending filter is applied.
+    Initial state: no rows selected, no filters active, page 1.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - clutter
+    factor_rationale: This targets the paginated-family recommendation to make agents apply a filter, verify the new pagination context, and only then navigate/select in the transformed table.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The target row is reachable only after the filter is truly applied, so configured-versus-applied confusion becomes part of the pagination burden.
+  success_trigger:
+    human_readable:
+    - The table has Status = Pending as the active filter.
+    - Current page is 3 after filtering.
+    - Exactly row P-2071 is selected.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+        - column: Status
+          operator: equals
+          value: Pending
+        pagination:
+          page: 3
+        selection:
+          mode: single
+          selected_row_ids:
+          - P-2071
+      tolerance:
+        set_mode: exact
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting P-2071 without applying the Pending filter.
+  - Applying Pending but staying on the wrong page.
+  - Reaching page 3 after filtering but selecting a neighboring row.
+  - Configuring Pending in the dropdown without clicking OK.
+  expected_interaction_path:
+  - Open the Status filter dropdown, select Pending, and click OK.
+  - Navigate to page 3 of the filtered results.
+  - Select row P-2071 only.
+  notes: The checker should evaluate final filter, page, and selection state together.
+- id: data_table_paginated-mui-v2-T06
+  name: 'Products grid: page size and page in the correct dashboard card'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: footer pagination in repeated cards'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Products grid (not Services), set rows per page to 50 and go to page 3. The task will finish automatically when done.
+  ui_copy: On the dashboard, in the Products grid (not Services), set rows per page to 50 and go to page 3. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel contains two MUI DataGrid cards: “Products” and “Services”. Both cards expose the standard footer rows-per-page selector and pagination controls. Small card actions (refresh and export) increase clutter but do not affect the grid state.
+    Initial state: both grids are page 1 with page size 10.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - layout
+    factor_rationale: 'This is a browse-family disambiguation task: the agent must bind a page-size change and a page change to the correct footer in a multi-card dashboard.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The footer controls are standard, but two visually similar grids make it easy to configure the wrong instance.
+  success_trigger:
+    human_readable:
+    - Products has page size 50 and current page 3.
+    - Services remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          products:
+            pagination:
+              page_size: 50
+              page: 3
+          services:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Products
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the Services grid instead of Products.
+  - Setting page size to 50 without moving to page 3.
+  - Going to page 3 with the wrong page size.
+  - Changing both grids.
+  expected_interaction_path:
+  - Locate the Products grid footer.
+  - Change rows per page to 50.
+  - Navigate to page 3.
+  - Verify Services remains unchanged.
+  notes: The checker should use the DataGrid paginationModel for each instance.
+- id: data_table_paginated-mui-v2-T07
+  name: 'Invite Manager dialog: Invited users page size and page'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: two instances in modal'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the Invite Manager dialog. In the Invited users grid (not Active users), set rows per page to 10 and go to page 2. The task will finish automatically when done.
+  ui_copy: Open the Invite Manager dialog. In the Invited users grid (not Active users), set rows per page to 10 and go to page 2. The task will finish automatically when done.
+  setup_description: |-
+    The page uses modal_flow. Opening “Invite Manager” reveals two stacked MUI DataGrid instances inside a dialog: “Active users” on top and “Invited users” below. Both use the same footer pagination UI with a rows-per-page selector.
+    Initial state: both are page 1 with page size 25. Only Invited users should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - guidance
+    factor_rationale: This keeps the strongest old MUI pagination pattern because repeated modal footers still generate meaningful wrong-instance failures even for strong agents.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The dialog stack and repeated footer controls create the main burden; the pagination semantics themselves are familiar.
+  success_trigger:
+    human_readable:
+    - Invited users has page size 10 and current page 2.
+    - Active users remains page 1 with page size 25.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          invited_users:
+            pagination:
+              page_size: 10
+              page: 2
+          active_users:
+            pagination:
+              page_size: 25
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invited users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Active users instead of Invited users.
+  - Setting the page size correctly but not the page.
+  - Going to page 2 with page size still at 25.
+  - Changing both grids.
+  expected_interaction_path:
+  - Open the dialog.
+  - Locate the Invited users footer.
+  - Select 10 rows per page and then navigate to page 2.
+  - Verify the Active users grid is unchanged.
+  notes: Use 1-based canonical page numbering in the checker even if the underlying grid state is 0-based.
+- id: data_table_paginated-mui-v2-T08
+  name: Cross-page exact selection in dark DataGrid
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: pagination + checkbox selection'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Users grid, select exactly U-0020, U-0077, and U-0199. You will need to change pages. The task will finish automatically when done.
+  ui_copy: In the Users grid, select exactly U-0020, U-0077, and U-0199. You will need to change pages. The task will finish automatically when done.
+  setup_description: |-
+    A dark, compact settings_panel contains one MUI DataGrid titled “Users”. Checkbox selection is enabled and persists as the page changes. The footer pager and row checkboxes are both relatively small.
+    Initial state: page 1, no rows selected. The three target IDs lie on different pages and have nearby distractor IDs.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - precision_surface
+    factor_rationale: The final state is an exact selected-id set across pages, so compact dark presentation amplifies the low-level acquisition burden without changing the semantics.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This is a strong hard task because the set-equality checker turns a superficially simple browse action into a precise multi-page selection problem.
+  success_trigger:
+    human_readable:
+    - Selected row IDs are exactly {U-0020, U-0077, U-0199}.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        selection:
+          mode: multi
+          selected_row_ids:
+          - U-0020
+          - U-0077
+          - U-0199
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing one of the required IDs.
+  - Selecting any extra row.
+  - Selecting a neighboring distractor such as U-0078.
+  - Losing prior selections while paging.
+  expected_interaction_path:
+  - Navigate to the pages containing the target IDs.
+  - Select each requested row exactly once.
+  - Verify the exact set remains selected after paging.
+  notes: Use exact set equality on selected row ids; ignore current page.
+- id: data_table_paginated-mui-v2-T09
+  name: 'Archived Candidates drawer: page size 10 and page 4'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: two grids inside drawer'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open Candidate Manager. In the Archived Candidates grid (not Current Candidates), set rows per page to 10 and go to page 4. The task will finish automatically when done.
+  ui_copy: Open Candidate Manager. In the Archived Candidates grid (not Current Candidates), set rows per page to 10 and go to page 4. The task will finish automatically when done.
+  setup_description: |-
+    A drawer_flow page opens a right-side drawer titled “Candidate Manager”. Inside are two MUI DataGrid cards stacked vertically: “Current Candidates” and “Archived Candidates”. Each footer exposes the standard rows-per-page selector and page controls.
+    Initial state: both grids are page 1 with page size 25. Only Archived Candidates should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - placement
+    factor_rationale: The drawer carrier keeps the task human-solvable while making it easier for agents to act on the wrong footer because both grids use the same compact pagination controls.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Repeated footers inside a drawer remain a good hard pagination pattern without needing exotic controls.
+  success_trigger:
+    human_readable:
+    - Archived Candidates has page size 10 and current page 4.
+    - Current Candidates remains page 1 with page size 25.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          archived_candidates:
+            pagination:
+              page_size: 10
+              page: 4
+          current_candidates:
+            pagination:
+              page_size: 25
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archived Candidates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Current Candidates instead of Archived Candidates.
+  - Setting page size correctly but ending on the wrong page.
+  - Reaching page 4 with page size still at 25.
+  - Changing both grids.
+  expected_interaction_path:
+  - Open the drawer.
+  - Find the Archived Candidates grid footer.
+  - Set rows per page to 10 and navigate to page 4.
+  - Verify Current Candidates is unchanged.
+  notes: Per-grid paginationModel hooks should be exposed for robust checking.
+- id: data_table_paginated-mui-v2-T10
+  name: 'Sessions surface: configure Archived sessions, not Live sessions'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X DataGrid: side-by-side grids with footer controls'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Archived sessions grid (not Live sessions), set rows per page to 50 and go to page 5. The task will finish automatically when done.
+  ui_copy: In the Archived sessions grid (not Live sessions), set rows per page to 50 and go to page 5. The task will finish automatically when done.
+  setup_description: |-
+    An off-center inline_surface contains two side-by-side MUI DataGrid cards titled “Live sessions” and “Archived sessions”. Both footers are compact and use the same rows-per-page selector and page navigation. A small audit-summary card beneath them adds moderate visual competition.
+    Initial state: both grids are page 1 with page size 10.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - placement
+    factor_rationale: This keeps the same underlying control vocabulary but raises the browse burden through two similar footer rows in a compact off-center surface.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: It is hard mainly because of repeated compact footers and non-central placement, not because the pagination semantics are unusual.
+  success_trigger:
+    human_readable:
+    - Archived sessions has page size 50 and current page 5.
+    - Live sessions remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          archived_sessions:
+            pagination:
+              page_size: 50
+              page: 5
+          live_sessions:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archived sessions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Live sessions instead of Archived sessions.
+  - Using page 5 with the wrong page size.
+  - Setting page size 50 but leaving Archived sessions on the wrong page.
+  - Changing both grids.
+  expected_interaction_path:
+  - Locate the Archived sessions footer.
+  - Set rows per page to 50.
+  - Navigate to page 5.
+  - Verify Live sessions is unchanged.
+  notes: Use canonical page numbering and page size per grid instance.
+- id: data_table_paginated-mantine-v2-T11
+  name: 'Products card: rows per page and page in the correct Mantine table'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: recordsPerPage selector + pagination'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Products table (not Services), set rows per page to 50 and go to page 3. The task will finish automatically when done.
+  ui_copy: On the dashboard, in the Products table (not Services), set rows per page to 50 and go to page 3. The task will finish automatically when done.
+  setup_description: |-
+    A dashboard_panel contains two Mantine DataTable cards titled “Products” and “Services”. Each card is wired with `recordsPerPageOptions`, an `onRecordsPerPageChange` handler, and pagination controls beneath the table. Small header actions and a chart card increase clutter.
+    Initial state: both cards are page 1 with page size 10. The target is Products only.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - layout
+    factor_rationale: This uses Mantine’s composed page-size and page controls in repeated cards, which creates a clean but still diagnostic correct-instance problem.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The task is hard because two table cards expose the same controls, so the agent must bind both changes to the intended card.
+  success_trigger:
+    human_readable:
+    - Products has page size 50 and current page 3.
+    - Services remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          products:
+            pagination:
+              page_size: 50
+              page: 3
+          services:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Products
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Services instead of Products.
+  - Setting 50 rows per page but leaving the wrong current page.
+  - Reaching page 3 with page size still at 10.
+  - Changing both cards.
+  expected_interaction_path:
+  - Find the Products card.
+  - Change rows per page to 50.
+  - Navigate to page 3.
+  - Verify Services remains unchanged.
+  notes: Use the composed `recordsPerPage` and `page` state for checking.
+- id: data_table_paginated-mantine-v2-T12
+  name: 'Inventory drawer: configure Inventory, not Backorders'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: recordsPerPage selector + pagination inside drawer'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open Inventory Manager. In the Inventory table (not Backorders), set rows per page to 25 and go to page 4. The task will finish automatically when done.
+  ui_copy: Open Inventory Manager. In the Inventory table (not Backorders), set rows per page to 25 and go to page 4. The task will finish automatically when done.
+  setup_description: |-
+    Clicking “Inventory Manager” opens a left-anchored Mantine drawer containing two stacked Mantine DataTable cards: “Inventory” and “Backorders”. Each card exposes page navigation and a records-per-page selector.
+    Initial state: both cards are page 1 with page size 10. The target is the Inventory card only.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - theme
+    factor_rationale: The drawer carrier and repeated cards make the small Mantine page-size control more error-prone while keeping the task within a realistic product-management context.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This is a good hard task because the control vocabulary is simple but acquisition and wrong-instance risk are meaningfully elevated.
+  success_trigger:
+    human_readable:
+    - Inventory has page size 25 and current page 4.
+    - Backorders remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          inventory:
+            pagination:
+              page_size: 25
+              page: 4
+          backorders:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Inventory
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Backorders instead of Inventory.
+  - Setting the right page size but wrong page.
+  - Reaching page 4 with page size still at 10.
+  - Changing both cards.
+  expected_interaction_path:
+  - Open the drawer.
+  - Find the Inventory card footer.
+  - Set rows per page to 25 and then go to page 4.
+  - Verify Backorders is unchanged.
+  notes: The checker should inspect both page and recordsPerPage in the target card.
+- id: data_table_paginated-mantine-v2-T13
+  name: Cross-page exact SKU selection in compact dark table
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: pagination + checkbox selection'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Products table, select exactly SKU-0137, SKU-0169, and SKU-0236. You will need to change pages. The task will finish automatically when done.
+  ui_copy: In the Products table, select exactly SKU-0137, SKU-0169, and SKU-0236. You will need to change pages. The task will finish automatically when done.
+  setup_description: |-
+    A dark, compact settings_panel contains one Mantine DataTable titled “Products”. Row selection checkboxes and pagination are both enabled. The target SKUs are on different pages, and each has close distractor neighbors.
+    Initial state: page 1, no rows selected.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - precision_surface
+    factor_rationale: The exact-set selection requirement is preserved while compact dark styling makes checkbox acquisition and cross-page bookkeeping more demanding.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This remains a strong hard pagination task because every incorrect extra or missing SKU is visible to the checker.
+  success_trigger:
+    human_readable:
+    - Selected row IDs are exactly {SKU-0137, SKU-0249, SKU-0376}.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        selection:
+          mode: multi
+          selected_row_ids:
+          - SKU-0137
+          - SKU-0249
+          - SKU-0376
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting only a subset of the three SKUs.
+  - Selecting any additional SKU.
+  - Selecting a neighboring distractor such as SKU-0138.
+  - Losing earlier selections during pagination.
+  expected_interaction_path:
+  - Navigate to the pages containing each target SKU.
+  - Select the requested rows and preserve earlier selections.
+  - Verify the final selected set is exact.
+  notes: Represent the selected rows canonically as an unordered exact set.
+- id: data_table_paginated-mantine-v2-T14
+  name: 'Vendors row: nested Invoices subtable pagination'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_nested_table
+  implementation_component: 'Mantine DataTable: nested paginated subtable in table cell'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: In the Vendors page, inside the Invoices subtable for Northern Supply, set rows per page to 25 and go to page 2. Do not change the Western Trade subtable. The task will finish automatically when done.
+  ui_copy: In the Vendors page, inside the Invoices subtable for Northern Supply, set rows per page to 25 and go to page 2. Do not change the Western Trade subtable. The task will finish automatically when done.
+  setup_description: |-
+    A table_cell page shows two expanded vendor rows, “Northern Supply” and “Western Trade”. Each expanded area contains its own Mantine DataTable titled “Invoices” with page navigation and a records-per-page selector. The two subtables look nearly identical and sit close together.
+    Initial state: both subtables are page 1 with page size 10. Only Northern Supply should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - clutter
+    factor_rationale: Nested subtables in expanded rows create strong local disambiguation pressure while keeping the primary object squarely in the paginated-table family.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the agent must bind both footer operations to the correct nested subtable rather than the visually adjacent sibling.
+  success_trigger:
+    human_readable:
+    - Northern Supply → Invoices has page size 25 and current page 2.
+    - Western Trade → Invoices remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          northern_supply_invoices:
+            pagination:
+              page_size: 25
+              page: 2
+          western_trade_invoices:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Northern Supply / Invoices
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the Western Trade subtable instead of Northern Supply.
+  - Setting the page size correctly but not the page.
+  - Reaching page 2 with the wrong page size.
+  - Changing both subtables.
+  expected_interaction_path:
+  - Locate the Northern Supply expanded row.
+  - Use the Invoices subtable footer there to set 25 rows per page.
+  - Navigate that same subtable to page 2.
+  - Verify the Western Trade subtable is unchanged.
+  notes: The checker should scope pagination state to the nested table instance, not just the vendor row.
+- id: data_table_paginated-mantine-v2-T15
+  name: 'Teams modal: page size 20 and page 5 in the lower table'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_modal_two_instances
+  implementation_component: 'Mantine DataTable: two paginated instances in modal'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open Team Manager. In the Teams table (not Users), set rows per page to 20 and go to page 5. The task will finish automatically when done.
+  ui_copy: Open Team Manager. In the Teams table (not Users), set rows per page to 20 and go to page 5. The task will finish automatically when done.
+  setup_description: |-
+    A modal_flow page contains a button labeled “Team Manager”. The modal shows two stacked Mantine DataTable cards: “Users” on top and “Teams” below. Both expose page navigation and a records-per-page selector, and both start in the same baseline state.
+    Initial state: page 1 with page size 10 in both tables.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - guidance
+    factor_rationale: Repeated paginated tables inside a modal remain one of the cleanest ways to measure whether the agent can bind footer controls to the correct instance under layered UI.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The target state is simple, but stacked modal tables create a meaningful grounding burden.
+  success_trigger:
+    human_readable:
+    - Teams has page size 20 and current page 5.
+    - Users remains page 1 with page size 10.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_instances:
+          teams:
+            pagination:
+              page_size: 20
+              page: 5
+          users:
+            pagination:
+              page_size: 10
+              page: 1
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Teams
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Users instead of Teams.
+  - Setting Teams to page 5 with the wrong page size.
+  - Setting Teams to page size 20 but the wrong page.
+  - Changing both tables.
+  expected_interaction_path:
+  - Open the Team Manager modal.
+  - Locate the Teams table footer.
+  - Set rows per page to 20 and navigate to page 5.
+  - Verify Users remains unchanged.
+  notes: Use canonical page and recordsPerPage state per modal table instance.
+- id: data_table_paginated-mantine-v2-T16
+  name: 'Customers table: clear search, then page size 50 and page 2'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: mantine_datatable_composite
+  implementation_component: 'Mantine DataTable: pagination with prefiltered search toolbar'
+  task_template: clear_reset
+  secondary_template: table_operation
+  browsergym_goal: In the Customers table, clear the existing search query, then set rows per page to 50 and go to page 2. The task will finish automatically when done.
+  ui_copy: In the Customers table, clear the existing search query, then set rows per page to 50 and go to page 2. The task will finish automatically when done.
+  setup_description: |-
+    A compact settings_panel contains one Mantine DataTable titled “Customers” and a toolbar search input above it. The search query `west` is already active, so the table is filtered and the current page count is reduced. The same card also exposes a records-per-page selector and page navigation.
+    Initial state: search query = `west`, page size 10, page 1.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - spacing
+    - layout
+    - clutter
+    factor_rationale: 'This is the paginated analogue of configured-vs-applied recovery: the agent must first remove a stale narrowing state before the intended page-size and page target are even meaningful.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The control set is simple, but the stale search state means the final pagination target can only be reached after an explicit recovery step.
+  success_trigger:
+    human_readable:
+    - The Customers table search query is empty.
+    - Customers has page size 50 and current page 2.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        global_filter: null
+        pagination:
+          page_size: 50
+          page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the search query `west` active.
+  - Changing page size and page without clearing the search.
+  - Clearing the search but leaving the wrong page size or page.
+  - Replacing `west` with a different search query instead of clearing it.
+  expected_interaction_path:
+  - Clear the toolbar search input.
+  - Set rows per page to 50.
+  - Navigate to page 2.
+  - Verify the search query remains empty.
+  notes: Treat the search query as canonical global filter state in addition to pagination state.

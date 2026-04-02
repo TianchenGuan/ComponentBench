@@ -1,0 +1,2389 @@
+- id: data_table_filterable-antd-T01
+  name: Filter Orders by Status (Shipped)
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders table, filter the Status column to only show "Shipped", then click OK to apply the filter.
+    The task will finish automatically when done.
+  ui_copy: 'Orders table: Set Status filter to Shipped and apply with OK.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered in the viewport. A single Ant Design Table titled "Orders" is shown.
+
+    The table uses default (comfortable) spacing and default scale. Columns: Order ID, Customer, Status, Country, Amount.
+
+    Filter affordances: the Status and Country column headers each have a small funnel icon. Clicking the Status funnel opens
+    an AntD filter dropdown popover.
+
+    Status filter configuration: single-select (radio-like) list of 6 statuses (Pending, Processing, Shipped, Delivered, Refunded,
+    Cancelled) with OK and Reset buttons at the bottom.
+
+    Initial state: no filters active; all rows visible; no filter chips.
+
+    Distractors: none beyond the second (unused) Country filter icon.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single column, single-select option with clear visual feedback in the header; only one table instance and
+      minimal clutter.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders".
+    - 'Column filter model contains exactly one filter: Status equals "Shipped".'
+    - No other column or global filters are active.
+    - Filter has been applied (popover confirmed via OK).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Shipped
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Status set to any value other than "Shipped".
+  - Country (or any other) filter changed instead of Status.
+  - '"Shipped" selected but OK not pressed (filter popover closed without applying).'
+  - Multiple statuses selected or residual filters left active.
+  expected_interaction_path:
+  - Click the Status column filter (funnel) icon.
+  - Select "Shipped" in the dropdown list.
+  - Click OK to apply.
+  notes: 'Instrumentation: expose current AntD Table filters (filteredValue) for the Orders table as a canonical filter model
+    for the checker.'
+- id: data_table_filterable-antd-T02
+  name: Filter Customers by Country (Canada + Germany)
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Customers table, filter the Country column to include only "Canada" and "Germany", then click OK
+    to apply. The task will finish automatically when done.
+  ui_copy: 'Customers table: Filter Country to Canada and Germany (multi-select) and apply with OK.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. A single Ant Design Table titled "Customers".
+
+    Spacing: comfortable; scale: default. Columns: Name, Email, Country, Status.
+
+    Country filter: multi-select checkbox list of 10 countries; OK and Reset buttons at the bottom of the popover.
+
+    Initial state: no active filters.
+
+    Distractors: Status column also has a filter icon with similar-looking options, but it is not needed for this task.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Two selections from a moderate list; the popover provides explicit checkboxes and visible applied-state
+      indicators.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Customers".
+    - Country filter is set to the set {Canada, Germany}.
+    - No other filters are active.
+    - Filter changes are applied (OK clicked).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Country
+          operator: in
+          value:
+          - Canada
+          - Germany
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one of the two countries selected.
+  - A different country selected (e.g., Austria) due to list confusion.
+  - Correct countries checked but OK not pressed to apply.
+  - Status filter modified instead of Country.
+  expected_interaction_path:
+  - Click the Country column filter icon.
+  - Check Canada and Germany.
+  - Click OK.
+  notes: Ensure filter order does not matter in the checker; treat multi-select values as an unordered set.
+- id: data_table_filterable-antd-T03
+  name: Name contains fragment (preview-highlighted)
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: custom_filterDropdown
+  implementation_component: 'AntD: Table (custom filterDropdown with Input)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Customers table, set the Name filter so it contains the fragment shown in the preview row (it is
+    "son"), then click Search to apply. The task will finish automatically when done.
+  ui_copy: 'Customers table: Filter Name by the highlighted fragment from the preview row and apply with Search.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=mixed; clutter=none.
+
+    Layout: isolated_card centered. Above the table, a small "Preview row" strip shows an example name with the target fragment
+    highlighted in yellow.
+
+    The Ant Design Table titled "Customers" uses comfortable spacing and default scale.
+
+    Name column uses a custom filterDropdown: clicking the Name filter icon opens a popover containing a single-line text
+    Input labeled "Search name", plus two buttons: "Search" and "Reset".
+
+    Initial state: no filters active; the preview row is visible and highlights the substring "son".
+
+    Distractors: other columns (Country, Status) have standard filter icons but are not needed.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Typing a short substring into a single input; the preview highlight reduces ambiguity and the Search button
+      gives clear apply feedback.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Customers".
+    - Name text filter is active with a contains (case-insensitive) query equal to "son".
+    - No other filters are active.
+    - Filter is applied via the "Search" button.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Name
+          operator: contains_ci
+          value: son
+      tolerance:
+        trim_whitespace: true
+        case_sensitive: false
+      require_confirm: true
+      confirm_control: Search
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Typed text does not include the fragment (e.g., 'so' or 'sons').
+  - Correct text typed but Search not clicked (popover closed without applying).
+  - Filter applied to a different column instead of Name.
+  - Extra filters active in Country/Status.
+  expected_interaction_path:
+  - Click the Name column filter icon.
+  - Type son into the Search name input.
+  - Click Search.
+  notes: Variant is a common AntD pattern using custom filterDropdown for text search; checker should read the controlled
+    filter value stored for the Name column.
+- id: data_table_filterable-antd-T04
+  name: Clear pre-applied Status filter
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Orders table, clear the existing Status filter so no filters are applied, then click OK to apply
+    the cleared state. The task will finish automatically when done.
+  ui_copy: 'Orders table: Clear the Status filter (currently active) and apply with OK.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=form_section; placement=center; scale=default;
+    instances=1; guidance=text; clutter=low.
+
+    Layout: form_section centered. The page shows a section header "Order management" with a few unrelated controls (a primary
+    button "Create order" and a disabled text field) above the table.
+
+    The Ant Design Table titled "Orders" is directly under the header; comfortable spacing, default scale.
+
+    Initial state: the Status column is already filtered to "Processing" (filter funnel icon is highlighted). Rows shown are
+    already reduced.
+
+    Interaction: open the Status filter dropdown; it shows the list of statuses with the current selection checked, plus Reset
+    and OK buttons.
+
+    Distractors: Country filter exists but is not active; the extra controls above the table should be ignored.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Goal is to remove a single active filter; UI provides a dedicated Reset control and clear applied-state
+      indicator.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders".
+    - No column filters are active (filter model is empty).
+    - Cleared state is applied (OK clicked after clearing).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders
+        logic_operator: AND
+        global_filter: null
+        column_filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Status filter still active after interaction.
+  - Status cleared but OK not clicked (cleared selection not applied).
+  - Country or another filter remains active.
+  - Only partial clearing (e.g., switched to a different status instead of clearing).
+  expected_interaction_path:
+  - Click the Status filter icon.
+  - Click Reset (or uncheck the selected option if configured).
+  - Click OK.
+  notes: Checker should treat the empty filter set as success and verify no residual filteredValue exists for any column.
+- id: data_table_filterable-antd-T05
+  name: Filter Category using filter search
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (filters with filterSearch)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the Products table, filter the Category column to "Accessories". Use the filter search box if needed,
+    then click OK. The task will finish automatically when done.
+  ui_copy: 'Products table: Set Category filter to Accessories and apply with OK (filter list is searchable).'
+  setup_description: 'Scene context: theme=light; spacing=compact; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. Spacing mode is compact (reduced padding/row height) while scale remains default.
+
+    A single Ant Design Table titled "Products" with columns: SKU, Product name, Category, Price.
+
+    Category filter: the filter dropdown popover includes a small search input at the top (filterSearch enabled) and a long
+    list of ~20 categories (e.g., Accessories, Apparel, Audio, Cameras, Chargers, etc.).
+
+    Initial state: no active filters.
+
+    Distractors: Price column has a sorter icon but no filter; other header icons may be visible but are irrelevant.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The correct option is in a long, dense list; using the small filterSearch input and selecting the right
+      matching item is the main challenge.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Products".
+    - Category filter equals "Accessories".
+    - No other filters are active.
+    - Filter is applied (OK clicked).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: products
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Category
+          operator: equals
+          value: Accessories
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selected a similar category (e.g., 'Audio') due to search/list confusion.
+  - Typed in the filter search but did not select the category.
+  - Selected Accessories but did not click OK.
+  - Applied filter to the wrong column.
+  expected_interaction_path:
+  - Click the Category filter icon.
+  - Type access in the filter search box (optional).
+  - Select Accessories from the filtered list.
+  - Click OK.
+  notes: AntD filterSearch behavior follows the Table filter API; checker should read the applied filteredValue for the Category
+    column.
+- id: data_table_filterable-antd-T06
+  name: Set Amount range ($50-$125)
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: custom_filterDropdown
+  implementation_component: 'AntD: Table (custom filterDropdown with two InputNumber fields)'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the Orders table, set the Amount filter to show values from 50 to 125 (inclusive), then click Apply.
+    The task will finish automatically when done.
+  ui_copy: 'Orders table: Set Amount range to 50-125 and apply.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered; light theme, comfortable spacing, default scale.
+
+    Ant Design Table titled "Orders" with columns including Amount. The Amount header has a filter icon.
+
+    Custom Amount filter dropdown: clicking the Amount filter icon opens a popover with two InputNumber fields labeled "Min"
+    and "Max", prefilled as blank, and two buttons: "Apply" and "Reset".
+
+    Initial state: no filters active.
+
+    Feedback: after Apply, the Amount filter icon becomes highlighted and the table rows update immediately.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires entering an exact numeric range into two small fields and applying; mistakes require resetting/retyping.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders".
+    - Amount filter range is set to min=50 and max=125 (inclusive).
+    - No other filters are active.
+    - Range is applied via the Apply button.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Amount
+          operator: between_inclusive
+          value:
+            min: 50
+            max: 125
+      tolerance:
+        endpoints: 0
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Entered 50-125 but forgot to click Apply.
+  - Entered a nearby range (e.g., 49-125 or 50-126).
+  - Only one endpoint entered (min only or max only).
+  - Used the wrong column's filter.
+  expected_interaction_path:
+  - Click the Amount filter icon.
+  - Type 50 in Min and 125 in Max.
+  - Click Apply.
+  notes: Checker should canonicalize numeric inputs as integers and enforce inclusive endpoints.
+- id: data_table_filterable-antd-T07
+  name: Filter by Status and Plan (two columns)
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders table, filter Status to "Pending" and Plan to "Pro". Apply the filters using OK in the filter
+    menus. The task will finish automatically when done.
+  ui_copy: 'Orders table: Apply two filters — Status=Pending and Plan=Pro.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=form_section; placement=center; scale=default;
+    instances=1; guidance=text; clutter=low.
+
+    Layout: form_section centered with low clutter (a short description paragraph and a secondary button above the table).
+
+    Ant Design Table titled "Orders" with comfortable spacing, default scale.
+
+    Columns include Status and Plan, each with a filter funnel icon that opens a popover with checkbox/radio options and OK/Reset
+    buttons.
+
+    Initial state: no active filters.
+
+    Distractors: the table also has sortable columns (caret icons) that do not affect filtering.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires opening and applying two separate column filter popovers; managing multiple overlays increases
+      depth and chance of partial completion.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders".
+    - Status equals "Pending".
+    - Plan equals "Pro".
+    - No other filters are active.
+    - Filter states are applied (OK used in the filter popovers).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Pending
+        - column: Plan
+          operator: equals
+          value: Pro
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one of the two filters applied (Status or Plan missing).
+  - Correct selections made but OK not clicked in one of the filter popovers.
+  - Applied a different Plan (e.g., 'Pro Plus') due to option similarity.
+  - Filters applied on a different table instance (if any appear due to clutter).
+  expected_interaction_path:
+  - Open Status filter → choose Pending → OK.
+  - Open Plan filter → choose Pro → OK.
+  notes: Checker should treat the filter set as an unordered conjunction (AND) and ignore ordering of filter application.
+- id: data_table_filterable-antd-T08
+  name: 'Dashboard: Filter Orders (not Invoices)'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Orders table (not the Invoices table), filter Status to "Refunded" and click OK
+    to apply. The task will finish automatically when done.
+  ui_copy: 'Dashboard: Orders table — set Status=Refunded and apply.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=top_left; scale=default;
+    instances=2; guidance=text; clutter=none.
+
+    Layout: isolated_card positioned toward the top-left of the viewport (the card''s top-left corner is near the viewport
+    top-left).
+
+    Inside the card are two Ant Design Tables placed side-by-side with their own titles: "Orders" (left) and "Invoices" (right).
+
+    Both tables use comfortable spacing and default scale and share a similar column set including a Status column with a
+    filter funnel icon.
+
+    Initial state: no active filters on either table.
+
+    Critical disambiguation: the task target is the Orders table; filtering Invoices must not count.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two near-identical tables side-by-side create high disambiguation load; small header filter icons make
+      target acquisition nontrivial even without extra clutter.
+  success_trigger:
+    human_readable:
+    - 'There are two table instances: Orders and Invoices; the target instance is Orders.'
+    - 'Orders table filter model contains exactly one filter: Status equals "Refunded".'
+    - Invoices table has no active filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Refunded
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: true
+      target_instance_label_or_id: Orders
+      terminal_condition: true
+  negative_cases:
+  - Filtered the Invoices table instead of Orders.
+  - Orders Status set incorrectly (e.g., Returned).
+  - Refunded selected but OK not clicked.
+  - Any extra filters applied (Orders or Invoices).
+  expected_interaction_path:
+  - Locate the Orders table card.
+  - Open Orders → Status filter popover.
+  - Select Refunded → OK.
+  notes: Checker must bind to the correct table instance via a stable label/testid (e.g., data-testid='table-orders') and
+    ensure the other instance remains unchanged.
+- id: data_table_filterable-antd-T09
+  name: 'Dark mode: Match reference chips (Country + Status)'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (filters) + reference chips (static UI)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Customers table, set filters to match the reference chips above the table (Country = Canada and
+    Status = Active). Apply the filters with OK. The task will finish automatically when done.
+  ui_copy: 'Customers table: Match the reference chips (Country=Canada, Status=Active) and apply.'
+  setup_description: 'Scene context: theme=dark; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=mixed; clutter=none.
+
+    Theme: dark. Layout: isolated_card centered with no extra clutter.
+
+    A small "Target filters" row above the Ant Design Table shows two colored chips: "Country: Canada" and "Status: Active".
+
+    The table titled "Customers" has columns Country and Status, each with a filter funnel icon that opens the standard AntD
+    filter popover with OK/Reset.
+
+    Initial state: no filters active.
+
+    Feedback: once applied, both filter icons become highlighted and the table rows update.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires matching two separate filters while operating in dark theme (lower contrast) and managing multiple
+      popovers.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Customers".
+    - Country equals "Canada".
+    - Status equals "Active".
+    - No other filters are active.
+    - Filters are applied (OK used).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Country
+          operator: equals
+          value: Canada
+        - column: Status
+          operator: equals
+          value: Active
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one of the two filters applied.
+  - Filtered to a different country/status that looks similar in the list.
+  - Made the correct selections but did not click OK to apply one of the filters.
+  - Extra filters left active.
+  expected_interaction_path:
+  - Open Country filter → select Canada → OK.
+  - Open Status filter → select Active → OK.
+  notes: Reference chips are visual guidance; checker ignores them and reads the actual table filter state.
+- id: data_table_filterable-antd-T10
+  name: 'Modal: Filter by Signup date range'
+  canonical_type: data_table_filterable
+  implementation_source: antd
+  implementation_variant: custom_filterDropdown
+  implementation_component: 'AntD: Table (in Modal) + DatePicker.RangePicker in filterDropdown'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: Open the "Filter Orders" modal, then set the Signup date filter to 2024-01-01 through 2024-03-31 and click
+    OK to apply. The task will finish automatically when done.
+  ui_copy: 'Filter Orders modal: Set Signup date range to 2024-01-01…2024-03-31 and apply with OK.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=modal_flow; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: modal_flow. The main page shows a single button "Open orders table". Clicking it opens a centered modal titled
+    "Filter Orders".
+
+    Inside the modal is an Ant Design Table titled "Orders" (default scale, comfortable spacing).
+
+    The Signup date column header has a filter icon. Clicking it opens a popover containing an AntD DatePicker.RangePicker.
+
+    Within the date picker, selecting a start date and end date fills two fields; an OK button in the filter popover applies
+    the date range to the table.
+
+    Initial state: modal closed; no filters active.
+
+    Distractors: the modal also contains a Cancel button in its footer (closes the modal) that must not be used to finish
+    the task early.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a modal, then a column filter popover, then interacting with a date-range picker (multi-step)
+      and confirming; multiple layers and dense calendars increase difficulty.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders" inside the "Filter Orders" modal.
+    - Signup date filter is set to the inclusive range [2024-01-01, 2024-03-31].
+    - No other filters are active.
+    - Date range is applied (OK clicked).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders_modal
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Signup date
+          operator: date_between_inclusive
+          value:
+            start: '2024-01-01'
+            end: '2024-03-31'
+      tolerance:
+        date_format: YYYY-MM-DD
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one date selected (start without end or vice versa).
+  - Selected a nearby range (e.g., end date off by one day/month).
+  - Selected the correct range but did not click OK to apply.
+  - Closed the modal without applying the filter.
+  expected_interaction_path:
+  - Click Open orders table → modal opens.
+  - Open Signup date filter popover.
+  - Pick 2024-01-01 as start and 2024-03-31 as end.
+  - Click OK.
+  notes: Checker should read a canonical ISO date range stored for the Signup date column; date selection may involve navigating
+    months in the picker.
+- id: data_table_filterable-mui-T01
+  name: 'DataGrid: Filter Status = Active'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Customers data grid, open Filters and set Status to equals "Active". The task will finish automatically
+    when done.
+  ui_copy: 'Customers data grid: Open Filters and set Status = Active.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. A single MUI X DataGrid titled "Customers" is visible with default density/spacing and
+    default scale.
+
+    The grid shows a toolbar above the column headers with a "Filters" button. Clicking it opens the built-in filter panel.
+
+    Filter panel UI: one filter row with (1) Column dropdown, (2) Operator dropdown, and (3) Value input. Status is a singleSelect
+    column so the value control is a dropdown.
+
+    Initial state: no filters active; filter panel closed.
+
+    Feedback: once the filter is set, the row set updates immediately (no Apply button).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single filter criterion using a standard DataGrid filter panel; immediate feedback and one instance keep
+      it straightforward.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Customers".
+    - 'Filter model contains exactly one item: Status equals "Active".'
+    - No other column filters or quick/global filter values are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Active
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Status set to a different value (e.g., Trial).
+  - Filter applied to the wrong column (e.g., Country).
+  - Multiple filters active (extra filter rows present).
+  - Quick filter/global filter text is non-empty.
+  expected_interaction_path:
+  - Click Filters in the toolbar.
+  - In the filter panel, choose column Status, operator equals, value Active.
+  notes: MUI DataGrid filtering is typically accessed via the Filters toolbar button or the column menu; checker should read
+    DataGrid filterModel.
+- id: data_table_filterable-mui-T02
+  name: 'DataGrid: Quick filter text'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (Toolbar Quick Filter)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Customers data grid, use the Quick filter search box to filter for "alicia". The task will finish
+    automatically when done.
+  ui_copy: 'Customers data grid: Type ''alicia'' in the Quick filter box.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered with one MUI X DataGrid titled "Customers".
+
+    Toolbar configuration: the built-in toolbar includes a visible Quick filter text box (placeholder "Search…" or "Quick
+    filter").
+
+    Initial state: no column filters active; quick filter box is empty.
+
+    Feedback: as you type, the grid filters the visible rows immediately (no Apply button).'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single visible text field with immediate feedback; no menus or multi-step interactions.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Customers".
+    - Quick/global filter text equals "alicia" (case-insensitive, trimmed).
+    - No column filters are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: AND
+        global_filter: alicia
+        column_filters: []
+      tolerance:
+        trim_whitespace: true
+        case_sensitive: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Quick filter contains extra characters/spaces (e.g., 'alicia '), if trimming is not enabled by checker.
+  - Text entered into a different search box outside the grid (if present).
+  - A column filter is set instead of using Quick filter.
+  - Only partial text entered (e.g., 'ali').
+  expected_interaction_path:
+  - Click the Quick filter input in the grid toolbar.
+  - Type alicia.
+  notes: Checker should read DataGrid quick filter values (or the global filter text) from the grid's filter state.
+- id: data_table_filterable-mui-T03
+  name: 'DataGrid: Clear all filters'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Customers data grid, clear all active filters so the grid is unfiltered. The task will finish automatically
+    when done.
+  ui_copy: 'Customers data grid: Clear all filters (some are already active).'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered with one MUI X DataGrid titled "Customers".
+
+    Initial state: two filters are pre-applied: (1) Status equals Pending (column filter item), and (2) a Quick filter text
+    ''son'' is present in the toolbar search box.
+
+    The toolbar includes a "Filters" button that opens the filter panel; the filter panel shows the active filter item and
+    offers controls to delete it.
+
+    Feedback: clearing either filter updates rows immediately; there is no Apply button.
+
+    Distractors: a "Density" selector may be present in the toolbar but does not affect filter state.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Clearing is explicit (remove filter item and clear quick-filter text) with immediate feedback; no disambiguation
+      or precise values required.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Customers".
+    - Column filter model is empty (no filter items).
+    - Quick/global filter text is empty/null.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Cleared the column filter but left the quick filter text present.
+  - Cleared the quick filter text but left a column filter item active.
+  - Used a reset control that changes density/sorting but not filters.
+  - Applied a new filter instead of clearing.
+  expected_interaction_path:
+  - Open Filters panel.
+  - Remove the active filter item (trash/delete).
+  - Clear the Quick filter text box.
+  notes: Checker should require both column filter items and quick filter values to be empty.
+- id: data_table_filterable-mui-T04
+  name: 'Column menu: Filter Country = Germany'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (column menu)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders data grid, open the Country column menu, choose Filter, and set Country to equals "Germany".
+    The task will finish automatically when done.
+  ui_copy: 'Orders data grid: Use the Country column menu to filter Country = Germany.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered with a single MUI X DataGrid titled "Orders".
+
+    The grid uses default density and scale. Column headers show a menu icon on hover; clicking opens the column menu.
+
+    The Country column is a singleSelect type. The column menu includes an item labeled "Filter". Selecting it opens the filter
+    panel with Country preselected.
+
+    Initial state: no filters active.
+
+    Feedback: once value is chosen, filtering applies immediately.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires hitting a small column-menu affordance and navigating one extra layer (column menu → filter panel)
+      before selecting the value.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Orders".
+    - 'Filter model contains exactly one item: Country equals "Germany".'
+    - No quick/global filter text is active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Country
+          operator: equals
+          value: Germany
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Used the toolbar Filters button but set the wrong column/value.
+  - Set Country to a different value (e.g., Austria).
+  - Left an extra filter item active.
+  - Entered a quick filter term instead of column filter.
+  expected_interaction_path:
+  - Open the Country column menu.
+  - Click Filter.
+  - In the filter panel, set value to Germany.
+  notes: 'Depth layering should be counted as 2 overlays: column menu then filter panel.'
+- id: data_table_filterable-mui-T05
+  name: 'Two filters: Status=Pending AND Plan=Enterprise'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (filter panel with multiple items)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders data grid, filter to Status = "Pending" AND Plan = "Enterprise". The task will finish automatically
+    when done.
+  ui_copy: 'Orders data grid: Set two filters (Status=Pending AND Plan=Enterprise).'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=form_section; placement=center; scale=default;
+    instances=1; guidance=text; clutter=low.
+
+    Layout: form_section with low clutter. Above the grid are a couple of unrelated form fields (read-only) and a Save button.
+
+    A single MUI X DataGrid titled "Orders" is shown.
+
+    Filtering UI: the toolbar includes a Filters button to open the filter panel.
+
+    Filter panel supports multiple filter items; there is an "Add filter" control to create a second filter row.
+
+    Initial state: no filters active; filter panel closed.
+
+    Feedback: filters apply immediately when set.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires creating and configuring two filter items in the panel; partial completion is common if only one
+      filter gets set.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Orders".
+    - 'Filter model has two items combined with AND: Status equals Pending; Plan equals Enterprise.'
+    - No quick/global filter text is active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Pending
+        - column: Plan
+          operator: equals
+          value: Enterprise
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one filter item present (Status or Plan missing).
+  - Used OR logic instead of AND (if configurable).
+  - Selected the wrong Plan (e.g., Pro).
+  - Quick filter text non-empty.
+  expected_interaction_path:
+  - Open Filters panel.
+  - 'Set first filter: Status equals Pending.'
+  - 'Click Add filter and set second: Plan equals Enterprise.'
+  notes: Checker should verify both filter items and the logicOperator are set to AND.
+- id: data_table_filterable-mui-T06
+  name: 'Compact density: Age ≥ 40'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (numeric filter)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: In the Customers data grid, set the Age filter to be greater than or equal to 40. The task will finish
+    automatically when done.
+  ui_copy: 'Customers data grid (compact): Filter Age ≥ 40.'
+  setup_description: 'Scene context: theme=light; spacing=compact; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. The Customers DataGrid is rendered in compact density (reduced row height and tighter
+    header spacing).
+
+    Age is a numeric column. Filtering is done via the Filters toolbar button which opens the filter panel.
+
+    In the filter row, you must choose column Age, operator ">=" (greater than or equal), and enter the numeric value 40.
+
+    Initial state: no filters active.
+
+    Feedback: filter applies immediately once the value is entered.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires selecting the correct numeric operator and entering an exact threshold; compact density makes
+      controls tighter but interaction is still straightforward.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Customers".
+    - 'Single filter item: Age >= 40.'
+    - No quick/global filter text is active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Age
+          operator: gte
+          value: 40
+      tolerance:
+        numeric: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Used '>' instead of '>='.
+  - Entered 4 or 400 (format/typing error).
+  - Set filter on a different numeric column (e.g., Amount).
+  - Added extra filter items unintentionally.
+  expected_interaction_path:
+  - Click Filters.
+  - Choose Age column and >= operator.
+  - Type 40 into the value field.
+  notes: Numeric operator names differ per implementation; canonicalize to gte for checker.
+- id: data_table_filterable-mui-T07
+  name: 'Reports page: Filter Customers grid (not Vendors)'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (two instances)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: On the Reports page, in the Customers data grid (not the Vendors data grid), filter Country to "Brazil".
+    The task will finish automatically when done.
+  ui_copy: 'Reports page: Customers grid — set Country=Brazil (do not change Vendors).'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=2; guidance=text; clutter=none.
+
+    Layout: isolated_card centered with no extra clutter.
+
+    Two MUI X DataGrids are stacked vertically inside the card: "Customers" on top and "Vendors" below. Both have a Country
+    column and a Filters button in their toolbars.
+
+    Initial state: no active filters in either grid.
+
+    Disambiguation requirement: only Customers must be filtered; Vendors must remain unfiltered.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two similar DataGrid instances require selecting the correct toolbar and filter panel; otherwise it is
+      a straightforward single-select filter.
+  success_trigger:
+    human_readable:
+    - Target instance is the "Customers" grid.
+    - 'Customers filter model contains exactly one item: Country equals Brazil.'
+    - Vendors grid has no active filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Country
+          operator: equals
+          value: Brazil
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Customers
+      terminal_condition: true
+  negative_cases:
+  - Filtered the Vendors grid instead of Customers.
+  - Applied the wrong country.
+  - Added extra filter items.
+  - Entered quick filter text rather than setting Country column filter.
+  expected_interaction_path:
+  - In the Customers grid toolbar, click Filters.
+  - Set Country equals Brazil.
+  notes: Checker must bind filter model per-instance; ensure each grid has a stable id/testid.
+- id: data_table_filterable-mui-T08
+  name: 'Dark mode: Status is any of (Trial, Paused, Cancelled)'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (singleSelect isAnyOf operator)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Customers data grid, set the Status filter to include Trial, Paused, and Cancelled (use an 'is any
+    of' style operator). The task will finish automatically when done.
+  ui_copy: 'Customers data grid (dark): Filter Status to Trial, Paused, and Cancelled.'
+  setup_description: 'Scene context: theme=dark; spacing=comfortable; layout=isolated_card; placement=bottom_right; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Theme: dark. Layout: isolated_card, but the grid is positioned in the bottom-right quadrant of the viewport.
+
+    A single MUI X DataGrid titled "Customers".
+
+    Filtering: open the Filters panel from the toolbar. Status is a singleSelect column with multiple possible values.
+
+    To select multiple statuses, the operator dropdown includes an "is any of" / "isAnyOf" operator; choosing it turns the
+    value control into a multi-select list.
+
+    Initial state: no active filters.
+
+    Feedback: filter applies immediately once all three statuses are selected.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires picking the correct multi-value operator and selecting three values in a denser multi-select UI;
+      dark theme and corner placement add friction.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Customers".
+    - Status filter uses a multi-value operator (isAnyOf) with exactly the set {Trial, Paused, Cancelled}.
+    - No other filters are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: isAnyOf
+          value:
+          - Trial
+          - Paused
+          - Cancelled
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Used equals operator and could only select one status.
+  - Selected only two of the three statuses.
+  - Selected a wrong status with a similar label (e.g., 'Canceled' vs 'Cancelled' if both exist).
+  - Added additional filter items.
+  expected_interaction_path:
+  - Click Filters.
+  - Set column Status, operator is any of.
+  - Select Trial, Paused, and Cancelled.
+  notes: Canonicalize multi-select as an unordered set; checker should ignore ordering of selected values.
+- id: data_table_filterable-mui-T09
+  name: Use OR logic in filter model
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (logicOperator)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Customers data grid, filter to show rows where Status is Trial OR Status is Paused. Use the "is any of" operator on the Status column, or set two filter rows with OR logic. The task
+    will finish automatically when done.
+  ui_copy: 'Customers data grid: Filter Status to Trial or Paused (use "is any of" or OR logic).'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered; light theme; default density/scale.
+
+    A single MUI X DataGrid titled "Customers".
+
+    Filtering UI: open the Filters panel. The panel supports multiple filter items and includes a control to switch the logic
+    operator between AND and OR.
+
+    Initial state: no filters active; logic operator is the default (AND).
+
+    To achieve the goal, you must add two filter items on the Status column and set the logic operator to OR.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Correctness depends on setting the filter logic operator to OR (a semantic state that is easy to miss)
+      in addition to configuring multiple filter rows.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Customers".
+    - Filter model has logicOperator=OR.
+    - 'There are exactly two filter items: Status equals Trial; Status equals Paused.'
+    - No quick/global filter text is active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: customers_datagrid
+        logic_operator: OR
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Trial
+        - column: Status
+          operator: equals
+          value: Paused
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Two filter items are set but logic operator remains AND.
+  - Only one Status value filtered (Trial only or Paused only).
+  - Used isAnyOf operator instead of OR logic with two items (if checker treats them differently).
+  - Extra filter items present.
+  expected_interaction_path:
+  - Open Filters panel.
+  - 'Add two filter rows for Status: Trial and Paused.'
+  - Change logic operator to OR.
+  notes: Checker should explicitly check the logicOperator field in the DataGrid filter model.
+- id: data_table_filterable-mui-T10
+  name: 'Dashboard: Match reference chips (Japan + Shipped)'
+  canonical_type: data_table_filterable
+  implementation_source: mui
+  implementation_variant: mui_x_datagrid
+  implementation_component: 'MUI X: DataGrid (with reference chips UI)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Orders data grid, match the two reference filter chips shown above the grid, then
+    make sure the filters are applied. The task will finish automatically when done.
+  ui_copy: 'Dashboard Orders grid: Match the reference filter chips shown above the grid.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=dashboard; placement=center; scale=default;
+    instances=1; guidance=mixed; clutter=high.
+
+    Layout: dashboard with high clutter. Visible elements include a left navigation rail, a top app bar with search, three
+    KPI cards, and two secondary panels.
+
+    The target component is a single MUI X DataGrid titled "Orders". Above the grid, a small "Target filters" strip shows
+    two chips (visual reference) for the desired Country and Status values.
+
+    The grid toolbar includes a Filters button that opens the filter panel.
+
+    Initial state: no filters active.
+
+    Feedback: filter chips in the target strip do not change; the grid updates immediately when filters are set.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: High clutter dashboard makes it harder to locate the correct grid and filter controls; matching multiple
+      reference chips requires careful reading and multi-step setup in the filter panel.
+  success_trigger:
+    human_readable:
+    - Target grid instance is "Orders".
+    - 'Filters match the reference chips: Country equals Japan; Status equals Shipped.'
+    - No other filters are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders_datagrid
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Country
+          operator: equals
+          value: Japan
+        - column: Status
+          operator: equals
+          value: Shipped
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only one of the two reference filters applied.
+  - Applied the filters to a different grid/table on the dashboard (if any).
+  - Used quick filter text instead of column filters.
+  - Extra filters active beyond the two required.
+  expected_interaction_path:
+  - Read the two reference chips above the grid.
+  - Open Filters panel.
+  - Add/set Country equals Japan and Status equals Shipped.
+  notes: Reference chips provide mixed guidance; checker still validates exact filter model on the Orders grid.
+- id: data_table_filterable-mantine-T01
+  name: 'Users: Status = Active (select)'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Select (Status)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Users table, set the Status filter to "Active". The task will finish automatically when done.
+  ui_copy: 'Users table: Set Status filter to Active.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. The filterable table is implemented as a composite Mantine component: a filter toolbar
+    above a Mantine Table.
+
+    Spacing: comfortable; scale: default; light theme.
+
+    Filter toolbar controls (left-to-right): a Select labeled "Status" (options: All, Active, Trial, Paused, Archived) and
+    a Select labeled "Country" (unused).
+
+    Initial state: Status=All (no filtering), Country=All, and the table shows all rows.
+
+    Feedback: selecting a status immediately updates the table rows and shows a small inline badge "Filtered" next to the
+    table title.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single dropdown selection in a visible filter toolbar with immediate feedback and no overlays beyond the
+      select menu.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Users".
+    - Status filter equals Active.
+    - No other filters are active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Active
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Status left as All (no filter).
+  - Selected a different status (Trial/Paused/Archived).
+  - Changed Country instead of Status.
+  - Used a table sort control (if present) instead of filter.
+  expected_interaction_path:
+  - Open the Status Select dropdown.
+  - Choose Active.
+  notes: 'Composite Mantine implementation: checker reads a unified filter model derived from toolbar control values.'
+- id: data_table_filterable-mantine-T02
+  name: 'Users: Search name contains ''son'''
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + TextInput (Search name)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Users table, type "son" into the Search name field to filter the table. The task will finish automatically
+    when done.
+  ui_copy: 'Users table: Type ''son'' in Search name.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered with a Mantine composite filterable table.
+
+    Filter toolbar includes a TextInput labeled "Search name" with a left search icon; below it is the Mantine Table of users.
+
+    Spacing: comfortable; scale: default; light theme.
+
+    Initial state: Search name is empty (no global filter); other filters are set to All.
+
+    Feedback: table rows filter live as text is entered; the current query is visible in the input.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: Single prominent text input with live feedback and high observability of the entered query.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Users".
+    - Global name search query equals "son" (case-insensitive, trimmed).
+    - No column filters (Status/Country/etc.) are restricting results.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: son
+        column_filters: []
+      tolerance:
+        trim_whitespace: true
+        case_sensitive: false
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Entered only part of the query (e.g., 'so').
+  - Typed into a different field in the toolbar.
+  - Added extra filters in Status/Country unintentionally.
+  - Entered 'son' but with an extra newline/submit behavior that clears the input.
+  expected_interaction_path:
+  - Click the Search name input.
+  - Type son.
+  notes: Checker should read the controlled value of the Search name input and treat it as the table's global_filter.
+- id: data_table_filterable-mantine-T03
+  name: Clear all filters (toolbar button)
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + filter toolbar (Clear filters button)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Users table, clear all active filters using the Clear filters button. The task will finish automatically
+    when done.
+  ui_copy: 'Users table: Clear all filters (some are active).'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. Mantine composite filterable table with a toolbar above the table.
+
+    Toolbar controls: Search name TextInput, Status Select, Country Select, and a right-aligned button labeled "Clear filters".
+
+    Initial state: filters are already active — Search name contains ''an'' and Status is set to Paused. Country is All.
+
+    Feedback: clicking Clear filters resets all toolbar controls to defaults (Search empty; Status=All; Country=All) and restores
+    all table rows.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: A single explicit reset button restores defaults; success is unambiguous and highly observable.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Users".
+    - Global filter is empty/null.
+    - No column filters are active (all dropdowns at All).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Cleared the text input but left Status as Paused.
+  - Reset Status but left Search name as 'an'.
+  - Used browser refresh or navigation that changes page state but not the component model (if disallowed).
+  - Cleared filters on the wrong table instance (if multiple).
+  expected_interaction_path:
+  - Click Clear filters in the toolbar.
+  notes: Composite reset should update a single canonical filter model; checker should verify all fields return to defaults.
+- id: data_table_filterable-mantine-T04
+  name: Tags filter (VIP + Overdue) with Apply
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + MultiSelect (Tags) + Apply button'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Users table, set the Tags filter to include VIP and Overdue, then click Apply filters. The task
+    will finish automatically when done.
+  ui_copy: 'Users table: Select VIP and Overdue in Tags filter, then Apply filters.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. Mantine composite filterable table.
+
+    Toolbar controls: MultiSelect labeled "Tags" (options include VIP, Overdue, New, Churn-risk, Internal), plus an "Apply
+    filters" button on the right.
+
+    Interaction: selecting tags updates a pending selection, but does NOT filter the table until Apply filters is clicked.
+
+    Initial state: no filters active; Tags selection empty.
+
+    Feedback: after applying, a small toast "Filters applied" appears for ~2 seconds and the table row set updates.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires multi-selecting two tags and remembering to click Apply; missing the apply step is a common failure.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Users".
+    - 'Tags filter is applied and contains all of: VIP, Overdue.'
+    - No other filters are active.
+    - Apply filters was used to commit the pending selection.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Tags
+          operator: contains_all
+          value:
+          - VIP
+          - Overdue
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selected only one tag (VIP or Overdue).
+  - Selected the right tags but did not click Apply filters.
+  - Selected additional tags beyond VIP and Overdue (if checker requires exact set).
+  - Applied tags in a different table instance.
+  expected_interaction_path:
+  - Open Tags MultiSelect.
+  - Select VIP and Overdue.
+  - Click Apply filters.
+  notes: Checker should treat Tags filter as a set and can enforce exact set or superset depending on design; this spec assumes
+    exact contains_all of the two tags with no extras.
+- id: data_table_filterable-mantine-T05
+  name: Signup date range (July 2024)
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + DatePickerInput (range) + Apply button'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the Users table, set the Signup date range to 2024-07-01 through 2024-07-31, then click Apply filters.
+    The task will finish automatically when done.
+  ui_copy: 'Users table: Set Signup date range to 2024-07-01…2024-07-31 and apply.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Layout: isolated_card centered. Mantine composite filterable table.
+
+    Toolbar includes a DatePickerInput in range mode labeled "Signup date", showing two date fields within one control.
+
+    There is an "Apply filters" button; date selection is staged and only applied after clicking Apply filters.
+
+    Initial state: no filters active; date range empty.
+
+    Feedback: after apply, the chosen date range is shown as text in the input and the table rows update.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Selecting an exact start and end date in a calendar UI is a multi-step interaction, and apply/commit adds
+      an extra required step.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Users".
+    - Signup date filter is set to [2024-07-01, 2024-07-31] inclusive.
+    - No other filters are active.
+    - Pending selection has been applied via Apply filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Signup date
+          operator: date_between_inclusive
+          value:
+            start: '2024-07-01'
+            end: '2024-07-31'
+      tolerance:
+        date_format: YYYY-MM-DD
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Only start date selected (end date missing).
+  - Picked the wrong month/day due to calendar navigation errors.
+  - Selected correct range but did not click Apply filters.
+  - Entered dates in the wrong format if manual typing is allowed.
+  expected_interaction_path:
+  - Open the Signup date date-range picker.
+  - Select 2024-07-01 then 2024-07-31.
+  - Click Apply filters.
+  notes: If manual typing is enabled, checker should validate ISO dates after parsing/normalization.
+- id: data_table_filterable-mantine-T06
+  name: 'Admin: Filter Users table (not Projects)'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Select (Country) (two instances)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the Admin page, in the Users table (not the Projects table), filter Country to "Brazil". The task will
+    finish automatically when done.
+  ui_copy: 'Admin page: Users table — set Country=Brazil (do not change Projects).'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=form_section; placement=center; scale=default;
+    instances=2; guidance=text; clutter=low.
+
+    Layout: form_section with low clutter (page title, short help text).
+
+    Two Mantine composite filterable tables are shown one after another: "Users" first and "Projects" second. Each has a filter
+    toolbar with a Country Select.
+
+    Placement: centered; default scale; comfortable spacing.
+
+    Initial state: no filters active in either table.
+
+    Disambiguation: only the Users table''s Country filter should be set to Brazil.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two similar table instances require selecting the correct toolbar; otherwise it is a simple single dropdown
+      selection.
+  success_trigger:
+    human_readable:
+    - Target instance is "Users".
+    - Users table has Country equals Brazil.
+    - Projects table remains unfiltered.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Country
+          operator: equals
+          value: Brazil
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Users
+      terminal_condition: true
+  negative_cases:
+  - Filtered the Projects table instead of Users.
+  - Set a different country or left it at All.
+  - Used Search name input instead of Country.
+  - Applied additional filters unintentionally.
+  expected_interaction_path:
+  - In the Users toolbar, open Country Select.
+  - Choose Brazil.
+  notes: Instance disambiguation should rely on stable section headers or data-testid per table.
+- id: data_table_filterable-mantine-T07
+  name: 'Small: Amount range slider 50-125'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + RangeSlider (Amount) + Apply button'
+  task_template: set_range
+  secondary_template: null
+  browsergym_goal: In the Orders table, set the Amount range slider to 50-125, then click Apply filters. The task will finish
+    automatically when done.
+  ui_copy: 'Orders table (small/compact): Set Amount range slider to 50-125 and apply.'
+  setup_description: 'Scene context: theme=light; spacing=compact; layout=isolated_card; placement=center; scale=small; instances=1;
+    guidance=text; clutter=none.
+
+    Layout: isolated_card centered. Spacing is compact and the component is rendered at small scale (narrower card and smaller
+    controls).
+
+    Composite Mantine filterable Orders table with a toolbar above the table.
+
+    Toolbar includes a RangeSlider labeled "Amount" with min=0, max=200, step=1, and two draggable handles showing the current
+    min/max as small value labels.
+
+    There is an "Apply filters" button; slider changes are staged and only applied after clicking Apply filters.
+
+    Initial state: slider is at full range 0-200 (no filtering).
+
+    Feedback: after apply, the table updates and the slider labels remain at the chosen values.'
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Small slider handles require precise dragging to exact numeric endpoints, and the extra Apply step increases
+      the cost of mistakes.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders".
+    - Amount range filter equals min=50 and max=125 (inclusive).
+    - No other filters are active.
+    - Applied via Apply filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Amount
+          operator: between_inclusive
+          value:
+            min: 50
+            max: 125
+      tolerance:
+        endpoints: 0
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Slider set close but not exact (e.g., 49-125 or 50-126).
+  - Moved only one handle (partial range).
+  - Set range correctly but did not click Apply filters.
+  - Changed a different filter control instead of the Amount slider.
+  expected_interaction_path:
+  - Drag the left handle to 50 and right handle to 125.
+  - Click Apply filters.
+  notes: Checker can read the staged slider values vs applied values; this spec assumes applied values must match exactly.
+- id: data_table_filterable-mantine-T08
+  name: 'Dark: Status (Trial/Paused) + Plan=Pro'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + MultiSelect (Status) + Select (Plan) + Apply button'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Orders table, set Status to Trial and Paused, set Plan to Pro, then click Apply filters. The task
+    will finish automatically when done.
+  ui_copy: 'Orders table (dark): Set Status to Trial+Paused and Plan to Pro, then apply.'
+  setup_description: 'Scene context: theme=dark; spacing=comfortable; layout=isolated_card; placement=center; scale=default;
+    instances=1; guidance=text; clutter=none.
+
+    Theme: dark. Layout: isolated_card centered.
+
+    Composite Mantine filterable Orders table with a toolbar.
+
+    Toolbar controls: MultiSelect labeled "Status" (options: Pending, Processing, Trial, Paused, Shipped, Cancelled), Select
+    labeled "Plan" (Free, Pro, Enterprise), and an "Apply filters" button.
+
+    Filtering is staged: changes do not affect rows until Apply filters is clicked.
+
+    Initial state: no filters active (Status empty, Plan=All).
+
+    Feedback: after applying, an inline summary text shows ''2 filters applied''.'
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires configuring two different controls (multi-select + select) and committing with Apply; dark theme
+      reduces contrast and increases chance of missed selections.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Orders".
+    - Status filter contains exactly Trial and Paused.
+    - Plan filter equals Pro.
+    - No other filters are active.
+    - Applied via Apply filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: orders_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: in
+          value:
+          - Trial
+          - Paused
+        - column: Plan
+          operator: equals
+          value: Pro
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Selected only one status (Trial or Paused).
+  - Set the correct selections but did not click Apply filters.
+  - Set Plan to the wrong value (Free/Enterprise).
+  - Added extra statuses beyond Trial and Paused.
+  expected_interaction_path:
+  - Open Status MultiSelect and select Trial and Paused.
+  - Open Plan Select and choose Pro.
+  - Click Apply filters.
+  notes: Checker should enforce exact set equality for Status multi-select (no extras) if that is desired.
+- id: data_table_filterable-mantine-T09
+  name: 'Top-right: Match reference chips (visual)'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + filter toolbar + reference chips'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Users table, match the reference filter chips shown in the Target filters row above the table, then
+    click Apply filters. The task will finish automatically when done.
+  ui_copy: 'Users table: Match the Target filters chips above the table and apply.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=isolated_card; placement=top_right; scale=default;
+    instances=1; guidance=visual; clutter=none.
+
+    Layout: isolated_card placed in the top-right quadrant of the viewport.
+
+    Above the Mantine composite Users table, a "Target filters" row displays three chips (visual reference) indicating the
+    desired Status, Country, and Tag.
+
+    Toolbar controls correspond 1:1 with the chips: Status Select, Country Select, Tags MultiSelect, and an "Apply filters"
+    button.
+
+    Guidance is visual: the instruction does not repeat the chip values; you must read them from the chips.
+
+    Initial state: no filters active (Status=All, Country=All, Tags empty).
+
+    Feedback: after applying, the toolbar shows the selected values and the table updates.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires reading target state from visual reference chips and mapping them to three different controls,
+      then applying; errors are easy if values are misread.
+  success_trigger:
+    human_readable:
+    - Target table instance is "Users".
+    - 'Filters match the reference chips exactly: Status=Archived, Country=Canada, Tags include VIP.'
+    - No additional filters are active.
+    - Applied via Apply filters.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: users_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Status
+          operator: equals
+          value: Archived
+        - column: Country
+          operator: equals
+          value: Canada
+        - column: Tags
+          operator: contains_all
+          value:
+          - VIP
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: true
+  negative_cases:
+  - Matched only two of the three chips (one control left at default).
+  - Selected the right values but did not click Apply filters.
+  - Added extra tags beyond VIP (if checker enforces exactness).
+  - Changed a different table's filters if multiple are present.
+  expected_interaction_path:
+  - Read the three Target filters chips.
+  - Set Status and Country selects and Tags multiselect accordingly.
+  - Click Apply filters.
+  notes: To keep the task deterministic, the benchmark page should render fixed reference chips (Archived/Canada/VIP) for
+    this instance.
+- id: data_table_filterable-mantine-T10
+  name: 'Nested cell: Filter the Invoices mini-table (3 instances)'
+  canonical_type: data_table_filterable
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table (mini) + toolbar filters (3 instances in table cells)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: In the Invoices table (the middle mini-table), filter Payment status to Late and Currency to EUR, then
+    click Apply filters. The task will finish automatically when done.
+  ui_copy: 'Mini-tables: Invoices — set Payment status=Late and Currency=EUR, then apply.'
+  setup_description: 'Scene context: theme=light; spacing=comfortable; layout=table_cell; placement=center; scale=default;
+    instances=3; guidance=text; clutter=none.
+
+    Layout: table_cell with minimal extra clutter. The page shows a parent summary table with three rows: Orders, Invoices,
+    Payouts.
+
+    In the rightmost cell of each row is an embedded mini filterable table (composite Mantine implementation) with its own
+    tiny filter toolbar.
+
+    There are three instances of the same canonical component (Orders mini-table, Invoices mini-table, Payouts mini-table).
+    The Invoices mini-table is the middle one.
+
+    Each mini-toolbar includes two Selects: "Payment status" (All, Paid, Late, Failed) and "Currency" (All, USD, EUR, GBP),
+    plus a small "Apply" button.
+
+    Scale: default overall, but the mini-table toolbars have smaller controls due to the constrained cell width.
+
+    Initial state: all mini-tables unfiltered.
+
+    Disambiguation: the task must apply filters only to the Invoices mini-table.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Three compact mini-table instances inside table cells make target acquisition and disambiguation very difficult;
+      controls are small and Apply is required.
+  success_trigger:
+    human_readable:
+    - Target instance is the Invoices mini-table (middle instance).
+    - 'Invoices: Payment status equals Late.'
+    - 'Invoices: Currency equals EUR.'
+    - Orders and Payouts mini-tables remain unfiltered.
+    - Applied via the Invoices mini-table Apply button.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        table_id: invoices_mini_mantine
+        logic_operator: AND
+        global_filter: null
+        column_filters:
+        - column: Payment status
+          operator: equals
+          value: Late
+        - column: Currency
+          operator: equals
+          value: EUR
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Invoices
+      terminal_condition: true
+  negative_cases:
+  - Filters applied to Orders or Payouts mini-table instead of Invoices.
+  - Only one of the two filters set (Payment status or Currency).
+  - Correct selections made but Apply not clicked in the Invoices mini-table.
+  - Extra filters active in the Invoices mini-table.
+  expected_interaction_path:
+  - Locate the middle row labeled Invoices.
+  - In the Invoices mini-toolbar, set Payment status to Late and Currency to EUR.
+  - Click Apply.
+  notes: Checker should scope by instance id (e.g., data-testid='mini-table-invoices') and ensure other instances' filter
+    models remain empty.

@@ -1,0 +1,3670 @@
+- id: resizable_columns-antd-v2-T01
+  name: 'Dense queue: resize Assignee without triggering header controls'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: Table header cells composed with react-resizable grips plus native sorter/filter affordances'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: In the Incident queue table, resize the “Assignee” column to 176 px, within ±4 px. Do not sort or filter the table. The task will finish automatically when done.
+  ui_copy: In the Incident queue table, resize the “Assignee” column to 176 px, within ±4 px. Do not sort or filter the table. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing, small scale, and high clutter. A left navigation rail and two status cards sit beside the main content. The main content contains one Ant Design incident queue table with resizable header grips composed onto the right edge of each header cell.
+    The target header row is deliberately crowded: the “Assignee” header has a sorter icon, a filter dropdown icon, and the thin resize grip adjacent to the same edge. A persistent width monitor above the table reads `Assignee width: ###px`. The table starts with Assignee at 132px. Other columns include Ticket, Severity, Service, Assignee, and Updated. No confirmation button is required; widths apply live.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - scale
+    - clutter
+    - layout
+    factor_rationale: The target affordance sits next to genuine header controls in a compact settings panel, so the task separates acquiring the true resize grip from merely understanding which column matters.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The table state is easy to understand, but the crowded AntD header edge makes target acquisition and recovery after a near-miss meaningfully hard.
+  success_trigger:
+    human_readable:
+    - Assignee width is within ±4px of 176px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          assignee: 176
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the Assignee filter menu instead of resizing the column.
+  - Sorting the table while leaving Assignee outside ±4 px.
+  - Resizing Service or Updated instead of Assignee.
+  - Stopping at a visually close width such as 170 px or 181 px.
+  expected_interaction_path:
+  - Locate the Assignee header in the incident queue.
+  - Acquire the thin grip on the header edge rather than the sort or filter controls.
+  - Drag until the width monitor reads about 176 px.
+  - Release and verify the width without changing sort or filter state.
+  notes: Read canonical width from the table state, not from rendered cell pixels. Treat sort_state and filter_state as unchanged for this task.
+- id: resizable_columns-antd-v2-T02
+  name: 'Drawer preview: resize Resolution in the Escalations layout and save'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: Drawer + preview tables with react-resizable header grips'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Column layouts”. In the preview labeled “Secondary — Escalations”, resize the “Resolution” column to 228 px, within ±4 px, then click “Save layouts”. The task will finish automatically when done.
+  ui_copy: Open “Column layouts”. In the preview labeled “Secondary — Escalations”, resize the “Resolution” column to 228 px, within ±4 px, then click “Save layouts”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. The page shows a queue summary card and a button labeled “Column layouts”. Clicking it opens a right-side Ant Design Drawer titled “Column layouts”.
+    Inside the drawer are three accordion sections, each containing a resizable preview table and its own width monitor: “Primary — Inbox”, “Secondary — Escalations”, and “Archived — Review”. Only the Secondary preview matters. The Secondary table contains Ticket, Owner, Resolution, and Age; Resolution starts at 168px. Resizing updates draft widths only. The drawer footer contains “Cancel” and “Save layouts”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: Three same-family previews inside one drawer create wrong-instance pressure, and the explicit drawer save separates drafting the right width from committing the right layout.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The hard part is selecting the right preview table and then remembering to save the draft, not simply dragging any visible grip.
+  success_trigger:
+    human_readable:
+    - Resolution width is within ±4px of 228px.
+    - The required "Save layouts" control has been clicked and the committed layout is saved.
+    - The correct target instance is "Secondary — Escalations".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          resolution: 228
+        saved: true
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: true
+      confirm_control: Save layouts
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Escalations
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Resolution in Primary — Inbox or Archived — Review instead of Secondary — Escalations.
+  - Achieving 228 px in draft state but closing or cancelling the drawer.
+  - Saving while Resolution is outside ±4 px.
+  - Resizing a non-target column such as Owner.
+  expected_interaction_path:
+  - Open the Column layouts drawer.
+  - Expand the Secondary — Escalations preview if needed.
+  - Drag the Resolution header grip until its monitor reads about 228 px.
+  - Click Save layouts.
+  notes: The committed layout should be stored separately from draft widths. Bind evaluation to the labeled preview section, not DOM position.
+- id: resizable_columns-antd-v2-T03
+  name: 'Nested scroll: find Error summary off-screen and resize it'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: horizontally scrollable Table with react-resizable header grips'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: In the Build failures table, scroll horizontally to find the “Error summary” column, then resize it to 312 px, within ±6 px. The task will finish automatically when done.
+  ui_copy: In the Build failures table, scroll horizontally to find the “Error summary” column, then resize it to 312 px, within ±6 px. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses nested_scroll with compact spacing and medium clutter. The page has an outer scrollable main column and, inside it, a card titled “Build failures” whose table itself overflows horizontally. The table is narrower than its content and exposes a visible horizontal scrollbar.
+    The leftmost columns are Job, Branch, SHA, Owner, Stage, and Duration. The target column “Error summary” starts off-screen to the right, just before “Retry hint”. Each header has a thin resize grip. A persistent monitor above the table reads `Error summary width: ###px` even when the target column is off-screen. Error summary starts at 244px.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - placement
+    - clutter
+    factor_rationale: The task forces the agent to manage a real horizontal-scroll discovery step before the resize itself, which cleanly separates finding the target header from converging on the target width.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The off-screen target header and nested scrolling make this harder than a simple grip drag, but the persistent monitor keeps the final convergence honest and human-feasible.
+  success_trigger:
+    human_readable:
+    - Error Summary width is within ±6px of 312px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          error_summary: 312
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling vertically or in the page without ever revealing the Error summary header.
+  - Resizing Retry hint or Duration instead of Error summary.
+  - Stopping outside ±6 px after the final release.
+  - Dragging the scrollbar but never performing the resize.
+  expected_interaction_path:
+  - Move the horizontal scrollbar until Error summary is visible.
+  - Acquire the Error summary resize grip.
+  - Drag until the monitor shows about 312 px.
+  - Release and verify the final width.
+  notes: Keep the horizontal scrollbar permanently visible; do not hide it behind fades or hover-only behavior.
+- id: resizable_columns-antd-v2-T04
+  name: 'Middle table only: align Service and Owner to the reference ruler'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: stacked preview tables with react-resizable header grips and reference ruler'
+  task_template: match_reference
+  secondary_template: table_operation
+  browsergym_goal: Use the reference ruler to adjust only the middle preview table, “Regional triage”, so that the “Service” and “Owner” boundaries are each within ±6 px of the ruler. Do not change the top or bottom preview table. The task will finish automatically when done.
+  ui_copy: Use the reference ruler to adjust only the middle preview table, “Regional triage”, so that the “Service” and “Owner” boundaries are each within ±6 px of the ruler. Do not change the top or bottom preview table. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and medium clutter. A dashboard card titled “Preview layouts” contains three same-width preview tables stacked vertically: “Inbox”, “Regional triage”, and “Archive”. Only the middle table should be changed.
+    A colored reference ruler above the middle table marks the desired header boundaries for Ticket, Service, Owner, and Status. The UI does not show numeric target widths; only the ruler and the live alignment guides are visible. All three tables use the same grip style. The middle table starts slightly misaligned on both Service and Owner.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - placement
+    factor_rationale: This uses a visual ruler instead of direct width numbers and adds same-family distractor instances, so the task tests whether the agent can couple visual boundary matching with correct-instance control.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Without per-column numbers, the agent must use visual alignment while also preserving the two non-target previews, which makes this a strong mixed grounding-plus-convergence task.
+  success_trigger:
+    human_readable:
+    - Each named reference boundary is matched within ±6px of the reference ruler.
+    - The correct target instance is "Regional triage".
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: antd_regional_triage_ruler_v2
+        column_widths_px:
+          service: 182
+          owner: 214
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Regional triage
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching the ruler in Inbox or Archive instead of Regional triage.
+  - Aligning only Service or only Owner.
+  - Ending outside the ±6 px boundary tolerance even if the layout looks close.
+  - Changing non-target preview tables.
+  expected_interaction_path:
+  - Identify the middle preview table labeled Regional triage.
+  - Use the ruler to adjust the Service boundary first.
+  - Adjust the Owner boundary and re-check Service because adjacent drags interact.
+  - Stop when both boundaries visually align.
+  notes: Reference checking should use canonical target widths and instance label binding, not pixel comparison against screenshot images.
+- id: resizable_columns-antd-v2-T05
+  name: 'Compact convergence: set three widths in one dense inventory table'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: compact Table with always-visible react-resizable grips'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact inventory table, set “ID” to 84 px, “Customer” to 206 px, and “Status” to 118 px, each within ±4 px. The task will finish automatically when done.
+  ui_copy: In the compact inventory table, set “ID” to 84 px, “Customer” to 206 px, and “Status” to 118 px, each within ±4 px. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses inline_surface with compact spacing, small scale, and medium clutter. The inventory card sits inside a busy operations surface with quick-filter chips and a bulk-action toolbar above it. The table itself is narrow and dense.
+    The table columns are ID, Customer, Status, Updated, and Owner. Grips are always visible to reduce pure discovery burden, but the compact header padding places them close together. A single monitor line above the table shows all three target widths live: `ID: ###px • Customer: ###px • Status: ###px`. Initial widths are 120px, 170px, and 144px respectively.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - spacing
+    - scale
+    - clutter
+    factor_rationale: The grips are visible by design, so the challenge becomes sequential convergence in a compact dense header strip rather than hover discovery.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Three interacting width targets in a compact small table create repeated post-drag calibration pressure even though the true grips are not hidden.
+  success_trigger:
+    human_readable:
+    - Id width is within ±4px of 84px.
+    - Customer width is within ±4px of 206px.
+    - Status width is within ±4px of 118px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          id: 84
+          customer: 206
+          status: 118
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one or two of the three target widths are correct.
+  - Resizing Updated or Owner instead of one of the target columns.
+  - Stopping outside ±4 px on any target width.
+  - Leaving the table in a state where one later drag undoes an earlier target.
+  expected_interaction_path:
+  - Resize ID to about 84 px.
+  - Resize Customer to about 206 px.
+  - Resize Status to about 118 px.
+  - Re-check all three monitor values and fine-adjust as needed.
+  notes: Ensure consistent box sizing so width state is deterministic across browsers and zoom levels.
+- id: resizable_columns-antd-v2-T06
+  name: 'Audit row table-cell: keep Reviewer in the allowed range'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: review table embedded in table-cell context with react-resizable grips'
+  task_template: table_operation
+  secondary_template: set_range
+  browsergym_goal: In the Review overrides table, resize the “Reviewer” column so it finishes between 134 px and 142 px inclusive. Do not resize “Decision”. The task will finish automatically when done.
+  ui_copy: In the Review overrides table, resize the “Reviewer” column so it finishes between 134 px and 142 px inclusive. Do not resize “Decision”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses table_cell with compact spacing and high clutter. The resizable table is embedded in the lower cell of a larger audit matrix, and the surrounding matrix contains non-target status badges and two unrelated dropdowns.
+    Within the target mini-table, headers are Review ID, Reviewer, Decision, and Updated. The Reviewer and Decision separators sit close together, and the Reviewer header also includes a tiny sort chevron. A monitor above the mini-table reads `Reviewer width: ###px`. Reviewer starts at 176px.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - clutter
+    - scale
+    factor_rationale: The target lives in a dense table-cell carrier where the wrong separator is nearby, so the task stresses local acquisition and controlled stopping rather than semantic understanding of the width goal.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The acceptable range is generous, but the tiny table-cell carrier and competing adjacent separator make the acquisition problem genuinely hard.
+  success_trigger:
+    human_readable:
+    - Reviewer width is between 134px and 142px inclusive.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_widths_px_range:
+          reviewer:
+            min: 134
+            max: 142
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Decision instead of Reviewer.
+  - Stopping at 133 px or 143 px.
+  - Opening the sort control without changing Reviewer into the target range.
+  - Leaving Reviewer near its starting width.
+  expected_interaction_path:
+  - Locate the Review overrides mini-table.
+  - Acquire the Reviewer header edge rather than the Decision edge or sort icon.
+  - Drag until the monitor falls inside 134–142 px.
+  - Release and verify the final range.
+  notes: Use inclusive bounds. Bind the task to the lower audit matrix cell so background tables are ignored.
+- id: resizable_columns-antd-v2-T07
+  name: 'Modal draft layout: resize Runbook and commit the saved width'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: Modal + draft preview table with react-resizable grips'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Customize table”. In the modal preview, resize the “Runbook” column to 340 px, within ±5 px, then click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Customize table”. In the modal preview, resize the “Runbook” column to 340 px, within ±5 px, then click “Save”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses modal_flow with compact spacing and medium clutter. The main page shows a deploy history table and a compact control bar. Clicking “Customize table” opens an Ant Design Modal containing a single resizable preview table.
+    The preview table columns are Service, Environment, Runbook, and Window. Runbook starts at 268px. A draft width readout under the table updates during dragging. The modal footer contains “Cancel” and “Save”. The live preview changes immediately, but the committed layout on the underlying page updates only after Save.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - clutter
+    factor_rationale: The task distinguishes draft resizing from committed resizing in a realistic modal customization flow, which turns a simple drag into a verification-and-commit task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The modal keeps the target obvious, but the saved state is distinct from the live preview, so success requires both precise dragging and correct commit behavior.
+  success_trigger:
+    human_readable:
+    - Runbook width is within ±5px of 340px.
+    - The required "Save" control has been clicked and the committed layout is saved.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          runbook: 340
+        saved: true
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting the draft width correctly but cancelling or closing the modal.
+  - Saving while Runbook is outside ±5 px.
+  - Resizing Window or Environment instead of Runbook.
+  - Leaving the modal open after the save should have committed.
+  expected_interaction_path:
+  - Open the Customize table modal.
+  - Drag the Runbook grip until the draft readout shows about 340 px.
+  - Click Save.
+  - Verify the committed table layout reflects the new width.
+  notes: Check committed width state after Save, not during the drag.
+- id: resizable_columns-antd-v2-T08
+  name: 'Lower budget table: match three boundaries to the strip'
+  canonical_type: resizable_columns
+  implementation_source: antd
+  implementation_variant: composite_react_resizable
+  implementation_component: 'AntD: twin dashboard tables with visual width strip and react-resizable grips'
+  task_template: match_reference
+  secondary_template: drag_operation
+  browsergym_goal: In the lower table labeled “Regional budget”, use the strip to match “Budget”, “Forecast”, and “Variance” within ±5 px of the reference boundaries. Do not edit the upper table. The task will finish automatically when done.
+  ui_copy: In the lower table labeled “Regional budget”, use the strip to match “Budget”, “Forecast”, and “Variance” within ±5 px of the reference boundaries. Do not edit the upper table. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and high clutter. Two similar finance tables are stacked inside a dashboard card. The upper table is labeled “Global budget”; the lower table is labeled “Regional budget” and is the target. A colored boundary strip aligned only to the lower table indicates the desired Budget, Forecast, and Variance widths.
+    Both tables use the same header grip style and both show hover highlights on separators. The lower table starts close to the reference but off on all three target columns. No Save button is present; widths apply live.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: This combines same-family instance disambiguation with perceptual boundary matching and a cluttered dashboard carrier, yielding a strong mixed task without relying on hidden handles.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Matching three boundaries in the correct table while ignoring a similar distractor table produces high disambiguation and convergence pressure.
+  success_trigger:
+    human_readable:
+    - Each named reference boundary is matched within ±5px of the reference ruler.
+    - The correct target instance is "Regional budget".
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: antd_regional_budget_strip_v2
+        column_widths_px:
+          budget: 156
+          forecast: 204
+          variance: 128
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Regional budget
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Global budget table instead of the Regional budget table.
+  - Matching only one or two boundaries.
+  - Stopping outside ±5 px on any target boundary.
+  - Using the wrong separator so that Updated changes but the target columns remain off.
+  expected_interaction_path:
+  - Identify the lower table labeled Regional budget.
+  - Use the strip to align Budget, then Forecast, then Variance.
+  - Re-check all three because adjacent drags interact.
+  - Stop when all three boundaries align.
+  notes: The strip should share the lower table's content-box origin so the visual alignment is unambiguous.
+- id: resizable_columns-mui-v2-T01
+  name: 'DataGrid header fight: resize Status without opening menus'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid
+  implementation_component: 'MUI X: DataGrid with column resizing, sorting, and header menu affordances'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: In the Ticket queue Data Grid, resize the “Status” column to 148 px, within ±4 px. Do not open the column menu or sort the grid. The task will finish automatically when done.
+  ui_copy: In the Ticket queue Data Grid, resize the “Status” column to 148 px, within ±4 px. Do not open the column menu or sort the grid. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and high clutter. A left settings rail, quick filters, and summary chips surround the main MUI X DataGrid. The grid columns are Ticket, Owner, Status, SLA, and Updated.
+    Status has all normal header affordances enabled: sort arrow, menu trigger, and the draggable right-edge resize separator. The separator is visible on hover and the grid shows `Status width: ###px` in a persistent monitor below the header. Status starts at 112px.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - clutter
+    - placement
+    - layout
+    factor_rationale: MUI exposes a real separator but places it beside other header controls, so the task targets separator-vs-menu confusion rather than hidden-handle discovery.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is hard because the correct edge affordance is semantically adjacent to genuine menu and sort controls, and the card is off-center in a dense settings panel.
+  success_trigger:
+    human_readable:
+    - Status width is within ±4px of 148px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          status: 148
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Opening the Status column menu instead of resizing.
+  - Sorting the grid while leaving Status outside ±4 px.
+  - Resizing Owner or SLA instead of Status.
+  - Stopping at a near-miss such as 143 px or 153 px.
+  expected_interaction_path:
+  - Locate the Status header in the grid.
+  - Acquire the resize separator rather than the menu or sort affordance.
+  - Drag until the width monitor shows about 148 px.
+  - Release and verify the width.
+  notes: Read width from DataGrid column state (`onColumnWidthChange`/api state), not from rendered cell boxes.
+- id: resizable_columns-mui-v2-T02
+  name: 'Flex clamp: expand Owner to its 210 px maximum'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_flex_constraints
+  implementation_component: 'MUI X: DataGrid with mixed fixed, flex, minWidth, and maxWidth columns'
+  task_template: set_scalar
+  secondary_template: drag_operation
+  browsergym_goal: In the Triage Data Grid, resize the “Owner” column until it reaches its 210 px maximum, exactly 210 px. The task will finish automatically when done.
+  ui_copy: In the Triage Data Grid, resize the “Owner” column until it reaches its 210 px maximum, exactly 210 px. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses inline_surface with compact spacing and medium clutter. The triage grid sits beneath a compact toolbar inside a product-admin surface. The grid mixes fixed-width and flex columns, and Owner specifically has `minWidth=160` and `maxWidth=210`.
+    As the Owner separator is dragged, neighboring flex columns reflow and a monitor line below the grid reads `Owner width: ###px (max 210px)`. Owner starts at 176px. The drag should stop at the hard cap; no confirmation button is required.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - spacing
+    - guidance
+    factor_rationale: 'This uses DataGrid min/max constraints to turn resizing into a state-verification task: the agent must notice it has hit a real width cap rather than keep over-dragging.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The target is explicit, but the mixed flex layout means neighboring columns move while Owner approaches its clamp, which makes stopping exactly at the cap nontrivial.
+  success_trigger:
+    human_readable:
+    - Owner width is within ±0px of 210px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          owner: 210
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at 208 px or 209 px instead of the exact 210 px maximum.
+  - Dragging another column while Owner remains below the cap.
+  - Trying to resize past the cap and releasing with Owner below 210 px.
+  - Changing grid density or other toolbar controls instead of the separator.
+  expected_interaction_path:
+  - Locate the Owner header separator.
+  - Drag right until the monitor reaches the 210 px maximum.
+  - Release and verify that Owner reads exactly 210 px.
+  notes: Use canonical column state and the declared maxWidth as source of truth. Exact 210 px is feasible because the monitor displays the live width.
+- id: resizable_columns-mui-v2-T03
+  name: 'Shipping vs Billing: off-screen shipping column only'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_horizontal_scroll
+  implementation_component: 'MUI X: wide DataGrid with horizontal scroll and resizable columns'
+  task_template: scroll_find
+  secondary_template: table_operation
+  browsergym_goal: In the Address Book Data Grid, scroll horizontally until “Shipping Address” is visible, then resize only “Shipping Address” to 304 px, within ±4 px. Do not resize “Billing Address”. The task will finish automatically when done.
+  ui_copy: In the Address Book Data Grid, scroll horizontally until “Shipping Address” is visible, then resize only “Shipping Address” to 304 px, within ±4 px. Do not resize “Billing Address”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and medium clutter. A sidebar of address settings and a compact help card frame a wide MUI DataGrid. The grid is narrower than the combined width of its columns and has a visible horizontal scrollbar.
+    The address-related columns appear far to the right in this order: Country, Shipping Address, Billing Address, Notes. Shipping Address starts at 240px and Billing Address at 260px. A persistent monitor reads `Shipping Address width: ###px`. Both address columns become visible together once the grid is scrolled.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - clutter
+    - placement
+    factor_rationale: The task combines off-screen target discovery with same-family lexical confusion between Shipping and Billing, which is a stronger disambiguation problem than simple horizontal scroll alone.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 3
+    justification: Once the headers are visible the interaction is straightforward, but discovering the correct off-screen address column and not resizing its neighbor makes this a real hard scroll-plus-disambiguation task.
+  success_trigger:
+    human_readable:
+    - Shipping Address width is within ±4px of 304px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          shipping_address: 304
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Billing Address instead of Shipping Address.
+  - Scrolling the page but not the grid's horizontal viewport.
+  - Stopping outside ±4 px on Shipping Address.
+  - Changing both address columns.
+  expected_interaction_path:
+  - Use the grid's horizontal scrollbar until Shipping Address is visible.
+  - Acquire the Shipping Address separator rather than Billing Address.
+  - Drag until the monitor shows about 304 px.
+  - Release and verify Billing Address stayed unchanged.
+  notes: The grid must expose a visible scrollbar and keep width telemetry independent of column visibility.
+- id: resizable_columns-mui-v2-T04
+  name: 'Two grids, autosized starts: resize Description in Tickets only'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_dual_instance
+  implementation_component: 'MUI X: two DataGrids with independent resize state'
+  task_template: table_operation
+  secondary_template: set_range
+  browsergym_goal: In the “Tickets” Data Grid, resize the “Description” column so it ends between 260 px and 272 px inclusive. Do not change the “Customers” grid. The task will finish automatically when done.
+  ui_copy: In the “Tickets” Data Grid, resize the “Description” column so it ends between 260 px and 272 px inclusive. Do not change the “Customers” grid. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and medium clutter. Two MUI DataGrids are stacked in the same card: the upper grid is labeled “Customers” and the lower grid is labeled “Tickets”. Both have resizable separators and similar header density.
+    Both grids begin from autosized initial widths rather than uniform widths, so Description does not start at a round number. In the Tickets grid, Description starts at 226px and a local monitor reads `Description width: ###px`. The Customers grid has its own description-like free-text column but is a distractor.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - clutter
+    factor_rationale: Dual DataGrid instances create a grounded wrong-grid failure mode, while the ranged target keeps the motor burden honest and emphasizes correct instance selection.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The range itself is manageable, but the two similar grids and nonuniform starting widths make this a difficult correct-instance resize task.
+  success_trigger:
+    human_readable:
+    - Description width is between 260px and 272px inclusive.
+    - The correct target instance is "Tickets".
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_widths_px_range:
+          description:
+            min: 260
+            max: 272
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Tickets
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the Customers grid instead of Tickets.
+  - Stopping at 259 px or 273 px.
+  - Resizing Notes or Summary instead of Description.
+  - Changing both grids.
+  expected_interaction_path:
+  - Locate the grid labeled Tickets.
+  - Find the Description header edge in that grid.
+  - Drag until the monitor falls inside 260–272 px.
+  - Release and verify Customers stayed unchanged.
+  notes: Bind evaluation to the Tickets grid instance id, not stack order.
+- id: resizable_columns-mui-v2-T05
+  name: 'Customize-columns modal: resize Description and save the draft'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_modal_draft
+  implementation_component: MUI Dialog + DataGrid preview with column resizing
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Customize columns”. In the preview grid, resize “Description” to 318 px, within ±5 px, then click “Save”. The task will finish automatically when done.
+  ui_copy: Open “Customize columns”. In the preview grid, resize “Description” to 318 px, within ±5 px, then click “Save”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses modal_flow with compact spacing and medium clutter. The page shows an audit table and a button labeled “Customize columns”. Clicking it opens a centered MUI Dialog with one DataGrid preview. Description is resizable; ID is explicitly not resizable and sits directly beside it, so the correct affordance is only on the Description edge.
+    The dialog shows a draft width monitor `Description width: ###px` and an “Unsaved” chip while the preview differs from the committed layout. Description starts at 278px. The footer buttons are “Cancel” and “Save”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - guidance
+    factor_rationale: This intentionally distinguishes live preview width from committed grid width, which turns a standard drag into a draft-vs-saved verification task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The target is numerically clear, but the save boundary and the adjacent non-resizable ID column make this a tougher, more diagnostic resize flow than a plain grid drag.
+  success_trigger:
+    human_readable:
+    - Description width is within ±5px of 318px.
+    - The required "Save" control has been clicked and the committed layout is saved.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          description: 318
+        saved: true
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing to the correct width but cancelling or closing the modal.
+  - Saving while Description is outside ±5 px.
+  - Trying to resize the non-resizable ID column instead of Description.
+  - Leaving the dialog open in unsaved state.
+  expected_interaction_path:
+  - Open the Customize columns dialog.
+  - Drag the Description edge until the draft monitor reads about 318 px.
+  - Click Save.
+  - Verify the committed layout updates.
+  notes: Use committed column width state as the checker source of truth.
+- id: resizable_columns-mui-v2-T06
+  name: 'Primary queue only: match SLA, Priority, and Owner to the ruler'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_reference_strip
+  implementation_component: 'MUI X: twin DataGrids with mixed text-plus-ruler guidance'
+  task_template: match_reference
+  secondary_template: table_operation
+  browsergym_goal: In the “Primary — Queue” Data Grid, use the ruler to match the “SLA”, “Priority”, and “Owner” boundaries within ±5 px of the reference. Do not change the “Secondary — Escalations” grid. The task will finish automatically when done.
+  ui_copy: In the “Primary — Queue” Data Grid, use the ruler to match the “SLA”, “Priority”, and “Owner” boundaries within ±5 px of the reference. Do not change the “Secondary — Escalations” grid. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and high clutter. Two same-width DataGrids sit in a queue dashboard card: “Primary — Queue” and “Secondary — Escalations”. A colored ruler strip is aligned only to the Primary grid, marking the target boundaries for SLA, Priority, and Owner.
+    Both grids share the same resize affordances and similar columns. No numeric widths are displayed on screen. The Primary grid starts close to, but not on, the ruler targets; the Secondary grid is fully resizable but irrelevant.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: The ruler removes direct numeric feedback and the second grid creates a same-family distractor, so this measures perceptual alignment and correct-instance control together.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is difficult because the agent has to do perceptual boundary matching on the correct grid while a very similar distractor grid is visible in the same dashboard card.
+  success_trigger:
+    human_readable:
+    - Each named reference boundary is matched within ±5px of the reference ruler.
+    - The correct target instance is "Primary — Queue".
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: mui_primary_queue_ruler_v2
+        column_widths_px:
+          sla: 144
+          priority: 112
+          owner: 196
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary — Queue
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting Secondary — Escalations instead of Primary — Queue.
+  - Matching only one or two of the three ruler boundaries.
+  - Stopping outside ±5 px even though the strip looks close.
+  - Resizing a non-target boundary such as Updated.
+  expected_interaction_path:
+  - Identify the grid labeled Primary — Queue.
+  - Use the ruler to align SLA, then Priority, then Owner.
+  - Re-check earlier alignments because later drags can shift adjacent boundaries.
+  - Stop when all three are within tolerance.
+  notes: The checker should use canonical target widths attached to the ruler id rather than image matching.
+- id: resizable_columns-mui-v2-T07
+  name: Compact tri-column convergence at top-left
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_compact_small
+  implementation_component: 'MUI X: DataGrid in compact density with visible live width monitor'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact orders grid, set “ID” to 76 px, “Customer” to 196 px, and “Status” to 118 px, each within ±4 px. The task will finish automatically when done.
+  ui_copy: In the compact orders grid, set “ID” to 76 px, “Customer” to 196 px, and “Status” to 118 px, each within ±4 px. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses inline_surface with compact spacing, small scale, and high clutter. The grid sits near the top-left of an operations surface so the user has to acquire it in a crowded region. Density mode is compact and the visible separators are close together.
+    A shared monitor above the grid reads `ID: ###px • Customer: ###px • Status: ###px`. Initial widths are ID 108px, Customer 162px, and Status 142px. The remaining columns Updated and Queue are present but not targets.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - placement
+    - scale
+    - spacing
+    factor_rationale: This uses MUI's compact density and a small off-center rendering to make sequential convergence itself hard rather than relying on hidden affordances.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Three widths must be hit in a compact small grid with adjacent separators, so the dominant burden is repeated precise control and verification.
+  success_trigger:
+    human_readable:
+    - Id width is within ±4px of 76px.
+    - Customer width is within ±4px of 196px.
+    - Status width is within ±4px of 118px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          id: 76
+          customer: 196
+          status: 118
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any of the three widths outside ±4 px.
+  - Resizing Queue or Updated instead of one of the targets.
+  - Fixing one width and undoing it later while changing another.
+  - Stopping after only two targets are correct.
+  expected_interaction_path:
+  - Resize ID to about 76 px.
+  - Resize Customer to about 196 px.
+  - Resize Status to about 118 px.
+  - Re-check the shared monitor and fine-adjust.
+  notes: Keep density mode compact but preserve a real hit target larger than the visible separator line.
+- id: resizable_columns-mui-v2-T08
+  name: 'Drawer audit history: off-screen Failure reason with apply'
+  canonical_type: resizable_columns
+  implementation_source: mui
+  implementation_variant: x_datagrid_drawer_scroll
+  implementation_component: MUI Drawer + horizontally scrollable DataGrid preview
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Audit columns”. In the drawer grid, scroll horizontally to “Failure reason”, resize it to 288 px, within ±4 px, then click “Apply widths”. The task will finish automatically when done.
+  ui_copy: Open “Audit columns”. In the drawer grid, scroll horizontally to “Failure reason”, resize it to 288 px, within ±4 px, then click “Apply widths”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. The page contains an audit card and a button labeled “Audit columns”. Clicking it opens a MUI right drawer with one wide DataGrid preview. The preview is narrower than the total column width and has a visible horizontal scrollbar.
+    The target header “Failure reason” begins off-screen to the right, after Status and before Recovery hint. A persistent monitor line inside the drawer reads `Failure reason width: ###px`. Failure reason starts at 224px. Width changes remain draft-only until “Apply widths” is pressed; “Cancel” discards them.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - layout
+    factor_rationale: This combines a real horizontal discovery step with a drawer-local commit boundary, which was underrepresented in the old packet but fits the DataGrid API and carrier idioms well.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The off-screen target and explicit apply step make this materially harder than a plain visible-header resize, while the monitor keeps the final move human-solvable.
+  success_trigger:
+    human_readable:
+    - Failure Reason width is within ±4px of 288px.
+    - The required "Apply widths" control has been clicked and the committed layout is saved.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          failure_reason: 288
+        saved: true
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: true
+      confirm_control: Apply widths
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Revealing the target header but resizing Recovery hint instead of Failure reason.
+  - Getting the draft width right but pressing Cancel or closing the drawer.
+  - Applying while the final width is outside ±4 px.
+  - Scrolling the page instead of the drawer grid.
+  expected_interaction_path:
+  - Open the Audit columns drawer.
+  - Use the grid's horizontal scrollbar until Failure reason is visible.
+  - Drag the Failure reason separator until the monitor shows about 288 px.
+  - Click Apply widths.
+  notes: Use committed DataGrid width state after Apply as the checker source of truth.
+- id: resizable_columns-mantine-v2-T01
+  name: 'ScrollArea table: find Escalation note and resize it'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_scrollarea_table
+  implementation_component: 'Mantine: Table inside ScrollArea with custom resizable header grips'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: In the Customer issues table, scroll horizontally until “Escalation note” is visible, then resize it to 328 px, within ±5 px. The task will finish automatically when done.
+  ui_copy: In the Customer issues table, scroll horizontally until “Escalation note” is visible, then resize it to 328 px, within ±5 px. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses nested_scroll with compact spacing and medium clutter. A Mantine ScrollArea wraps the target table inside a customer support panel; the page itself also has an outer scroll container. The table is wider than its card and shows a visible horizontal scrollbar.
+    The target column “Escalation note” starts off-screen to the right after Country and before Follow-up. A persistent monitor above the table reads `Escalation note width: ###px`. The column starts at 248px. Header grips are always visible and styled to match Mantine's subtle divider affordance.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - clutter
+    factor_rationale: This uses Mantine ScrollArea to create a genuine internal-scroll discovery step before the resize, which adds difficulty without turning the task into hidden-scrollbar guesswork.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target is off-screen inside an internal scroll region, so the challenge is first to operate the right viewport and then converge to the target width.
+  success_trigger:
+    human_readable:
+    - Escalation Note width is within ±5px of 328px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          escalation_note: 328
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page but not the table's horizontal viewport.
+  - Resizing Follow-up instead of Escalation note.
+  - Stopping outside ±5 px after revealing the right column.
+  - Dragging the scrollbar without performing the resize.
+  expected_interaction_path:
+  - Use the ScrollArea's horizontal scrollbar until Escalation note is visible.
+  - Grab the Escalation note separator.
+  - Drag until the monitor reads about 328 px.
+  - Release and verify the final width.
+  notes: Use column-id keyed width state, not rendered cell width, for evaluation.
+- id: resizable_columns-mantine-v2-T02
+  name: 'Drawer accordion: resize Notes in Secondary support view and save'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_drawer_accordion
+  implementation_component: 'Mantine: Drawer + Accordion + preview tables with custom resizable grips'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Customize columns”. In “Secondary — Support view”, resize the “Notes” column to 260 px, within ±5 px, then click “Save changes”. The task will finish automatically when done.
+  ui_copy: Open “Customize columns”. In “Secondary — Support view”, resize the “Notes” column to 260 px, within ±5 px, then click “Save changes”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. The page shows a settings card with a “Customize columns” button. Clicking it opens a Mantine Drawer containing an Accordion with three preview tables: “Primary — Sales view”, “Secondary — Support view”, and “Archived — Read only”.
+    Each section contains a table preview and a local width monitor. Only the Secondary section matters. In Secondary — Support view, Notes starts at 182px. Resizing updates only a draft layout until the drawer footer button “Save changes” is clicked; “Cancel” discards the draft.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: Three preview instances in a drawer accordion create grounded wrong-instance failures, and the save boundary prevents the task from collapsing into a single successful drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is difficult because the correct preview must be selected among three similar layouts and the correct draft must be explicitly committed.
+  success_trigger:
+    human_readable:
+    - Notes width is within ±5px of 260px.
+    - The required "Save changes" control has been clicked and the committed layout is saved.
+    - The correct target instance is "Secondary — Support view".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          notes: 260
+        saved: true
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Support view
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Notes in the wrong preview table.
+  - Reaching the target width but not clicking Save changes.
+  - Saving while Notes is outside ±5 px.
+  - Changing a non-target column such as Priority.
+  expected_interaction_path:
+  - Open the Customize columns drawer.
+  - Expand or locate Secondary — Support view.
+  - Resize Notes to about 260 px using the local monitor.
+  - Click Save changes.
+  notes: Bind the target instance by section label rather than accordion index.
+- id: resizable_columns-mantine-v2-T03
+  name: 'Dark compact convergence: set Ticket, Team, and Status widths'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_dark_compact
+  implementation_component: 'Mantine: dark compact Table with visible custom resizable grips'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact dark queue table, set “Ticket” to 82 px, “Team” to 184 px, and “Status” to 120 px, each within ±4 px. The task will finish automatically when done.
+  ui_copy: In the compact dark queue table, set “Ticket” to 82 px, “Team” to 184 px, and “Status” to 120 px, each within ±4 px. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses inline_surface with compact spacing, small scale, dark theme, and medium clutter. The table sits beneath a row of dark filter chips and segmented controls. Header grips are always visible but low-profile and close together because of the compact density.
+    The table columns are Ticket, Team, Status, Owner, and Updated. A shared monitor reads `Ticket: ###px • Team: ###px • Status: ###px`. Initial widths are 108px, 150px, and 146px respectively. No Save button is present; widths apply live.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - scale
+    factor_rationale: The grips are visible, so this hard variant pushes convergence and reacquisition in a compact dark surface instead of relying on hidden affordances.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Three interacting target widths in a compact dark layout produce repeated calibration pressure, even though the grips are not hidden.
+  success_trigger:
+    human_readable:
+    - Ticket width is within ±4px of 82px.
+    - Team width is within ±4px of 184px.
+    - Status width is within ±4px of 120px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          ticket: 82
+          team: 184
+          status: 120
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any target width outside ±4 px.
+  - Resizing Owner or Updated instead of one of the targets.
+  - Overshooting a target and not correcting it after later drags.
+  - Stopping after only two widths are correct.
+  expected_interaction_path:
+  - Resize Ticket to about 82 px.
+  - Resize Team to about 184 px.
+  - Resize Status to about 120 px.
+  - Use the shared monitor to fine-adjust all three.
+  notes: Provide sufficient contrast for the grip hover state so the task remains hard but not unfair.
+- id: resizable_columns-mantine-v2-T04
+  name: 'Middle preview only: match Name, Region, and Tier to the strip'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_reference_strip
+  implementation_component: 'Mantine: stacked preview tables with reference strip and custom resizable grips'
+  task_template: match_reference
+  secondary_template: table_operation
+  browsergym_goal: In the middle preview table, “Regional accounts”, use the strip to match “Name”, “Region”, and “Tier” within ±5 px of the reference. Do not change the top or bottom preview tables. The task will finish automatically when done.
+  ui_copy: In the middle preview table, “Regional accounts”, use the strip to match “Name”, “Region”, and “Tier” within ±5 px of the reference. Do not change the top or bottom preview tables. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and high clutter. A “Preview layouts” card contains three Mantine-styled preview tables: “Global accounts”, “Regional accounts”, and “Archived accounts”. Only the middle preview is the target.
+    A colored strip aligned to the middle preview marks the desired boundaries for Name, Region, and Tier. The UI does not show numeric targets, only the strip and subtle alignment guides. All three tables share the same visible grip style.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - clutter
+    factor_rationale: This forces perceptual alignment in the correct preview table while same-family distractors remain visible, which makes the task diagnostically richer than a single-table ruler match.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The visual strip removes direct numeric feedback, and the stacked preview tables introduce high wrong-instance risk.
+  success_trigger:
+    human_readable:
+    - Each named reference boundary is matched within ±5px of the reference ruler.
+    - The correct target instance is "Regional accounts".
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_layout_id: mantine_regional_accounts_strip_v2
+        column_widths_px:
+          name: 172
+          region: 198
+          tier: 122
+      tolerance:
+        type: absolute_px
+        value: 5
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Regional accounts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting Global accounts or Archived accounts instead of Regional accounts.
+  - Matching only one or two of the three boundaries.
+  - Stopping outside ±5 px on any target boundary.
+  - Using the wrong separator so that Tier stays misaligned.
+  expected_interaction_path:
+  - Identify the middle preview labeled Regional accounts.
+  - Align Name, then Region, then Tier to the strip.
+  - Re-check earlier alignments because boundaries interact.
+  - Stop when all three match.
+  notes: Keep the reference strip aligned only to the target preview to avoid accidental ambiguity.
+- id: resizable_columns-mantine-v2-T05
+  name: 'Two inline tables: keep Owner inside the target range in the lower one'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_inline_dual
+  implementation_component: 'Mantine: two inline tables with custom resizable grips'
+  task_template: table_operation
+  secondary_template: set_range
+  browsergym_goal: In the lower “Overrides” table, resize the “Owner” column so it finishes between 144 px and 152 px inclusive. Do not change the upper table. The task will finish automatically when done.
+  ui_copy: In the lower “Overrides” table, resize the “Owner” column so it finishes between 144 px and 152 px inclusive. Do not change the upper table. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses inline_surface with compact spacing and medium clutter. Two small Mantine tables sit one above the other inside a settings surface: the upper table is labeled “Defaults” and the lower table is labeled “Overrides”. Each table has columns Rule, Owner, Status, and Updated, plus the same visible grip style.
+    The lower table's Owner column starts at 182px and shows a local monitor `Owner width: ###px`. The upper table is a same-family distractor. There is no save step; widths apply live.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - clutter
+    factor_rationale: The ranged target keeps motor demands fair while the real challenge comes from choosing the correct inline table in a cluttered low-height surface.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is hard mainly because the wrong table is easy to grab first and the local surfaces are visually similar.
+  success_trigger:
+    human_readable:
+    - Owner width is between 144px and 152px inclusive.
+    - The correct target instance is "Overrides".
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_widths_px_range:
+          owner:
+            min: 144
+            max: 152
+      tolerance:
+        type: absolute_px
+        value: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Overrides
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Owner in Defaults instead of Overrides.
+  - Stopping at 143 px or 153 px.
+  - Resizing Status instead of Owner.
+  - Changing both tables.
+  expected_interaction_path:
+  - Locate the lower table labeled Overrides.
+  - Acquire the Owner separator in that table.
+  - Drag until the local monitor falls inside 144–152 px.
+  - Release and verify the upper table stayed unchanged.
+  notes: Bind the instance by label. The inclusive range should be enforced exactly.
+- id: resizable_columns-mantine-v2-T06
+  name: 'Audit matrix lower table: resize Tags and ignore the upper twin'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_table_cell_dual
+  implementation_component: 'Mantine: twin tables embedded in a table-cell carrier with custom resizable grips'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: In the lower table labeled “Tag overrides”, resize “Tags” to 210 px, within ±4 px. Do not edit the upper table. The task will finish automatically when done.
+  ui_copy: In the lower table labeled “Tag overrides”, resize “Tags” to 210 px, within ±4 px. Do not edit the upper table. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses table_cell with compact spacing, small scale, and high clutter. The target appears in the lower cell of a larger audit matrix. That lower cell contains two small Mantine tables, “Default tags” and “Tag overrides”, stacked tightly with nearly identical columns: Rule, Tags, Scope, Updated.
+    Only Tag overrides is the target. Its Tags column starts at 164px and has a local width monitor. The upper twin table is fully resizable but should remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - scale
+    factor_rationale: A cramped table-cell carrier plus same-family twins creates an acquisition problem that is harder than the numeric target itself.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The width target is simple, but the dense table-cell carrier and twin-table disambiguation create strong grounded difficulty.
+  success_trigger:
+    human_readable:
+    - Tags width is within ±4px of 210px.
+    - The correct target instance is "Tag overrides".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          tags: 210
+      tolerance:
+        type: absolute_px
+        value: 4
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Tag overrides
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Tags in Default tags instead of Tag overrides.
+  - Stopping outside ±4 px.
+  - Resizing Scope rather than Tags.
+  - Changing both tables.
+  expected_interaction_path:
+  - Identify the lower table labeled Tag overrides.
+  - Acquire the Tags header grip in that table.
+  - Drag until the local monitor reads about 210 px.
+  - Release and verify the upper table stayed unchanged.
+  notes: The checker should bind to the lower matrix cell and then to the labeled target table within it.
+- id: resizable_columns-mantine-v2-T07
+  name: 'Modal save: scroll to Billing Address and commit the resized width'
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_modal_scroll
+  implementation_component: 'Mantine: Modal + ScrollArea-wrapped table with custom resizable grips'
+  task_template: scroll_find
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit customer columns”. In the modal table, scroll horizontally to “Billing Address”, resize it to 344 px, within ±6 px, then click “Save layout”. The task will finish automatically when done.
+  ui_copy: Open “Edit customer columns”. In the modal table, scroll horizontally to “Billing Address”, resize it to 344 px, within ±6 px, then click “Save layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses modal_flow with compact spacing and medium clutter. The main page contains a customer table and a button labeled “Edit customer columns”. Clicking it opens a Mantine Modal containing a ScrollArea-wrapped preview table with a visible horizontal scrollbar.
+    Billing Address starts off-screen to the right, immediately after Shipping Address. A persistent monitor inside the modal reads `Billing Address width: ###px`. Billing Address starts at 268px. The modal footer contains “Cancel” and “Save layout”; changes remain draft-only until Save layout is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - layout
+    factor_rationale: The off-screen target and save boundary are both real product customization idioms, which makes this stronger than a plain modal drag or a plain off-screen scroll task alone.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The combination of off-screen discovery and explicit save turns a simple resize into a layered scroll-plus-commit task.
+  success_trigger:
+    human_readable:
+    - Billing Address width is within ±6px of 344px.
+    - The required "Save layout" control has been clicked and the committed layout is saved.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          billing_address: 344
+        saved: true
+      tolerance:
+        type: absolute_px
+        value: 6
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Shipping Address instead of Billing Address.
+  - Getting the draft width right but cancelling or closing the modal.
+  - Saving while Billing Address is outside ±6 px.
+  - Scrolling the page instead of the modal ScrollArea.
+  expected_interaction_path:
+  - Open the Edit customer columns modal.
+  - Use the modal's horizontal scrollbar until Billing Address is visible.
+  - Drag the Billing Address separator until the monitor shows about 344 px.
+  - Click Save layout.
+  notes: Check the committed modal result, not the transient draft width.
+- id: resizable_columns-mantine-v2-T08
+  name: API key width in a cluttered settings panel
+  canonical_type: resizable_columns
+  implementation_source: mantine
+  implementation_variant: composite_settings_panel
+  implementation_component: 'Mantine: settings-panel table with custom resizable grips and adjacent icons'
+  task_template: set_scalar
+  secondary_template: drag_operation
+  browsergym_goal: In the Credentials table, resize the “API key” column to 171 px, within ±3 px. Do not resize “Name”. The task will finish automatically when done.
+  ui_copy: In the Credentials table, resize the “API key” column to 171 px, within ±3 px. Do not resize “Name”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and high clutter. The credentials card sits inside a dense settings panel with segmented controls, toggles, and a help card. The target table columns are Name, API key, Scope, and Updated.
+    The API key header includes a tooltip icon and sits directly beside Name, so the resize separator is close to both the icon and the Name separator. A persistent monitor reads `API key width: ###px`. API key starts at 138px. No save step is required.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - clutter
+    - layout
+    - precision_surface
+    factor_rationale: This task keeps the semantic target simple but packs the local header region with nearby non-target affordances, turning it into a clean grip-acquisition and fine-stop problem.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A tight ±3 px window plus nearby tooltip and adjacent Name separator make this a precise and acquisition-heavy settings-panel resize task.
+  success_trigger:
+    human_readable:
+    - Api Key width is within ±3px of 171px.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        column_widths_px:
+          api_key: 171
+      tolerance:
+        type: absolute_px
+        value: 3
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing Name instead of API key.
+  - Opening the tooltip instead of resizing.
+  - Stopping at 167 px or 175 px, outside ±3 px.
+  - Changing Scope or another column instead of API key.
+  expected_interaction_path:
+  - Locate the API key header in the Credentials table.
+  - Acquire the API key separator instead of the tooltip or Name separator.
+  - Drag until the monitor shows about 171 px.
+  - Release and verify the final width.
+  notes: Because the tolerance is narrow, the monitor must update continuously and the grip hit target should remain larger than its visible line.
+- id: window_splitter-antd-v2-T01
+  name: Inspector panel to 37% with saved layout
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the Layout panel, set the Inspector pane to 37% of the width, within ±1 percentage point, then click “Apply layout”. The task will finish automatically when done.
+  ui_copy: In the Layout panel, set the Inspector pane to 37% of the width, within ±1 percentage point, then click “Apply layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and medium clutter. The main content includes a two-pane Ant Design Splitter labeled Canvas (left) and Inspector (right). A live readout below the splitter shows the current percentages, but the page also has surrounding settings toggles and cards.
+    The split starts at 50/50. Dragging updates a draft percentage immediately, but the page treats the layout as unsaved until the card-local button “Apply layout” is clicked. A small chip reads “Unsaved” whenever the draft differs from the committed split.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - placement
+    factor_rationale: This uses a native AntD splitter with continuous feedback, but success depends on committing the correct split rather than merely passing through it during a drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The narrow ±1 point target would already be hard, and the explicit apply step raises feedback and verification burden further.
+  success_trigger:
+    human_readable:
+    - Inspector (right) pane is 37% of the available width, within ±1 percentage point.
+    - The required "Apply layout" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_secondary_pane_fraction
+        secondary_pane: right
+        value: 0.37
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Apply layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Inspector to about 37% but not clicking Apply layout.
+  - Applying while the committed split is outside ±1 percentage point.
+  - Dragging the wrong boundary or another page control instead of the splitter.
+  - Leaving the panel marked Unsaved.
+  expected_interaction_path:
+  - Locate the Layout panel splitter.
+  - Drag until the readout shows Inspector near 37%.
+  - Release and click Apply layout.
+  - Verify the saved state updates.
+  notes: Evaluate the committed split, not the transient drag position.
+- id: window_splitter-antd-v2-T02
+  name: 'Lazy mode: set Preview to 41% after release only'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (lazy mode)'
+  task_template: set_scalar
+  secondary_template: drag_operation
+  browsergym_goal: In the lazy splitter, set the Preview pane to 41% of the width, within ±1 percentage point. The readout updates only after you release the divider. The task will finish automatically when done.
+  ui_copy: In the lazy splitter, set the Preview pane to 41% of the width, within ±1 percentage point. The readout updates only after you release the divider. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and medium clutter. The target card contains an Ant Design Splitter configured with `lazy=true`, so dragging shows a ghost divider but the real sizes and numeric readout update only on drag end.
+    The panes are Fields (left) and Preview (right), starting at 50/50. Above and beside the card are non-target dashboard widgets. The readout below the splitter shows `Preview: 50%` and only changes when the mouse button is released.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - clutter
+    - guidance
+    factor_rationale: Lazy mode removes continuous feedback, so the task specifically tests iterative drag-release calibration rather than raw ability to drag a visible handle.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 5
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Release-only feedback forces repeated correction, which is exactly the kind of state-tracking burden the old splitter evidence showed.
+  success_trigger:
+    human_readable:
+    - Preview (right) pane is 41% of the available width, within ±1 percentage point.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: secondary_pane_fraction
+        secondary_pane: right
+        value: 0.41
+        unit: fraction_of_container
+        evaluated_on: resize_end
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Preview lands at 39% or 43% after the final release.
+  - Stopping mid-drag without releasing the pointer.
+  - Using the ghost divider position as if it were the final state.
+  - Interacting with dashboard widgets instead of the splitter.
+  expected_interaction_path:
+  - Drag the divider toward the target position.
+  - Release and observe the updated Preview percentage.
+  - Repeat small corrections until the final released value is about 41%.
+  notes: Use onResizeEnd or equivalent committed size event as the evaluation source.
+- id: window_splitter-antd-v2-T03
+  name: Collapse Files, then re-expand it to 28% and save
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (collapsible)'
+  task_template: drag_operation
+  secondary_template: toggle_state
+  browsergym_goal: In the Workspace splitter, collapse the Files pane, then re-expand it until Files is 28% of the width, within ±1 percentage point, and click “Save layout”. The task will finish automatically when done.
+  ui_copy: In the Workspace splitter, collapse the Files pane, then re-expand it until Files is 28% of the width, within ±1 percentage point, and click “Save layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. Clicking “Open workspace layout” opens a right drawer containing one Ant Design Splitter with collapsible controls embedded in the divider. The panes are Files (left) and Editor (right), starting at 36/64.
+    The divider shows the native collapse affordance for the Files pane. After collapsing, the user can drag to re-expand. A live readout in the drawer shows `Files: ##% • Editor: ##%`, and the drawer footer contains “Cancel” and “Save layout”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - guidance
+    factor_rationale: 'This upgrades a simple collapse idiom into a multi-step interaction-knowledge task: the agent must use the native collapse affordance, recover to a precise live split, and then save.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The final width target is narrow, and the task additionally requires correct use of the built-in collapse control and a drawer save boundary.
+  success_trigger:
+    human_readable:
+    - Files (left) pane is 28% of the available width, within ±1 percentage point.
+    - The required "Save layout" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_primary_pane_fraction
+        primary_pane: left
+        value: 0.28
+        unit: fraction_of_container
+        saved: true
+        collapse_cycle_completed: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging directly to 28% without ever collapsing the Files pane first.
+  - Collapsing the pane but leaving it collapsed at terminal state.
+  - Saving while Files is outside ±1 percentage point.
+  - Cancelling or closing the drawer instead of saving.
+  expected_interaction_path:
+  - Open the workspace layout drawer.
+  - Use the divider's collapse control to collapse Files.
+  - Drag the divider to re-expand Files to about 28%.
+  - Click Save layout.
+  notes: Track that a collapse event occurred before the final saved split.
+- id: window_splitter-antd-v2-T04
+  name: 'Four-pane layout: match 20/45/20/15'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (multiple panels)'
+  task_template: drag_operation
+  secondary_template: match_reference
+  browsergym_goal: In the four-pane layout, set the panes so that Files is 20%, Editor is 45%, Preview is 20%, and Console is 15%, each within ±2 percentage points. The task will finish automatically when done.
+  ui_copy: In the four-pane layout, set the panes so that Files is 20%, Editor is 45%, Preview is 20%, and Console is 15%, each within ±2 percentage points. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses isolated_card with compact spacing, small scale, and medium clutter. The card contains a native Ant Design Splitter configured with four horizontal panes and three visible draggers. A compact readout table under the splitter shows all four current percentages.
+    The pane order is Files, Editor, Preview, Console, starting from roughly 25/30/25/20. The layout is intrinsically hard because every drag affects at least two neighboring panes and the card is rendered at small scale.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - scale
+    - precision_surface
+    - guidance
+    factor_rationale: A four-pane splitter with a small rendering turns the task into genuine multi-handle convergence instead of simple one-divider dragging.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Three handles and four simultaneous targets make this frontier-hard but still human-solvable because the readout table exposes the current percentages directly.
+  success_trigger:
+    human_readable:
+    - Pane fractions for Files, Editor, Preview, Console match the requested layout within ±2 percentage points each.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: pane_fractions
+        pane_order:
+        - Files
+        - Editor
+        - Preview
+        - Console
+        values:
+        - 0.2
+        - 0.45
+        - 0.2
+        - 0.15
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any one pane outside ±2 percentage points.
+  - Only moving one or two draggers so the remaining panes stay far from target.
+  - Collapsing a pane instead of reaching the requested proportions.
+  - Stopping when totals look plausible but individual panes are wrong.
+  expected_interaction_path:
+  - Use the leftmost handle to move Files toward 20%.
+  - Use the middle and right handles to set Preview and Console near 20% and 15%.
+  - Use the readout table to fine-adjust all four percentages.
+  notes: Use pane ids rather than DOM order alone when computing fractions.
+- id: window_splitter-antd-v2-T05
+  name: 'Below-fold triage splitter: set Details to 32%'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: Scroll to the “Incident triage” card and set the Details pane to 32% of the width, within ±2 percentage points. The task will finish automatically when done.
+  ui_copy: Scroll to the “Incident triage” card and set the Details pane to 32% of the width, within ±2 percentage points. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and high clutter. Several dashboard cards appear before the target, including KPI summaries, a chart, and a smaller non-target splitter card. The target Ant Design Splitter is in a lower card labeled “Incident triage”.
+    Inside the target card the panes are Queue (left) and Details (right), starting at 50/50. A local readout under the target splitter shows `Queue: ##% • Details: ##%`. The target card begins below the fold on most viewports.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - placement
+    - clutter
+    factor_rationale: This tests acquisition of the correct splitter after page scroll, not just the mechanics of dragging a visible divider in isolation.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The split itself is simple, but the target card is below the fold and another splitter-like card appears earlier, so wrong-instance and scroll failures are likely.
+  success_trigger:
+    human_readable:
+    - Details (right) pane is 32% of the available width, within ±2 percentage points.
+    - The correct target instance is "Incident triage".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: secondary_pane_fraction
+        secondary_pane: right
+        value: 0.32
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Incident triage
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the non-target splitter card higher on the page.
+  - Leaving Details outside ±2 percentage points after the final release.
+  - Scrolling to the card but never changing its split.
+  - Changing another card instead of Incident triage.
+  expected_interaction_path:
+  - Scroll until the Incident triage heading is visible.
+  - Locate its divider, not the earlier non-target divider.
+  - Drag until Details is about 32%.
+  - Release and verify the local readout.
+  notes: Bind to the target card heading or id before evaluating the split.
+- id: window_splitter-antd-v2-T06
+  name: 'Bottom drawer vertical split: set Timeline to 62% and save'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (vertical orientation)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Chart layout”. In the vertical splitter, set the Timeline pane to 62% of the height, within ±1 percentage point, then click “Save layout”. The task will finish automatically when done.
+  ui_copy: Open “Chart layout”. In the vertical splitter, set the Timeline pane to 62% of the height, within ±1 percentage point, then click “Save layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. Clicking “Chart layout” opens a bottom drawer containing a vertical Ant Design Splitter with panes Timeline (top) and Errors (bottom). A horizontal divider separates them.
+    The readout inside the drawer shows `Timeline: ##% • Errors: ##%`. The split starts at 50/50. The drawer footer includes “Cancel” and “Save layout”, and only the saved split counts as committed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - placement
+    factor_rationale: This uses vertical orientation plus a drawer save boundary to expand coverage beyond the old horizontal live-only tasks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Vertical drag plus a saved-state boundary make this more demanding than a plain horizontal splitter, especially with a ±1 point target.
+  success_trigger:
+    human_readable:
+    - Timeline (top) pane is 62% of the available height, within ±1 percentage point.
+    - The required "Save layout" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: vertical
+        measure: committed_primary_pane_fraction
+        primary_pane: top
+        value: 0.62
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging Timeline to about 62% but not saving.
+  - Saving while the committed split is outside ±1 percentage point.
+  - Dragging horizontally or interacting with drawer controls instead of the splitter.
+  - Leaving the drawer in unsaved state.
+  expected_interaction_path:
+  - Open the Chart layout drawer.
+  - Drag the horizontal divider until Timeline is about 62%.
+  - Click Save layout.
+  - Verify the committed state updates.
+  notes: For vertical orientation, compute fractions from pane heights, excluding header/footer chrome.
+- id: window_splitter-antd-v2-T07
+  name: Secondary splitter to ~35/65 (±5), then save
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (drag Notes/Draft to target ratio, ±5pp)'
+  task_template: clear_reset
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Layout lab”. In “Secondary — Release notes”, drag the divider so Notes is about 35% of the width and Draft about 65% (within ±5 percentage points). Do not change the upper splitter. Click “Save layout”. The task will finish automatically when done.
+  ui_copy: Open “Layout lab”. In “Secondary — Release notes”, drag the divider so Notes is about 35% of the width and Draft about 65% (within ±5 percentage points). Do not change the upper splitter. Click “Save layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses modal_flow with compact spacing and medium clutter. Clicking “Layout lab” opens a modal with two stacked Ant Design splitters: “Primary — Editor/Preview” and “Secondary — Release notes”. No live percentage labels are shown in the UI.
+    Only the lower splitter is graded. It starts near 48/52; the agent drags toward roughly one-third Notes and two-thirds Draft (canonical target 35/65, ±5). The modal footer has “Cancel” and “Save layout”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - guidance
+    factor_rationale: 'This is an interaction-knowledge task rather than a brute-force drag task: the divider idiom itself matters, and it is embedded in a same-family multi-instance modal.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Double-click reset is less obvious than drag-to-target, and the correct divider must be chosen among two similar splitters before the saved state is committed.
+  success_trigger:
+    human_readable:
+    - Notes (left) pane is 35% of the available width, within ±0 percentage points.
+    - The required "Save layout" control has been clicked.
+    - The correct target instance is "Secondary — Release notes".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_primary_pane_fraction
+        primary_pane: left
+        value: 0.35
+        unit: fraction_of_container
+        saved: true
+        reset_via_double_click: true
+      tolerance:
+        type: absolute
+        value: 0.0
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Release notes
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging the divider manually to 35/65 without using the double-click reset.
+  - Double-clicking the Primary splitter instead of Secondary — Release notes.
+  - Resetting correctly but not clicking Save layout.
+  - Saving with the lower splitter still off the 35/65 default.
+  expected_interaction_path:
+  - Open the Layout lab modal.
+  - Locate the lower splitter labeled Secondary — Release notes.
+  - Double-click its divider to restore the default split.
+  - Click Save layout.
+  notes: Track that the final default ratio was reached via the reset interaction, not only via manual drag.
+- id: window_splitter-antd-v2-T08
+  name: 'Dark visual reference: match 72/28 with no on-page numbers'
+  canonical_type: window_splitter
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Splitter (visual-reference variant)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dark splitter card, match the target thumbnail so the left pane is about 72% of the width, within ±2 percentage points. No numeric readout is shown. The task will finish automatically when done.
+  ui_copy: In the dark splitter card, match the target thumbnail so the left pane is about 72% of the width, within ±2 percentage points. No numeric readout is shown. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses isolated_card with compact spacing, small scale, dark theme, and medium clutter. The card contains a two-pane Ant Design Splitter labeled Left and Right. A small reference thumbnail under the splitter shows the target split visually, but the live UI does not display numbers.
+    The visible divider is thin but high-contrast. The starting split is 50/50. The only way to judge progress is by comparing the live layout to the reference thumbnail.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - theme
+    - scale
+    factor_rationale: This preserves a human-solvable visual-match task but removes direct numeric feedback, turning the burden into perceptual calibration rather than text reading.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Without numeric state on the page, the task is dominated by perceptual calibration and fine stopping on a thin divider.
+  success_trigger:
+    human_readable:
+    - The live split matches the reference layout within ±2 percentage points.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: antd_dark_ref_72_28
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.72
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending outside ±2 percentage points even if it looks similar.
+  - Matching the reference transiently while dragging but finishing elsewhere.
+  - Using zoom or page scaling instead of resizing the splitter.
+  - Ignoring the visual reference and leaving the split near 50/50.
+  expected_interaction_path:
+  - Compare the live split to the thumbnail.
+  - Drag the divider until the live left pane looks slightly under three-quarters.
+  - Release and fine-adjust if needed.
+  notes: The checker should compute actual pane fractions; the thumbnail itself must never be resizable.
+- id: window_splitter-mui-v2-T01
+  name: 'Keyboard-accessible separator: set Inspector to 24% and save'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: react-resizable-panels with separator role and keyboard resizing'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: Open “Customize layout”. Focus the keyboard-accessible divider and set the Inspector pane to 24% of the width, within ±1 percentage point, then click “Save changes”. The task will finish automatically when done.
+  ui_copy: Open “Customize layout”. Focus the keyboard-accessible divider and set the Inspector pane to 24% of the width, within ±1 percentage point, then click “Save changes”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses modal_flow with compact spacing and medium clutter. Clicking “Customize layout” opens a MUI Dialog containing a two-pane react-resizable-panels layout: Canvas (left) and Inspector (right). The divider is rendered as a real separator control with a visible focus ring and a short hint line, `This divider supports keyboard adjustment`.
+    A live readout shows the current split. Inspector starts at 40%. The footer contains “Cancel” and “Save changes”. The split is considered draft state until Save changes is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - guidance
+    - layout
+    factor_rationale: This intentionally tests the semantic-separator path that react-resizable-panels exposes, so the benchmark can distinguish pointer dragging failure from separator interaction knowledge.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The target is tight and the commit step matters, but the main novelty is that the divider is a keyboard-accessible separator rather than only a drag affordance.
+  success_trigger:
+    human_readable:
+    - Inspector (right) pane is 24% of the available width, within ±1 percentage point.
+    - The required "Save changes" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_secondary_pane_fraction
+        secondary_pane: right
+        value: 0.24
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Inspector outside ±1 percentage point.
+  - Changing the draft split correctly but not clicking Save changes.
+  - Dragging the surrounding dialog instead of using the actual divider.
+  - Cancelling the dialog after reaching the right draft value.
+  expected_interaction_path:
+  - Open the Customize layout dialog.
+  - Focus the divider separator.
+  - Adjust the split until Inspector is about 24%.
+  - Click Save changes.
+  notes: The checker should not care whether the user used keyboard or pointer once the committed split is correct; the UI hint merely makes the keyboard route discoverable.
+- id: window_splitter-mui-v2-T02
+  name: 'Below-fold secondary card: set Details to 68%'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: react-resizable-panels in dashboard card'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: Scroll to the card labeled “Secondary — Metrics” and set the Details pane to 68% of the width, within ±2 percentage points. The task will finish automatically when done.
+  ui_copy: Scroll to the card labeled “Secondary — Metrics” and set the Details pane to 68% of the width, within ±2 percentage points. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and high clutter. Several dashboard cards appear before the target, including a chart card and one non-target splitter card. The target card, “Secondary — Metrics”, begins below the fold.
+    The target splitter panes are Summary (left) and Details (right), starting at 50/50. A local readout under the card displays percentages. Another splitter card above it looks similar but is labeled “Primary — Filters”.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - clutter
+    factor_rationale: The task is meant to measure page-level search plus correct-card discrimination before the splitter interaction itself, because that mixed failure pattern was common in the old splitter packet.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The actual resize is simple, but the target card is below the fold and a similar splitter card appears earlier, so this is a hard acquisition-plus-disambiguation task.
+  success_trigger:
+    human_readable:
+    - Details (right) pane is 68% of the available width, within ±2 percentage points.
+    - The correct target instance is "Secondary — Metrics".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: secondary_pane_fraction
+        secondary_pane: right
+        value: 0.68
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Metrics
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the Primary — Filters card instead of Secondary — Metrics.
+  - Leaving Details outside ±2 percentage points.
+  - Scrolling to the target but never changing the split.
+  - Changing a non-target dashboard control instead of the divider.
+  expected_interaction_path:
+  - Scroll until the Secondary — Metrics heading is visible.
+  - Locate its divider rather than the earlier similar card.
+  - Drag until Details is about 68%.
+  - Release and verify with the local readout.
+  notes: Use the card label or id to bind the correct splitter instance.
+- id: window_splitter-mui-v2-T03
+  name: 'Fixed-width pixel range: keep the left pane between 284 and 292 px'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: react-resizable-panels inside fixed-width container'
+  task_template: set_range
+  secondary_template: drag_operation
+  browsergym_goal: In the fixed-width splitter, resize the divider so the left pane finishes between 284 px and 292 px inclusive. The task will finish automatically when done.
+  ui_copy: In the fixed-width splitter, resize the divider so the left pane finishes between 284 px and 292 px inclusive. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and medium clutter. A fixed-width card (860px content width) contains a two-pane react-resizable-panels layout with labels Left and Right. The divider is visible and the card displays a live pixel readout `Left width: ###px`.
+    The split begins at 430px / 430px. Surrounding settings controls are distractors only. Because the container width is fixed, the target can be evaluated in pixels rather than percentages.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - precision_surface
+    - placement
+    factor_rationale: A fixed-width container creates a transparent pixel-based target that is still grounded in the divider interaction, letting the benchmark measure precise stopping rather than semantic discovery.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The target range is narrow and the card is off-center in a cluttered settings panel, but the live pixel readout keeps it fair.
+  success_trigger:
+    human_readable:
+    - Left pane is between 284px and 292px inclusive.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        orientation: horizontal
+        measure: pane_px
+        pane: left
+        min_value: 284
+        max_value: 292
+        unit: px
+      tolerance:
+        type: measurement_jitter_px
+        value: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping below 284 px or above 292 px.
+  - Confusing the pixel readout with a percentage target.
+  - Changing another control in the settings panel instead of the splitter.
+  - Leaving the split near its starting width.
+  expected_interaction_path:
+  - Locate the fixed-width splitter card.
+  - Drag until the pixel readout falls between 284 and 292 px.
+  - Release and verify the final width.
+  notes: The checker may compute either the exact left content-box width or the normalized fraction derived from the fixed 860px container.
+- id: window_splitter-mui-v2-T04
+  name: 'Compact three-pane split: match 18/57/25'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: react-resizable-panels with three panels'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the compact three-pane splitter, set Files to 18%, Editor to 57%, and Terminal to 25%, each within ±2 percentage points. The task will finish automatically when done.
+  ui_copy: In the compact three-pane splitter, set Files to 18%, Editor to 57%, and Terminal to 25%, each within ±2 percentage points. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses isolated_card with compact spacing, small scale, and medium clutter. The card contains a three-panel react-resizable-panels layout with visible separators. Pane order is Files, Editor, Terminal. A compact readout under the card lists all three live percentages.
+    The split starts near 25/50/25. The separators are visually thin because of the small scale, though the hit target is larger than the visible line.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - scale
+    - spacing
+    - precision_surface
+    factor_rationale: 'This is a pure convergence stressor: the handles are visible, but a small compact rendering and three simultaneous targets make repeated fine adjustment necessary.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Two separators and three simultaneous targets make this a strong hard calibration task without relying on hidden state.
+  success_trigger:
+    human_readable:
+    - Pane fractions for Files, Editor, Terminal match the requested layout within ±2 percentage points each.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: pane_fractions
+        pane_order:
+        - Files
+        - Editor
+        - Terminal
+        values:
+        - 0.18
+        - 0.57
+        - 0.25
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any pane outside ±2 percentage points.
+  - Only moving one divider and assuming the untouched pane will land correctly.
+  - Collapsing Files or Terminal instead of reaching the target proportions.
+  - Stopping when the numbers sum correctly but individual panes are wrong.
+  expected_interaction_path:
+  - Adjust the left separator to move Files toward 18%.
+  - Adjust the right separator to move Terminal toward 25%.
+  - Use the readout to fine-adjust Editor to 57%.
+  notes: Use labeled panel ids to map percentages to Files, Editor, and Terminal.
+- id: window_splitter-mui-v2-T05
+  name: 'Drawer split: adjust Secondary map/details and apply'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: Drawer + two react-resizable-panels instances'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Preview layouts”. In the drawer, adjust the splitter labeled “Secondary — Map/Details” so that Map is 35% of the width, within ±2 percentage points, then click “Apply”. The task will finish automatically when done.
+  ui_copy: Open “Preview layouts”. In the drawer, adjust the splitter labeled “Secondary — Map/Details” so that Map is 35% of the width, within ±2 percentage points, then click “Apply”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. Clicking “Preview layouts” opens a MUI right drawer containing two splitters stacked vertically: “Primary — Editor/Preview” and “Secondary — Map/Details”. Both start at 50/50 and both show their own readouts.
+    Only the lower splitter should change. The drawer footer contains “Cancel” and “Apply”. Resizing affects draft state only until Apply is pressed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - layout
+    factor_rationale: This combines same-family instance disambiguation with a drawer commit boundary, which creates more diagnostic value than a single live-only splitter.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target split is straightforward, but choosing the correct splitter and remembering to apply the draft make this a hard, layered layout task.
+  success_trigger:
+    human_readable:
+    - Map (left) pane is 35% of the available width, within ±2 percentage points.
+    - The required "Apply" control has been clicked.
+    - The correct target instance is "Secondary — Map/Details".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_primary_pane_fraction
+        primary_pane: left
+        value: 0.35
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Map/Details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting the Primary — Editor/Preview splitter instead of Secondary — Map/Details.
+  - Leaving the lower splitter at the correct draft value but not clicking Apply.
+  - Applying while Map is outside ±2 percentage points.
+  - Cancelling the drawer.
+  expected_interaction_path:
+  - Open the Preview layouts drawer.
+  - Locate the lower splitter labeled Secondary — Map/Details.
+  - Drag until Map is about 35%.
+  - Click Apply.
+  notes: The committed state should update only after Apply.
+- id: window_splitter-mui-v2-T06
+  name: Collapse Navigator, then reopen it to 17%
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: react-resizable-panels with collapsible left panel'
+  task_template: drag_operation
+  secondary_template: toggle_state
+  browsergym_goal: In the Navigator splitter, drag until the left pane collapses, then reopen it and finish with Navigator at 17% of the width, within ±1 percentage point. The task will finish automatically when done.
+  ui_copy: In the Navigator splitter, drag until the left pane collapses, then reopen it and finish with Navigator at 17% of the width, within ±1 percentage point. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and medium clutter. The target card contains a react-resizable-panels layout with a collapsible left panel named Navigator and a main pane named Content. The left panel has `collapsible=true` and `collapsedSize=0`, so dragging past the collapse threshold snaps it shut.
+    A live readout under the card shows the current percentages and whether Navigator is collapsed. The split starts at 28/72. No explicit save is required.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - layout
+    - precision_surface
+    factor_rationale: This turns collapse from a trivial toggle into a two-stage recovery task where the agent must intentionally traverse collapse state and then converge to a narrow final width.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: The split itself is simple, but the required collapse cycle and tight final target make this a genuine recovery and state-tracking task.
+  success_trigger:
+    human_readable:
+    - Navigator (left) pane is 17% of the available width, within ±1 percentage point.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.17
+        unit: fraction_of_container
+        collapse_cycle_completed: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at 17% without ever collapsing Navigator first.
+  - Leaving Navigator collapsed at terminal state.
+  - Ending outside ±1 percentage point after reopening.
+  - Manipulating another control instead of the divider.
+  expected_interaction_path:
+  - Drag left until Navigator collapses.
+  - Drag back to reopen Navigator.
+  - Fine-adjust until Navigator is about 17%.
+  - Release and verify the final state.
+  notes: Track both final fraction and whether a collapsed state was traversed.
+- id: window_splitter-mui-v2-T07
+  name: 'Dark visual-only split at top-left: match 64/36'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: react-resizable-panels visual-reference variant'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dark splitter card, match the reference thumbnail so the left pane is about 64% of the width, within ±2 percentage points. No numeric readout is shown. The task will finish automatically when done.
+  ui_copy: In the dark splitter card, match the reference thumbnail so the left pane is about 64% of the width, within ±2 percentage points. No numeric readout is shown. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses isolated_card with compact spacing, small scale, dark theme, and medium clutter. The card sits near the top-left and contains a two-pane split labeled Left and Right. No live percentages are shown.
+    A small reference thumbnail below the card shows the target layout. The divider line is visible and high-contrast, but the user must rely on visual matching alone. The split starts at 50/50.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - scale
+    factor_rationale: 'This is a deliberately perceptual task: the target is visible only as a reference image, and the small off-center rendering increases acquisition and stopping pressure.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: No live numbers are available, so the agent must perform fine visual calibration on a small off-center divider.
+  success_trigger:
+    human_readable:
+    - The live split matches the reference layout within ±2 percentage points.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: mui_dark_ref_64_36
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.64
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending outside ±2 percentage points even though the card looks close to the reference.
+  - Matching the split while dragging but releasing elsewhere.
+  - Changing page zoom or scale instead of resizing the divider.
+  - Leaving the split near 50/50.
+  expected_interaction_path:
+  - Compare the live card to the thumbnail.
+  - Drag the divider until the left pane visually matches about 64%.
+  - Release and fine-adjust if needed.
+  notes: Use actual pane fractions for evaluation; the thumbnail is guidance only.
+- id: window_splitter-mui-v2-T08
+  name: 'Nested splitters: adjust only the inner Preview/History split'
+  canonical_type: window_splitter
+  implementation_source: mui
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'MUI-styled: nested react-resizable-panels'
+  task_template: drag_operation
+  secondary_template: table_operation
+  browsergym_goal: In the nested layout card, adjust only the inner splitter labeled “Preview / History” so that Preview is 29% of the width, within ±1 percentage point. Do not change the outer splitter. The task will finish automatically when done.
+  ui_copy: In the nested layout card, adjust only the inner splitter labeled “Preview / History” so that Preview is 29% of the width, within ±1 percentage point. Do not change the outer splitter. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and medium clutter. A card titled “Nested layout” contains an outer splitter with panes Navigation and Workspace. Inside the Workspace pane there is a second, inner splitter labeled “Preview / History”.
+    Both separators are simultaneously visible and both have local readouts. The outer split starts at 32/68 and the inner split starts at 50/50. Only the inner splitter's Preview pane should change.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - guidance
+    factor_rationale: This measures whether the agent can bind the instruction to the correct nested splitter rather than simply drag the first visible divider.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two simultaneously visible separators make wrong-divider errors likely, and the final target is narrow enough that a mistaken first drag is costly.
+  success_trigger:
+    human_readable:
+    - Preview (left) pane is 29% of the available width, within ±1 percentage point.
+    - The correct target instance is "Preview / History".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.29
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Preview / History
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adjusting the outer Navigation/Workspace split instead of the inner split.
+  - Changing both splitters.
+  - Leaving the inner Preview outside ±1 percentage point.
+  - Stopping at 29% in the wrong splitter.
+  expected_interaction_path:
+  - Identify the inner splitter labeled Preview / History.
+  - Ignore the outer Navigation / Workspace divider.
+  - Drag the inner divider until Preview is about 29%.
+  - Release and verify only the inner split changed.
+  notes: Bind the target instance by inner-split label, not by DOM depth alone.
+- id: window_splitter-mantine-v2-T01
+  name: 'Top drawer vertical split: set Timeline to 62% and save'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine: Drawer(position=top) + react-resizable-panels'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Timeline layout”. In the top drawer, set the Timeline pane to 62% of the height, within ±1 percentage point, then click “Save layout”. The task will finish automatically when done.
+  ui_copy: Open “Timeline layout”. In the top drawer, set the Timeline pane to 62% of the height, within ±1 percentage point, then click “Save layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. Clicking “Timeline layout” opens a Mantine Drawer from the top of the viewport. Inside is a vertical react-resizable-panels layout with Timeline on top and Errors below.
+    A live readout inside the drawer shows `Timeline: ##% • Errors: ##%`. The split starts at 50/50. The footer actions are “Cancel” and “Save layout”, and only the saved state is considered committed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - placement
+    factor_rationale: Using Mantine Drawer positioning changes acquisition and layering without changing the core splitter semantics, which keeps the task realistic but clearly harder.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Vertical dragging in a top drawer plus a save boundary makes this a layered precise-control task rather than a plain splitter drag.
+  success_trigger:
+    human_readable:
+    - Timeline (top) pane is 62% of the available height, within ±1 percentage point.
+    - The required "Save layout" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: vertical
+        measure: committed_primary_pane_fraction
+        primary_pane: top
+        value: 0.62
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Timeline to the right draft value but not saving.
+  - Saving while Timeline is outside ±1 percentage point.
+  - Dragging horizontally or using drawer controls instead of the divider.
+  - Leaving the drawer in unsaved state.
+  expected_interaction_path:
+  - Open the top drawer.
+  - Drag the horizontal divider until Timeline is about 62%.
+  - Click Save layout.
+  - Verify the committed split updates.
+  notes: Exclude drawer header/footer chrome when computing the vertical fraction.
+- id: window_splitter-mantine-v2-T02
+  name: 'Right drawer with offset: set Canvas to 58% and save'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine: Drawer(position=right, offset) + react-resizable-panels'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Canvas layout”. In the right drawer, set the Canvas pane to 58% of the width, within ±1 percentage point, then click “Save layout”. The task will finish automatically when done.
+  ui_copy: Open “Canvas layout”. In the right drawer, set the Canvas pane to 58% of the width, within ±1 percentage point, then click “Save layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing and medium clutter. Clicking “Canvas layout” opens a Mantine right drawer with a small visual offset from the page edge. Inside is a horizontal splitter with Canvas on the left and Settings on the right.
+    A live readout shows the current percentages. The split starts at 50/50. The drawer footer contains “Cancel” and “Save layout”; only the saved value is committed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - placement
+    factor_rationale: The offset right drawer is a realistic Mantine carrier that adds acquisition and commit burden while keeping the task squarely about the splitter.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The exact target is narrow and the right-drawer carrier forces the agent to operate in an off-center overlay before saving.
+  success_trigger:
+    human_readable:
+    - Canvas (left) pane is 58% of the available width, within ±1 percentage point.
+    - The required "Save layout" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_primary_pane_fraction
+        primary_pane: left
+        value: 0.58
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reaching the correct draft width but not saving.
+  - Saving while Canvas is outside ±1 percentage point.
+  - Interacting with the drawer chrome instead of the divider.
+  - Cancelling the drawer after changing the split.
+  expected_interaction_path:
+  - Open the Canvas layout drawer.
+  - Drag until Canvas is about 58%.
+  - Click Save layout.
+  - Verify the committed split updates.
+  notes: The drawer offset should not affect pane measurement; use the splitter container as the measurement root.
+- id: window_splitter-mantine-v2-T03
+  name: 'ScrollArea dashboard: below-fold Release notes to 31%'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine: ScrollArea-wrapped dashboard card with react-resizable-panels'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: Scroll to the card labeled “Release notes” and set the right pane to 31% of the width, within ±1 percentage point. The task will finish automatically when done.
+  ui_copy: Scroll to the card labeled “Release notes” and set the right pane to 31% of the width, within ±1 percentage point. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and high clutter. The dashboard body is wrapped in a Mantine ScrollArea so the page content scrolls inside a contained region rather than the browser body. The target card “Release notes” begins below the fold.
+    The target splitter panes are Draft (left) and Preview (right). Another smaller splitter card appears above it as a distractor. The local readout under Release notes shows the live percentages and the split starts at 50/50.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - clutter
+    factor_rationale: Putting the dashboard inside ScrollArea creates a genuine internal page-search problem before the divider interaction, which was a useful but underused splitter failure mode in v1.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The scrollable dashboard and below-fold target card create meaningful acquisition burden before the narrow final 31% stop.
+  success_trigger:
+    human_readable:
+    - Preview (right) pane is 31% of the available width, within ±1 percentage point.
+    - The correct target instance is "Release notes".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: secondary_pane_fraction
+        secondary_pane: right
+        value: 0.31
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Release notes
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the distractor splitter card above Release notes.
+  - Scrolling the browser body instead of the ScrollArea content.
+  - Leaving the right pane outside ±1 percentage point.
+  - Finding the correct card but never changing the split.
+  expected_interaction_path:
+  - Scroll within the dashboard ScrollArea until Release notes is visible.
+  - Locate the target card's divider.
+  - Drag until the right pane is about 31%.
+  - Release and verify using the local readout.
+  notes: Use the ScrollArea viewport element, not window scroll position, when validating the interaction path.
+- id: window_splitter-mantine-v2-T04
+  name: 'Secondary card only: set Queue/Detail to 42%'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine-styled: two dashboard splitters with react-resizable-panels'
+  task_template: drag_operation
+  secondary_template: table_operation
+  browsergym_goal: In the card labeled “Secondary — Queue/Detail”, set the Detail pane to 42% of the width, within ±1 percentage point. Do not change the Primary card. The task will finish automatically when done.
+  ui_copy: In the card labeled “Secondary — Queue/Detail”, set the Detail pane to 42% of the width, within ±1 percentage point. Do not change the Primary card. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses dashboard_panel with compact spacing and medium clutter. Two Mantine cards with nearly identical splitters are stacked in one dashboard column. The upper card is labeled “Primary — Editor/Preview”; the lower card is labeled “Secondary — Queue/Detail”.
+    Both splitters start at 50/50 and show similar local readouts. Only the lower card should change. No save button is present; splits apply live.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - placement
+    factor_rationale: Two visually similar cards create grounded wrong-instance risk without introducing extra overlay mechanics, so the task remains a clean splitter-disambiguation test.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The mechanics are simple, but the correct card must be selected and held in memory while making a narrow ±1 point adjustment.
+  success_trigger:
+    human_readable:
+    - Detail (right) pane is 42% of the available width, within ±1 percentage point.
+    - The correct target instance is "Secondary — Queue/Detail".
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: secondary_pane_fraction
+        secondary_pane: right
+        value: 0.42
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary — Queue/Detail
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing the Primary card instead of Secondary — Queue/Detail.
+  - Changing both cards.
+  - Leaving Detail outside ±1 percentage point.
+  - Stopping at the correct fraction in the wrong card.
+  expected_interaction_path:
+  - Locate the lower card labeled Secondary — Queue/Detail.
+  - Ignore the Primary card above it.
+  - Drag until Detail is about 42%.
+  - Release and verify the local readout.
+  notes: Bind to the labeled card id, not stack order.
+- id: window_splitter-mantine-v2-T05
+  name: 'Dark compact three-pane split: match 25/50/25'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine-styled: three-panel react-resizable-panels'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the dark three-pane splitter, set Files to 25%, Editor to 50%, and Console to 25%, each within ±2 percentage points. The task will finish automatically when done.
+  ui_copy: In the dark three-pane splitter, set Files to 25%, Editor to 50%, and Console to 25%, each within ±2 percentage points. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses isolated_card with compact spacing, small scale, dark theme, and medium clutter. The card contains three horizontal panes: Files, Editor, and Console. Two separators are visible, and a compact readout table under the card shows all three percentages live.
+    The split starts at roughly 30/40/30. The small dark rendering increases handle reacquisition difficulty between adjustments, though the hit target is larger than the visible separator line.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - scale
+    - spacing
+    factor_rationale: This is a pure compact calibration task that stays hard through repeated fine adjustments, not through hidden states or extra workflow steps.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Two separators and three live targets make this a robust hard convergence task, especially in a compact dark rendering.
+  success_trigger:
+    human_readable:
+    - Pane fractions for Files, Editor, Console match the requested layout within ±2 percentage points each.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: pane_fractions
+        pane_order:
+        - Files
+        - Editor
+        - Console
+        values:
+        - 0.25
+        - 0.5
+        - 0.25
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any pane outside ±2 percentage points.
+  - Only moving one separator and assuming the rest will align automatically.
+  - Collapsing one side pane instead of reaching the requested 25/50/25 layout.
+  - Stopping when the total looks plausible but one pane is still wrong.
+  expected_interaction_path:
+  - Adjust the left separator to set Files near 25%.
+  - Adjust the right separator to set Console near 25%.
+  - Use the readout table to fine-adjust Editor to 50%.
+  notes: Use labeled panel ids to avoid ambiguity when computing pane fractions.
+- id: window_splitter-mantine-v2-T06
+  name: 'Off-center visual-only match: reach 74/26'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine-styled: react-resizable-panels visual-reference variant'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the off-center splitter card, match the reference thumbnail so the left pane is about 74% of the width, within ±2 percentage points. No live numbers are shown. The task will finish automatically when done.
+  ui_copy: In the off-center splitter card, match the reference thumbnail so the left pane is about 74% of the width, within ±2 percentage points. No live numbers are shown. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses isolated_card with compact spacing, small scale, light theme, and medium clutter. The card is placed off-center and contains a two-pane splitter labeled Left and Right. No numeric readout is shown on the live UI.
+    A small reference thumbnail under the card shows the target split visually. The visible divider is thin and subtle. The split starts at 50/50 and must be matched by visual comparison alone.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - placement
+    - scale
+    factor_rationale: This strips away live numeric feedback and makes the stopping decision perceptual, while off-center placement adds search cost without changing the control idiom.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: No on-page numbers are available, so the task depends on visual calibration and controlled stopping on a subtle divider.
+  success_trigger:
+    human_readable:
+    - The live split matches the reference layout within ±2 percentage points.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: mantine_ref_74_26
+        orientation: horizontal
+        measure: primary_pane_fraction
+        primary_pane: left
+        value: 0.74
+        unit: fraction_of_container
+      tolerance:
+        type: absolute
+        value: 0.02
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Ending outside ±2 percentage points even if the thumbnail match seems close.
+  - Passing through the target split during drag but releasing elsewhere.
+  - Changing page scale rather than dragging the divider.
+  - Leaving the split near 50/50.
+  expected_interaction_path:
+  - Compare the card to the reference thumbnail.
+  - Drag the divider until the live split looks a bit under three-quarters on the left.
+  - Release and fine-adjust if necessary.
+  notes: Use actual pane fractions for the checker; the thumbnail itself is guidance only.
+- id: window_splitter-mantine-v2-T07
+  name: 'Fixed-width pixel band: keep the left pane between 270 and 282 px'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine-styled: fixed-width react-resizable-panels'
+  task_template: set_range
+  secondary_template: drag_operation
+  browsergym_goal: In the fixed-width splitter, resize the divider so the left pane finishes between 270 px and 282 px inclusive. The task will finish automatically when done.
+  ui_copy: In the fixed-width splitter, resize the divider so the left pane finishes between 270 px and 282 px inclusive. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and medium clutter. A fixed-width Mantine card contains a two-pane splitter with panes Notes (left) and Preview (right). The content box width of the splitter is fixed, and a live readout under the panes shows `Notes width: ###px`.
+    The split starts at 400px / 400px within an 800px content box. Nearby settings controls are distractors only. No save step is required.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: none
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - layout
+    - placement
+    - precision_surface
+    factor_rationale: This keeps the idiom purely splitter-centric but changes the target from a percentage to a narrow pixel band, which exercises a slightly different stopping and verification strategy.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The band is narrow and the card sits in a cluttered corner of the settings panel, but the pixel readout keeps it realistically solvable.
+  success_trigger:
+    human_readable:
+    - Notes (left) pane is between 270px and 282px inclusive.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        orientation: horizontal
+        measure: pane_px
+        pane: left
+        min_value: 270
+        max_value: 282
+        unit: px
+      tolerance:
+        type: measurement_jitter_px
+        value: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping below 270 px or above 282 px.
+  - Reading the pixel band as a percentage instruction.
+  - Interacting with settings controls instead of the divider.
+  - Leaving the split near its starting width.
+  expected_interaction_path:
+  - Locate the fixed-width splitter card.
+  - Drag until the Notes width falls inside 270–282 px.
+  - Release and verify using the pixel readout.
+  notes: The checker can compute either exact pixels or normalized fraction from the fixed 800px content width.
+- id: window_splitter-mantine-v2-T08
+  name: 'Keyboard-accessible Alerts layout: set right pane to 30% and apply'
+  canonical_type: window_splitter
+  implementation_source: mantine
+  implementation_variant: external_react_resizable_panels
+  implementation_component: 'Mantine-styled: react-resizable-panels with separator role inside settings panel'
+  task_template: confirm_cancel
+  secondary_template: set_scalar
+  browsergym_goal: In the “Alerts layout” card, focus the divider and set the right pane to 30% of the width, within ±1 percentage point, then click “Apply layout”. The task will finish automatically when done.
+  ui_copy: In the “Alerts layout” card, focus the divider and set the right pane to 30% of the width, within ±1 percentage point, then click “Apply layout”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses settings_panel with compact spacing and medium clutter. The target card is labeled “Alerts layout” and contains a horizontal two-pane splitter: Rules (left) and Preview (right). The divider is rendered as a focusable separator with a visible focus outline and a short inline hint, `Divider supports keyboard adjustment`.
+    A live readout shows the current split. Preview starts at 40%. The card footer contains a button labeled “Apply layout”; only the applied split counts as committed.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: continuous_1d
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - guidance
+    - layout
+    factor_rationale: This gives the benchmark a second explicit separator-semantics task, but in a non-modal Mantine carrier where the commit step is still local and visible.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: The split target is tight and the applied state matters; the interesting part is whether the agent treats the divider as a genuine separator control rather than only a drag line.
+  success_trigger:
+    human_readable:
+    - Preview (right) pane is 30% of the available width, within ±1 percentage point.
+    - The required "Apply layout" control has been clicked.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        orientation: horizontal
+        measure: committed_secondary_pane_fraction
+        secondary_pane: right
+        value: 0.3
+        unit: fraction_of_container
+        saved: true
+      tolerance:
+        type: absolute
+        value: 0.01
+      require_confirm: true
+      confirm_control: Apply layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting Preview to about 30% but not clicking Apply layout.
+  - Applying while Preview is outside ±1 percentage point.
+  - Dragging some other control in the settings panel instead of the divider.
+  - Leaving the card in unsaved state.
+  expected_interaction_path:
+  - Locate the Alerts layout card.
+  - Focus or acquire its divider separator.
+  - Adjust until Preview is about 30%.
+  - Click Apply layout.
+  notes: The checker should use the committed split after Apply. The UI hint exists to make the accessible separator discoverable, not to reveal the answer.

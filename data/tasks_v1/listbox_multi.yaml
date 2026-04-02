@@ -1,0 +1,2057 @@
+- id: listbox_multi-antd-T01
+  name: Weekly report recipients
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Checkbox.Group + List (composed listbox)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Report recipients" list, select exactly: Sales, Product, and Support. The task will finish automatically when done.'
+  ui_copy: Report recipients (choose all that should receive the weekly report).
+  setup_description: |-
+    Layout: isolated_card placed at the center of the viewport. The card title is "Weekly report settings".
+
+    Target component: a single multi-select listbox implemented as an Ant Design Checkbox.Group rendered in a vertical List.
+
+    Options (6 total) are shown as labeled checkboxes in one column: Sales, Marketing, Finance, Product, Support, HR.
+
+    Initial state: no options are selected.
+
+    No overlays, no scrolling. No other listboxes on the page.
+
+    Feedback: checkbox checkmarks update immediately; a small text line under the list shows "Selected: N" (updates live).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single list with 6 clearly labeled options, inline with immediate visual feedback and no disambiguation.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Sales, Product, Support.'
+    - 'The correct list instance must be used: Report recipients.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Sales
+        - Product
+        - Support
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Report recipients
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Any extra option selected beyond Sales, Product, Support.
+  - Missing one of the required selections.
+  - Changing any other control on the page (there are none) without matching the required selection set.
+  - Selecting in the wrong component instance (not applicable here, but enforced by the checker label).
+  expected_interaction_path: Click the Sales checkbox → click the Product checkbox → click the Support checkbox.
+  notes: 'Instrumentation: add data-testid=''listbox-report-recipients'' on the Checkbox.Group wrapper; each Checkbox gets data-value and accessible label text.'
+- id: listbox_multi-antd-T02
+  name: Backup carriers only
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Checkbox.Group (two groups on one page)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Backup carriers" list, select exactly: USPS and DHL. Do not change the "Primary carriers" list. The task will finish automatically when done.'
+  ui_copy: 'Shipping carriers: choose Primary and Backup carriers.'
+  setup_description: |-
+    Layout: isolated_card centered. The card contains two side-by-side sections labeled "Primary carriers" (left) and "Backup carriers" (right).
+
+    Each section is a multi-select listbox implemented with Ant Design Checkbox.Group in a vertical stack.
+
+    Primary carriers options: FedEx, UPS, USPS.
+
+    Backup carriers options: UPS, USPS, DHL, Local Courier.
+
+    Initial state: all options unchecked in both lists.
+
+    No overlays. No scrolling.
+
+    Disambiguation: both lists contain "UPS" and "USPS", so the label at the top of each section is the main cue.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar checkbox lists appear simultaneously; overlapping option names increase the chance of selecting in the wrong instance.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): USPS, DHL.'
+    - 'The correct list instance must be used: Backup carriers.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - USPS
+        - DHL
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Backup carriers
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting USPS and DHL in the "Primary carriers" list instead of "Backup carriers".
+  - Selecting UPS or Local Courier in the Backup list (extra items).
+  - Leaving either USPS or DHL unselected in the Backup list.
+  - Any selection set in Backup carriers that does not exactly equal {USPS, DHL}.
+  expected_interaction_path: Locate the "Backup carriers" section → check USPS → check DHL.
+  notes: 'Instrumentation: each list group should expose an instance label via aria-labelledby or data-testid (e.g., listbox-primary-carriers, listbox-backup-carriers).'
+- id: listbox_multi-antd-T03
+  name: 'Transfer: select candidates in Available'
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Transfer (select items in left/source column; right/target column empty)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Available candidates" list (left column), select exactly: Avery, Jordan, and Kai. The task will finish automatically when done.'
+  ui_copy: Candidate shortlist (select candidates to review).
+  setup_description: |-
+    Layout: isolated_card centered titled "Candidate shortlist".
+    Target component: an Ant Design Transfer widget used purely as a multi-select listbox. Two columns are visible:
+    - Left column title: "Available candidates" with a list of names and checkboxes.
+    - Right column title: "Selected" but it is empty and shows the empty-state text.
+    Transfer buttons (move right / move left) are present but are NOT required for success.
+    Options in the left list (8): Avery, Blake, Casey, Drew, Eden, Jordan, Kai, Morgan.
+    Initial state: no items selected.
+    No search box (showSearch=false). No pagination. No scrolling needed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Transfer has a denser row layout than a plain checkbox list and includes non-required affordances (move buttons), but the option set is small and inline.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Avery, Jordan, Kai.'
+    - 'The correct list instance must be used: Available candidates.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Avery
+        - Jordan
+        - Kai
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Available candidates
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any name not in {Avery, Jordan, Kai}.
+  - Failing to select one of Avery, Jordan, or Kai.
+  - Selecting items in the right column only (right column is empty, so this should not be possible).
+  - Moving items between columns (not needed; selection must still match exactly).
+  expected_interaction_path: In the left column, click the checkboxes next to Avery, Jordan, and Kai.
+  notes: Checker should read Transfer selectedKeys for the left/source column only; ignore targetKeys/move operations.
+- id: listbox_multi-antd-T04
+  name: Select all alert types
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Checkbox.Group with a ''Select all'' master checkbox'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on "Select all" so that all alert types in the list are selected. The task will finish automatically when done.
+  ui_copy: Alert types (you can use Select all).
+  setup_description: |-
+    Layout: isolated_card centered titled "Alert preferences".
+
+    Target component: a Checkbox.Group listbox with a master checkbox labeled "Select all" above the list.
+
+    Options in the list (5): Security alerts, Billing alerts, Product updates, Weekly summary, Incident notifications.
+
+    Initial state: none selected; the master checkbox is unchecked.
+
+    No overlays or scrolling. A live counter below the list shows "Selected: N of 5".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: A single, prominent master control selects the entire list; state is immediately visible.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Security alerts, Billing alerts, Product updates, Weekly summary, Incident notifications.'
+    - 'The correct list instance must be used: Alert types.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Security alerts
+        - Billing alerts
+        - Product updates
+        - Weekly summary
+        - Incident notifications
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Alert types
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any alert type unchecked.
+  - Selecting all but then unchecking one or more items.
+  - Toggling unrelated controls (none exist) without reaching the all-selected state.
+  expected_interaction_path: Click the "Select all" checkbox once (verify all items become checked).
+  notes: 'Instrumentation: expose the master checkbox label; checker should compute selected_values from the group value array.'
+- id: listbox_multi-antd-T05
+  name: 'Transfer search: select roles'
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Transfer with showSearch enabled'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the "Available roles" list (left column), use the search box if helpful and select exactly: Editor, Billing Admin, Compliance Viewer, and Support Agent. The task will finish automatically when done.'
+  ui_copy: 'Invite user: choose roles from the Available roles list.'
+  setup_description: |-
+    Layout: form_section centered in the viewport. Above the target component are two unrelated text inputs ("Email" and "Team").
+
+    Target component: an Ant Design Transfer widget used as a multi-select listbox.
+
+    Left column title: "Available roles". Right column title: "Assigned" (empty).
+
+    Configuration: showSearch=true, showSelectAll=true. A search input appears at the top of the left list with placeholder similar to "Search here".
+
+    Options in the left list (20 total). Examples include: Viewer, Editor, Admin, Billing Admin, Compliance Viewer, Support Agent, Read-only Auditor, Project Owner, etc.
+
+    Initial state: none selected.
+
+    Feedback: selected rows show a checked checkbox; the header shows "N items" and updates as you select.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: More options (20) and a search sub-control increase within-component steps; selection must be exact.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Editor, Billing Admin, Compliance Viewer, Support Agent.'
+    - 'The correct list instance must be used: Available roles.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Editor
+        - Billing Admin
+        - Compliance Viewer
+        - Support Agent
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Available roles
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a similarly named role (e.g., "Admin" instead of "Billing Admin").
+  - Selecting any extra roles beyond the four targets.
+  - Selecting the right/Assigned column (it is empty) instead of the Available roles list.
+  - Typing in the unrelated Email/Team inputs without completing the required selection.
+  expected_interaction_path: Click into the search box (optional) → filter to a target role → check it → clear/adjust search → repeat for remaining targets.
+  notes: Checker should use role value keys, not rendered order; search filtering must not affect stored selection.
+- id: listbox_multi-antd-T06
+  name: 'Compact settings: select email settings'
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Checkbox.Group in compact density panel'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Email options" list, make sure only these are selected: Daily digest, Weekly digest, Security notices, and New device sign-in. The task will finish automatically when done.'
+  ui_copy: 'Notification settings: Email options.'
+  setup_description: |-
+    Layout: settings_panel centered, with a left sidebar of tabs ("Profile", "Security", "Notifications"). The active tab is "Notifications".
+    Target component: a single Checkbox.Group listbox labeled "Email options".
+    Universal spacing mode is compact; the checkbox rows have reduced vertical padding.
+    Options (15 total) include several similar labels:
+    - Daily digest
+    - Weekly digest
+    - Monthly digest
+    - Security notices
+    - Security notices (marketing)
+    - New device sign-in
+    - New device sign-in (beta)
+    - Comment replies, Mentions, Product announcements, etc.
+    Initial state: "Weekly digest" is pre-selected; "Monthly digest" is also pre-selected.
+    No overlays. No scrolling.
+    Feedback: inline checkmarks update immediately; a small helper text shows a comma-separated summary of selected items.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Compact spacing and several near-duplicate labels raise the risk of selecting the wrong item or forgetting to deselect a preselected option.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Daily digest, Weekly digest, Security notices, New device sign-in.'
+    - 'The correct list instance must be used: Email options.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Daily digest
+        - Weekly digest
+        - Security notices
+        - New device sign-in
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Email options
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving "Monthly digest" selected (it starts selected but must be removed).
+  - Selecting "Security notices (marketing)" instead of "Security notices".
+  - Selecting "New device sign-in (beta)" instead of "New device sign-in".
+  - Having any extra selections beyond the four required items.
+  expected_interaction_path: In the Email options list, check Daily digest, Security notices, New device sign-in → uncheck Monthly digest → verify only the four specified options remain checked.
+  notes: Use stable value keys for near-duplicate labels; ensure each checkbox has an accessible name matching its label.
+- id: listbox_multi-antd-T07
+  name: Modal permissions with Save
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Modal + Checkbox.Group (apply on Save button)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open "Edit permissions", then in the "Team permissions" list select only: View dashboards, Export data, and Manage users. Click "Save changes". The task will finish automatically when done.'
+  ui_copy: 'Team access: Edit permissions.'
+  setup_description: |-
+    Layout: modal_flow. The main page shows a card titled "Team access" with a button labeled "Edit permissions".
+
+    When clicked, a centered Ant Design Modal opens titled "Edit team permissions".
+
+    Inside the modal is the target component: a Checkbox.Group listbox labeled "Team permissions".
+
+    Options (10): View dashboards, Edit dashboards, Export data, Manage users, Manage billing, View audit log, API access, Create projects, Delete projects, Manage webhooks.
+
+    Initial state inside the modal: "View dashboards" and "View audit log" are selected.
+
+    At the bottom right of the modal are two buttons: "Cancel" and a primary "Save changes".
+
+    Feedback: after clicking "Save changes", the modal closes and the main page shows a read-only summary line "Permissions: …" reflecting the saved selection.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires an overlay open/close plus an explicit Save action; preselected items must be adjusted to an exact set.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): View dashboards, Export data, Manage users.'
+    - 'The selection is only considered final after clicking: Save changes.'
+    - 'The correct list instance must be used: Team permissions.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - View dashboards
+        - Export data
+        - Manage users
+      tolerance:
+        set_order_independent: true
+      require_confirm: true
+      confirm_control: Save changes
+      require_correct_instance: true
+      target_instance_label_or_id: Team permissions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the right items but clicking Cancel or closing the modal without saving.
+  - Leaving "View audit log" selected (must be deselected).
+  - Selecting "Edit dashboards" instead of "View dashboards".
+  - Any saved selection that is not exactly {View dashboards, Export data, Manage users}.
+  expected_interaction_path: Click Edit permissions → in modal adjust checkboxes to the exact set → click Save changes → modal closes with updated summary.
+  notes: Checker should only evaluate selection after Save is pressed (require_confirm=true). Capture saved state from the underlying form model, not transient modal state.
+- id: listbox_multi-antd-T08
+  name: 'Dark Transfer with pagination: pick projects'
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Transfer with showSearch + pagination (select in left/source list)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the "All projects" list (left column), select exactly: Project Omega 03, Project Omega 14, Project Sigma 07, Project Sigma 19, and Project Tau 02. The task will finish automatically when done.'
+  ui_copy: 'Project access: select projects to review.'
+  setup_description: |-
+    Layout: isolated_card in dark theme, anchored near the bottom-right of the viewport (you may need to scroll the page slightly to bring it fully into view).
+
+    Target component: Ant Design Transfer used as a multi-select listbox.
+
+    Left column title: "All projects"; right column title: "Selected" (empty).
+
+    Configuration: showSearch=true; pagination enabled with page size 10; showSelectAll=true.
+
+    There are 60 projects in the left list with similar naming patterns (e.g., Project Omega 01–20, Project Sigma 01–20, Project Tau 01–20). Only 10 are visible per page.
+
+    Initial state: no items selected.
+
+    Sub-controls: search box at the top of the left list; pagination controls at the bottom of the list.
+
+    Feedback: selected items show checked boxes; the header indicates how many items are selected.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 5
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Large, highly confusable option set with pagination and search in a dark, corner-placed component makes both identification and manipulation more error-prone.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Project Omega 03, Project Omega 14, Project Sigma 07, Project Sigma 19, Project Tau 02.'
+    - 'The correct list instance must be used: All projects.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Project Omega 03
+        - Project Omega 14
+        - Project Sigma 07
+        - Project Sigma 19
+        - Project Tau 02
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: All projects
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a near-miss project number (e.g., Omega 13 instead of Omega 14).
+  - Selecting any extra project beyond the five required.
+  - Failing to select one of the required projects because it is on another page.
+  - Selecting in the right/Selected column (empty) instead of All projects.
+  expected_interaction_path: Use search to find each required project (or navigate pages) → check it → clear/adjust search → repeat until all five are selected.
+  notes: AntD Transfer supports showSearch and showSelectAll props; pagination can be enabled via the pagination prop. Checker should use stable project keys, not display order.
+- id: listbox_multi-antd-T09
+  name: 'Dashboard filter: customer segments'
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Multiple Checkbox.Group filter lists (dashboard sidebar)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the dashboard sidebar, find the "Customer segments" list and select exactly: Enterprise, SMB, Education, and Non-profit. The task will finish automatically when done.'
+  ui_copy: 'Analytics dashboard: filters (Regions, Customer segments, Product lines).'
+  setup_description: |-
+    Layout: dashboard. The page shows a header, a central chart area, and a left sidebar titled "Filters".
+    In the sidebar there are three separate Checkbox.Group listboxes (instances=3) stacked vertically:
+    1) "Regions" (Americas, EMEA, APAC, LATAM, …)
+    2) "Customer segments" (Enterprise, SMB, Mid-market, Education, Non-profit, Government, …)
+    3) "Product lines" (Core, Add-ons, Mobile, API, …)
+    Target is ONLY the "Customer segments" list.
+    Initial state: some filters in other sections may be preselected (e.g., Regions=EMEA), but Customer segments starts with none selected.
+    Clutter: the dashboard has many unrelated controls (date range picker, export button, chart legend) but none are required.
+    No overlays; sidebar lists are visible without scrolling.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: High clutter and multiple similar checkbox lists create substantial disambiguation load even though selection itself is straightforward.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Enterprise, SMB, Education, Non-profit.'
+    - 'The correct list instance must be used: Customer segments.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Enterprise
+        - SMB
+        - Education
+        - Non-profit
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Customer segments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the correct segments in the wrong filter list (e.g., Regions).
+  - Selecting extra segments like "Mid-market" or "Government".
+  - Interacting with dashboard controls instead of the filter list and not reaching the exact selection.
+  - Partial completion (only some of the four selected).
+  expected_interaction_path: In the left Filters sidebar, locate the Customer segments section → check the four specified items.
+  notes: 'Instrumentation: each filter block should have a stable label element and a data-testid to identify the instance for the checker.'
+- id: listbox_multi-antd-T10
+  name: Match reference feature chips
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Checkbox.Group list with a visual reference preview'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Feature flags" list, select exactly the features shown in the "Reference selection" chips above the list. The task will finish automatically when done.
+  ui_copy: Feature flags (match the Reference selection).
+  setup_description: |-
+    Layout: isolated_card centered titled "Feature flags".
+    Above the listbox is a small preview row labeled "Reference selection" showing 4 pill-shaped chips with text labels.
+    Target component: a Checkbox.Group multi-select listbox labeled "Feature flags", rendered as a scrollable list of 25 options.
+    The list includes the same labels as chips plus many distractors with similar wording. Example options:
+    - Two-factor authentication
+    - Audit log
+    - SAML SSO
+    - API access
+    - API access (legacy)
+    - Single sign-on (OIDC)
+    - Advanced reports
+    - Data export
+    Initial state: none selected.
+    Guidance: the target set is specified visually by the chips, not by enumerating items in the instruction.
+    Feedback: checkmarks update immediately; chips do not change.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires mapping a visual reference (chips) to the correct items within a longer, partially similar option list.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Two-factor authentication, Audit log, SAML SSO, API access.'
+    - 'The correct list instance must be used: Feature flags.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Two-factor authentication
+        - Audit log
+        - SAML SSO
+        - API access
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Feature flags
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "API access (legacy)" instead of "API access".
+  - Selecting fewer or more than the four features shown in the reference chips.
+  - Selecting items that look similar but do not exactly match the chip labels.
+  - Failing to scroll if needed and leaving a required item unchecked.
+  expected_interaction_path: Read the four reference chips → find each corresponding checkbox label in the list (scroll if needed) → check them and leave all others unchecked.
+  notes: Checker should compare selected checkbox values against the pre-defined target set associated with the reference chips.
+- id: listbox_multi-mui-T01
+  name: Meeting snacks selection
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + Checkbox (primary action)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Snacks" list, select exactly: Trail mix, Fruit cups, and Pretzels. The task will finish automatically when done.'
+  ui_copy: 'Office meeting order: Snacks (choose multiple).'
+  setup_description: |-
+    Layout: isolated_card centered titled "Office meeting order".
+
+    Target component: a Material UI List where each ListItem contains a Checkbox and a text label (checkbox is the primary action).
+
+    Options (7): Chips, Trail mix, Fruit cups, Cookies, Pretzels, Granola bars, Popcorn.
+
+    Initial state: no items selected.
+
+    No overlays and no scrolling. No other checkbox lists on the page.
+
+    Feedback: the checkbox checkmark and ListItem selected styling update immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Short list with clearly labeled checkboxes and immediate visual feedback in a simple, uncluttered scene.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Trail mix, Fruit cups, Pretzels.'
+    - 'The correct list instance must be used: Snacks.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Trail mix
+        - Fruit cups
+        - Pretzels
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Snacks
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any snack beyond Trail mix, Fruit cups, and Pretzels.
+  - Missing one of the three required snacks.
+  - Interacting with non-target UI (none present) without reaching the exact selection.
+  expected_interaction_path: Click the checkboxes for Trail mix, Fruit cups, and Pretzels.
+  notes: 'Instrumentation: wrap the list in data-testid=''listbox-snacks''; each ListItem checkbox should have an aria-label matching its snack name.'
+- id: listbox_multi-mui-T02
+  name: Push notification types
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Two Lists with Checkboxes (form section)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Push notifications" list, select exactly: Mentions and Security alerts. Do not change the "Email notifications" list. The task will finish automatically when done.'
+  ui_copy: 'Notification channels: Email notifications and Push notifications.'
+  setup_description: |-
+    Layout: form_section centered. At the top is a small profile form (Name field and Timezone dropdown) that is unrelated.
+    Below are two separate checkbox listboxes (instances=2):
+    - "Email notifications" list (left) with options like Weekly summary, Product tips, Billing receipts.
+    - "Push notifications" list (right) with options: Mentions, Direct messages, Security alerts, Outage updates.
+    Each list is a Material UI List with a checkbox per row.
+    Initial state: some Email notifications are preselected (Weekly summary checked), but Push notifications start with none selected.
+    No overlays. No scrolling.
+    Clutter: a couple of unrelated form controls are present above.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 4
+    justification: Two similar checkbox lists appear together and one of them has preselected items, increasing the need to target the correct instance.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Mentions, Security alerts.'
+    - 'The correct list instance must be used: Push notifications.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Mentions
+        - Security alerts
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Push notifications
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Mentions/Security alerts in the Email notifications list instead of Push notifications.
+  - Changing the Email notifications list (not checked by success predicate, but discouraged; treat as failure in analysis if tracked).
+  - Selecting any extra push option like Direct messages.
+  - Leaving either Mentions or Security alerts unchecked.
+  expected_interaction_path: Locate the Push notifications list → check Mentions and Security alerts.
+  notes: If you want to strictly enforce 'do not change Email notifications', add an additional checker guard for that instance (optional).
+- id: listbox_multi-mui-T03
+  name: Clear selected labels
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + Checkbox with an in-component ''Clear selected'' control'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the "Labels" list so that no labels are selected. The task will finish automatically when done.
+  ui_copy: Labels (you can clear selected labels).
+  setup_description: |-
+    Layout: isolated_card centered titled "Issue labels".
+
+    Target component: a checkbox listbox labeled "Labels" built with a MUI List.
+
+    A small text button labeled "Clear selected" appears in the list header row (inside the card, directly above the list).
+
+    Options (8): Bug, Feature, Documentation, Security, Performance, Accessibility, UI, Backend.
+
+    Initial state: Bug, UI, and Performance are preselected (checked).
+
+    No overlays and no scrolling.
+
+    Feedback: clearing updates checkmarks immediately; a helper text below reads "0 selected" when cleared.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Goal state is simply empty selection with a dedicated clear control and immediate feedback.
+  success_trigger:
+    human_readable:
+    - The target listbox has no selected items (all options are unchecked).
+    - 'The correct list instance must be used: Labels.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values: []
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Labels
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any label checked.
+  - Unchecking some but not all of the preselected labels.
+  - Clicking Clear selected but the list still has a checked item.
+  expected_interaction_path: Click "Clear selected" (or manually uncheck Bug, UI, Performance) until none are checked.
+  notes: Checker should evaluate the selected_values array is empty.
+- id: listbox_multi-mui-T04
+  name: Scroll to select destinations
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Long List with subheaders + checkboxes'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: 'In the "Travel destinations" list, select exactly: Kyoto, Reykjavík, and Cape Town. The task will finish automatically when done.'
+  ui_copy: Travel destinations (scroll to find cities).
+  setup_description: |-
+    Layout: isolated_card anchored near the top-left of the viewport.
+
+    Target component: a scrollable Material UI List with sticky subheaders by region (e.g., "Asia", "Europe", "Africa", "Americas"). Each item row has a checkbox.
+
+    Total options: 30 cities spread across subheaders; only ~10 are visible without scrolling.
+
+    Kyoto is under "Asia", Reykjavík under "Europe", and Cape Town under "Africa" (so at least one target is off-screen initially).
+
+    Initial state: none selected.
+
+    No overlays.
+
+    Feedback: item checkmarks update immediately; the subheader stays pinned while scrolling.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires controlled scrolling within the list to find targets across sections while maintaining correct selections.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Kyoto, Reykjavík, Cape Town.'
+    - 'The correct list instance must be used: Travel destinations.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Kyoto
+        - Reykjavík
+        - Cape Town
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Travel destinations
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a wrong city with a similar name (e.g., selecting Tokyo instead of Kyoto).
+  - Failing to scroll far enough and missing one target.
+  - Selecting extra cities beyond the three required.
+  expected_interaction_path: Scroll within the list to each region → locate the city row → check it → repeat for all three targets.
+  notes: 'Instrumentation: ensure the scroll container is within the listbox root so agent can scroll it; checker uses selected city values.'
+- id: listbox_multi-mui-T05
+  name: 'Dense list: choose quick actions'
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Dense List where checkbox is a secondary action'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Quick actions" list, select exactly: Pin to sidebar, Enable shortcuts, and Show tooltips. The task will finish automatically when done.'
+  ui_copy: Quick actions (dense list).
+  setup_description: |-
+    Layout: isolated_card centered.
+
+    Target component: a Material UI List rendered in dense mode (reduced vertical padding). Each ListItem has text on the left and a small checkbox aligned on the far right as a secondary action.
+
+    Spacing is compact and the component scale is small, making the checkbox targets tighter.
+
+    Options (12): Pin to sidebar, Enable shortcuts, Show tooltips, Auto-refresh, Compact mode, High contrast, Animations, Sounds, etc.
+
+    Initial state: none selected.
+
+    No overlays and no scrolling.
+
+    Feedback: checkbox tick appears; list item does not highlight when clicking the checkbox (only the checkbox toggles).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Small, right-aligned secondary-action checkboxes in a dense list increase pointing/target acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Pin to sidebar, Enable shortcuts, Show tooltips.'
+    - 'The correct list instance must be used: Quick actions.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Pin to sidebar
+        - Enable shortcuts
+        - Show tooltips
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Quick actions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking the list item text but not actually toggling the checkbox (if configured that way).
+  - Selecting extra actions beyond the three targets.
+  - Missing one of the required actions.
+  expected_interaction_path: For each target row, click the checkbox on the right side (secondary action) until checked.
+  notes: If ListItem click toggles selection too, ensure checker reads checkbox state rather than row focus state.
+- id: listbox_multi-mui-T06
+  name: 'Dialog: share calendar permissions'
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Dialog + List + Checkbox (explicit Save)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open "Sharing settings", then in the "Who can see my calendar" list select only: Team members and Managers. Click "Save". The task will finish automatically when done.'
+  ui_copy: 'Calendar sharing: open Sharing settings to choose visibility.'
+  setup_description: |-
+    Layout: modal_flow. The page shows a settings card with a button labeled "Sharing settings".
+
+    Clicking it opens a Material UI Dialog titled "Sharing settings".
+
+    Inside the dialog is the target checkbox listbox labeled "Who can see my calendar".
+
+    Options (6): Only me, Team members, Managers, Entire company, External guests, Public.
+
+    Initial state: "Only me" is selected.
+
+    Dialog actions: "Cancel" and primary "Save".
+
+    Feedback: after Save, the dialog closes and a summary line on the page updates to show the saved audience.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening a dialog and committing via Save; must replace an initial selection with an exact set.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Team members, Managers.'
+    - 'The selection is only considered final after clicking: Save.'
+    - 'The correct list instance must be used: Who can see my calendar.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Team members
+        - Managers
+      tolerance:
+        set_order_independent: true
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Who can see my calendar
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the right items but clicking Cancel or closing the dialog.
+  - Leaving "Only me" selected in addition to Team members/Managers.
+  - Saving a selection that includes any extra audience like Entire company.
+  expected_interaction_path: Click Sharing settings → in dialog check Team members and Managers and uncheck Only me → click Save.
+  notes: Even though the UI resembles a multi-select list, this task treats it as listbox_multi; ensure it is implemented with independent checkboxes (not radio buttons).
+- id: listbox_multi-mui-T07
+  name: 'Match preview chips: enable integrations'
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + Checkbox with a preview panel (chips)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Integrations" list, select exactly the integrations shown in the "Enabled in preview" chips. The task will finish automatically when done.
+  ui_copy: 'Integrations: match Enabled in preview.'
+  setup_description: |-
+    Layout: settings_panel centered. The panel has two columns.
+
+    Left column: a small box titled "Enabled in preview" displaying 3 chips (text labels) representing the desired enabled integrations.
+
+    Right column: the target component, a checkbox listbox titled "Integrations" implemented as a MUI List.
+
+    Options (12): Slack, Jira, GitHub, GitLab, Linear, PagerDuty, Notion, Google Drive, Dropbox, Zoom, Teams, Zapier.
+
+    Initial state: none selected.
+
+    Guidance is mixed/visual: the target items are specified by reading the chips in the preview box.
+
+    Feedback: checkboxes update immediately; chips stay static.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires cross-referencing a separate preview element with the listbox items, but the option count is moderate.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Slack, Jira, PagerDuty.'
+    - 'The correct list instance must be used: Integrations.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Slack
+        - Jira
+        - PagerDuty
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Integrations
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting integrations that are not in the preview chips.
+  - Missing one of the preview integrations.
+  - Selecting a similarly named integration (e.g., Teams instead of Microsoft Teams label if present).
+  expected_interaction_path: Read the chip labels in the preview → find those labels in the list → check them and leave all others unchecked.
+  notes: Set the preview chips to Slack, Jira, PagerDuty for this instance; checker uses that fixed target set.
+- id: listbox_multi-mui-T08
+  name: 'Dark dashboard: priority filter list'
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Multiple checkbox Lists in a dashboard sidebar'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Priority" filter list, select exactly: P0 Critical, P2 Medium, and P3 Low. The task will finish automatically when done.'
+  ui_copy: 'Issue dashboard (dark): filters for Status, Priority, Owner.'
+  setup_description: |-
+    Layout: dashboard in dark theme. The main area shows an issues table and charts; a right sidebar contains filters.
+    In the sidebar there are three separate checkbox listboxes (instances=3):
+    - Status: Open, In progress, Blocked, Closed…
+    - Priority: P0 Critical, P1 High, P2 Medium, P3 Low, P4 Trivial…
+    - Owner: several names…
+    Target is ONLY the "Priority" list.
+    Initial state: none selected in Priority; Status has "Open" preselected.
+    Clutter: many non-target controls (search bar, table sort, date picker) are visible.
+    No overlays; sidebar is visible without scrolling.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Dark theme plus a cluttered dashboard and multiple similar list instances make it easy to interact with the wrong filter section.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): P0 Critical, P2 Medium, P3 Low.'
+    - 'The correct list instance must be used: Priority.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - P0 Critical
+        - P2 Medium
+        - P3 Low
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Priority
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting P1 High instead of P2 Medium.
+  - Selecting the right priorities in the wrong list (e.g., Status).
+  - Selecting any extra priorities beyond the three required.
+  - Failing to locate the Priority section among other sidebar filters.
+  expected_interaction_path: In the sidebar, find Priority → check P0 Critical, P2 Medium, P3 Low.
+  notes: 'Instrumentation: sidebar filter blocks should expose labels and data-testid for instance selection (e.g., filter-priority).'
+- id: listbox_multi-mui-T09
+  name: 'Search within list: select tree species'
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: TextField (filter) + List + Checkbox (composite listbox)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the "Tree species" list, use the search box if helpful and select exactly: Redwood, Cedar, Maple, and Pine. The task will finish automatically when done.'
+  ui_copy: Tree species selector (search and select multiple).
+  setup_description: |-
+    Layout: isolated_card centered titled "Tree species selector".
+
+    Target component: a composite listbox consisting of a small search TextField directly above a scrollable MUI List of checkbox items.
+
+    Typing in the search box filters the visible list items but does not clear already selected items.
+
+    Total options: 40 species (e.g., Acacia, Alder, Ash, Beech, Birch, Cedar, Cypress, Elm, Fir, Maple, Oak, Pine, Redwood, Spruce, Willow, …).
+
+    Initial state: none selected; search box empty.
+
+    No overlays.
+
+    Feedback: checkmarks stay checked even when the item is temporarily filtered out; a summary line under the list shows the selected names.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Large option set with an additional search sub-control requires careful state tracking while filtering and selecting an exact set.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Redwood, Cedar, Maple, Pine.'
+    - 'The correct list instance must be used: Tree species.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Redwood
+        - Cedar
+        - Maple
+        - Pine
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Tree species
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a near-match like "Red oak" instead of Redwood.
+  - Selecting extra species beyond the four targets.
+  - Losing selections due to filtering (should not happen, but indicates incorrect interaction).
+  expected_interaction_path: Type in search to find each target species → check it → adjust/clear search → repeat for remaining targets.
+  notes: Although MUI doesn't ship a dedicated listbox-with-search, this composite pattern is common; label it as composite and provide stable test ids for search input and list root.
+- id: listbox_multi-mui-T10
+  name: 'Drawer: match advanced tags'
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Drawer + List + Checkbox (selection auto-applies)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the "Advanced tags" drawer, then in the "Tags" list select exactly the tags shown in the "Required tags" chips. The task will finish automatically when done.
+  ui_copy: Advanced tags (open drawer and match Required tags).
+  setup_description: |-
+    Layout: drawer_flow. The main page has a button labeled "Advanced tags".
+
+    Clicking it opens a right-side Drawer. Inside the drawer, near the top, is a small row labeled "Required tags" showing 3 chips.
+
+    Below the chips is the target component: a checkbox listbox titled "Tags", implemented as a MUI List.
+
+    Options (25): Security, Performance, Accessibility, UX, Reliability, Infra, Compliance, Billing, Analytics, Localization, …
+
+    Initial state: none selected.
+
+    No explicit Apply button; selecting checkboxes updates a "Selected tags" summary immediately within the drawer.
+
+    Drawer placement means the list is anchored on the right side of the viewport; the page behind it is visible but not required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a drawer and matching a visual reference to a longer list with many distractors.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Security, Performance, Accessibility.'
+    - 'The correct list instance must be used: Tags.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Security
+        - Performance
+        - Accessibility
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Tags
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Not opening the Advanced tags drawer (cannot reach the list).
+  - Selecting tags not shown in the Required tags chips.
+  - Selecting fewer or more than the three required tags.
+  expected_interaction_path: Click Advanced tags → in drawer read Required tags chips → check the matching items in the Tags list.
+  notes: Ensure drawer open control has a stable label. Checker should target the drawer list instance (not any background lists).
+- id: listbox_multi-mantine-T01
+  name: Pick spoken languages
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Checkbox.Group + Stack (checkbox list)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Languages" list, select exactly: English, Spanish, and Japanese. The task will finish automatically when done.'
+  ui_copy: 'Profile: Languages (select all that apply).'
+  setup_description: |-
+    Layout: isolated_card centered titled "Profile".
+
+    Target component: a Mantine Checkbox.Group rendered as a vertical Stack of Checkbox items, labeled "Languages".
+
+    Options (8): English, Spanish, French, German, Japanese, Korean, Mandarin, Hindi.
+
+    Initial state: none selected.
+
+    No overlays or scrolling. No other checkbox groups are present.
+
+    Feedback: checkmarks update immediately; a small line below shows "Current value: …" with the selected values.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single, clearly labeled Checkbox.Group with few options and immediate inline state visibility.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): English, Spanish, Japanese.'
+    - 'The correct list instance must be used: Languages.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - English
+        - Spanish
+        - Japanese
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Languages
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any extra language beyond the three required.
+  - Missing English, Spanish, or Japanese.
+  - Interacting with other UI (none exists) without reaching the exact selection.
+  expected_interaction_path: Check English → check Spanish → check Japanese.
+  notes: 'Instrumentation: Checkbox.Group wrapper data-testid=''listbox-languages''; each checkbox value attribute should match label.'
+- id: listbox_multi-mantine-T02
+  name: SMS topics selection (second group)
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Two Checkbox.Group instances in a settings panel'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "SMS topics" list, select exactly: Delivery updates and Security alerts. The task will finish automatically when done.'
+  ui_copy: 'Notifications: Email topics and SMS topics.'
+  setup_description: |-
+    Layout: settings_panel centered with a header "Notifications".
+    Two Mantine Checkbox.Group listboxes are shown (instances=2):
+    - "Email topics" (left) with several newsletter-type options (some preselected).
+    - "SMS topics" (right) with options: Delivery updates, Appointment reminders, Security alerts, Billing reminders.
+    Target is the "SMS topics" group.
+    Initial state: SMS topics has none selected; Email topics has "Weekly newsletter" preselected.
+    No overlays. No scrolling.
+    Clutter: a couple of unrelated toggles ("Enable email", "Enable SMS") appear above the groups.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 3
+    justification: Two similar checkbox groups exist, so the agent must correctly target the "SMS topics" instance.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Delivery updates, Security alerts.'
+    - 'The correct list instance must be used: SMS topics.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Delivery updates
+        - Security alerts
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: SMS topics
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the two items in Email topics instead of SMS topics.
+  - Selecting extra SMS topics like Appointment reminders.
+  - Leaving either Delivery updates or Security alerts unchecked.
+  expected_interaction_path: Locate the SMS topics group → check Delivery updates → check Security alerts.
+  notes: Mantine Checkbox.Group exposes values array; checker should bind to the SMS group instance via label or data-testid.
+- id: listbox_multi-mantine-T03
+  name: Clear selected interests
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Checkbox.Group with in-card Reset button'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the "Interests" list so that nothing is selected. The task will finish automatically when done.
+  ui_copy: Interests (you can reset).
+  setup_description: |-
+    Layout: isolated_card centered titled "Interests".
+
+    Target component: Mantine Checkbox.Group labeled "Interests" with 10 options (Art, Music, Travel, Sports, Cooking, Reading, Gaming, Photography, Fitness, Tech).
+
+    Initial state: Music, Travel, and Tech are preselected.
+
+    A small button labeled "Reset" appears at the bottom of the card (considered part of the component container).
+
+    No overlays and no scrolling.
+
+    Feedback: after reset, all checkmarks clear and the "Current value" text becomes "–".
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Clear end-state with an explicit reset control and immediate feedback.
+  success_trigger:
+    human_readable:
+    - The target listbox has no selected items (all options are unchecked).
+    - 'The correct list instance must be used: Interests.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values: []
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Interests
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving any interest selected.
+  - Resetting but one or more checkmarks remain.
+  - Only partially unchecking items (not fully cleared).
+  expected_interaction_path: Click Reset (or manually uncheck the preselected items) until no items are selected.
+  notes: Ensure Reset button has a stable accessible name; checker validates the group value array is empty.
+- id: listbox_multi-mantine-T04
+  name: 'Drawer: add team roles'
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Drawer + Checkbox.Group (auto applies)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: 'Open "Add roles", then in the "Team roles" list select exactly: Reviewer, Commenter, and Reporter. The task will finish automatically when done.'
+  ui_copy: Team roles (open drawer to add roles).
+  setup_description: |-
+    Layout: drawer_flow. The main page shows a "Team" card with a button labeled "Add roles".
+
+    Clicking the button opens a left-side Mantine Drawer titled "Add roles".
+
+    Inside the drawer is the target component: a Checkbox.Group listbox labeled "Team roles".
+
+    Options (12): Admin, Editor, Viewer, Reviewer, Commenter, Reporter, Billing, Security, Support, Analyst, Guest, Owner.
+
+    Initial state: none selected.
+
+    No explicit Apply button; selections update immediately and a small line "Selected roles: …" updates live.
+
+    The drawers position makes the list appear on the left side of the viewport.'
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires opening a drawer overlay and selecting an exact subset within a moderate-size list.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Reviewer, Commenter, Reporter.'
+    - 'The correct list instance must be used: Team roles.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Reviewer
+        - Commenter
+        - Reporter
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Team roles
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Not opening the Add roles drawer.
+  - Selecting any extra role such as Viewer or Editor.
+  - Missing one of Reviewer/Commenter/Reporter.
+  expected_interaction_path: Click Add roles → in drawer check Reviewer, Commenter, Reporter.
+  notes: Attach data-testid to drawer root and Checkbox.Group; checker should target the drawer instance.
+- id: listbox_multi-mantine-T05
+  name: 'Compact small: select permission flags'
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Checkbox.Group with size=''xs'' (small targets)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Permissions" list, make sure only these are selected: Read invoices, Download invoices, View audit log, and Manage API keys. The task will finish automatically when done.'
+  ui_copy: Permissions (compact).
+  setup_description: |-
+    Layout: isolated_card anchored near the top-right of the viewport.
+    Target component: Mantine Checkbox.Group labeled "Permissions" rendered with small checkbox size (xs) and compact spacing.
+    Options (18) include several similar labels:
+    - Read invoices
+    - Download invoices
+    - Edit invoices
+    - Manage API keys
+    - Manage API keys (legacy)
+    - View audit log
+    - View audit logs (extended)
+    - Export data, Create users, Delete users, etc.
+    Initial state: "Read invoices" is preselected and "Edit invoices" is also preselected.
+    No overlays and no scrolling.
+    Feedback: small checkmarks update immediately; a helper text lists selected permissions.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Small checkbox targets in compact layout plus near-duplicate labels require careful selection and deselection.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Read invoices, Download invoices, View audit log, Manage API keys.'
+    - 'The correct list instance must be used: Permissions.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Read invoices
+        - Download invoices
+        - View audit log
+        - Manage API keys
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Permissions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving "Edit invoices" selected (it starts selected but must be removed).
+  - Selecting "Manage API keys (legacy)" instead of "Manage API keys".
+  - Selecting "View audit logs (extended)" instead of "View audit log".
+  - Any extra permission selected beyond the four targets.
+  expected_interaction_path: Check Download invoices, View audit log, Manage API keys → uncheck Edit invoices → verify only the four required remain selected.
+  notes: Mantine supports checkbox size variants; ensure labels are accessible and distinguishable for near-duplicates.
+- id: listbox_multi-mantine-T06
+  name: 'Match reference: pick packages to install'
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Checkbox.Group + Checkbox.Card (card-style listbox)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the "Packages" selection, choose exactly the packages shown in the "Recommended" cards. The task will finish automatically when done.
+  ui_copy: 'Project setup: pick packages (match Recommended).'
+  setup_description: |-
+    Layout: form_section centered with two columns.
+
+    Left column: a "Recommended" area showing 3 small cards (read-only) with package names.
+
+    Right column: the target component is a Mantine Checkbox.Group rendered as a vertical Stack of Checkbox.Card items (each card behaves like a checkbox).
+
+    Options (10 cards) include: @mantine/core, @mantine/hooks, @mantine/notifications, @mantine/dates, @tabler/icons-react, react-router, zod, tanstack-query, etc.
+
+    Initial state: none selected.
+
+    Guidance is mixed: user reads package names from the Recommended cards and matches them in the selectable card list.
+
+    Feedback: selected cards show a checked indicator; a "Current value" line lists selected package names.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Card-style checkboxes change the click target shape and require matching from a separate reference area.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): @mantine/core, @mantine/hooks, @mantine/notifications.'
+    - 'The correct list instance must be used: Packages.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - '@mantine/core'
+        - '@mantine/hooks'
+        - '@mantine/notifications'
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Packages
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a non-recommended package such as @mantine/dates.
+  - Missing one of the three recommended packages.
+  - Selecting more than the three recommended items.
+  expected_interaction_path: Read the three Recommended card titles → in the selectable card list click those cards to check them.
+  notes: Mantine Checkbox.Card is documented as usable inside Checkbox.Group; ensure the card root has role='checkbox' and accessible name.
+- id: listbox_multi-mantine-T07
+  name: 'Dark dashboard: select compliance checks'
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Checkbox.Group with Checkbox.Card items (dashboard)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: 'In the "Compliance checks" list, select exactly: SOC 2, GDPR, and HIPAA. The task will finish automatically when done.'
+  ui_copy: 'Security dashboard (dark): Compliance checks.'
+  setup_description: |-
+    Layout: dashboard in dark theme. The main area shows security score widgets and a table of recent events.
+
+    In a right-side panel titled "Compliance" there is a card listbox labeled "Compliance checks".
+
+    The listbox is implemented with Mantine Checkbox.Group and Checkbox.Card items arranged in a tight grid.
+
+    Options (12): SOC 2, ISO 27001, GDPR, HIPAA, PCI DSS, FedRAMP, SOX, NIST, CSA STAR, etc.
+
+    Initial state: ISO 27001 is preselected.
+
+    Clutter: many unrelated dashboard widgets and buttons are visible.
+
+    Feedback: selected cards show a check indicator; a small toast "Filters updated" appears briefly after changes.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Dark theme and dashboard clutter make it harder to focus on the correct card grid; preselected items must be corrected to an exact set.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): SOC 2, GDPR, HIPAA.'
+    - 'The correct list instance must be used: Compliance checks.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - SOC 2
+        - GDPR
+        - HIPAA
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Compliance checks
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving ISO 27001 selected (must be deselected).
+  - Selecting PCI DSS or ISO 27001 instead of one of the required checks.
+  - Selecting any extra compliance frameworks beyond the three targets.
+  expected_interaction_path: In the compliance panel, click SOC 2, GDPR, HIPAA cards → unselect ISO 27001 if it is checked → verify only three remain selected.
+  notes: If the dashboard uses live-updating filters, ensure selection state is still immediately observable in the cards themselves.
+- id: listbox_multi-mantine-T08
+  name: 'Modal: apply report filters from long list'
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Modal + long Checkbox.Group (scroll inside modal) with Apply button'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: 'Open "Filter report", then in the "Metrics" list select only: Active users, Churn rate, and NPS. Click "Apply filters". The task will finish automatically when done.'
+  ui_copy: 'Reports: Filter report (choose metrics).'
+  setup_description: |-
+    Layout: modal_flow. The page shows a report with a toolbar button "Filter report".
+
+    Clicking it opens a centered Mantine Modal titled "Filter report".
+
+    Inside the modal is the target component: a scrollable Checkbox.Group labeled "Metrics" with 35 options (many are off-screen inside the modal).
+
+    Examples: Active users, New users, Revenue, Churn rate, NPS, Support tickets, Session duration, Retention, etc.
+
+    Initial state: Revenue and New users are preselected.
+
+    At the bottom of the modal are buttons: "Cancel" and primary "Apply filters".
+
+    Feedback: after Apply filters, the modal closes and the report header shows a small filter summary pill.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires scrolling within a modal list, adjusting preselected items, and confirming via an Apply button to commit state.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Active users, Churn rate, NPS.'
+    - 'The selection is only considered final after clicking: Apply filters.'
+    - 'The correct list instance must be used: Metrics.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Active users
+        - Churn rate
+        - NPS
+      tolerance:
+        set_order_independent: true
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Metrics
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the right items but not clicking Apply filters.
+  - Clicking Cancel, closing the modal, or clicking outside the modal.
+  - Leaving Revenue or New users selected along with the targets.
+  - Selecting extra metrics beyond the three required.
+  expected_interaction_path: Click Filter report → in modal scroll to locate targets → check Active users, Churn rate, NPS → uncheck Revenue/New users → click Apply filters.
+  notes: Checker should evaluate the committed filter state after Apply; attach stable ids to modal and list container for scrolling.
+- id: listbox_multi-mantine-T09
+  name: Search and select columns (two groups)
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput filter + Checkbox.Group (two instances)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: 'In the "Available columns" list, use the search box if helpful and select exactly: Last seen, Plan, and MRR. The task will finish automatically when done.'
+  ui_copy: 'Table columns: Available columns and Pinned columns.'
+  setup_description: |-
+    Layout: settings_panel centered.
+    At the top of the panel is a TextInput labeled "Search columns" that filters the visible items in the column lists below.
+    There are two Checkbox.Group listboxes (instances=2):
+    - "Available columns" (left) with a long list of 30 possible columns.
+    - "Pinned columns" (right) with a short list of 5 columns.
+    Target is ONLY "Available columns".
+    The Available columns list includes items like: Name, Email, Last seen, Created at, Plan, MRR, ARR, Seats, Country, Status, …
+    Initial state: Pinned columns has "Name" and "Email" selected; Available columns has none selected.
+    Feedback: selected items remain selected even when filtered out; a small summary text under each group shows the selected values.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Large option set with filtering and two similar list instances increases both within-component steps and disambiguation demands.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Last seen, Plan, MRR.'
+    - 'The correct list instance must be used: Available columns.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Last seen
+        - Plan
+        - MRR
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Available columns
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the target columns in the Pinned columns list instead of Available columns.
+  - Selecting extra columns beyond Last seen, Plan, MRR.
+  - Failing to clear/adjust search and missing one of the targets.
+  expected_interaction_path: Use Search columns to narrow list → check Last seen → search Plan → check Plan → search MRR → check MRR.
+  notes: Bind the search input and each list to distinct data-testids; checker targets only Available columns group state.
+- id: listbox_multi-mantine-T10
+  name: Select all billing tags (choose correct group)
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Two Checkbox.Groups each with a master ''Select all'' checkbox'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the "Billing tags" section, turn on "Select all" so that all billing tags are selected. Do not change the "Support tags" section. The task will finish automatically when done.
+  ui_copy: 'Tag rules: Billing tags and Support tags (each has Select all).'
+  setup_description: |-
+    Layout: settings_panel anchored near the bottom-left of the viewport.
+    Spacing is compact and the checkbox size is small (xs), making the controls tighter.
+    There are two separate checkbox listboxes (instances=2) stacked vertically:
+    - "Billing tags" (top) with a master checkbox labeled "Select all" above the list.
+    Billing tag options (8): Invoices, Refunds, Tax forms, Chargebacks, Trials, Renewals, Coupons, Credits.
+    - "Support tags" (bottom) with its own "Select all" master checkbox.
+    Support tag options (8): Tickets, SLA breaches, On-call, Escalations, Chat, Email, Phone, Community.
+    Initial state: Billing tags has none selected; Support tags has "Tickets" preselected.
+    No overlays and no scrolling.
+    Feedback: the Billing master checkbox becomes checked when all billing items are selected; it shows indeterminate state if partially selected.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Two similar groups each with their own Select all control plus small, compact targets create high disambiguation and pointing demand.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Invoices, Refunds, Tax forms, Chargebacks, Trials, Renewals, Coupons, Credits.'
+    - 'The correct list instance must be used: Billing tags.'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Invoices
+        - Refunds
+        - Tax forms
+        - Chargebacks
+        - Trials
+        - Renewals
+        - Coupons
+        - Credits
+      tolerance:
+        set_order_independent: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing tags
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Using Select all in the Support tags group instead of Billing tags.
+  - Leaving any Billing tag unselected.
+  - Changing Support tags (not required for success; can be tracked as an auxiliary failure mode).
+  - Partially selecting Billing tags so the master checkbox stays indeterminate.
+  expected_interaction_path: Locate the Billing tags section → click its Select all checkbox → verify all billing tags become checked.
+  notes: Checker should compute the full billing option set from the rendered items to validate 'all selected'. If enforcing 'do not change Support tags', add a guard condition.

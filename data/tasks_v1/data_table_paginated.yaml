@@ -1,0 +1,2025 @@
+- id: data_table_paginated-antd-T01
+  name: 'Orders table: go to page 3'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination enabled)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Orders table, go to page 3. The task will finish automatically when done.
+  ui_copy: In the Orders table, go to page 3. The task will finish automatically when done.
+  setup_description: |-
+    Layout: an isolated card centered in the viewport titled **Orders**.
+
+    Component: an Ant Design Table with built-in pagination in the footer. The table shows 5 columns: Order ID, Customer, Status (colored Tag), Total, and Order Date. The dataset contains 120 orders (IDs A-1001…A-1120), so pagination shows 12 pages at 10 rows per page.
+
+    Initial state: the table is on page 1, sorted by Order Date (newest first) **is NOT** enabled; no filters are active; no rows are selected.
+
+    Controls: pagination footer shows page numbers and next/previous arrows. Clicking a page number changes pages immediately (no Apply/OK confirmation).
+
+    Distractors: none beyond the standard table header and pagination controls.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single table with visible page numbers; one direct click updates the page immediately.
+  success_trigger:
+    human_readable:
+    - Orders table pagination current page is 3 (1-based).
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Landing on page 2 or page 4 (off-by-one page).
+  - Changing rows-per-page without reaching page 3.
+  - Scrolling the table body without changing the pagination page.
+  expected_interaction_path: Click page number **3** in the pagination footer (or use next twice).
+  notes: |-
+    Checker hint: read AntD Table pagination state from the rendered Pagination control (current page) or from the table adapter state.
+    Instrumentation: add data-testid on the Orders table root (e.g., data-testid='orders-table') and on its pagination container.
+- id: data_table_paginated-antd-T02
+  name: 'Orders table: set rows per page to 20'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + pageSize changer)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the Orders table to show 20 rows per page. The task will finish automatically when done.
+  ui_copy: Set the Orders table to show 20 rows per page. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered, titled **Orders**.
+
+    Component: Ant Design Table with pagination configured with **page size changer** enabled. Footer pagination includes a "Rows per page" (pageSize) dropdown with options 10, 20, 50.
+
+    Initial state: page 1, page size 10 rows per page; no filters; no selected rows.
+
+    Controls: selecting a new page size applies immediately (no extra Apply button).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires opening a single dropdown in the pagination footer and choosing a clearly labeled option.
+  success_trigger:
+    human_readable:
+    - Orders table page size is 20 rows per page.
+    - Change is applied (no pending/unsaved state).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page_size: 20
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Page size remains 10 or becomes 50.
+  - Changing to 20 in a different table (if any appears due to responsive layout) — not applicable here but should be guarded
+    by testid scoping.
+  - Typing 20 into any unrelated input on the page.
+  expected_interaction_path: Open the page-size dropdown in the pagination footer → click **20 / page**.
+  notes: |-
+    Checker hint: normalize page-size across libraries to integer page_size.
+    Instrumentation: page size selector should have stable aria-label (e.g., 'Rows per page') or data-testid.
+- id: data_table_paginated-antd-T03
+  name: 'Orders table: sort by Order Date (newest first)'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + column sorter)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: Sort the Orders table by Order Date from newest to oldest. The task will finish automatically when done.
+  ui_copy: Sort the Orders table by Order Date from newest to oldest. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered, titled **Orders**.
+
+    Component: Ant Design Table with sortable columns. The **Order Date** column header shows the standard sort caret indicators on hover.
+
+    Initial state: page 1, page size 10; no filters; sorting is **not set** (neutral) on all columns.
+
+    Controls: clicking a sortable header cycles sorting states (neutral → ascending → descending). Sorting is applied immediately.
+
+    Distractors: other columns (Customer, Status, Total) are also sortable but are irrelevant.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single click target in the header; feedback is visible via sort indicator and row order changes.
+  success_trigger:
+    human_readable:
+    - Orders table active sort is set to Order Date descending (newest → oldest).
+    - No column filters are required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort:
+          column_id: order_date
+          direction: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Order Date sorted ascending (oldest → newest).
+  - A different column is sorted instead of Order Date.
+  - Table is left in neutral (unsorted) state.
+  expected_interaction_path: Click the **Order Date** header until the descending sort indicator is active.
+  notes: 'Checker hint: map AntD sorter state to canonical {column_id, direction}.'
+- id: data_table_paginated-antd-T04
+  name: 'Orders table: select one row by Order ID'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + rowSelection)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Select the row with Order ID A-1007 in the Orders table. The task will finish automatically when done.
+  ui_copy: Select the row with Order ID A-1007 in the Orders table. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered, titled **Orders**.
+
+    Component: Ant Design Table with a leading checkbox selection column (rowSelection enabled). Each row has a stable `rowKey` equal to the Order ID (e.g., A-1007).
+
+    Initial state: page 1, page size 10, sorted by Order ID ascending so A-1007 is visible on page 1. No rows are selected.
+
+    Controls: click the checkbox at the start of the A-1007 row (or click the row if the checkbox is configured as row click). Selection updates immediately.
+
+    Distractors: other rows have similar IDs (A-1006, A-1008).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Row checkboxes are small and adjacent rows have similar IDs, but the target row is visible on the first
+      page.
+  success_trigger:
+    human_readable:
+    - 'Exactly one row is selected: Order ID A-1007.'
+    - Selection is in the Orders table (single instance on page).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection:
+          mode: single
+          selected_row_ids:
+          - A-1007
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting A-1006 or A-1008 (neighbor rows).
+  - Selecting multiple rows (more than one checkbox checked).
+  - Row is focused/highlighted but not actually selected (if selection is checkbox-only).
+  expected_interaction_path: Locate row A-1007 on page 1 → click its checkbox.
+  notes: 'Instrumentation: ensure each row exposes its canonical row_id (Order ID) for the checker (e.g., data-row-key).'
+- id: data_table_paginated-antd-T05
+  name: 'Orders table: filter Status to Pending'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + column filters)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Filter the Orders table so it shows only rows with Status = Pending. Click OK in the filter menu if needed.
+    The task will finish automatically when done.
+  ui_copy: Filter the Orders table so it shows only rows with Status = Pending. Click OK in the filter menu if needed. The
+    task will finish automatically when done.
+  setup_description: |-
+    Layout: **form_section** — a "Manage Orders" page with a left-aligned form section (date range inputs and a "Create order" button) above the table. The Orders table sits below the form inputs inside the same page section.
+
+    Component: Ant Design Table with column filters enabled on the **Status** column. The Status header has a funnel/filter icon that opens a dropdown menu. The filter menu lists 5 statuses with single-select behavior (radio-style): Pending, Shipped, Delivered, Cancelled, Refunded.
+
+    Initial state: no filters are applied; page 1; page size 10.
+
+    Controls: open the Status filter dropdown → choose **Pending** → click **OK** to apply. After applying, the filter icon becomes highlighted and the table rows update.
+
+    Distractors: the page contains unrelated form inputs (date range, customer search) but they do not affect the success checker.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a small header control, choosing among similar options, and confirming in the dropdown
+      menu.
+  success_trigger:
+    human_readable:
+    - Status column filter is active with value 'Pending'.
+    - If the AntD filter menu requires confirmation, the filter has been applied (OK clicked).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+        - column_id: status
+          operator: equals
+          value: Pending
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filter dropdown shows Pending selected but OK was not clicked (filter not applied).
+  - Filtering to a different status (e.g., Shipped).
+  - Using the unrelated form inputs above the table without setting the table's Status filter.
+  expected_interaction_path: Click Status column filter icon → select Pending → click OK.
+  notes: 'Checker hint: read table filter state from adapter (e.g., filteredInfo) rather than from visible rows alone.'
+- id: data_table_paginated-antd-T06
+  name: 'Orders table: select the row matching a reference card'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + rowSelection + reference panel)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Select the order in the Orders table that matches the reference card shown on the right. The task will
+    finish automatically when done.
+  ui_copy: Select the order in the Orders table that matches the reference card shown on the right. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated card centered. The card is split into two columns:
+    • Left: the **Orders** Ant Design Table with pagination and row selection (checkboxes).
+    • Right: a **Reference Order** mini-card that visually summarizes one target order.
+
+    Reference card details (mixed guidance): shows a customer avatar, a colored Status Tag, and a text badge reading **Order ID A-1042**.
+
+    Table details: 120 orders total, 10 rows per page. The target order A-1042 is not on page 1; it appears on page 2.
+
+    Initial state: page 1; no filters; no rows selected.
+
+    Distractors: neighboring Order IDs on page 2 include A-1041 and A-1043, and multiple rows share the same Status color.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires using a visual/text reference, navigating pages, and selecting the correct row among similar IDs.
+  success_trigger:
+    human_readable:
+    - The selected row in the Orders table matches the Reference Order card (Order ID A-1042).
+    - Exactly that row is selected (no extra selected rows).
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-order-card-1
+        resolved_row_id: A-1042
+        selection:
+          mode: single
+          selected_row_ids:
+          - A-1042
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row that matches only part of the reference (e.g., same Status color but different Order ID).
+  - Selecting A-1041 or A-1043 (adjacent IDs).
+  - Leaving multiple rows selected.
+  expected_interaction_path: Read Order ID from the reference card → go to page 2 → select row A-1042.
+  notes: 'Checker hint: reference card should have stable reference_id; checker resolves to a canonical row_id and validates
+    selection.'
+- id: data_table_paginated-antd-T07
+  name: 'Orders table: clear the active Status filter'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + column filters, pre-filtered)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the active Status filter in the Orders table so all statuses are shown again. If the filter menu
+    has Reset/OK buttons, use them. The task will finish automatically when done.
+  ui_copy: Clear the active Status filter in the Orders table so all statuses are shown again. If the filter menu has Reset/OK
+    buttons, use them. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Orders**.
+
+    Component: Ant Design Table with a Status column filter dropdown.
+
+    Initial state (important): the Status filter is already active with value **Pending**. The filter icon in the Status column header appears highlighted, and only Pending rows are visible.
+
+    Controls: opening the Status filter dropdown shows Pending selected and provides **Reset** and **OK** buttons at the bottom.
+
+    Distractors: other columns are sortable and can change row order but do not affect filter clearing.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Requires recognizing an already-filtered state and using the correct control sequence to remove the filter.
+  success_trigger:
+    human_readable:
+    - No column filters are active (filters list is empty).
+    - If the filter UI requires confirmation, the cleared state is applied.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters: []
+      tolerance: null
+      require_confirm: true
+      confirm_control: OK
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filter menu shows Reset clicked but OK not clicked (cleared state not applied).
+  - Switching the filter to a different status instead of clearing it.
+  - Clearing sorting only (filter remains active).
+  expected_interaction_path: Open Status filter dropdown → click Reset → click OK.
+  notes: 'Checker hint: verify canonical filters model is empty, not just that more rows appear (avoid false positives).'
+- id: data_table_paginated-antd-T08
+  name: 'Orders table: select three specific orders across pages'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + multi-row selection, preserveSelectedRowKeys)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: Select the rows with Order IDs A-1088, A-1091, and A-1120 in the Orders table. You may need to change pages;
+    selected rows should stay selected when you paginate. The task will finish automatically when done.
+  ui_copy: Select the rows with Order IDs A-1088, A-1091, and A-1120 in the Orders table. You may need to change pages; selected
+    rows should stay selected when you paginate. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Orders** in **dark theme** with **compact spacing** (reduced padding in rows and pagination).
+
+    Component: Ant Design Table with pagination (10 rows per page) and multi-row selection (checkboxes). `rowSelection.preserveSelectedRowKeys` is enabled so selections persist when moving between pages.
+
+    Dataset: 120 orders (A-1001…A-1120). The three target Order IDs are spread across multiple pages:
+    • A-1088 (page 9)
+    • A-1091 (page 10)
+    • A-1120 (page 12)
+
+    Initial state: page 1; no rows selected.
+
+    Distractors: many IDs differ by only 1 digit; compact spacing makes the checkboxes and row text tighter.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires accurate multi-selection across several pagination changes in a dense, compact/dark presentation.
+  success_trigger:
+    human_readable:
+    - Selected row IDs are exactly {A-1088, A-1091, A-1120}.
+    - Selection persists across pagination (no need to return to page 1).
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        selection:
+          mode: multi
+          selected_row_ids:
+          - A-1088
+          - A-1091
+          - A-1120
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting only a subset (e.g., A-1088 and A-1091 but missing A-1120).
+  - Selecting extra rows beyond the three targets.
+  - Selecting rows in the right pages but with wrong IDs (e.g., A-1089 instead of A-1088).
+  expected_interaction_path: Go to page 9 → select A-1088 → page 10 → select A-1091 → page 12 → select A-1120.
+  notes: 'Checker hint: enforce exact set equality on selected_row_ids; ignore ordering.'
+- id: data_table_paginated-antd-T09
+  name: 'Dashboard: navigate Archived Orders table to page 4'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (dashboard with 2 instances, each paginated)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Archived Orders table (not Recent Orders), go to page 4. The task will finish automatically when
+    done.
+  ui_copy: In the Archived Orders table (not Recent Orders), go to page 4. The task will finish automatically when done.
+  setup_description: |-
+    Layout: **dashboard** layout anchored toward the **top-left** of the viewport.
+
+    Scene contains TWO Ant Design tables of the same canonical type (instances=2):
+    1) **Recent Orders** (top card) — small table with pagination.
+    2) **Archived Orders** (bottom card) — larger table with pagination.
+
+    Both tables have the same columns and similar pagination controls, but each card has a clear title.
+
+    Initial state: both tables start on page 1 with 10 rows per page.
+
+    Task target: only the **Archived Orders** table should end on page 4. Changing the page on Recent Orders does not count.
+
+    Clutter/distractors: dashboard also includes a right-side summary panel (KPIs and a small chart), but it is non-interactive.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: Two visually similar table instances require careful disambiguation before using pagination controls.
+  success_trigger:
+    human_readable:
+    - Archived Orders table current page is 4.
+    - Recent Orders table state is ignored by the checker.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 4
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Archived Orders
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing page to 4 in the Recent Orders table instead of Archived Orders.
+  - Archived Orders ends on page 3 or 5.
+  - Changing rows-per-page without reaching page 4.
+  expected_interaction_path: Locate the 'Archived Orders' card → use its pagination to select page 4.
+  notes: 'Instrumentation: each table instance should have a stable instance label/testid (e.g., data-testid=''table-archived-orders'').'
+- id: data_table_paginated-antd-T10
+  name: 'Orders table: jump to page 9 via quick jumper'
+  canonical_type: data_table_paginated
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Table (pagination + quick jumper)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: Use the page jumper in the Orders table pagination to go to page 9. Press Enter if needed. The task will
+    finish automatically when done.
+  ui_copy: Use the page jumper in the Orders table pagination to go to page 9. Press Enter if needed. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated card positioned near the **bottom-right** of the viewport.
+
+    Component: Ant Design Table with pagination configured with `showQuickJumper` enabled. The pagination footer includes a small numeric text field labeled "Jump to" (or similar) that lets the user type a page number.
+
+    Dataset: 300 orders (30 pages at 10 rows per page).
+
+    Initial state: page 1; page size 10; no filters; no selection.
+
+    Controls: focus the quick-jump input → type **9** → confirm by pressing Enter (or the input's built-in confirm behavior). Page changes immediately when the jump is accepted.
+
+    Density: compact spacing and **small scale** make the jumper input and pagination buttons tighter.
+
+    Distractors: the pagination footer also contains a page-size selector, but changing it is not required.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires acquiring a small numeric input and entering a correctly formatted page number with explicit submission.
+  success_trigger:
+    human_readable:
+    - Orders table pagination current page is 9.
+    - The page jump has been accepted (not just typed but unapplied).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 9
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing 9 but not submitting (page remains 1).
+  - Landing on page 8 or 10 due to mis-entry.
+  - Changing rows per page (page size) without reaching page 9.
+  expected_interaction_path: Click the quick jumper input → type 9 → press Enter → verify current page shows 9.
+  notes: 'Instrumentation: expose current page in a data attribute; ensure the quick-jumper input has a stable label/aria-label
+    for accessibility.'
+- id: data_table_paginated-mui-T01
+  name: 'Users grid: go to page 2'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Users table, go to page 2. The task will finish automatically when done.
+  ui_copy: In the Users table, go to page 2. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Users**.
+
+    Component: MUI X **DataGrid** with client-side pagination enabled. The footer shows the displayed-rows label (e.g., "1–25 of 250"), a Rows-per-page selector, and Next/Previous page arrow buttons.
+
+    Dataset: 250 users (User IDs U-0001…U-0250). Page size is 25 rows per page (10 pages total).
+
+    Initial state: page 1 (showing rows 1–25), no sorting, no filters, no selected rows.
+
+    Controls: click the Next page arrow once to reach page 2; changes apply immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Simple single-instance footer navigation (Next page) with immediate feedback in the displayed-rows label.
+  success_trigger:
+    human_readable:
+    - Users grid current page is 2 (1-based in canonical state).
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Remaining on page 1.
+  - Jumping past page 2 (e.g., to page 3).
+  - Changing rows per page instead of changing the page.
+  expected_interaction_path: Use the footer Next page arrow once.
+  notes: 'Checker hint: normalize MUI DataGrid paginationModel.page (0-based) to canonical page (1-based).'
+- id: data_table_paginated-mui-T02
+  name: 'Users grid: set rows per page to 50'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the Users table to show 50 rows per page. The task will finish automatically when done.
+  ui_copy: Set the Users table to show 50 rows per page. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Users**.
+
+    Component: MUI X DataGrid with pagination. Footer includes a **Rows per page** select with options 25, 50, 100.
+
+    Initial state: page 1, rows per page = 25.
+
+    Controls: open the Rows per page select in the footer and choose **50**. The grid refreshes immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: One dropdown selection in a standard footer control with clear numeric options.
+  success_trigger:
+    human_readable:
+    - Users grid page size is 50 rows per page.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page_size: 50
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Setting page size to 25 or 100.
+  - Changing page number without setting page size.
+  - Selecting 50 in any unrelated dropdown outside the grid (should not exist in this isolated scene).
+  expected_interaction_path: Open footer Rows per page select → choose 50.
+  notes: 'Checker hint: use DataGrid paginationModel.pageSize (or equivalent) for canonical page_size.'
+- id: data_table_paginated-mui-T03
+  name: 'Users grid: sort by Last seen (most recent first)'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: Sort the Users table by Last seen so the most recent activity is first. The task will finish automatically
+    when done.
+  ui_copy: Sort the Users table by Last seen so the most recent activity is first. The task will finish automatically when
+    done.
+  setup_description: |-
+    Layout: isolated card centered titled **Users**.
+
+    Component: MUI X DataGrid with sortable columns.
+
+    Columns: User ID, Name, Role, Status, and **Last seen** (date-time).
+
+    Initial state: no active sort model (neutral).
+
+    Controls: click the **Last seen** column header to toggle sorting. Sorting applies immediately and the header shows a sort arrow.
+
+    Distractors: other column headers are also clickable for sorting.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single header interaction with visible sort indicator; only one column needs to be set correctly.
+  success_trigger:
+    human_readable:
+    - Active sort model is Last seen descending (most recent first).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort:
+          column_id: last_seen
+          direction: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Last seen sorted ascending (oldest first).
+  - Sorting a different column.
+  - Leaving the grid unsorted.
+  expected_interaction_path: Click Last seen header until descending sort arrow is active.
+  notes: 'Checker hint: map DataGrid sortModel (field, sort) into canonical sort state.'
+- id: data_table_paginated-mui-T04
+  name: 'Users grid: search and select the user from a reference chip'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (with toolbar quick filter)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Use the search box in the Users table to find the user shown in the reference chip, then select that user's
+    row. The task will finish automatically when done.
+  ui_copy: Use the search box in the Users table to find the user shown in the reference chip, then select that user's row.
+    The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Users** with a small right-side panel.
+
+    Component: MUI X DataGrid with toolbar enabled (includes a quick search/quick filter text field). The grid supports checkbox row selection.
+
+    Reference (mixed guidance): to the right of the grid is a **Target user** chip showing an avatar and the text **Maria Chen**.
+
+    Dataset: 250 users. Maria Chen appears exactly once in the Name column and is not on the first page.
+
+    Initial state: page 1; no filters; no selected rows.
+
+    Controls: type into the toolbar search box to filter rows; after filtering, select the matching row via its checkbox.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires using a toolbar search control and then selecting the correct row; the target is not visible initially.
+  success_trigger:
+    human_readable:
+    - The selected row matches the reference chip user (resolved to User ID U-0137).
+    - Exactly that one row is selected.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-user-chip-1
+        resolved_row_id: U-0137
+        selection:
+          mode: single
+          selected_row_ids:
+          - U-0137
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering for Maria but selecting a different row.
+  - Selecting multiple rows.
+  - Typing in the search box but not selecting the row (no selection state).
+  expected_interaction_path: Type 'Maria Chen' in quick filter → find remaining row → click its checkbox.
+  notes: 'Checker hint: selection should be validated by canonical row_id; do not depend on filtered row count.'
+- id: data_table_paginated-mui-T05
+  name: 'Users grid: select user U-0062 (page 3)'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (checkbox selection)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Select the row with User ID U-0062 in the Users table. The task will finish automatically when done.
+  ui_copy: Select the row with User ID U-0062 in the Users table. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card anchored near the **bottom-left** of the viewport titled **Users**.
+
+    Component: MUI X DataGrid with pagination (25 rows per page) and checkbox selection.
+
+    Dataset: 250 users with sequential IDs. User **U-0062** appears on page 3 (rows 51–75).
+
+    Initial state: page 1; no rows selected.
+
+    Controls: use the footer pagination next/previous controls to reach page 3, then click the checkbox for the U-0062 row.
+
+    Distractors: nearby IDs include U-0061 and U-0063.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires pagination plus a small checkbox target among similar row IDs.
+  success_trigger:
+    human_readable:
+    - 'Exactly one selected row: U-0062.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection:
+          mode: single
+          selected_row_ids:
+          - U-0062
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting U-0061 or U-0063.
+  - Selecting multiple rows.
+  - Navigating to page 3 but not selecting the row.
+  expected_interaction_path: Go to page 3 via next controls → locate U-0062 → click its checkbox.
+  notes: 'Checker hint: validate selected row IDs against canonical row_id field (User ID).'
+- id: data_table_paginated-mui-T06
+  name: 'Users grid: filter Status to Active via filter panel'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (toolbar filter panel)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Filter the Users table so only Status = Active rows are shown. The task will finish automatically when
+    done.
+  ui_copy: Filter the Users table so only Status = Active rows are shown. The task will finish automatically when done.
+  setup_description: |-
+    Layout: **dashboard** page with a top bar (non-interactive) and the **Users** grid in the main content area.
+
+    Component: MUI X DataGrid with the built-in toolbar enabled, including a **Filters** button that opens the filter panel. The Status column supports a single filter rule.
+
+    Initial state: no filters; page 1.
+
+    Controls: click the toolbar Filters button → in the filter panel, set:
+    • Column: Status
+    • Operator: equals
+    • Value: Active
+    Filtering applies immediately.
+
+    Clutter: dashboard shows a small stats strip (cards like "Active", "Pending") above the grid, but they are not interactive.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires opening a secondary panel and setting a multi-field filter rule (column/operator/value).
+  success_trigger:
+    human_readable:
+    - 'Users grid has an active filter rule: Status equals Active.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters:
+        - column_id: status
+          operator: equals
+          value: Active
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering to Inactive or a different status.
+  - Setting the filter UI but leaving it empty (no active filter model).
+  - Sorting instead of filtering.
+  expected_interaction_path: Open Filters panel → set column Status → operator equals → value Active.
+  notes: 'Checker hint: map DataGrid filterModel.items into canonical filters list.'
+- id: data_table_paginated-mui-T07
+  name: 'Users grid: reset filters and sorting to default view'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (custom toolbar reset)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: 'Reset the Users table to its default view: no filters, no sorting, and back to page 1. The task will finish
+    automatically when done.'
+  ui_copy: 'Reset the Users table to its default view: no filters, no sorting, and back to page 1. The task will finish automatically
+    when done.'
+  setup_description: |-
+    Layout: **settings_panel** for "User Directory". The Users grid is the main element, with a compact toolbar at the top.
+
+    Component: MUI X DataGrid with a custom toolbar that includes a **Reset view** button.
+
+    Initial state (important): the grid starts in a non-default state:
+    • Filter active: Status equals Inactive
+    • Sort active: Last seen descending
+    • Current page: 4
+
+    Controls: clicking **Reset view** clears the filter model, clears the sort model, and returns pagination to page 1.
+
+    Distractors: the settings panel also includes toggles ("Show avatars", "Show emails") above the grid; they do not affect the checker.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple table states must be cleared; a dedicated Reset control reduces interaction depth but still requires
+      correct discovery.
+  success_trigger:
+    human_readable:
+    - Pagination is on page 1.
+    - No filters are active.
+    - No sorting is active.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 1
+        filters: []
+        sort: null
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clearing only filters but leaving sorting active (or vice versa).
+  - Returning to page 1 but leaving a filter active.
+  - Clicking unrelated settings toggles instead of resetting the grid state.
+  expected_interaction_path: Locate the toolbar Reset view button → click it once → verify page 1 and neutral sort/filter.
+  notes: 'Checker hint: allow canonical sort to be null/None when sortModel is empty.'
+- id: data_table_paginated-mui-T08
+  name: 'Users grid: multi-select three users across distant pages'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (dark theme, persistent selection)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: Select the rows for User IDs U-0020, U-0077, and U-0199 in the Users table. You will need to change pages;
+    selected rows should remain selected when you paginate. The task will finish automatically when done.
+  ui_copy: Select the rows for User IDs U-0020, U-0077, and U-0199 in the Users table. You will need to change pages; selected
+    rows should remain selected when you paginate. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Users** in **dark theme**.
+
+    Component: MUI X DataGrid with checkboxSelection and pagination (25 rows per page). Selection model is configured to persist across pagination (selected IDs stay selected even when not on the current page).
+
+    Target IDs are on different pages:
+    • U-0020 (page 1)
+    • U-0077 (page 4)
+    • U-0199 (page 8)
+
+    Initial state: page 1; no rows selected.
+
+    Distractors: each page contains many similar IDs; the footer navigation arrows are small in dark mode.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Cross-page exact multi-selection with small checkbox targets; dark theme reduces contrast for subtle selection
+      states.
+  success_trigger:
+    human_readable:
+    - Selected row IDs are exactly {U-0020, U-0077, U-0199}.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        selection:
+          mode: multi
+          selected_row_ids:
+          - U-0020
+          - U-0077
+          - U-0199
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Missing one of the three IDs.
+  - Selecting additional rows beyond the three targets.
+  - Selecting the wrong neighbor ID (e.g., U-0078 instead of U-0077).
+  expected_interaction_path: On page 1 select U-0020 → go to page 4 select U-0077 → go to page 8 select U-0199.
+  notes: 'Checker hint: exact set equality over selectionModel; ignore current page.'
+- id: data_table_paginated-mui-T09
+  name: 'Invite Manager dialog: configure Invited users pagination'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (2 instances in modal)'
+  task_template: table_operation
+  secondary_template: open_overlay
+  browsergym_goal: Open the Invite Manager dialog. In the Invited users table (not Active users), set rows per page to 10
+    and go to page 2. The task will finish automatically when done.
+  ui_copy: Open the Invite Manager dialog. In the Invited users table (not Active users), set rows per page to 10 and go to
+    page 2. The task will finish automatically when done.
+  setup_description: |-
+    Layout: **modal_flow**.
+
+    Outside the modal: a settings page with a single button labeled **Invite Manager**.
+
+    Inside the modal (after opening): there are TWO paginated tables (instances=2), stacked vertically:
+    1) **Active users** (top) — MUI X DataGrid with pagination.
+    2) **Invited users** (bottom) — MUI X DataGrid with pagination.
+
+    Both grids use the same footer UI: Rows per page select and next/previous arrows.
+
+    Initial state inside modal:
+    • Active users: page 1, page size 25
+    • Invited users: page 1, page size 25
+
+    Task target: only the **Invited users** grid should end with page size 10 and page 2.
+
+    Distractors: the modal header has Close (X) and a non-functional Help icon. No other interactions are required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires opening a modal, disambiguating between two similar grids, and setting both page size and page
+      number correctly.
+  success_trigger:
+    human_readable:
+    - Invite Manager modal is open (implicitly, because the Invited users grid state can be read).
+    - 'Invited users grid: page size = 10 and current page = 2.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page_size: 10
+          page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Invited users
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Active users grid instead of Invited users grid.
+  - Setting page size to 10 but staying on page 1.
+  - Going to page 2 but leaving page size at 25.
+  expected_interaction_path: Click Invite Manager → in Invited users grid footer choose 10 rows/page → click next to reach
+    page 2.
+  notes: 'Instrumentation: give each grid an instance testid inside modal; ensure modal open state doesn''t block querying
+    the grid root.'
+- id: data_table_paginated-mui-T10
+  name: 'Users grid: resize the Email column to reveal full text'
+  canonical_type: data_table_paginated
+  implementation_source: mui
+  implementation_variant: x-data-grid
+  implementation_component: 'MUI X: DataGrid (column resizing)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: Resize the Email column in the Users table so the full email address in the first visible row is shown
+    (no … truncation). The task will finish automatically when done.
+  ui_copy: Resize the Email column in the Users table so the full email address in the first visible row is shown (no … truncation).
+    The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card positioned near the **top-right** of the viewport.
+
+    Component: MUI X DataGrid with pagination and resizable columns (default behavior). Page size is 25.
+
+    Initial state: the **Email** column is intentionally narrow, causing long emails to be truncated with an ellipsis (…)
+    Example: first row shows "alex.hend…" instead of the full address "alex.henderson@company.example.com".
+
+    Controls: in the header row, the boundary between columns can be dragged to resize. Drag the right edge of the Email column header to increase its width.
+
+    Scale: **small** — the column resize handle is thin and requires precise pointer control.
+
+    Distractors: adjacent columns (Name, Role) are also resizable; resizing the wrong column will not satisfy the checker.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Thin drag handles plus small scale make precise column resizing difficult; success depends on achieving
+      a minimum width/visibility threshold.
+  success_trigger:
+    human_readable:
+    - Email column width is at least 200 px (or equivalently, the first row's email is not truncated).
+    - No confirmation click is required.
+    canonical_predicate:
+      predicate_type: range_contains
+      target_state:
+        column_width_px:
+          column_id: email
+          min: 260
+      tolerance:
+        unit: px
+        min: 260
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Resizing a different column (e.g., Name) while Email remains truncated.
+  - Email column width increases but stays below the threshold (still shows ellipsis).
+  - Horizontal scrolling without resizing.
+  expected_interaction_path: Locate Email header → drag its right edge to the right until the first row email shows fully.
+  notes: 'Checker note: prefer measuring rendered header cell width for column_id=''email'' to avoid string-based heuristics.'
+- id: data_table_paginated-mantine-T01
+  name: 'Products table: go to page 2'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (composed)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Products table, go to page 2. The task will finish automatically when done.
+  ui_copy: In the Products table, go to page 2. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Products**.
+
+    Component: a composed Mantine implementation of a paginated table:
+    • Mantine **Table** for the rows/columns
+    • Mantine **Pagination** component below the table for page navigation
+
+    Dataset: 120 products, 10 rows per page (12 pages total). Pagination shows numbered page buttons plus next/previous.
+
+    Initial state: page 1; no selected rows; no sorting/filtering.
+
+    Controls: clicking a page number updates the table immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Single pagination control with visible numbered buttons and immediate page switching.
+  success_trigger:
+    human_readable:
+    - Products table current page is 2 (1-based).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 2
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Remaining on page 1.
+  - Navigating to page 3 instead of page 2.
+  - Scrolling without changing the pagination page.
+  expected_interaction_path: Click page number 2 in the Pagination component.
+  notes: 'Implementation note: Mantine core has Table and Pagination as separate components; the page composes them into one
+    canonical data_table_paginated component.'
+- id: data_table_paginated-mantine-T02
+  name: 'Products table: set rows per page to 25'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination + Select (page size)'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Set the Products table to show 25 rows per page. The task will finish automatically when done.
+  ui_copy: Set the Products table to show 25 rows per page. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Products**.
+
+    Component: composed Mantine Table + Pagination with a small table toolbar.
+
+    Toolbar (part of the table component wrapper): includes a **Rows per page** Select control with options 10, 25, 50.
+
+    Initial state: page 1; rows per page = 10.
+
+    Controls: open the Rows per page Select and choose **25**; the table re-renders immediately and pagination total pages decreases accordingly.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Simple dropdown selection with clear numeric choices; state change is visible in the table.
+  success_trigger:
+    human_readable:
+    - Products table rows-per-page (page_size) is 25.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page_size: 25
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving page size at 10.
+  - Setting page size to 50 instead of 25.
+  - Changing page number without changing page size.
+  expected_interaction_path: Open Rows per page Select → choose 25.
+  notes: 'Checker hint: in the composite adapter, treat the toolbar Select as part of the canonical table''s pagination state.'
+- id: data_table_paginated-mantine-T03
+  name: 'Products table: sort by Price (highest first)'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (sortable headers)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: Sort the Products table by Price from highest to lowest. The task will finish automatically when done.
+  ui_copy: Sort the Products table by Price from highest to lowest. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Products**.
+
+    Component: Mantine Table + Pagination composite. Column headers are interactive: each sortable header is rendered as a small button (e.g., an unstyled button) with a sort indicator.
+
+    Initial state: no active sorting (neutral).
+
+    Controls: click the **Price** header to toggle sorting. Sorting applies immediately; the header shows an arrow indicating direction.
+
+    Distractors: other columns (Name, Category, Stock) are also sortable.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single header interaction with visible indicator; only the correct column and direction matter.
+  success_trigger:
+    human_readable:
+    - Active sort is Price descending (highest → lowest).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        sort:
+          column_id: price
+          direction: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Price sorted ascending.
+  - A different column is sorted.
+  - Neutral (unsorted) state.
+  expected_interaction_path: Click Price header until descending indicator is shown.
+  notes: 'Checker hint: sort state is managed by the composite wrapper; expose canonical sort state for checker.'
+- id: data_table_paginated-mantine-T04
+  name: 'Products table: search and select product from reference card'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination + Search input + selection'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Use the search box in the Products table to find the product shown in the reference card, then select that
+    product's row. The task will finish automatically when done.
+  ui_copy: Use the search box in the Products table to find the product shown in the reference card, then select that product's
+    row. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered, split into two areas:
+    • Main area: Products table (Mantine Table + Pagination composite)
+    • Side area: a **Reference Product** card
+
+    Reference card (mixed guidance): shows a small product thumbnail icon and the text **Acoustic Guitar**.
+
+    Table toolbar (part of the component wrapper): includes a Search TextInput labeled "Search products". Typing filters the table by Name.
+
+    Dataset: 120 products. "Acoustic Guitar" appears exactly once and is not on the first page.
+
+    Row selection: each row has a leading checkbox.
+
+    Initial state: page 1; no filter text; no selected rows.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires using a text filter control and then selecting the correct row; the reference card adds a match
+      step.
+  success_trigger:
+    human_readable:
+    - Selected row matches the reference product (resolved SKU-0457).
+    - Exactly that one row is selected.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-product-card-1
+        resolved_row_id: SKU-0457
+        selection:
+          mode: single
+          selected_row_ids:
+          - SKU-0457
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering for the product but selecting a different row.
+  - Selecting multiple rows.
+  - Typing in the search input without selecting the row.
+  expected_interaction_path: Type 'Acoustic Guitar' in Search → table filters to the item → click its checkbox.
+  notes: 'Checker hint: validate by selected SKU; search usage is not required for success.'
+- id: data_table_paginated-mantine-T05
+  name: 'Products table: select SKU-0137 on page 4'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (checkbox selection)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Select the row with SKU SKU-0137 in the Products table. The task will finish automatically when done.
+  ui_copy: Select the row with SKU SKU-0137 in the Products table. The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card positioned near the **top-right** of the viewport titled **Products**.
+
+    Component: Mantine Table + Pagination composite with checkbox row selection.
+
+    Dataset: 100 products with SKUs SKU-0100 through SKU-0199, sorted by SKU ascending. Page size is 10.
+    Therefore, SKU-0137 appears on page 4 (rows SKU-0130…SKU-0139).
+
+    Initial state: page 1; no selection.
+
+    Controls: use the Pagination component to go to page 4, then click the checkbox for SKU-0137.
+
+    Distractors: adjacent SKUs (SKU-0136, SKU-0138) are very similar.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires pagination plus accurate checkbox selection among visually similar SKU values.
+  success_trigger:
+    human_readable:
+    - 'Exactly one selected row: SKU-0137.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection:
+          mode: single
+          selected_row_ids:
+          - SKU-0137
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting SKU-0136 or SKU-0138.
+  - Selecting multiple rows.
+  - Navigating to page 4 but not selecting the row.
+  expected_interaction_path: Go to page 4 via Pagination → locate SKU-0137 row → click checkbox.
+  notes: 'Instrumentation: render each row with data-row-id=SKU for unambiguous checker mapping.'
+- id: data_table_paginated-mantine-T06
+  name: 'Products table: clear the active search filter'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination + Search (pre-filtered)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Clear the active search filter in the Products table so all products are shown again. The task will finish
+    automatically when done.
+  ui_copy: Clear the active search filter in the Products table so all products are shown again. The task will finish automatically
+    when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Products**.
+
+    Component: Mantine Table + Pagination composite with a toolbar Search TextInput.
+
+    Initial state (important): the Search input already contains the text **guitar**, and the table is filtered accordingly (only matching products are shown). The Search input shows a clear (×) control on the right.
+
+    Controls: clear the Search input (using the × button or by deleting text) so the table returns to the unfiltered state.
+
+    Distractors: pagination remains visible but may show fewer pages while the filter is active.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Requires recognizing a pre-filtered state and clearing an input via a small clear affordance.
+  success_trigger:
+    human_readable:
+    - No active filters remain (search text is empty / filter list empty).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        filters: []
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Search input still contains 'guitar' (filter remains).
+  - Replacing with a different query instead of clearing.
+  - Changing page number without clearing the filter.
+  expected_interaction_path: Click the × clear button in the Search field (or select-all and delete).
+  notes: 'Checker hint: treat the search query as a canonical global filter; success requires empty query.'
+- id: data_table_paginated-mantine-T07
+  name: 'Dashboard: configure Products table page size and page'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (dashboard, 2 instances)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the Products table (not Services), set rows per page to 50 and go to page 3. The task
+    will finish automatically when done.
+  ui_copy: On the dashboard, in the Products table (not Services), set rows per page to 50 and go to page 3. The task will
+    finish automatically when done.
+  setup_description: |-
+    Layout: **dashboard** with multiple cards and higher clutter.
+
+    Scene contains TWO paginated tables (instances=2), each implemented as a Mantine Table + Pagination composite:
+    1) **Products** table (left card) — includes a Rows per page Select and Pagination.
+    2) **Services** table (right card) — similar controls and styling.
+
+    Both cards also include small header actions (Refresh icon, Export button) as distractors.
+
+    Initial state:
+    • Products: page 1, page size 10
+    • Services: page 1, page size 10
+
+    Task target: only the **Products** table should end on page size 50 and page 3.
+
+    Controls: Products card toolbar has a Rows per page Select (10/25/50) and the Pagination below the table.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: High clutter and two near-identical table instances require careful targeting plus multiple pagination-related
+      state changes.
+  success_trigger:
+    human_readable:
+    - 'Products table: page size is 50 and current page is 3.'
+    - Services table state is ignored.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page_size: 50
+          page: 3
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Products
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Applying changes to Services table instead of Products.
+  - Setting page size to 50 but staying on page 1.
+  - Going to page 3 but leaving page size at 10 or 25.
+  expected_interaction_path: 'In Products card: set Rows per page to 50 → click page 3 in Pagination.'
+  notes: 'Instrumentation: each card should set a stable instance label/testid; scope all state reads to the instance.'
+- id: data_table_paginated-mantine-T08
+  name: 'Products table: go to last page in dark compact mode'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (withEdges)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the Products table, go to the last page (page 12). The task will finish automatically when done.
+  ui_copy: In the Products table, go to the last page (page 12). The task will finish automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Products** in **dark theme** with **compact spacing**.
+
+    Component: Mantine Table + Pagination composite. Pagination is configured with **withEdges** enabled, so it shows small first/last controls (double-chevron buttons) in addition to previous/next.
+
+    Dataset: 120 products, 10 rows per page (12 pages).
+
+    Initial state: page 1.
+
+    Controls: use the Pagination controls to reach page 12. In compact/dark mode, the edge controls are small and close together.
+
+    Distractors: none beyond the table and pagination.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Small, tightly spaced pagination controls in dark theme increase click precision demands even for a simple
+      target page.
+  success_trigger:
+    human_readable:
+    - Products table current page is 12.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        pagination:
+          page: 12
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Stopping at page 11.
+  - Using next/previous but not reaching the final page.
+  - Changing rows per page instead of navigating pages.
+  expected_interaction_path: Click last-page edge control (or page 12 button if visible) in Pagination.
+  notes: 'Checker hint: page is controlled by Pagination component; expose current page in a data attribute for consistent
+    checking.'
+- id: data_table_paginated-mantine-T09
+  name: 'Invoices table: select the row matching a visual badge reference'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (visual badge matching)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Select the invoice row whose Flag badge matches the reference badge shown above the table. The task will
+    finish automatically when done.
+  ui_copy: Select the invoice row whose Flag badge matches the reference badge shown above the table. The task will finish
+    automatically when done.
+  setup_description: |-
+    Layout: isolated card centered titled **Invoices**.
+
+    Component: Mantine Table + Pagination composite with checkbox selection.
+
+    Visual reference (guidance=visual): above the table header, there is a small **Reference badge** area showing a single Flag badge (icon + color) with no text label. Each table row has a Flag badge in the first data column.
+
+    Dataset: 120 invoices with IDs INV-0001…INV-0120, 10 rows per page. The matching badge appears on exactly one row: invoice **INV-0094**, located on page 10.
+
+    Initial state: page 1; no selection.
+
+    Controls: navigate using Pagination to find the row that has the same badge as the reference, then select that row's checkbox.
+
+    Distractors: several badges share the same color but different icons, and vice versa, making partial matches common.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Purely visual matching plus pagination search and small selection targets; partial visual matches increase
+      interference.
+  success_trigger:
+    human_readable:
+    - The selected invoice row matches the visual reference badge (resolved to INV-0094).
+    - Exactly that one row is selected.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        reference_id: ref-flag-badge-1
+        resolved_row_id: INV-0094
+        selection:
+          mode: single
+          selected_row_ids:
+          - INV-0094
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a row with the same color but different icon (partial match).
+  - Selecting a row with the same icon but different color (partial match).
+  - Selecting multiple invoice rows.
+  expected_interaction_path: Compare reference badge → paginate to page 10 → scan Flag column → select INV-0094.
+  notes: 'Checker note: reference badge should be programmatically linked to the resolved_row_id for deterministic checking
+    (avoid image-based inference).'
+- id: data_table_paginated-mantine-T10
+  name: 'Dashboard: select a row in the West Region table (3 instances)'
+  canonical_type: data_table_paginated
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Pagination (3 instances dashboard)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: On the dashboard, in the West Region table (not North or South), select the row with Record ID SALE-0423.
+    The task will finish automatically when done.
+  ui_copy: On the dashboard, in the West Region table (not North or South), select the row with Record ID SALE-0423. The task
+    will finish automatically when done.
+  setup_description: |-
+    Layout: **dashboard** centered in the viewport.
+
+    Scene contains THREE similar paginated tables (instances=3), each a Mantine Table + Pagination composite:
+    • **North Region**
+    • **South Region**
+    • **West Region**
+
+    Each table shows sales records with columns: Record ID, Rep, Amount, and Date, and each has a leading checkbox selection column.
+
+    Dataset: each region has 120 records (12 pages at 10 rows per page). In the **West Region** table, Record ID **SALE-0423** appears on page 5.
+
+    Initial state: all three tables start on page 1 with no selected rows.
+
+    Task target: only the selection state of the **West Region** table matters.
+
+    Distractors: a small KPI strip and a "Download CSV" button appear above the tables but do not affect the checker.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: Three near-identical table instances require strong disambiguation before paginating and selecting a specific
+      row by ID.
+  success_trigger:
+    human_readable:
+    - 'In the West Region table, exactly one selected row exists: SALE-0423.'
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        selection:
+          mode: single
+          selected_row_ids:
+          - SALE-0423
+      tolerance:
+        set_mode: exact
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: West Region
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting SALE-0423 in North or South table (wrong instance).
+  - Selecting a different record ID (e.g., SALE-0422 or SALE-0424).
+  - Selecting multiple rows.
+  expected_interaction_path: Locate West Region table → go to page 5 → select row SALE-0423.
+  notes: 'Instrumentation: each region table must have an instance label/testid so the checker can scope the selection model
+    correctly.'

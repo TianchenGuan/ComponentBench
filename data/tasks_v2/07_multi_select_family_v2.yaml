@@ -1,0 +1,3894 @@
+- id: select_custom_multi-antd-v2-T01
+  name: Billing labels drawer exact-set repair
+  canonical_type: select_custom_multi
+  implementation_source: antd
+  implementation_variant: tags_mode_searchable_responsive
+  implementation_component: 'AntD: Select (mode=multiple/tags, showSearch, maxTagCount="responsive") inside Drawer'
+  task_template: search_and_select
+  secondary_template: open_and_select
+  browsergym_goal: Open the “Edit routing labels” drawer. In the multi-select field labeled “Billing labels”, make the selection exactly Billing alerts, Chargebacks, Renewal failed, and Tax reminder. Do not change the “Incident labels” field. Then click “Save labels”. The task will finish automatically when done.
+  ui_copy: Open the “Edit routing labels” drawer. In the multi-select field labeled “Billing labels”, make the selection exactly Billing alerts, Chargebacks, Renewal failed, and Tax reminder. Do not change the “Incident labels” field. Then click “Save labels”. The task will finish automatically when done.
+  setup_description: |-
+    Layout uses drawer_flow with compact spacing, medium clutter, and bottom-right placement. A notifications dashboard stays visible in the background with an unread table, two summary cards, and a muted search bar. Clicking “Edit routing labels” opens a right-side Ant Design Drawer.
+    Inside the drawer are two stacked Ant Design Select fields rendered as multi-select tag inputs with search enabled and maxTagCount set to responsive:
+    - “Incident labels”
+    - “Billing labels” ← TARGET
+    Both fields share a long option list with subtly similar labels, including Billing alerts, Billing alert (legacy), Chargebacks, Chargeback sync, Renewal failed, Renewal reminder, Tax reminder, Tax forms, Refunds, Refund delayed, and several unrelated routing labels.
+    Initial state:
+    - Incident labels: Critical, Pager
+    - Billing labels: Invoices, Chargebacks
+    As more chips are selected, the visible chip area collapses and the inline input becomes smaller. The drawer footer contains Cancel and Save labels. Selections are not committed until Save labels is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: Two same-family fields live inside an off-center drawer, and Ant Design’s responsive chip overflow reduces immediate visibility of the full set as the target field fills up. The explicit drawer-local save step forces exact-set verification rather than stopping after a plausible partial edit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the agent must repair an exact set in the correct field while the chip display reflows and a sibling field with overlapping labels remains unchanged until an explicit save.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Billing alerts, Chargebacks, Renewal failed, Tax reminder (order does not matter).'
+    - 'The correct field instance must be used: Billing labels.'
+    - Changes are committed only after clicking "Save labels".
+    - All non-target instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Billing alerts
+        - Chargebacks
+        - Renewal failed
+        - Tax reminder
+        saved: true
+        non_target_instances_must_remain:
+          Incident labels:
+          - Critical
+          - Pager
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save labels
+      require_correct_instance: true
+      target_instance_label_or_id: Billing labels
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Incident labels instead of Billing labels.
+  - Leaving the initial Invoices chip selected in Billing labels.
+  - Selecting near-miss options such as Billing alert (legacy), Chargeback sync, or Renewal reminder.
+  - Reaching the right visible draft selection but not clicking Save labels.
+  expected_interaction_path:
+  - Open the drawer.
+  - Focus Billing labels and remove the wrong default chip.
+  - Search and add Billing alerts, Renewal failed, and Tax reminder while keeping Chargebacks.
+  - Leave Incident labels unchanged and click Save labels.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-antd-v2-T02
+  name: Table row environment field with responsive overflow
+  canonical_type: select_custom_multi
+  implementation_source: antd
+  implementation_variant: tags_mode_tablecell_responsive
+  implementation_component: 'AntD: Select (mode=multiple, showSearch, maxTagCount="responsive") in editable table cell'
+  task_template: table_operation
+  secondary_template: search_and_select
+  browsergym_goal: In the “Project staffing” table, edit the multi-select field in the Team B row so that its environments are exactly EU-Prod, EU-Staging, US-Prod, and APAC-Prod. Do not change Team A or Team C. Then click “Save row” for Team B. The task will finish automatically when done.
+  ui_copy: In the “Project staffing” table, edit the multi-select field in the Team B row so that its environments are exactly EU-Prod, EU-Staging, US-Prod, and APAC-Prod. Do not change Team A or Team C. Then click “Save row” for Team B. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, off-center placement, and high clutter from the surrounding staffing table, status pills, and a row-filter toolbar. Three rows are visible: Team A, Team B, and Team C. Only Team B has an editable Ant Design multi-select field in its Environments cell; Team A and Team C show read-only text.
+    The Team B field uses Ant Design Select in multiple mode with search enabled and responsive chip collapse. Options include EU-Prod, EU-Prod-Legacy, EU-Staging, EU-Staging-DR, US-Prod, US-Prod-Canary, US-Staging, APAC-Prod, APAC-Staging, and Sandbox.
+    Initial Team B selection is EU-Prod-Legacy and US-Prod. Team B also has a row-local “Save row” button. The final state is committed only when that row button is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - scale
+    - confirmation_model
+    factor_rationale: A small editable table cell makes opening and re-entering the select harder than in a full-width form, and the row-local save button ensures the task measures exact repair plus commit rather than temporary chip state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: The input area shrinks as chips accumulate, the option labels are deliberately confusable, and the correct change must be scoped to one dense table row and then explicitly saved.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: EU-Prod, EU-Staging, US-Prod, APAC-Prod (order does not matter).'
+    - 'The correct field instance must be used: Team B environments.'
+    - Changes are committed only after clicking "save-row-team-b".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - EU-Prod
+        - EU-Staging
+        - US-Prod
+        - APAC-Prod
+        saved: true
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: save-row-team-b
+      require_correct_instance: true
+      target_instance_label_or_id: Team B environments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving EU-Prod-Legacy selected instead of replacing it with EU-Prod.
+  - Selecting EU-Staging-DR, US-Prod-Canary, or APAC-Staging instead of the requested values.
+  - Changing Team A or Team C instead of only Team B.
+  - Editing Team B correctly but not clicking Save row for Team B.
+  expected_interaction_path:
+  - Focus the Team B Environments cell to open the dropdown.
+  - Remove the legacy default chip and add the requested four environments.
+  - Verify Team A and Team C remain unchanged.
+  - Click Save row in the Team B row.
+  notes: Checker should read the Team B field value array after the Team B row save fires. Instrument the Team B cell root and its Save row button separately.
+- id: select_custom_multi-antd-v2-T03
+  name: Release tags modal with one custom value
+  canonical_type: select_custom_multi
+  implementation_source: antd
+  implementation_variant: tags_mode_custom_modal
+  implementation_component: 'AntD: Select (mode=tags, showSearch) inside Modal'
+  task_template: enter_text
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit release tags”. In the multi-select field labeled “Release tags”, make the selection exactly urgent, backend, and postmortem-required. The tag postmortem-required does not exist yet and must be created. Then click “Apply tags”. The task will finish automatically when done.
+  ui_copy: Open “Edit release tags”. In the multi-select field labeled “Release tags”, make the selection exactly urgent, backend, and postmortem-required. The tag postmortem-required does not exist yet and must be created. Then click “Apply tags”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter from the underlying release checklist and deployment summary. Clicking “Edit release tags” opens a centered Ant Design Modal.
+    The modal contains one Select field labeled “Release tags” configured in tags mode, so existing suggestions can be selected and new values can be committed from typed text. Suggestions include urgent, backend, frontend, postmortem, postmortem-draft, customer-facing, and release-blocker.
+    Initial state in the field is urgent and internal-only. The modal footer contains Cancel and Apply tags. The selection is committed only after Apply tags is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - precision_surface
+    - clutter
+    factor_rationale: The agent must both repair the existing set and use the create-new-value path correctly for a near-miss custom tag, then explicitly apply the modal change.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This task is hard because one target is absent from the suggestion list while several close distractors are present, so the agent must manage selection versus creation and then commit the modal state.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: urgent, backend, postmortem-required (order does not matter).'
+    - Changes are committed only after clicking "Apply tags".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - urgent
+        - backend
+        - postmortem-required
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply tags
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting postmortem or postmortem-draft instead of creating postmortem-required.
+  - Leaving internal-only selected.
+  - Creating the custom tag in the input but not committing it to the value set.
+  - Reaching the right draft chips but not clicking Apply tags.
+  expected_interaction_path:
+  - Open the modal.
+  - Remove internal-only from the field.
+  - Select backend from the suggestions.
+  - Type postmortem-required and commit it as a new tag.
+  - Click Apply tags.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-antd-v2-T04
+  name: Audience segments nested-scroll repair
+  canonical_type: select_custom_multi
+  implementation_source: antd
+  implementation_variant: multiple_searchable_scroll
+  implementation_component: 'AntD: Select (mode=multiple, showSearch, dropdown with internal scroll) in nested scroll panel'
+  task_template: scroll_find
+  secondary_template: search_and_select
+  browsergym_goal: In the right-side filter panel, edit only the multi-select field labeled “Audience segments” so that it contains exactly Enterprise West, Enterprise East, SMB West, and Education. Do not change “Muted segments”. Then click “Apply filters”. The task will finish automatically when done.
+  ui_copy: In the right-side filter panel, edit only the multi-select field labeled “Audience segments” so that it contains exactly Enterprise West, Enterprise East, SMB West, and Education. Do not change “Muted segments”. Then click “Apply filters”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing, medium clutter, and off-center placement. The page has an outer scrollable analytics dashboard and a separately scrollable right-side filter panel.
+    Inside the panel are two Ant Design multi-select fields with the same dropdown styling: “Audience segments” and “Muted segments”. The Audience segments dropdown list is long enough that only about 8 options are visible at once and it mixes very similar labels such as Enterprise West, Enterprise East, Enterprise Central, SMB West, SMB East, Education, Education Trial, Nonprofit, and Government.
+    Initial state:
+    - Audience segments: Enterprise Central, SMB West
+    - Muted segments: Government
+    The panel footer contains “Apply filters”. The final value is committed only after that button is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: The agent must manage a long dropdown inside a nested-scroll filter rail, keep a sibling field untouched, and then explicitly apply the repaired set.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Long similar option lists plus a sibling field and an apply step turn a nominally simple multi-select into a demanding state-tracking task.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Enterprise West, Enterprise East, SMB West, Education (order does not matter).'
+    - 'The correct field instance must be used: Audience segments.'
+    - Changes are committed only after clicking "Apply filters".
+    - All non-target instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Enterprise West
+        - Enterprise East
+        - SMB West
+        - Education
+        saved: true
+        non_target_instances_must_remain:
+          Muted segments:
+          - Government
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Audience segments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Muted segments instead of Audience segments.
+  - Leaving Enterprise Central selected.
+  - Choosing Education Trial instead of Education or SMB East instead of SMB West.
+  - Fixing the chips visually but not clicking Apply filters.
+  expected_interaction_path:
+  - Open Audience segments.
+  - Remove Enterprise Central and search or scroll for the required options.
+  - Leave Muted segments unchanged.
+  - Click Apply filters.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mui-v2-T05
+  name: Primary groups panel with hidden-overflow chips
+  canonical_type: select_custom_multi
+  implementation_source: mui
+  implementation_variant: autocomplete_multiple_limitTags
+  implementation_component: 'MUI: Autocomplete (multiple, disableCloseOnSelect, filterSelectedOptions, limitTags=2)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the settings panel, edit only the field labeled “Primary groups” so that it contains exactly Fraud Ops, Platform, Customer Success, and Security Review. Do not change “Fallback groups”. Then click “Save groups”. The task will finish automatically when done.
+  ui_copy: In the settings panel, edit only the field labeled “Primary groups” so that it contains exactly Fraud Ops, Platform, Customer Success, and Security Review. Do not change “Fallback groups”. Then click “Save groups”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, high clutter, and bottom-left placement. A stack of unrelated toggles and dropdowns sits above two MUI Autocomplete fields:
+    - “Primary groups” ← TARGET
+    - “Fallback groups”
+    Both are configured for multiple selection with disableCloseOnSelect, filterSelectedOptions, and limitTags=2, so only two chips remain visible once the selection grows and the rest collapse behind a “+N” indicator.
+    Options include Fraud Ops, Fraud Ops (shadow), Platform, Platform Legacy, Customer Success, Customer Support, Security Review, Security Ops, Risk, Billing, and Growth.
+    Initial state:
+    - Primary groups: Platform Legacy, Risk
+    - Fallback groups: Billing
+    A panel button labeled “Save groups” commits the final state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The high-clutter settings carrier and the collapsed chip display make the current set harder to audit, while the sibling field and Save step increase wrong-instance and recovery pressure.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This task is hard because the full selection is partially hidden, close distractor labels are present, and only one of two nearly identical fields should change before save.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Fraud Ops, Platform, Customer Success, Security Review (order does not matter).'
+    - 'The correct field instance must be used: Primary groups.'
+    - Changes are committed only after clicking "Save groups".
+    - All non-target instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Fraud Ops
+        - Platform
+        - Customer Success
+        - Security Review
+        saved: true
+        non_target_instances_must_remain:
+          Fallback groups:
+          - Billing
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save groups
+      require_correct_instance: true
+      target_instance_label_or_id: Primary groups
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Platform Legacy selected instead of Platform.
+  - Choosing Customer Support or Security Ops instead of the requested values.
+  - Changing Fallback groups.
+  - Reaching the right draft selection but not clicking Save groups.
+  expected_interaction_path:
+  - Focus Primary groups and remove the wrong defaults.
+  - Search for and select the four requested groups while the popup stays open.
+  - Verify Fallback groups is unchanged despite the collapsed chip display.
+  - Click Save groups.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mui-v2-T06
+  name: Access labels modal with freeSolo commit
+  canonical_type: select_custom_multi
+  implementation_source: mui
+  implementation_variant: autocomplete_multiple_freeSolo
+  implementation_component: 'MUI: Autocomplete (multiple, freeSolo) inside Dialog'
+  task_template: enter_text
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit access labels”. In the multi-select field labeled “Access labels”, make the selection exactly Critical, Customer-facing, and on-call-only. The label on-call-only does not exist yet and must be created. Remove any non-target labels, then click “Apply labels”. The task will finish automatically when done.
+  ui_copy: Open “Edit access labels”. In the multi-select field labeled “Access labels”, make the selection exactly Critical, Customer-facing, and on-call-only. The label on-call-only does not exist yet and must be created. Remove any non-target labels, then click “Apply labels”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. A policy card opens an MUI Dialog titled “Edit access labels”.
+    The dialog contains one Autocomplete field labeled “Access labels” configured for multiple values with freeSolo enabled. Existing options include Critical, Customer-facing, Customer-visible, Internal, On-call, and Pager.
+    Initial state is Critical and Internal. Typing text only updates the input; the custom value is not part of the selection until it is explicitly committed. The dialog footer contains Cancel and Apply labels.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - precision_surface
+    - overlay_model
+    factor_rationale: 'The task pressures the freeSolo commit path rather than plain option picking: the agent must remove a wrong default, select one existing option, create one new label, and then apply the modal change.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The hard part is distinguishing typed text from committed selection state and avoiding close existing options before the dialog-local apply step.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Critical, Customer-facing, on-call-only (order does not matter).'
+    - Changes are committed only after clicking "Apply labels".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Critical
+        - Customer-facing
+        - on-call-only
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply labels
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Internal selected.
+  - Selecting On-call instead of creating on-call-only.
+  - Typing on-call-only without committing it into the selected values.
+  - Reaching the right draft but not clicking Apply labels.
+  expected_interaction_path:
+  - Open the dialog.
+  - Remove Internal from the selected chips.
+  - Add Customer-facing from the option list.
+  - Type and commit on-call-only as a custom value.
+  - Click Apply labels.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mui-v2-T07
+  name: Pipeline B environments row repair
+  canonical_type: select_custom_multi
+  implementation_source: mui
+  implementation_variant: autocomplete_multiple_limitTags_tablecell
+  implementation_component: 'MUI: Autocomplete (multiple, limitTags=2) in editable table cell'
+  task_template: table_operation
+  secondary_template: search_and_select
+  browsergym_goal: In the Deployments table, edit the “Environments” field in the Pipeline B row so that it is exactly dev, prod, staging, and qa. Do not change Pipeline A or Pipeline C. Then click “Save row” for Pipeline B. The task will finish automatically when done.
+  ui_copy: In the Deployments table, edit the “Environments” field in the Pipeline B row so that it is exactly dev, prod, staging, and qa. Do not change Pipeline A or Pipeline C. Then click “Save row” for Pipeline B. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter from a dense deployments table plus inline status chips. Three rows are visible: Pipeline A, Pipeline B, and Pipeline C.
+    The Pipeline B Environments cell is editable and uses a MUI Autocomplete multiple field with limitTags=2, so after two selections the rest collapse into a “+N” indicator. Options include dev, prod, prod-old, staging, qa, canary, sandbox, and perf.
+    Initial Pipeline B selection is dev and prod-old. Pipeline A and Pipeline C are read-only. A row-local “Save row” button commits only Pipeline B.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - scale
+    - confirmation_model
+    factor_rationale: The small editable cell and hidden-overflow chips make it easy to lose track of the exact selection, while the row-local save keeps the task grounded in one dense table row.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: This row-scoped set-repair task couples small targets, hidden chip overflow, and close option names with an explicit save requirement.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: dev, prod, staging, qa (order does not matter).'
+    - 'The correct field instance must be used: Pipeline B environments.'
+    - Changes are committed only after clicking "save-row-pipeline-b".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - dev
+        - prod
+        - staging
+        - qa
+        saved: true
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: save-row-pipeline-b
+      require_correct_instance: true
+      target_instance_label_or_id: Pipeline B environments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving prod-old selected instead of prod.
+  - Adding canary, sandbox, or perf as extra values.
+  - Changing any row other than Pipeline B.
+  - Fixing Pipeline B correctly but not clicking its Save row button.
+  expected_interaction_path:
+  - Focus the Pipeline B cell.
+  - Remove prod-old and add prod, staging, and qa.
+  - Verify Pipeline A and C remain unchanged.
+  - Click Save row for Pipeline B.
+  notes: Checker should read the Pipeline B value array after the row save event. Instrument the Pipeline B cell and its Save row button separately.
+- id: select_custom_multi-mui-v2-T08
+  name: Enabled metrics drawer with sibling preservation
+  canonical_type: select_custom_multi
+  implementation_source: mui
+  implementation_variant: autocomplete_multiple_search_drawer
+  implementation_component: 'MUI: Autocomplete (multiple, disableCloseOnSelect) inside Drawer'
+  task_template: search_and_select
+  secondary_template: open_and_select
+  browsergym_goal: Open “Metric visibility”. In the field labeled “Enabled metrics”, make the selection exactly MRR, Net Revenue, Gross Margin, and Active Accounts. Do not change “Muted metrics”. Then click “Save visibility”. The task will finish automatically when done.
+  ui_copy: Open “Metric visibility”. In the field labeled “Enabled metrics”, make the selection exactly MRR, Net Revenue, Gross Margin, and Active Accounts. Do not change “Muted metrics”. Then click “Save visibility”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, top_right placement, and medium clutter from the surrounding revenue dashboard. Opening “Metric visibility” shows a MUI Drawer with two Autocomplete multiple fields: Enabled metrics and Muted metrics.
+    Both fields share a long option list with close labels such as MRR, ARR, Net Revenue, Revenue Growth, Gross Margin, Margin %, Active Accounts, Active Trials, and Churned Accounts. Search is enabled and the popup remains open after selection.
+    Initial state:
+    - Enabled metrics: ARR, Revenue Growth
+    - Muted metrics: Churned Accounts
+    A drawer-local “Save visibility” button commits the final state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: The off-corner drawer and duplicate metric fields raise acquisition and disambiguation burden, while the explicit save step forces the agent to verify the repaired set rather than rely on transient chips.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The agent must replace a plausible but wrong default set in the correct field, distinguish close metric names, and commit the drawer state while leaving the sibling field untouched.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: MRR, Net Revenue, Gross Margin, Active Accounts (order does not matter).'
+    - 'The correct field instance must be used: Enabled metrics.'
+    - Changes are committed only after clicking "Save visibility".
+    - All non-target instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - MRR
+        - Net Revenue
+        - Gross Margin
+        - Active Accounts
+        saved: true
+        non_target_instances_must_remain:
+          Muted metrics:
+          - Churned Accounts
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save visibility
+      require_correct_instance: true
+      target_instance_label_or_id: Enabled metrics
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving ARR or Revenue Growth selected.
+  - Selecting Active Trials instead of Active Accounts or Margin % instead of Gross Margin.
+  - Changing Muted metrics.
+  - Getting the right chips in Enabled metrics but not clicking Save visibility.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove the wrong defaults from Enabled metrics.
+  - Search for and add the four requested metrics.
+  - Leave Muted metrics unchanged and click Save visibility.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mui-v2-T09
+  name: Reference scopes card with hidden-tag verification
+  canonical_type: select_custom_multi
+  implementation_source: mui
+  implementation_variant: autocomplete_multiple_limitTags_reference
+  implementation_component: 'MUI: Autocomplete (multiple, limitTags=2) with reference chips'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the “Granted scopes” field, make the selection exactly match the “Required scopes” reference chips. The task will finish automatically when done.
+  ui_copy: In the “Granted scopes” field, make the selection exactly match the “Required scopes” reference chips. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, off-center placement, and medium clutter from a permissions summary panel and two unrelated action buttons. A read-only chip row labeled “Required scopes” shows the target set: read:cases, write:cases, export:reports, and manage:tokens.
+    Below it is a single MUI Autocomplete multiple field labeled “Granted scopes” configured with limitTags=2, so part of the final set will be hidden behind a “+N” tag. Options include read:cases, read:case-files, write:cases, write:reports, export:reports, export:raw, manage:tokens, manage:billing, and audit:logs.
+    Initial state is read:case-files and export:raw. Selections update immediately; there is no separate Apply button in this card.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - scale
+    factor_rationale: The target set is given visually while the granted field collapses most of its chips, so the agent must use the reference card to verify an exact repair even without a separate save boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Even though only one field is editable, close scope names and hidden overflow make exact-set verification difficult without careful use of the reference chips.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: read:cases, write:cases, export:reports, manage:tokens (order does not matter).'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - read:cases
+        - write:cases
+        - export:reports
+        - manage:tokens
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving read:case-files or export:raw selected.
+  - Selecting write:reports or manage:billing instead of the requested scopes.
+  - Matching only the visible chips while a hidden extra remains selected.
+  expected_interaction_path:
+  - Inspect the reference chips.
+  - Remove the wrong current scopes.
+  - Add the four required scopes in the field.
+  - Stop when the field's selected set exactly matches the reference chips.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mantine-v2-T10
+  name: Visible tags panel exact-set repair
+  canonical_type: select_custom_multi
+  implementation_source: mantine
+  implementation_variant: multiselect_searchable
+  implementation_component: 'Mantine: MultiSelect (searchable, clearable) in settings panel'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the settings panel, edit only the field labeled “Visible tags” so that it contains exactly Platform, Growth, Billing, and QA. Do not change “Muted tags”. Then click “Save tag rules”. The task will finish automatically when done.
+  ui_copy: In the settings panel, edit only the field labeled “Visible tags” so that it contains exactly Platform, Growth, Billing, and QA. Do not change “Muted tags”. Then click “Save tag rules”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, medium clutter, and top_left placement. A column of unrelated toggles and pill filters sits above two Mantine MultiSelect fields:
+    - Visible tags ← TARGET
+    - Muted tags
+    Both fields are searchable and share options including Platform, Platform Legacy, Growth, Growth Ops, Billing, Billing Export, QA, QA Automation, Security, and Infra.
+    Initial state:
+    - Visible tags: Platform Legacy, Security
+    - Muted tags: Infra
+    A button labeled “Save tag rules” commits the panel state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - instances
+    - placement
+    - confirmation_model
+    factor_rationale: Two same-style fields in a corner-placed settings panel create wrong-instance pressure, and the save boundary turns this into an exact-set repair task instead of a transient search exercise.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This task couples overlapping tag labels with sibling-field preservation and an explicit save, making it substantially harder than a normal searchable multiselect.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Platform, Growth, Billing, QA (order does not matter).'
+    - 'The correct field instance must be used: Visible tags.'
+    - Changes are committed only after clicking "Save tag rules".
+    - All non-target instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Platform
+        - Growth
+        - Billing
+        - QA
+        saved: true
+        non_target_instances_must_remain:
+          Muted tags:
+          - Infra
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save tag rules
+      require_correct_instance: true
+      target_instance_label_or_id: Visible tags
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Platform Legacy selected instead of Platform.
+  - Selecting Growth Ops, Billing Export, or QA Automation instead of the requested tags.
+  - Changing Muted tags.
+  - Reaching the right visible pills but not clicking Save tag rules.
+  expected_interaction_path:
+  - Focus Visible tags and remove the wrong defaults.
+  - Search for and select Platform, Growth, Billing, and QA.
+  - Leave Muted tags unchanged.
+  - Click Save tag rules.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mantine-v2-T11
+  name: Approved regions drawer with long dropdown
+  canonical_type: select_custom_multi
+  implementation_source: mantine
+  implementation_variant: combobox_multiselect_composite
+  implementation_component: 'Mantine: Combobox-based multiselect (composite) inside Drawer'
+  task_template: scroll_find
+  secondary_template: open_and_select
+  browsergym_goal: Open the “Edit region allowlist” drawer. In the field labeled “Approved regions”, make the selection exactly APAC-North, APAC-South, EU-Central, and US-East. Remove any non-target values, then click “Save allowlist”. The task will finish automatically when done.
+  ui_copy: Open the “Edit region allowlist” drawer. In the field labeled “Approved regions”, make the selection exactly APAC-North, APAC-South, EU-Central, and US-East. Remove any non-target values, then click “Save allowlist”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, medium clutter, and bottom_right placement. Clicking “Edit region allowlist” opens a Mantine Drawer containing one Combobox-based multiselect field labeled “Approved regions”.
+    The dropdown contains more than 60 region labels and only about 8 are visible at once, so the dropdown itself has an internal scroll region. Similar labels include APAC-North, APAC-South, APAC-Southeast, EU-Central, EU-Central-DR, EU-West, US-East, US-East-DR, and US-West.
+    Initial selection is APAC-Southeast and US-East. A drawer-local “Save allowlist” button commits the final set.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: The target options are partially offscreen inside the dropdown itself, not just the page, and the off-corner drawer plus save step ensure the task measures grounded scrolling and exact set repair.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: A long internal dropdown scroll plus close region-name distractors and an explicit save make this a strong hard multiselect task.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: APAC-North, APAC-South, EU-Central, US-East (order does not matter).'
+    - Changes are committed only after clicking "Save allowlist".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - APAC-North
+        - APAC-South
+        - EU-Central
+        - US-East
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save allowlist
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving APAC-Southeast selected.
+  - Selecting EU-Central-DR or US-East-DR instead of the requested values.
+  - Scrolling the page or drawer but not the dropdown list when needed.
+  - Reaching the correct draft set but not clicking Save allowlist.
+  expected_interaction_path:
+  - Open the drawer and the multiselect dropdown.
+  - Remove APAC-Southeast from the current selection.
+  - Scroll/search inside the dropdown and add the requested regions.
+  - Click Save allowlist.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mantine-v2-T12
+  name: Incident categories modal exact-set repair
+  canonical_type: select_custom_multi
+  implementation_source: mantine
+  implementation_variant: multiselect_modal
+  implementation_component: 'Mantine: MultiSelect inside Modal'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open “Edit incident categories”. In the multi-select field labeled “Incident categories”, make the selection exactly Authentication, Billing, Search, and Deployments. Remove any extra categories, then click “Apply categories”. The task will finish automatically when done.
+  ui_copy: Open “Edit incident categories”. In the multi-select field labeled “Incident categories”, make the selection exactly Authentication, Billing, Search, and Deployments. Remove any extra categories, then click “Apply categories”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter from the underlying incidents table and status banner. The modal contains one Mantine MultiSelect field labeled “Incident categories”.
+    Options include Authentication, Auth (legacy), Billing, Billing Export, Search, Search Infra, Deployments, Rollbacks, Notifications, and Availability.
+    Initial selection is Auth (legacy), Search, and Rollbacks. The modal footer contains Cancel and Apply categories. The selection is committed only after Apply categories is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - clutter
+    - precision_surface
+    factor_rationale: The task is hard because the modal draft starts from a close but wrong set and includes legacy near-miss labels; the explicit apply step prevents the benchmark from accepting transient draft state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The selected set must be repaired rather than built from scratch, close legacy labels are present, and the final state only counts after the modal apply step.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Authentication, Billing, Search, Deployments (order does not matter).'
+    - Changes are committed only after clicking "Apply categories".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Authentication
+        - Billing
+        - Search
+        - Deployments
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply categories
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Auth (legacy) or Rollbacks selected.
+  - Choosing Billing Export or Search Infra instead of the requested labels.
+  - Adding the correct draft chips but not clicking Apply categories.
+  - Closing the modal with Cancel.
+  expected_interaction_path:
+  - Open the modal.
+  - Remove the wrong defaults.
+  - Add Authentication, Billing, and Deployments while keeping Search.
+  - Click Apply categories.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mantine-v2-T13
+  name: Reference permissions card on custom combobox
+  canonical_type: select_custom_multi
+  implementation_source: mantine
+  implementation_variant: combobox_multiselect_reference
+  implementation_component: 'Mantine: Combobox-based multiselect (composite) with reference chips'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the field labeled “Effective permissions”, make the selected values exactly match the “Reference permissions” chips. The task will finish automatically when done.
+  ui_copy: In the field labeled “Effective permissions”, make the selected values exactly match the “Reference permissions” chips. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, top_right placement, and medium clutter from nearby audit widgets. A read-only chip row labeled “Reference permissions” shows the target set: Export, View audit log, Manage billing, and Read.
+    Below it is a Combobox-based multiselect field labeled “Effective permissions”. Available options include Export, Export CSV, View audit log, View audit logs (archived), Manage billing, Manage billing (view), Read, Read-only, Write, and Delete.
+    Initial selection is Export CSV and Read-only. Selections apply immediately in this card; there is no separate Save button.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - guidance
+    - scale
+    - clutter
+    factor_rationale: The target is specified visually while the small, custom combobox field uses close permission labels, and the save step ensures the agent actually commits the repaired exact set.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: 'This is a classic near-miss hard case: the final set is simple but the option names are confusable and the custom combobox keeps the perceptual burden high.'
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Export, View audit log, Manage billing, Read (order does not matter).'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Export
+        - View audit log
+        - Manage billing
+        - Read
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Export CSV or Read-only selected.
+  - Choosing View audit logs (archived) or Manage billing (view) instead of the requested options.
+  - Matching only part of the reference chips.
+  expected_interaction_path:
+  - Inspect the reference chips.
+  - Remove the wrong current values from Effective permissions.
+  - Add the four matching permissions.
+  - Stop when the right pills correspond exactly to the reference permissions.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mantine-v2-T14
+  name: Team C skills compact row repair
+  canonical_type: select_custom_multi
+  implementation_source: mantine
+  implementation_variant: multiselect_tablecell
+  implementation_component: 'Mantine: MultiSelect in editable table cell'
+  task_template: table_operation
+  secondary_template: search_and_select
+  browsergym_goal: In the staffing table, edit the multi-select field in the Team C row so that it is exactly Python, SQL, Airflow, and Docker. Do not change Team A or Team B. Then click “Save row” for Team C. The task will finish automatically when done.
+  ui_copy: In the staffing table, edit the multi-select field in the Team C row so that it is exactly Python, SQL, Airflow, and Docker. Do not change Team A or Team B. Then click “Save row” for Team C. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, off-center placement, and high clutter from the staffing table and active filters. Three rows are visible. Only Team C has an editable Mantine MultiSelect field in the Skills cell.
+    Options include Python, Python ETL, SQL, SQL Legacy, Airflow, Airflow 1.x, Docker, Kubernetes, and dbt.
+    Initial Team C selection is Python ETL and SQL. Team A and Team B are read-only. Team C has a row-local “Save row” button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - scale
+    - confirmation_model
+    factor_rationale: The row-scoped compact cell creates a small target surface, and the save boundary plus close option names keep the task focused on grounded exact-set repair rather than abstract label matching.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 4
+    justification: The field is hard to operate because it sits in a small dense row and starts from a near-match that must be repaired before a row-local save.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Python, SQL, Airflow, Docker (order does not matter).'
+    - 'The correct field instance must be used: Team C skills.'
+    - Changes are committed only after clicking "save-row-team-c".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Python
+        - SQL
+        - Airflow
+        - Docker
+        saved: true
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: save-row-team-c
+      require_correct_instance: true
+      target_instance_label_or_id: Team C skills
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Python ETL selected instead of Python.
+  - Selecting SQL Legacy or Airflow 1.x instead of the requested values.
+  - Changing Team A or Team B.
+  - Repairing Team C correctly but not clicking Save row for Team C.
+  expected_interaction_path:
+  - Focus the Team C Skills cell.
+  - Remove Python ETL and add Python, Airflow, and Docker while keeping SQL.
+  - Leave the other rows unchanged.
+  - Click Save row for Team C.
+  notes: Checker should read the Team C value array after the Team C row save event. Instrument the Team C cell and its Save row button separately.
+- id: select_custom_multi-antd-v2-T15
+  name: Reference audience inline card exact match
+  canonical_type: select_custom_multi
+  implementation_source: antd
+  implementation_variant: multiple_reference_inline
+  implementation_component: 'AntD: Select (mode=multiple, showSearch, maxTagCount="responsive") with reference chips'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the field labeled “Recipients”, make the selected values exactly match the “Reference audience” chips. The task will finish automatically when done.
+  ui_copy: In the field labeled “Recipients”, make the selected values exactly match the “Reference audience” chips. The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing, off-center placement, and medium clutter from a notification composer card. A read-only chip row labeled “Reference audience” shows Finance, Legal, Security, and Support.
+    Below it is an Ant Design Select field labeled “Recipients” in multiple mode with search and responsive chip collapse. Options include Finance, FinOps, Legal, Legal Ops, Security, Security Review, Support, Support APAC, and Product.
+    Initial selection is FinOps and Security Review. The card updates live; there is no separate Apply button.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - placement
+    factor_rationale: The target set is specified visually and the editable field hides part of its final state as chips overflow, so the agent must use the reference plus the apply step to verify an exact replacement.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The task is simple semantically but hard in practice because several options are close lexical distractors and the field’s own chip rendering does not reveal the full set once it grows.
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: Finance, Legal, Security, Support (order does not matter).'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Finance
+        - Legal
+        - Security
+        - Support
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving FinOps or Security Review selected.
+  - Selecting Legal Ops or Support APAC instead of the requested values.
+  - Matching the visible chips while a hidden extra remains selected.
+  expected_interaction_path:
+  - Inspect the reference chips.
+  - Remove the wrong current values from Recipients.
+  - Add Finance, Legal, Security, and Support.
+  - Stop when the Recipients field exactly matches the reference audience chips.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: select_custom_multi-mui-v2-T16
+  name: Long dropdown metrics field with repeated re-entry
+  canonical_type: select_custom_multi
+  implementation_source: mui
+  implementation_variant: autocomplete_multiple_longlist
+  implementation_component: 'MUI: Autocomplete (multiple, filterSelectedOptions) in inline surface'
+  task_template: scroll_find
+  secondary_template: search_and_select
+  browsergym_goal: In the field labeled “Tracked metrics”, make the selection exactly API latency, Error rate, Retry count, and Queue depth. Remove any non-target values. The task will finish automatically when done.
+  ui_copy: In the field labeled “Tracked metrics”, make the selection exactly API latency, Error rate, Retry count, and Queue depth. Remove any non-target values. The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing, medium clutter, and bottom_right placement. The metrics field sits inside a compact observability card next to a chart legend and two unrelated icon buttons.
+    The MUI Autocomplete field “Tracked metrics” uses multiple selection with filterSelectedOptions enabled. Its dropdown contains more than 50 metric names, including API latency, API latency p95, Error rate, Error budget, Retry count, Retry budget, Queue depth, Queue age, Throughput, and Saturation.
+    Initial selection is API latency p95 and Throughput. The popup closes after each selection, so the input area gets smaller and requires repeated re-entry as chips accumulate. Selections update immediately in this inline card; there is no separate Save button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: autocomplete
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - scale
+    - placement
+    factor_rationale: The field combines a long dropdown with repeated popup re-entry as chips accumulate in a small inline surface, and the Save step turns the task into exact-set repair rather than local exploration.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: 'This is a pressure-test for repeated re-entry and near-miss option names: the target set is short, but each new chip makes the next interaction harder and the long list increases interference.'
+  success_trigger:
+    human_readable:
+    - 'The selected values on the target multi-select are exactly: API latency, Error rate, Retry count, Queue depth (order does not matter).'
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - API latency
+        - Error rate
+        - Retry count
+        - Queue depth
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving API latency p95 or Throughput selected.
+  - Selecting Error budget, Retry budget, or Queue age instead of the requested metrics.
+  - Stopping after a partial repair because the popup closed and the input looked crowded.
+  expected_interaction_path:
+  - Open the field and remove the two wrong defaults.
+  - Repeatedly reopen the dropdown and add API latency, Error rate, Retry count, and Queue depth.
+  - Audit the final set despite the small chip area.
+  - Stop when the selected metric set is exactly API latency, Error rate, Retry count, and Queue depth.
+  notes: Checker should read normalized selected option values from the component value array after any required Save/Apply step. For duplicate fields, instrument each field root and each local save control separately.
+- id: listbox_multi-antd-v2-T01
+  name: Billing alerts drawer with mirrored groups
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: checkbox_group_drawer
+  implementation_component: 'AntD: Checkbox.Group inside Drawer'
+  task_template: open_and_select
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the “Edit alert routing” drawer. In the checkbox list labeled “Billing alerts”, make the selection exactly Invoice failed, Chargeback opened, Renewal failed, and Tax reminder. Do not change “Customer alerts”. Then click “Save routing”. The task will finish automatically when done.
+  ui_copy: Open the “Edit alert routing” drawer. In the checkbox list labeled “Billing alerts”, make the selection exactly Invoice failed, Chargeback opened, Renewal failed, and Tax reminder. Do not change “Customer alerts”. Then click “Save routing”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, medium clutter, and bottom_right placement. A billing dashboard stays visible behind the drawer.
+    Opening “Edit alert routing” reveals two Ant Design Checkbox.Group sections with the same visual styling:
+    - Customer alerts
+    - Billing alerts ← TARGET
+    The two groups share overlapping labels such as Renewal failed, Reminder sent, Escalation opened, and Security notice. Billing alerts starts with Invoice sent and Chargeback opened selected. Customer alerts starts with Welcome email selected and must remain unchanged.
+    The drawer footer contains Cancel and Save routing.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: Two same-family checkbox groups inside an off-corner drawer create wrong-instance pressure, and the explicit save step forces exact-subset verification before commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The labels are semantically simple, but overlapping groups and an explicit drawer save turn this into a grounded exact-set repair task.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Invoice failed, Chargeback opened, Renewal failed, Tax reminder.'
+    - 'The correct list instance must be used: Billing alerts.'
+    - Changes are committed only after clicking "Save routing".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Invoice failed
+        - Chargeback opened
+        - Renewal failed
+        - Tax reminder
+        saved: true
+        non_target_instances_must_remain:
+          Customer alerts:
+          - Welcome email
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save routing
+      require_correct_instance: true
+      target_instance_label_or_id: Billing alerts
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Customer alerts instead of Billing alerts.
+  - Leaving Invoice sent selected instead of replacing it with Invoice failed.
+  - Selecting Reminder sent or Security notice instead of the requested billing labels.
+  - Repairing Billing alerts correctly but not clicking Save routing.
+  expected_interaction_path:
+  - Open the drawer.
+  - Edit Billing alerts to remove the wrong default and add the required labels.
+  - Leave Customer alerts unchanged.
+  - Click Save routing.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-antd-v2-T02
+  name: Data exports modal exact-subset recovery
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: checkbox_group_modal
+  implementation_component: 'AntD: Checkbox.Group inside Modal'
+  task_template: confirm_cancel
+  secondary_template: select_many
+  browsergym_goal: Click “Customize exports”. In the list labeled “Data exports”, keep only CSV, PDF, Audit log, and Invoices selected. Remove any other selected items, then click “Save exports”. The task will finish automatically when done.
+  ui_copy: Click “Customize exports”. In the list labeled “Data exports”, keep only CSV, PDF, Audit log, and Invoices selected. Remove any other selected items, then click “Save exports”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter from the report page behind it. Clicking “Customize exports” opens a modal containing one Ant Design Checkbox.Group labeled “Data exports”.
+    The list contains 14 options, including CSV, PDF, JSON, Raw events, Audit log, Invoices, Billing summary, PII bundle, Webhooks, and Refund details.
+    Initial state is JSON, Audit log, and Billing summary selected. The modal footer contains Cancel and Save exports. Only the saved modal state counts.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - clutter
+    - theme
+    factor_rationale: The modal starts from a plausible but wrong subset, so the task measures repair and explicit commit rather than simple label spotting.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: This task is hard because the correct answer is a repaired subset, not a new blank-state selection, and the change only counts after the modal save.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): CSV, PDF, Audit log, Invoices.'
+    - Changes are committed only after clicking "Save exports".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - CSV
+        - PDF
+        - Audit log
+        - Invoices
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save exports
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving JSON or Billing summary selected.
+  - Selecting Raw events or Billing summary instead of CSV or Invoices.
+  - Getting the right checks but not clicking Save exports.
+  - Closing the modal with Cancel.
+  expected_interaction_path:
+  - Open the modal.
+  - Uncheck the wrong defaults and check CSV, PDF, and Invoices while keeping Audit log.
+  - Click Save exports.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-antd-v2-T03
+  name: Dashboard filters match reference segments
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: checkbox_group_dashboard_reference
+  implementation_component: 'AntD: Checkbox.Group filters with reference chip row'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dashboard sidebar, make the “Customer segments” list exactly match the “Reference segments” chips, then click “Apply filters”. Do not change Regions or Plan tiers. The task will finish automatically when done.
+  ui_copy: In the dashboard sidebar, make the “Customer segments” list exactly match the “Reference segments” chips, then click “Apply filters”. Do not change Regions or Plan tiers. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, high clutter, and off-center placement. A left filter rail contains three Ant Design Checkbox.Group lists: Regions, Customer segments, and Plan tiers. Only Customer segments is the target.
+    Above the target group is a read-only chip row labeled “Reference segments” showing Enterprise, SMB, Education, and Non-profit.
+    The Customer segments group includes Enterprise, SMB, Mid-market, Education, Non-profit, Government, Startups, and NGO. Regions and Plan tiers both have their own checkboxes and must remain unchanged. A global “Apply filters” button commits the sidebar state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - guidance
+    factor_rationale: The visual reference clarifies the target set, but the crowded dashboard and three stacked filter groups ensure the task still measures grounded subgroup targeting and exact-set verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The labels are visible, but the agent must bind the reference to the correct subgroup in a cluttered multi-group dashboard and then apply the final state.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Enterprise, SMB, Education, Non-profit.'
+    - 'The correct list instance must be used: Customer segments.'
+    - Changes are committed only after clicking "Apply filters".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Enterprise
+        - SMB
+        - Education
+        - Non-profit
+        saved: true
+        non_target_instances_must_remain:
+          Regions: []
+          Plan tiers: []
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Customer segments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the correct labels in Regions or Plan tiers instead of Customer segments.
+  - Choosing Mid-market, Government, Startups, or NGO as extras.
+  - Editing the Customer segments checks correctly but not clicking Apply filters.
+  - Changing any non-target filter group.
+  expected_interaction_path:
+  - Inspect the Reference segments chips.
+  - Edit only the Customer segments group to match them.
+  - Leave Regions and Plan tiers untouched.
+  - Click Apply filters.
+  notes: Checker should read the three filter groups separately and verify only Customer segments changed. Instrument the Apply filters button as the commit boundary.
+- id: listbox_multi-antd-v2-T04
+  name: Available columns nested-scroll search list
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: searchable_checkbox_list_nested
+  implementation_component: 'AntD: searchable Checkbox.Group list in nested scroll settings panel'
+  task_template: search_and_select
+  secondary_template: scroll_find
+  browsergym_goal: In the settings panel, use the search box for the list labeled “Available columns” and make its checked items exactly Last seen, Plan, and MRR. Do not change “Pinned columns”. Then click “Apply columns”. The task will finish automatically when done.
+  ui_copy: In the settings panel, use the search box for the list labeled “Available columns” and make its checked items exactly Last seen, Plan, and MRR. Do not change “Pinned columns”. Then click “Apply columns”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing, bottom_left placement, and medium clutter from a long settings rail. Inside the rail are two searchable checkbox lists: Available columns and Pinned columns.
+    Available columns contains more than 40 items and only about 10 are visible at once, so the list itself scrolls. Search narrows only the list that currently has focus. Options include Last seen, Last active, Plan, Plan change, MRR, ARR, Owner, Seats, and Trial end.
+    Initial state:
+    - Available columns: none selected
+    - Pinned columns: Name, Status
+    A button labeled “Apply columns” commits the current state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: nested_scroll
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - instances
+    - confirmation_model
+    factor_rationale: A long internally scrollable checkbox list plus a sibling list with its own search path creates strong focus and state-tracking pressure before the settings panel apply step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The user intent is simple, but the task is hard because search and scroll are scoped to one of two similar lists and the set must be verified before apply.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Last seen, Plan, MRR.'
+    - 'The correct list instance must be used: Available columns.'
+    - Changes are committed only after clicking "Apply columns".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Last seen
+        - Plan
+        - MRR
+        saved: true
+        non_target_instances_must_remain:
+          Pinned columns:
+          - Name
+          - Status
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply columns
+      require_correct_instance: true
+      target_instance_label_or_id: Available columns
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Checking the target columns in Pinned columns instead of Available columns.
+  - Selecting Last active, Plan change, or ARR instead of the requested items.
+  - Leaving the search filter on and missing one of the targets.
+  - Reaching the right checks in Available columns but not clicking Apply columns.
+  expected_interaction_path:
+  - Focus Available columns.
+  - Use search and, if needed, internal list scrolling to locate Last seen, Plan, and MRR.
+  - Leave Pinned columns unchanged.
+  - Click Apply columns.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-antd-v2-T05
+  name: Payments row escalation channels
+  canonical_type: listbox_multi
+  implementation_source: antd
+  implementation_variant: checkbox_group_table_row
+  implementation_component: 'AntD: Checkbox.Group embedded in expanded table row'
+  task_template: table_operation
+  secondary_template: select_many
+  browsergym_goal: In the “Service routing” table, edit the expanded checklist in the Payments row so that it selects exactly Pager, Slack, and Runbook. Do not change Identity. Then click “Save row” for Payments. The task will finish automatically when done.
+  ui_copy: In the “Service routing” table, edit the expanded checklist in the Payments row so that it selects exactly Pager, Slack, and Runbook. Do not change Identity. Then click “Save row” for Payments. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter from a dense services table. Two expanded rows are visible: Payments and Identity. Each expanded row contains a checkbox list titled “Escalation channels” and its own Save row button.
+    Payments options are Pager, Email, Slack, SMS, Runbook, and Auto-retry. Identity has the same options but is not the target. Initial Payments selection is Email and Pager. Initial Identity selection is Pager only and must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Two row-local checklists with identical labels make grounded row attribution the main pressure, while the row-local save step enforces exact scoping.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is hard because the correct labels appear in both rows, targets are small, and only the Payments row should change before its own save.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Pager, Slack, Runbook.'
+    - 'The correct list instance must be used: Payments escalation channels.'
+    - Changes are committed only after clicking "save-row-payments".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Pager
+        - Slack
+        - Runbook
+        saved: true
+        non_target_instances_must_remain:
+          Identity escalation channels:
+          - Pager
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: save-row-payments
+      require_correct_instance: true
+      target_instance_label_or_id: Payments escalation channels
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Identity instead of Payments.
+  - Leaving Email selected in Payments.
+  - Selecting SMS or Auto-retry instead of the requested set.
+  - Fixing Payments correctly but clicking Save row for Identity or not saving at all.
+  expected_interaction_path:
+  - Locate the Payments row.
+  - Uncheck Email and check Slack and Runbook while keeping Pager.
+  - Leave Identity unchanged.
+  - Click Save row for Payments.
+  notes: Checker should bind each expanded row checklist and row save button separately.
+- id: listbox_multi-mui-v2-T06
+  name: Dense quick actions section exact subset
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: dense_secondary_action_list
+  implementation_component: 'MUI: dense List with right-aligned Checkbox secondary actions'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the settings drawer, edit only the list labeled “Workspace quick actions” so that it selects exactly Pin to sidebar, Enable shortcuts, and Show tooltips. Do not change “Project quick actions”. Then click “Save actions”. The task will finish automatically when done.
+  ui_copy: In the settings drawer, edit only the list labeled “Workspace quick actions” so that it selects exactly Pin to sidebar, Enable shortcuts, and Show tooltips. Do not change “Project quick actions”. Then click “Save actions”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, medium clutter, and top_left placement. A MUI Drawer contains two dense listbox sections with the same styling: Project quick actions and Workspace quick actions.
+    Each list item has text on the left and a small checkbox aligned on the far right as a secondary action. Workspace quick actions contains Pin to sidebar, Enable shortcuts, Show tooltips, Auto-refresh, Compact mode, and Sounds. Project quick actions has its own similar labels and starts with Auto-refresh checked. Workspace quick actions starts with none selected.
+    A drawer-local “Save actions” button commits the lists.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_left
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - scale
+    - instances
+    - confirmation_model
+    factor_rationale: Small right-aligned secondary-action checkboxes create grounded pointing pressure, while the duplicated section structure and save step keep the task focused on the correct list instance.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Dense secondary-action checkboxes are physically hard to target, and the correct subgroup must be edited and saved without touching a visually similar sibling section.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Pin to sidebar, Enable shortcuts, Show tooltips.'
+    - 'The correct list instance must be used: Workspace quick actions.'
+    - Changes are committed only after clicking "Save actions".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Pin to sidebar
+        - Enable shortcuts
+        - Show tooltips
+        saved: true
+        non_target_instances_must_remain:
+          Project quick actions:
+          - Auto-refresh
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save actions
+      require_correct_instance: true
+      target_instance_label_or_id: Workspace quick actions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking labels without toggling the far-right checkbox controls where the implementation keeps state on the checkbox.
+  - Changing Project quick actions instead of Workspace quick actions.
+  - Selecting Auto-refresh, Compact mode, or Sounds as extras.
+  - Reaching the right checks but not clicking Save actions.
+  expected_interaction_path:
+  - Open the drawer.
+  - Locate Workspace quick actions.
+  - Use the small right-aligned checkboxes to select the three requested items.
+  - Leave Project quick actions unchanged and click Save actions.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mui-v2-T07
+  name: Dark modal team permissions repair
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: checkbox_list_modal
+  implementation_component: 'MUI: List with Checkboxes inside Dialog'
+  task_template: confirm_cancel
+  secondary_template: select_many
+  browsergym_goal: Open “Edit team permissions”. In the checklist labeled “Team permissions”, make the selection exactly View dashboards, Export data, and Manage users. Remove any extra selections, then click “Save permissions”. The task will finish automatically when done.
+  ui_copy: Open “Edit team permissions”. In the checklist labeled “Team permissions”, make the selection exactly View dashboards, Export data, and Manage users. Remove any extra selections, then click “Save permissions”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. The MUI Dialog contains one checklist labeled “Team permissions” with 12 items. Options include View dashboards, Edit dashboards, Export data, Manage users, Manage billing, View audit log, API access, and Create projects.
+    Initial state is View dashboards and View audit log selected. The footer contains Cancel and Save permissions. The saved dialog state, not the transient draft, is checked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - theme
+    - clutter
+    factor_rationale: A prefilled modal checklist is easy to understand semantically but still hard because the agent must repair an existing set and commit it in a dark, compact overlay.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The agent must remove one plausible default, add two new permissions, and save from a modal, which is a reliable exact-subset recovery pattern.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): View dashboards, Export data, Manage users.'
+    - Changes are committed only after clicking "Save permissions".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - View dashboards
+        - Export data
+        - Manage users
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save permissions
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving View audit log selected.
+  - Selecting Edit dashboards or Manage billing instead of the requested items.
+  - Editing correctly but clicking Cancel or closing the dialog.
+  - Reaching the right draft state but not clicking Save permissions.
+  expected_interaction_path:
+  - Open the dialog.
+  - Uncheck View audit log.
+  - Check Export data and Manage users while keeping View dashboards.
+  - Click Save permissions.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mui-v2-T08
+  name: Offscreen city list exact subset with apply
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: scrollable_checkbox_list
+  implementation_component: 'MUI: scrollable List with Checkbox rows'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the list labeled “Cities”, scroll within the list and make the checked items exactly Kyoto, Lisbon, and Tallinn. Remove any extra checked items, then click “Apply cities”. The task will finish automatically when done.
+  ui_copy: In the list labeled “Cities”, scroll within the list and make the checked items exactly Kyoto, Lisbon, and Tallinn. Remove any extra checked items, then click “Apply cities”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing, off-center placement, and low clutter. The settings card contains one MUI List labeled “Cities”. The list holds 70 alphabetized city rows and only about 10 are visible at a time, so the list itself must be scrolled.
+    Each row has a small checkbox on the right. Initial state has Lima checked. Kyoto, Lisbon, and Tallinn are initially offscreen at load. A button labeled “Apply cities” commits the list state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: low
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - scale
+    - confirmation_model
+    factor_rationale: The task is intrinsically hard because the list itself must be scrolled to reach all targets, the checkboxes are small, and the explicit Apply step separates transient checks from committed state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 1
+    justification: Controlled internal scrolling and offscreen target retrieval make this much harder than a same-list exact subset in a static view.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Kyoto, Lisbon, Tallinn.'
+    - Changes are committed only after clicking "Apply cities".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Kyoto
+        - Lisbon
+        - Tallinn
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply cities
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Lima selected.
+  - Failing to scroll far enough and missing one of the targets.
+  - Checking a nearby city such as Lille or Turin instead of the requested one.
+  - Selecting the right rows but not clicking Apply cities.
+  expected_interaction_path:
+  - Scroll within the Cities list until each target city appears.
+  - Uncheck Lima if it remains checked.
+  - Check Kyoto, Lisbon, and Tallinn.
+  - Click Apply cities.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mui-v2-T09
+  name: Night shift overrides row checklist
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: checkbox_list_table_row
+  implementation_component: 'MUI: Checklist inside expanded table row'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the “Shift overrides” table, edit only the checklist in the Night row so that it selects exactly Pager, Escalate to manager, and Create ticket. Do not change Day. Then click “Save row” for Night. The task will finish automatically when done.
+  ui_copy: In the “Shift overrides” table, edit only the checklist in the Night row so that it selects exactly Pager, Escalate to manager, and Create ticket. Do not change Day. Then click “Save row” for Night. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. Two expanded rows are open in the table: Day and Night. Each row contains a checklist titled “Actions” plus a row-local Save row button.
+    Night options are Pager, Email, Escalate to manager, Create ticket, Retry later, and Ignore. Day has the same options and currently has Email checked. Night starts with Pager and Retry later checked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: The same labels appear in two expanded table rows, so the task pressures row binding and exact repair under a row-local save boundary.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This is difficult because the target controls are small and duplicated across rows; the agent must scope the change to Night and then save that row only.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Pager, Escalate to manager, Create ticket.'
+    - 'The correct list instance must be used: Night actions.'
+    - Changes are committed only after clicking "save-row-night".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Pager
+        - Escalate to manager
+        - Create ticket
+        saved: true
+        non_target_instances_must_remain:
+          Day actions:
+          - Email
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: save-row-night
+      require_correct_instance: true
+      target_instance_label_or_id: Night actions
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Day row instead of Night.
+  - Leaving Retry later selected.
+  - Selecting Ignore or Email instead of the requested actions.
+  - Repairing Night correctly but not clicking Save row for Night.
+  expected_interaction_path:
+  - Locate the Night row checklist.
+  - Uncheck Retry later and check Escalate to manager and Create ticket while keeping Pager.
+  - Leave Day unchanged.
+  - Click Save row for Night.
+  notes: Checker should instrument each row checklist and each row-local Save row button separately.
+- id: listbox_multi-mui-v2-T10
+  name: Customer segments reference filter card
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: checkbox_list_reference_dashboard
+  implementation_component: 'MUI: List with Checkboxes and reference chip row'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the dashboard filter card, make the list labeled “Customer segments” exactly match the “Reference segments” chips, then click “Apply segments”. The task will finish automatically when done.
+  ui_copy: In the dashboard filter card, make the list labeled “Customer segments” exactly match the “Reference segments” chips, then click “Apply segments”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, high clutter, and off-center placement. A sidebar card contains three checkbox lists: Customer segments, Product lines, and Regions. Only Customer segments is the target.
+    A reference chip row shows Enterprise, Education, and Non-profit. The Customer segments list also contains Mid-market, SMB, Government, and Startup. Product lines and Regions must remain unchanged. A button labeled “Apply segments” commits the card state.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - clutter
+    factor_rationale: The reference chips reduce ambiguity about the target set but do not reduce the need to bind that set to the correct subgroup in a crowded three-list filter panel.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This remains hard because there are several nearby lists and the correct group must be matched to a visual reference and then applied.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Enterprise, Education, Non-profit.'
+    - 'The correct list instance must be used: Customer segments.'
+    - Changes are committed only after clicking "Apply segments".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Enterprise
+        - Education
+        - Non-profit
+        saved: true
+        non_target_instances_must_remain:
+          Product lines: []
+          Regions: []
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply segments
+      require_correct_instance: true
+      target_instance_label_or_id: Customer segments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the reference labels in Product lines or Regions instead of Customer segments.
+  - Adding SMB, Government, or Startup as extras.
+  - Changing any non-target filter list.
+  - Matching Customer segments correctly but not clicking Apply segments.
+  expected_interaction_path:
+  - Inspect the Reference segments chips.
+  - Edit only the Customer segments list to match them.
+  - Leave Product lines and Regions unchanged.
+  - Click Apply segments.
+  notes: Checker should bind the three list states separately and enforce that only Customer segments changes.
+- id: listbox_multi-mui-v2-T11
+  name: Searchable available columns list in drawer
+  canonical_type: listbox_multi
+  implementation_source: mui
+  implementation_variant: searchable_checkbox_lists_drawer
+  implementation_component: 'MUI: two searchable checkbox lists inside Drawer'
+  task_template: search_and_select
+  secondary_template: open_and_select
+  browsergym_goal: Open “Column manager”. In the list labeled “Available columns”, use search if needed and make the checked items exactly Last seen, Plan, and MRR. Do not change “Pinned columns”. Then click “Save columns”. The task will finish automatically when done.
+  ui_copy: Open “Column manager”. In the list labeled “Available columns”, use search if needed and make the checked items exactly Last seen, Plan, and MRR. Do not change “Pinned columns”. Then click “Save columns”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, top_right placement, and medium clutter. A right-side drawer contains two searchable checkbox lists: Available columns and Pinned columns.
+    Search text only filters the list where focus is currently placed. Available columns contains more than 30 entries, including Last seen, Last active, Plan, Plan note, MRR, ARR, Seats, Trial end, and Segment. Pinned columns initially has Name and Status checked and must remain unchanged.
+    A drawer-local “Save columns” button commits the result.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: Two focus-sensitive searchable lists create strong scope confusion, and the save step ensures the benchmark measures the committed list state, not temporary filtered checks.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This task remains hard even with text labels because search is list-scoped and the two lists share the same interaction model and close column names.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Last seen, Plan, MRR.'
+    - 'The correct list instance must be used: Available columns.'
+    - Changes are committed only after clicking "Save columns".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Last seen
+        - Plan
+        - MRR
+        saved: true
+        non_target_instances_must_remain:
+          Pinned columns:
+          - Name
+          - Status
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save columns
+      require_correct_instance: true
+      target_instance_label_or_id: Available columns
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Filtering or checking the wrong list.
+  - Selecting Last active, Plan note, or ARR instead of the requested values.
+  - Changing Pinned columns.
+  - Reaching the correct Available columns checks but not clicking Save columns.
+  expected_interaction_path:
+  - Open the drawer.
+  - Focus Available columns and use its search box to locate the requested entries.
+  - Leave Pinned columns unchanged.
+  - Click Save columns.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mantine-v2-T12
+  name: API scopes panel with admin sibling preserved
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: checkbox_group_panel
+  implementation_component: 'Mantine: Checkbox.Group in settings panel'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the settings panel, edit only the list labeled “API scopes” so that it selects exactly Read users, Write users, Export data, and Audit access. Do not change “Admin scopes”. Then click “Save scopes”. The task will finish automatically when done.
+  ui_copy: In the settings panel, edit only the list labeled “API scopes” so that it selects exactly Read users, Write users, Export data, and Audit access. Do not change “Admin scopes”. Then click “Save scopes”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, medium clutter, and bottom_left placement. Two Mantine Checkbox.Group sections appear one under the other: API scopes and Admin scopes.
+    API scopes contains Read users, Write users, Export data, Audit access, Billing access, and Token rotate. Admin scopes contains overlapping labels plus Manage members. API scopes starts with Read users and Billing access selected. Admin scopes starts with Manage members selected and must remain unchanged.
+    A panel button labeled “Save scopes” commits both groups.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_left
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: Two overlapping checkbox groups in a corner-placed settings panel create wrong-instance pressure, and the save boundary forces the exact repaired API scope set to be verified before commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The labels are readable, but the task is still hard because the agent must repair one group, preserve the other, and save from a cluttered panel.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Read users, Write users, Export data, Audit access.'
+    - 'The correct list instance must be used: API scopes.'
+    - Changes are committed only after clicking "Save scopes".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Read users
+        - Write users
+        - Export data
+        - Audit access
+        saved: true
+        non_target_instances_must_remain:
+          Admin scopes:
+          - Manage members
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save scopes
+      require_correct_instance: true
+      target_instance_label_or_id: API scopes
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Admin scopes instead of API scopes.
+  - Leaving Billing access selected.
+  - Selecting Billing access or Token rotate as extras.
+  - Repairing API scopes correctly but not clicking Save scopes.
+  expected_interaction_path:
+  - Locate API scopes.
+  - Uncheck Billing access and check Write users, Export data, and Audit access while keeping Read users.
+  - Leave Admin scopes unchanged.
+  - Click Save scopes.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mantine-v2-T13
+  name: Team roles drawer with searchable checkbox list
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: searchable_checkbox_list_drawer_composite
+  implementation_component: 'Mantine: Drawer + searchable Checkbox.Group (composite)'
+  task_template: search_and_select
+  secondary_template: open_and_select
+  browsergym_goal: Open “Add team roles”. In the list labeled “Team roles”, make the checked items exactly Reviewer, Reporter, and Security liaison. Then click “Apply roles”. The task will finish automatically when done.
+  ui_copy: Open “Add team roles”. In the list labeled “Team roles”, make the checked items exactly Reviewer, Reporter, and Security liaison. Then click “Apply roles”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, top_left placement, and medium clutter. Clicking “Add team roles” opens a Mantine Drawer containing one searchable checkbox list labeled “Team roles”.
+    The list contains more than 30 roles and only about 9 fit without scrolling. Search filters the roles in place. Similar labels include Reviewer, Review owner, Reporter, Report viewer, Security liaison, Security owner, Support lead, and Billing reviewer.
+    Initial state is Report viewer selected. The drawer footer contains Cancel and Apply roles.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: The long searchable checkbox list sits in a corner drawer and starts from a near-miss default, making the task about exact subset repair plus explicit commit instead of a trivial add-only action.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Search helps, but close role names, internal scrolling, and an explicit apply step keep the task firmly in hard territory.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Reviewer, Reporter, Security liaison.'
+    - Changes are committed only after clicking "Apply roles".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Reviewer
+        - Reporter
+        - Security liaison
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply roles
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Report viewer selected.
+  - Selecting Review owner or Security owner instead of the requested labels.
+  - Missing one target because search focus or scroll state was lost.
+  - Reaching the correct checks but not clicking Apply roles.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove Report viewer.
+  - Use search and list scrolling to check Reviewer, Reporter, and Security liaison.
+  - Click Apply roles.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mantine-v2-T14
+  name: Statuses filter card matched to reference chips
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: checkbox_group_reference_dashboard
+  implementation_component: 'Mantine: Checkbox.Group with reference chip row'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the filter card, make the list labeled “Statuses” exactly match the “Reference statuses” chips, then click “Apply statuses”. Do not change Regions or Channels. The task will finish automatically when done.
+  ui_copy: In the filter card, make the list labeled “Statuses” exactly match the “Reference statuses” chips, then click “Apply statuses”. Do not change Regions or Channels. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, off-center placement, and high clutter from adjacent trend cards. The filter card contains three groups: Statuses, Regions, and Channels.
+    A chip row labeled “Reference statuses” shows Waiting on vendor, Needs review, and Resolved. The Statuses list contains Waiting on vendor, Waiting on customer, Needs review, Escalated, Resolved, and Closed. Regions and Channels have their own checkboxes, and both start with no items selected; they must remain unchanged.
+    A button labeled “Apply statuses” commits the filter card.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - instances
+    - clutter
+    factor_rationale: The visual reference clarifies the target state, but the crowded multi-group filter card still makes correct subgroup binding and non-target preservation the main source of difficulty.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: This task is hard because the correct set must be mapped to one subgroup in a cluttered card while two neighboring groups remain untouched until apply.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Waiting on vendor, Needs review, Resolved.'
+    - 'The correct list instance must be used: Statuses.'
+    - Changes are committed only after clicking "Apply statuses".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Waiting on vendor
+        - Needs review
+        - Resolved
+        saved: true
+        non_target_instances_must_remain:
+          Regions: []
+          Channels: []
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Apply statuses
+      require_correct_instance: true
+      target_instance_label_or_id: Statuses
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting Waiting on customer, Escalated, or Closed as extras.
+  - Changing Regions or Channels.
+  - Matching the Statuses list correctly but not clicking Apply statuses.
+  - Applying the reference chips to the wrong filter group.
+  expected_interaction_path:
+  - Inspect the Reference statuses chips.
+  - Edit only the Statuses list to match them.
+  - Leave Regions and Channels unchanged.
+  - Click Apply statuses.
+  notes: Checker should bind each filter subgroup separately and enforce that only Statuses changes.
+- id: listbox_multi-mantine-v2-T15
+  name: Feature flags modal exact subset
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: checkbox_group_modal
+  implementation_component: 'Mantine: Checkbox.Group inside Modal'
+  task_template: confirm_cancel
+  secondary_template: select_many
+  browsergym_goal: Open “Edit feature flags”. In the list labeled “Feature flags”, make the selection exactly Audit log, API access, and SAML SSO. Remove any extras, then click “Save flags”. The task will finish automatically when done.
+  ui_copy: Open “Edit feature flags”. In the list labeled “Feature flags”, make the selection exactly Audit log, API access, and SAML SSO. Remove any extras, then click “Save flags”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. The modal contains a single Mantine Checkbox.Group titled “Feature flags”.
+    Options include Audit log, API access, API access (legacy), SAML SSO, SSO OIDC, Advanced reports, Data export, and User sync. Initial selection is API access (legacy) and Advanced reports.
+    Save flags commits the modal; Cancel discards it.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - theme
+    - spacing
+    factor_rationale: The modal starts with close but wrong defaults, and dark compact styling reduces visual slack, so the agent must repair an exact subset and then explicitly save it.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: The option list is not huge, but subtle naming differences and the need to repair and save a modal draft make it a meaningful hard task.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Audit log, API access, SAML SSO.'
+    - Changes are committed only after clicking "Save flags".
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Audit log
+        - API access
+        - SAML SSO
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: Save flags
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving API access (legacy) or Advanced reports selected.
+  - Choosing SSO OIDC instead of SAML SSO.
+  - Editing the checks correctly but clicking Cancel or closing the modal.
+  - Reaching the right draft but not clicking Save flags.
+  expected_interaction_path:
+  - Open the modal.
+  - Uncheck the wrong defaults.
+  - Check Audit log, API access, and SAML SSO.
+  - Click Save flags.
+  notes: Checker should read the checked values from the labeled listbox/group after any required Save/Apply step. For duplicate groups, instrument each group root and each local confirm separately.
+- id: listbox_multi-mantine-v2-T16
+  name: APAC reminder channels row checklist
+  canonical_type: listbox_multi
+  implementation_source: mantine
+  implementation_variant: checkbox_group_table_row
+  implementation_component: 'Mantine: Checkbox.Group in table row detail panel'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the “Regional reminders” table, edit only the APAC row so that its checklist selects exactly Email, Pager, and Slack. Do not change EMEA. Then click “Save row” for APAC. The task will finish automatically when done.
+  ui_copy: In the “Regional reminders” table, edit only the APAC row so that its checklist selects exactly Email, Pager, and Slack. Do not change EMEA. Then click “Save row” for APAC. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter from a dense reminders table. Two row-detail panels are open: EMEA and APAC. Each row-detail panel contains a checklist labeled “Channels” and its own Save row button.
+    APAC options are Email, Pager, Slack, SMS, and Phone tree. APAC starts with SMS selected. EMEA starts with Email selected and must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: This is a row-scoped exact-subset task in a compact table context; the same control pattern appears in two rows, and only the APAC row should change before its local save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 5
+    justification: The small row controls and duplicated row structure make this a strong grounded listbox task even though the labels themselves are easy to understand.
+  success_trigger:
+    human_readable:
+    - 'The target listbox has exactly these selected items (order does not matter): Email, Pager, Slack.'
+    - 'The correct list instance must be used: APAC channels.'
+    - Changes are committed only after clicking "save-row-apac".
+    - All non-target list instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: set_equals
+      target_state:
+        selected_values:
+        - Email
+        - Pager
+        - Slack
+        saved: true
+        non_target_instances_must_remain:
+          EMEA channels:
+          - Email
+      tolerance:
+        set_order_independent: true
+        string_match: exact
+        trim_whitespace: true
+      require_confirm: true
+      confirm_control: save-row-apac
+      require_correct_instance: true
+      target_instance_label_or_id: APAC channels
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing EMEA instead of APAC.
+  - Leaving SMS selected in APAC.
+  - Selecting Phone tree as an extra.
+  - Repairing APAC correctly but not clicking Save row for APAC.
+  expected_interaction_path:
+  - Locate the APAC row-detail checklist.
+  - Uncheck SMS and check Email, Pager, and Slack.
+  - Leave EMEA unchanged.
+  - Click Save row for APAC.
+  notes: Checker should bind each row-detail checklist and each row-local Save row button separately.
+- id: transfer_list-antd-v2-T01
+  name: Escalation recipients drawer exact-set repair
+  canonical_type: transfer_list
+  implementation_source: antd
+  implementation_variant: transfer_showSearch_drawer
+  implementation_component: 'AntD: Transfer (showSearch) inside Drawer'
+  task_template: transfer_move
+  secondary_template: open_and_select
+  browsergym_goal: Open “Edit recipients”. In the transfer list labeled “Escalation recipients”, make the Selected side contain exactly On-call Engineer, Engineering Manager, Security Officer, and SRE. Do not change “Default recipients”. Then click “Save recipients”. The task will finish automatically when done.
+  ui_copy: Open “Edit recipients”. In the transfer list labeled “Escalation recipients”, make the Selected side contain exactly On-call Engineer, Engineering Manager, Security Officer, and SRE. Do not change “Default recipients”. Then click “Save recipients”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, high clutter, and bottom_right placement. Opening “Edit recipients” reveals a right-side drawer with two stacked Ant Design Transfer components: Default recipients and Escalation recipients.
+    Both instances use showSearch and have overlapping names in their source lists. Escalation recipients starts with On-call Engineer and Incident Commander selected. Default recipients starts with Support Lead selected and must remain unchanged.
+    The available names include Engineering Manager, Security Officer, SRE, Support Lead, QA Lead, Incident Commander, and Finance Partner. A drawer-local “Save recipients” button commits both transfer lists.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: Two similar Transfer widgets in a cluttered drawer force correct-instance grounding, and exact-set repair requires both removals and additions before the drawer save step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: This is hard because the target transfer must be identified among two similar instances, repaired to an exact set, and then committed with a drawer-local save.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: On-call Engineer, Engineering Manager, Security Officer, SRE (order ignore).'
+    - Only the transfer list instance labeled "Escalation recipients" is evaluated.
+    - Changes are committed only after clicking "Save recipients".
+    - All non-target transfer instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - On-call Engineer
+        - Engineering Manager
+        - Security Officer
+        - SRE
+        saved: true
+        non_target_instances_must_remain:
+          Default recipients:
+          - Support Lead
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Save recipients
+      require_correct_instance: true
+      target_instance_label_or_id: Escalation recipients
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Default recipients instead of Escalation recipients.
+  - Leaving Incident Commander selected in Escalation recipients.
+  - Failing to move one of the required roles to Selected.
+  - Getting the right right-pane membership but not clicking Save recipients.
+  expected_interaction_path:
+  - Open the drawer.
+  - In Escalation recipients, remove Incident Commander from the right pane.
+  - Search or select Engineering Manager, Security Officer, and SRE in the left pane and move them right.
+  - Leave Default recipients unchanged and click Save recipients.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-antd-v2-T02
+  name: Paged projects transfer with exact-set repair
+  canonical_type: transfer_list
+  implementation_source: antd
+  implementation_variant: transfer_showSearch_pagination
+  implementation_component: 'AntD: Transfer (showSearch, pagination) in dashboard panel'
+  task_template: search_and_select
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Selected projects”, make the right side contain exactly Project Omega 03, Project Omega 14, Project Sigma 07, Project Sigma 19, and Project Tau 02. Remove any extra selected project, then click “Apply projects”. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Selected projects”, make the right side contain exactly Project Omega 03, Project Omega 14, Project Sigma 07, Project Sigma 19, and Project Tau 02. Remove any extra selected project, then click “Apply projects”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, off-center placement, and medium clutter. The Ant Design Transfer component is titled “Project access”, uses showSearch, and paginates the source list so only 10 items are visible per page.
+    The source list contains 60 similarly named items across Project Omega 01–20, Project Sigma 01–20, and Project Tau 01–20. The right side initially contains Project Tau 03 as an incorrect default.
+    Pagination controls appear at the bottom of the source pane and the search box filters only the source pane. A button labeled “Apply projects” commits the final target set.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: Pagination and search are both live within the source pane, so the agent must manage repeated source filtering and exact-set repair before the explicit Apply step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: The project names are highly confusable and split across pages, so the task heavily pressures state tracking and exact membership verification.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Project Omega 03, Project Omega 14, Project Sigma 07, Project Sigma 19, Project Tau 02 (order ignore).'
+    - Changes are committed only after clicking "Apply projects".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Project Omega 03
+        - Project Omega 14
+        - Project Sigma 07
+        - Project Sigma 19
+        - Project Tau 02
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Apply projects
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Project Tau 03 selected.
+  - Selecting a near-miss such as Project Omega 13 or Project Sigma 17.
+  - Finding and checking the right source items but not transferring them to the right pane.
+  - Reaching the correct right-pane set but not clicking Apply projects.
+  expected_interaction_path:
+  - Remove Project Tau 03 from the target pane.
+  - Use search and/or pagination in the source pane to find each required project.
+  - Transfer the five required projects to the right pane.
+  - Click Apply projects.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-antd-v2-T03
+  name: Long source list monitored assets repair
+  canonical_type: transfer_list
+  implementation_source: antd
+  implementation_variant: transfer_long_scroll_modal
+  implementation_component: 'AntD: Transfer inside Modal with long internal scroll'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Open “Edit monitored assets”. In the transfer list labeled “Monitored assets”, make the Selected side contain exactly Asset 73, Asset 74, and Asset 79. Remove Asset 12 if it is selected. Then click “Save assets”. The task will finish automatically when done.
+  ui_copy: Open “Edit monitored assets”. In the transfer list labeled “Monitored assets”, make the Selected side contain exactly Asset 73, Asset 74, and Asset 79. Remove Asset 12 if it is selected. Then click “Save assets”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. The dialog contains one Ant Design Transfer component titled “Monitored assets”.
+    The source pane has 100 sequential items, Asset 01 through Asset 100, and only about 12 rows are visible at a time, so the source pane must be scrolled internally to reach the 70s. The right pane initially contains Asset 12 as an incorrect default.
+    A footer button labeled “Save assets” commits the final target set.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - layout
+    factor_rationale: The long internally scrollable source pane creates a real offscreen retrieval burden, and the modal save keeps the task focused on committed right-pane membership.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: The target items are semantically trivial but physically demanding to retrieve and verify from a long transfer source list while repairing a wrong default.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Asset 73, Asset 74, Asset 79 (order ignore).'
+    - Changes are committed only after clicking "Save assets".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Asset 73
+        - Asset 74
+        - Asset 79
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Save assets
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Asset 12 in the target pane.
+  - Selecting a nearby asset such as Asset 72, 75, or 78.
+  - Checking the right source rows without moving them to Selected.
+  - Reaching the correct right-pane set but not clicking Save assets.
+  expected_interaction_path:
+  - Open the modal.
+  - Remove Asset 12 from the target pane.
+  - Scroll within the source pane to the 70s and transfer Asset 73, 74, and 79.
+  - Click Save assets.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-antd-v2-T04
+  name: Required roles visual reference in compact card
+  canonical_type: transfer_list
+  implementation_source: antd
+  implementation_variant: transfer_reference_compact
+  implementation_component: 'AntD: Transfer with reference chip row'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Access roles”, make the right side exactly match the “Required roles” reference chips. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Access roles”, make the right side exactly match the “Required roles” reference chips. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, small scale, and medium clutter. A read-only chip row labeled “Required roles” shows Read, Write, Export, Delete, Manage billing, and View audit log.
+    Below it is one Ant Design Transfer component with subtle label distractors such as Read-only, Write (admin), Export CSV, Delete hard, Manage billing (view), and View audit logs (export). The right pane initially contains Read-only and Export CSV.
+    The transfer state updates immediately; there is no separate Save button.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - guidance
+    - scale
+    - clutter
+    factor_rationale: The target set is specified visually while the small transfer UI and many near-duplicate labels make exact right-pane repair nontrivial before the final save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is a hard exact-set repair problem because right-pane membership must match a visual reference in the presence of near-miss role labels.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Read, Write, Export, Delete, Manage billing, View audit log (order ignore).'
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Read
+        - Write
+        - Export
+        - Delete
+        - Manage billing
+        - View audit log
+      tolerance:
+        order: ignore
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Read-only or Export CSV selected.
+  - Choosing Write (admin), Delete hard, Manage billing (view), or View audit logs (export) instead of the requested roles.
+  - Matching only part of the reference chips.
+  expected_interaction_path:
+  - Inspect the Required roles chips.
+  - Remove the wrong current right-pane items.
+  - Transfer the six matching roles from left to right.
+  - Stop when the right pane matches the reference chips exactly.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-antd-v2-T05
+  name: Revenue row visible columns transfer
+  canonical_type: transfer_list
+  implementation_source: antd
+  implementation_variant: transfer_table_row
+  implementation_component: 'AntD: Transfer embedded in table row detail panel'
+  task_template: table_operation
+  secondary_template: transfer_move
+  browsergym_goal: In the “Report rows” table, edit only the transfer list in the Revenue row so that Visible columns contains exactly Date, Customer, Total, and Margin. Remove any extra visible column, then click “Save row” for Revenue. The task will finish automatically when done.
+  ui_copy: In the “Report rows” table, edit only the transfer list in the Revenue row so that Visible columns contains exactly Date, Customer, Total, and Margin. Remove any extra visible column, then click “Save row” for Revenue. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. Two row-detail panels are open: Revenue and Churn. Each row-detail panel contains its own Transfer component labeled “Visible columns”.
+    Revenue currently shows Date, Customer, Total, and Notes in the right pane, with Margin, Discount, and Tax in the left pane. Churn has its own right-pane state—Date, Churn rate, and Region—and it must remain unchanged. Each row has its own Save row button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: The same transfer idiom appears in two dense table rows, so the task measures correct row binding, exact right-pane repair, and row-local commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The intended set is easy to reason about, but the small duplicated row widgets and row-local save semantics make the grounded interaction genuinely difficult.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Date, Customer, Total, Margin (order ignore).'
+    - Only the transfer list instance labeled "Revenue visible columns" is evaluated.
+    - Changes are committed only after clicking "save-row-revenue".
+    - All non-target transfer instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Date
+        - Customer
+        - Total
+        - Margin
+        saved: true
+        non_target_instances_must_remain:
+          Churn visible columns:
+          - Date
+          - Churn rate
+          - Region
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: save-row-revenue
+      require_correct_instance: true
+      target_instance_label_or_id: Revenue visible columns
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Churn row instead of Revenue.
+  - Leaving Notes visible.
+  - Failing to move Margin into the right pane.
+  - Repairing Revenue correctly but clicking Save row in the wrong row or not saving.
+  expected_interaction_path:
+  - Locate the Revenue row transfer list.
+  - Move Notes from right to left and Margin from left to right.
+  - Leave Churn unchanged.
+  - Click Save row for Revenue.
+  notes: Checker should instrument each row transfer root and each row-local save button separately.
+- id: transfer_list-antd-v2-T06
+  name: Approvers dialog with secondary confirm
+  canonical_type: transfer_list
+  implementation_source: antd
+  implementation_variant: transfer_modal_confirm
+  implementation_component: 'AntD: Transfer inside Modal plus confirmation dialog'
+  task_template: confirm_cancel
+  secondary_template: transfer_move
+  browsergym_goal: Open “Edit approvers”. In the transfer list labeled “Approvers”, make the Selected side contain exactly Finance and Security. Then click “Save”, and in the follow-up confirmation dialog click “Confirm”. The task will finish automatically when done.
+  ui_copy: Open “Edit approvers”. In the transfer list labeled “Approvers”, make the Selected side contain exactly Finance and Security. Then click “Save”, and in the follow-up confirmation dialog click “Confirm”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking “Edit approvers” opens an Ant Design Modal containing one Transfer component labeled “Approvers”.
+    Initial state:
+    - Selected: Finance, HR
+    - Available: Security, Legal, Sales, Support
+    Clicking “Save” opens a second confirmation dialog with Confirm and Cancel. The transfer change only counts after Confirm is clicked in that second overlay.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - layout
+    factor_rationale: The modal plus secondary confirmation dialog split draft repair from committed state, so the task measures whether the agent follows the full layered save flow after fixing the right-pane set.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: A correct right-pane draft is not enough here; the benchmark checks whether the agent follows through a second confirmation step after repairing the set.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Finance, Security (order ignore).'
+    - Changes are committed only after clicking "Confirm".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Finance
+        - Security
+        saved: true
+        overlay_open: false
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving HR selected.
+  - Failing to move Security into Selected.
+  - Clicking Save but not Confirm in the second dialog.
+  - Clicking Cancel in either overlay.
+  expected_interaction_path:
+  - Open the modal.
+  - Move HR out of Selected and move Security in.
+  - Click Save in the first modal.
+  - Click Confirm in the second dialog.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mui-v2-T07
+  name: SMS recipients settings panel exact set
+  canonical_type: transfer_list
+  implementation_source: mui
+  implementation_variant: composed_transfer_two_instances
+  implementation_component: 'MUI: composed Transfer List in settings panel'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the settings panel, edit only the transfer list labeled “SMS recipients” so that its Selected side contains exactly Priya Shah, Mateo Rossi, Olivia Chen, and Daniel Reed. Do not change “Email recipients”. Then click “Save recipients”. The task will finish automatically when done.
+  ui_copy: In the settings panel, edit only the transfer list labeled “SMS recipients” so that its Selected side contains exactly Priya Shah, Mateo Rossi, Olivia Chen, and Daniel Reed. Do not change “Email recipients”. Then click “Save recipients”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, medium clutter, and top_right placement. Two composed MUI transfer lists are stacked vertically: Email recipients and SMS recipients.
+    Both instances share the same 12 contact names. SMS recipients starts with Mateo Rossi and Ava Patel selected. Email recipients starts with Eva Müller selected and must remain unchanged.
+    The center move buttons are small and aligned tightly between the panes. A panel button labeled “Save recipients” commits both transfer lists.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - instances
+    - scale
+    - confirmation_model
+    factor_rationale: The same transfer idiom appears twice with shared names and small center controls, so the task pressures correct instance binding and exact right-pane repair before save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The move semantics are known, but the actual hard part is using the correct instance and ending with the exact committed membership in a compact panel.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Priya Shah, Mateo Rossi, Olivia Chen, Daniel Reed (order ignore).'
+    - Only the transfer list instance labeled "SMS recipients" is evaluated.
+    - Changes are committed only after clicking "Save recipients".
+    - All non-target transfer instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Priya Shah
+        - Mateo Rossi
+        - Olivia Chen
+        - Daniel Reed
+        saved: true
+        non_target_instances_must_remain:
+          Email recipients:
+          - Eva Müller
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Save recipients
+      require_correct_instance: true
+      target_instance_label_or_id: SMS recipients
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Email recipients instead of SMS recipients.
+  - Leaving Ava Patel selected in SMS recipients.
+  - Missing Olivia Chen or Daniel Reed in the right pane.
+  - Repairing the SMS right pane correctly but not clicking Save recipients.
+  expected_interaction_path:
+  - Locate SMS recipients.
+  - Move Ava Patel out of the Selected pane if present.
+  - Move Olivia Chen and Daniel Reed into Selected while keeping Priya Shah and Mateo Rossi.
+  - Leave Email recipients unchanged and click Save recipients.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mui-v2-T08
+  name: Monitored services nested-scroll transfer
+  canonical_type: transfer_list
+  implementation_source: mui
+  implementation_variant: composed_transfer_long_scroll
+  implementation_component: 'MUI: composed Transfer List with long scrollable source pane'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Monitored services”, make the Selected side contain exactly Service 91, Service 94, and Service 97. Remove Service 12 if it is selected. Then click “Apply services”. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Monitored services”, make the Selected side contain exactly Service 91, Service 94, and Service 97. Remove Service 12 if it is selected. Then click “Apply services”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing, off-center placement, and medium clutter. The composed MUI transfer list sits inside a scrollable side panel. The left pane contains Service 01 through Service 120, with only about 11 visible at once.
+    The source pane must be scrolled internally to reach the 90s. The right pane initially contains Service 12 as an incorrect default. A button labeled “Apply services” commits the final target membership.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: This task raises pressure through an inner-scroll source pane and an exact-set repair requirement, not through ambiguous language; the apply step ensures committed right-pane state is what matters.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: The hard part is controlled inner scrolling and right-pane verification under a long uniform source list, especially when one wrong default must also be removed.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Service 91, Service 94, Service 97 (order ignore).'
+    - Changes are committed only after clicking "Apply services".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Service 91
+        - Service 94
+        - Service 97
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Apply services
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Service 12 selected.
+  - Selecting nearby services such as 90, 95, or 98.
+  - Checking the correct left-pane rows without moving them to the right pane.
+  - Reaching the correct right-pane set but not clicking Apply services.
+  expected_interaction_path:
+  - Remove Service 12 from the Selected pane.
+  - Scroll within the source pane to the 90s.
+  - Move Service 91, 94, and 97 into Selected.
+  - Click Apply services.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mui-v2-T09
+  name: Required roles compact visual-reference transfer
+  canonical_type: transfer_list
+  implementation_source: mui
+  implementation_variant: composed_transfer_reference_small
+  implementation_component: 'MUI: composed Transfer List with reference chips'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Access roles”, make the Selected side exactly match the “Required roles” reference chips. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Access roles”, make the Selected side exactly match the “Required roles” reference chips. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, small scale, and medium clutter. A chip row labeled “Required roles” shows Viewer, Editor, Admin (billing), and Owner.
+    Below it is a composed MUI transfer list. Similar distractors include View-only, Editor (limited), Admin, Owner (workspace), and Admin (ops). The right pane initially contains View-only and Editor (limited).
+    The transfer updates immediately; there is no separate Save button.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - guidance
+    - scale
+    - clutter
+    factor_rationale: The target set is specified visually while the compact transfer controls and close role names increase the cost of exact-set repair before save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is hard because the right-pane set must be rebuilt from a misleading initial state using a compact transfer layout and several close lexical distractors.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Viewer, Editor, Admin (billing), Owner (order ignore).'
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Viewer
+        - Editor
+        - Admin (billing)
+        - Owner
+      tolerance:
+        order: ignore
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving View-only or Editor (limited) selected.
+  - Choosing Admin or Owner (workspace) instead of the requested values.
+  - Matching only part of the reference chips.
+  expected_interaction_path:
+  - Inspect the Required roles chips.
+  - Move the two wrong current selections out of the right pane.
+  - Move Viewer, Editor, Admin (billing), and Owner into the right pane.
+  - Stop when the right-pane set exactly matches the reference roles.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mui-v2-T10
+  name: Report columns drawer exact-set repair
+  canonical_type: transfer_list
+  implementation_source: mui
+  implementation_variant: composed_transfer_drawer
+  implementation_component: 'MUI: composed Transfer List inside Drawer'
+  task_template: open_and_select
+  secondary_template: transfer_move
+  browsergym_goal: Open “Customize columns”. In the transfer list labeled “Report columns”, make the Visible side contain exactly Date, Customer, Total, and Profit margin. Remove any extra visible column, then click “Save columns”. The task will finish automatically when done.
+  ui_copy: Open “Customize columns”. In the transfer list labeled “Report columns”, make the Visible side contain exactly Date, Customer, Total, and Profit margin. Remove any extra visible column, then click “Save columns”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, medium clutter, and off-center placement. A right-side Drawer contains one transfer list labeled “Report columns”.
+    Initial state:
+    - Visible: Date, Customer, Total, Notes
+    - Hidden: Profit margin, Tax, Discount
+    The move buttons are narrow and centered between the panes. The drawer footer contains Cancel and Save columns.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - placement
+    - clutter
+    factor_rationale: The column set is semantically easy, so the pressure comes from exact repair under narrow move controls in an off-center drawer followed by explicit save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 2
+    justification: This remains hard because one wrong visible item must be removed, one hidden item must be added, and the drawer save boundary matters.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Date, Customer, Total, Profit margin (order ignore).'
+    - Changes are committed only after clicking "Save columns".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Date
+        - Customer
+        - Total
+        - Profit margin
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Save columns
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Notes visible.
+  - Failing to move Profit margin into Visible.
+  - Moving Tax or Discount instead of Profit margin.
+  - Repairing the right pane correctly but not clicking Save columns.
+  expected_interaction_path:
+  - Open the drawer.
+  - Move Notes out of the Visible pane and Profit margin into it.
+  - Verify the right pane now has exactly four columns.
+  - Click Save columns.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mui-v2-T11
+  name: Search-required country allowlist transfer
+  canonical_type: transfer_list
+  implementation_source: mui
+  implementation_variant: composed_transfer_search
+  implementation_component: 'MUI: composed Transfer List with filter inputs'
+  task_template: search_and_select
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Allowed countries”, use the filter input as needed and make the Selected side contain exactly Canada, Japan, Kenya, and Norway. Remove any extra selected country, then click “Apply allowlist”. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Allowed countries”, use the filter input as needed and make the Selected side contain exactly Canada, Japan, Kenya, and Norway. Remove any extra selected country, then click “Apply allowlist”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing, off-center placement, and medium clutter. A single composed MUI transfer list titled “Allowed countries” includes a text filter above the source pane.
+    The source pane contains more than 40 country names. The right pane initially contains Jordan as an incorrect default. Close distractor names include Japan/Jordan and Norway/North Macedonia.
+    A button labeled “Apply allowlist” commits the final right-pane membership.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - clutter
+    factor_rationale: The source list is long enough that filtering becomes the natural path, but close lexical distractors and a wrong target-pane default preserve real exact-set repair difficulty before the final apply.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: This is harder than a simple country transfer because filtering can hide state, close names create mistakes, and the right pane must be repaired rather than built from blank.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Canada, Japan, Kenya, Norway (order ignore).'
+    - Changes are committed only after clicking "Apply allowlist".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Canada
+        - Japan
+        - Kenya
+        - Norway
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Apply allowlist
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Jordan selected.
+  - Selecting Jordan instead of Japan or another near-miss country instead of Norway.
+  - Filtering to the right value but never moving it into Selected.
+  - Reaching the correct right-pane set but not clicking Apply allowlist.
+  expected_interaction_path:
+  - Remove Jordan from the right pane.
+  - Use the source filter to find Canada, Japan, Kenya, and Norway one by one.
+  - Move the four required countries to the right pane.
+  - Click Apply allowlist.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mantine-v2-T12
+  name: Pager recipients modal with sibling transfer preserved
+  canonical_type: transfer_list
+  implementation_source: mantine
+  implementation_variant: combobox_transfer_modal
+  implementation_component: 'Mantine: Combobox-based transfer list (composite) inside Modal'
+  task_template: open_and_select
+  secondary_template: transfer_move
+  browsergym_goal: Open “Edit recipient groups”. In the transfer list labeled “Pager recipients”, make the Selected side contain exactly On-call Engineer, Security Officer, and SRE. Do not change “Chat recipients”. Then click “Apply recipients”. The task will finish automatically when done.
+  ui_copy: Open “Edit recipient groups”. In the transfer list labeled “Pager recipients”, make the Selected side contain exactly On-call Engineer, Security Officer, and SRE. Do not change “Chat recipients”. Then click “Apply recipients”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. A Mantine Modal contains two combobox-based transfer lists: Chat recipients and Pager recipients.
+    Both instances share the same source names. Pager recipients starts with Incident Commander and On-call Engineer selected. Chat recipients starts with Support Lead selected and must remain unchanged.
+    The move buttons are compact and centered between the panes. A footer button labeled “Apply recipients” commits both transfer lists.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - clutter
+    factor_rationale: Two same-family composite transfer lists inside a modal create wrong-instance pressure, while exact target-pane repair and an explicit apply step test state tracking rather than mere recognition of labels.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: The transfer idiom is familiar, but the modal, duplicate instances, and exact repair requirement make the task meaningfully hard.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: On-call Engineer, Security Officer, SRE (order ignore).'
+    - Only the transfer list instance labeled "Pager recipients" is evaluated.
+    - Changes are committed only after clicking "Apply recipients".
+    - All non-target transfer instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - On-call Engineer
+        - Security Officer
+        - SRE
+        saved: true
+        non_target_instances_must_remain:
+          Chat recipients:
+          - Support Lead
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Apply recipients
+      require_correct_instance: true
+      target_instance_label_or_id: Pager recipients
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Chat recipients instead of Pager recipients.
+  - Leaving Incident Commander selected.
+  - Failing to move Security Officer or SRE into Selected.
+  - Getting the correct Pager right-pane set but not clicking Apply recipients.
+  expected_interaction_path:
+  - Open the modal.
+  - In Pager recipients, move Incident Commander out of the right pane.
+  - Move Security Officer and SRE into the right pane.
+  - Leave Chat recipients unchanged and click Apply recipients.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mantine-v2-T13
+  name: Services allowlist nested-scroll transfer
+  canonical_type: transfer_list
+  implementation_source: mantine
+  implementation_variant: combobox_transfer_long_scroll
+  implementation_component: 'Mantine: Combobox-based transfer list (composite) with long scrollable source pane'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Allowed services”, make the Selected side contain exactly Service 84, Service 87, Service 91, and Service 96. Remove Service 10 if it is selected. Then click “Save allowlist”. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Allowed services”, make the Selected side contain exactly Service 84, Service 87, Service 91, and Service 96. Remove Service 10 if it is selected. Then click “Save allowlist”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing, off-center placement, and medium clutter. The transfer list sits inside a scrollable policy panel. Its left pane contains Service 01 through Service 100, with only about 10 visible at once.
+    The source pane must be scrolled internally to reach the 80s and 90s. The right pane initially contains Service 10 as an incorrect default. A button labeled “Save allowlist” commits the final right-pane membership.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: nested_scroll
+    placement: off_center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: The task isolates the inner-scroll problem in a transfer source pane and pairs it with exact target-pane repair plus an explicit save step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: The items are easy to name but hard to reach and verify because the left pane is long, uniform, and nested inside another scrollable panel.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Service 84, Service 87, Service 91, Service 96 (order ignore).'
+    - Changes are committed only after clicking "Save allowlist".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Service 84
+        - Service 87
+        - Service 91
+        - Service 96
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Save allowlist
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Service 10 selected.
+  - Selecting a nearby service number instead of one of the requested four.
+  - Finding the right source items but not moving them to the right pane.
+  - Reaching the correct right-pane set but not clicking Save allowlist.
+  expected_interaction_path:
+  - Remove Service 10 from the right pane.
+  - Scroll within the left pane to find Services 84, 87, 91, and 96.
+  - Move the four required services into Selected.
+  - Click Save allowlist.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mantine-v2-T14
+  name: Required roles reference transfer in compact card
+  canonical_type: transfer_list
+  implementation_source: mantine
+  implementation_variant: combobox_transfer_reference
+  implementation_component: 'Mantine: Combobox-based transfer list (composite) with reference chip row'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: In the transfer list labeled “Access roles”, make the Selected side exactly match the “Required roles” reference chips. The task will finish automatically when done.
+  ui_copy: In the transfer list labeled “Access roles”, make the Selected side exactly match the “Required roles” reference chips. The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing, small scale, and medium clutter. A reference chip row labeled “Required roles” shows Viewer, Commenter, Editor, and Admin (billing).
+    Below it is a combobox-based transfer list with many close role names such as View-only, Commenter, Commenter (internal), Editor, Editor (limited), Admin, Admin (billing), and Owner.
+    The right pane initially contains View-only and Commenter (internal). Selections move immediately; there is no separate Save button.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: settings_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: auto_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: listbox
+  design_intent:
+    active_factors:
+    - guidance
+    - scale
+    - clutter
+    factor_rationale: The compact composite widget and close role names preserve high interference even though a visual reference defines the target set, and the save step keeps the metric on committed right-pane membership.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 4
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: This is a high-interference exact-set transfer task because the starting state is close-but-wrong and several near-miss role names remain available.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Viewer, Commenter, Editor, Admin (billing) (order ignore).'
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Viewer
+        - Commenter
+        - Editor
+        - Admin (billing)
+      tolerance:
+        order: ignore
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving View-only or Commenter (internal) selected.
+  - Selecting Admin or Editor (limited) instead of the requested roles.
+  - Matching only part of the reference chips.
+  expected_interaction_path:
+  - Inspect the Required roles chips.
+  - Move the two wrong right-pane items out.
+  - Move Viewer, Commenter, Editor, and Admin (billing) into the right pane.
+  - Stop when the right-pane membership exactly matches the reference chips.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mantine-v2-T15
+  name: Feature allowlist drawer with source search
+  canonical_type: transfer_list
+  implementation_source: mantine
+  implementation_variant: combobox_transfer_search_drawer
+  implementation_component: 'Mantine: Combobox-based transfer list (composite) with source search inside Drawer'
+  task_template: search_and_select
+  secondary_template: transfer_move
+  browsergym_goal: Open “Feature allowlist”. In the transfer list labeled “Enabled features”, use the search box as needed and make the Selected side contain exactly Audit log, API access, SAML SSO, and SCIM. Remove any extra selected item, then click “Apply allowlist”. The task will finish automatically when done.
+  ui_copy: Open “Feature allowlist”. In the transfer list labeled “Enabled features”, use the search box as needed and make the Selected side contain exactly Audit log, API access, SAML SSO, and SCIM. Remove any extra selected item, then click “Apply allowlist”. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing, bottom_left placement, and medium clutter. The Mantine Drawer contains one combobox-based transfer list labeled “Enabled features”.
+    The source pane includes more than 40 features and a search input that filters the source pane only. Similar labels include Audit log, Audit log export, API access, API access (legacy), SAML SSO, OIDC SSO, SCIM, and SCIM Sync.
+    The right pane initially contains API access (legacy) and OIDC SSO. A drawer-local “Apply allowlist” button commits the final membership.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: Filtering the source pane makes the task practical, but close feature names and wrong defaults keep it diagnostically about exact target-pane repair before the drawer apply step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 1
+    justification: This task is hard because the right pane starts from a misleading near-match and the source pane search can hide state if the agent does not track transfers carefully.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Audit log, API access, SAML SSO, SCIM (order ignore).'
+    - Changes are committed only after clicking "Apply allowlist".
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Audit log
+        - API access
+        - SAML SSO
+        - SCIM
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: Apply allowlist
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving API access (legacy) or OIDC SSO selected.
+  - Selecting Audit log export or SCIM Sync instead of the requested features.
+  - Finding the right source items without actually moving them to the right pane.
+  - Reaching the correct right-pane set but not clicking Apply allowlist.
+  expected_interaction_path:
+  - Open the drawer.
+  - Remove the two wrong current right-pane items.
+  - Use the source search to find and transfer Audit log, API access, SAML SSO, and SCIM.
+  - Click Apply allowlist.
+  notes: Checker should compute the right-pane membership from stable item keys after any required Save/Apply step. For duplicate instances, instrument each transfer root and each local confirm separately.
+- id: transfer_list-mantine-v2-T16
+  name: APAC row visible resources transfer
+  canonical_type: transfer_list
+  implementation_source: mantine
+  implementation_variant: combobox_transfer_table_row
+  implementation_component: 'Mantine: Combobox-based transfer list (composite) in table row detail panel'
+  task_template: table_operation
+  secondary_template: transfer_move
+  browsergym_goal: In the “Regional resources” table, edit only the transfer list in the APAC row so that Visible resources contains exactly Dashboard, Runbook, Alert channel, and On-call rota. Remove any extra visible resource, then click “Save row” for APAC. The task will finish automatically when done.
+  ui_copy: In the “Regional resources” table, edit only the transfer list in the APAC row so that Visible resources contains exactly Dashboard, Runbook, Alert channel, and On-call rota. Remove any extra visible resource, then click “Save row” for APAC. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. Two expanded row-detail panels are open: EMEA and APAC. Each row-detail panel contains a combobox-based transfer list labeled “Visible resources” and its own Save row button.
+    APAC currently has Dashboard, Alert channel, and Notes visible; Runbook and On-call rota are hidden. EMEA shows Dashboard and Status page in its right pane and must remain unchanged.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: discrete
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Two row-scoped transfer lists with row-local saves force the agent to localize the correct row, repair exact right-pane membership, and commit the change with the right button.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 5
+      disambiguation_load: 5
+    justification: This is hard because the correct visible set requires both removing and adding items inside one compact row-scoped transfer widget, while another identical row must remain untouched.
+  success_trigger:
+    human_readable:
+    - 'Target (right) list contains exactly: Dashboard, Runbook, Alert channel, On-call rota (order ignore).'
+    - Only the transfer list instance labeled "APAC visible resources" is evaluated.
+    - Changes are committed only after clicking "save-row-apac".
+    - All non-target transfer instances listed in the checker must remain unchanged.
+    canonical_predicate:
+      predicate_type: target_set_equals
+      target_state:
+        target_items:
+        - Dashboard
+        - Runbook
+        - Alert channel
+        - On-call rota
+        saved: true
+        non_target_instances_must_remain:
+          EMEA visible resources:
+          - Dashboard
+          - Status page
+      tolerance:
+        order: ignore
+      require_confirm: true
+      confirm_control: save-row-apac
+      require_correct_instance: true
+      target_instance_label_or_id: APAC visible resources
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing EMEA instead of APAC.
+  - Leaving Notes visible in APAC.
+  - Failing to move Runbook or On-call rota into the right pane.
+  - Repairing APAC correctly but not clicking Save row for APAC.
+  expected_interaction_path:
+  - Locate the APAC row-detail transfer list.
+  - Move Notes out of the right pane and move Runbook and On-call rota in.
+  - Leave EMEA unchanged.
+  - Click Save row for APAC.
+  notes: Checker should instrument each row transfer root and each row-local Save row button separately.

@@ -1,0 +1,2086 @@
+- id: progress_bar-antd-T01
+  name: Complete Primary upload to 100%
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'')'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Start the Primary upload and let the progress reach 100%. The task will finish automatically when done.
+  ui_copy: Start the Primary upload and let the progress reach 100%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered in the viewport. The card title is “Upload simulator”.
+
+    Target component: one Ant Design line Progress bar labeled “Primary upload”. It shows a percentage text to the right (showInfo enabled) and animates smoothly while running. Initial value is 0% with status “normal”.
+
+    Controls (non-scored, used to drive the progress):
+    - “Start upload” button: begins increasing the Progress percent from 0% to 100% over ~10 seconds.
+    - “Pause” button (disabled until started): pauses at the current percent.
+    - “Reset” button: returns to 0%.
+    - “Cancel” button: opens a confirmation popover (not required for this task).
+
+    There are no other progress bars and no distractor panels.
+    Feedback: while running, the Progress status becomes “active”; at completion, it becomes “success” and stays at 100%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single progress bar with visible percentage text; only one obvious action (start) and the bar completes automatically.
+  success_trigger:
+    human_readable:
+    - The “Primary upload” progress bar value is exactly 100%.
+    - The progress bar status is “success” (completed state).
+    - The progress bar is the only instance on the page.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+        status: success
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress is still running and has not reached 100%.
+  - Progress reaches 100% but status is not the completed/success state (e.g., still “active”).
+  - Any interaction only changes other UI while the progress bar remains below 100%.
+  expected_interaction_path: Click “Start upload” → wait until the Progress shows 100% and success styling.
+  notes: 'Instrumentation: add data-testid=''primary-progress'' to the Progress root; expose canonical state {value_percent,status,variant} from props/state.'
+- id: progress_bar-antd-T02
+  name: Reset progress back to 0%
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'')'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Primary upload progress back to 0%. The task will finish automatically when done.
+  ui_copy: Reset the Primary upload progress back to 0%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered. Card title “Upload simulator”.
+
+    Target component: one Ant Design line Progress bar labeled “Primary upload”. The percentage text is visible. The bar starts pre-filled at 65% with status “active” (as if an upload is mid-flight).
+
+    Controls:
+    - “Reset” button (primary control for this task): immediately sets the Progress percent to 0% and status to “normal”.
+    - “Start upload” button: would start filling again (distractor).
+    - “Pause” button: pauses at current value (distractor).
+
+    No overlays. No other progress bars.
+    Feedback: after reset, the bar appears empty and the percent text reads “0%”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single labeled progress bar with a dedicated Reset control; state change is immediate and clearly visible.
+  success_trigger:
+    human_readable:
+    - The “Primary upload” progress bar value is 0%.
+    - The progress bar status is “normal” (not active/success/exception).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 0
+        variant: determinate
+        status: normal
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress is reset on another control but the bar remains above 0%.
+  - Progress is paused (status not “normal”) even if it reads 0%.
+  - Any change is applied to a non-target component (none exist here) while the progress bar remains at 65%.
+  expected_interaction_path: Click “Reset” → verify the bar reads 0% and returns to normal styling.
+  notes: 'Checker note: treat 0% with status ''normal'' as the canonical reset state.'
+- id: progress_bar-antd-T03
+  name: Hide the percentage text on the progress bar
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'', showInfo toggle)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn off the percentage text for the Primary upload progress bar. The task will finish automatically when done.
+  ui_copy: Turn off the percentage text for the Primary upload progress bar. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered. Card title “Upload simulator”.
+
+    Target component: one Ant Design line Progress bar labeled “Primary upload”, currently at 30% with status “normal”. By default, AntD Progress displays a percentage readout next to the bar.
+
+    Sub-controls relevant to this task:
+    - A small switch control labeled “Show percentage text” located directly under the progress bar.
+      - ON: Progress renders its info text (e.g., “30%”).
+      - OFF: Progress hides the info text (showInfo=false) but the bar fill remains unchanged.
+
+    Distractors:
+    - “Start upload” button and “Reset” button are present but not needed.
+
+    Feedback: when the switch is turned OFF, the numeric percent text disappears immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Simple binary toggle with immediate visual feedback (percent text disappears) and only one progress bar instance.
+  success_trigger:
+    human_readable:
+    - The “Primary upload” progress bar has showInfo disabled (percentage text hidden).
+    - The bar’s numeric value remains 30% (no need to start/reset).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 30
+        variant: determinate
+        status: normal
+        show_info: false
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The switch is toggled but the percent text is still visible.
+  - The progress value changes (e.g., reset to 0% or started running) even if the percent text is hidden.
+  - Any change is made to a non-target element while the progress bar still shows its percentage text.
+  expected_interaction_path: Click the “Show percentage text” switch to turn it OFF → confirm the percent text disappears.
+  notes: 'Instrumentation: expose Progress prop showInfo in canonical state as show_info boolean.'
+- id: progress_bar-antd-T04
+  name: Open export dialog and finish to 100%
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'') inside Modal'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Export details dialog and wait until the export progress reaches 100%. The task will finish automatically when done.
+  ui_copy: Open the Export details dialog and wait until the export progress reaches 100%. The task will finish automatically when done.
+  setup_description: |
+    Layout: modal_flow. The main page shows a centered card titled “Report export” with a single button “Open export details”.
+
+    Target component: an Ant Design line Progress bar labeled “Export progress” that is NOT visible until a modal dialog is opened.
+
+    Overlay behavior:
+    - Clicking “Open export details” opens an AntD Modal titled “Export details”.
+    - Inside the modal, the Progress bar appears at 0% and begins filling automatically.
+    - The modal also contains secondary text (“Preparing data…”) and two buttons in the footer: “Close” and “Cancel export” (distractors).
+
+    Feedback: the Progress percent text updates while running; at completion it reaches 100% and status becomes “success”.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening a single modal overlay to access the progress bar; after that, the bar completes automatically with a visible percent readout.
+  success_trigger:
+    human_readable:
+    - The “Export progress” progress bar (inside the modal) reaches 100%.
+    - The progress bar status is “success”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+        status: success
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The modal is not opened, so the progress bar never runs.
+  - The export is canceled, preventing the progress bar from reaching 100%.
+  - The progress bar is below 100% when the agent stops interacting.
+  expected_interaction_path: Click “Open export details” → wait in the modal until the Progress shows 100% and success state.
+  notes: 'Instrumentation: add data-testid=''export-progress'' inside the modal content; checker should target the modal instance if multiple modals exist (not in this task).'
+- id: progress_bar-antd-T05
+  name: Pause upload near 60%
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'')'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Start the Primary upload and pause it when it is around 60%. The task will finish automatically when done.
+  ui_copy: Start the Primary upload and pause it when it is around 60%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Upload simulator”.
+
+    Target component: one Ant Design line Progress bar labeled “Primary upload”, starting at 0% with visible percent text.
+
+    Controls:
+    - “Start upload”: begins filling from 0% upward at a steady rate.
+    - “Pause”: stops the progress at its current value (the bar and percent stop updating).
+    - “Resume”: appears in place of “Pause” once paused.
+    - “Reset”: returns to 0% (distractor).
+
+    The progress increments smoothly; the user must pause at roughly the requested target.
+    Feedback: the percent text updates continuously while running; once paused, it remains fixed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires timing-sensitive interaction to stop a continuously changing value near a target percent, with tolerance but no multi-instance ambiguity.
+  success_trigger:
+    human_readable:
+    - The “Primary upload” progress bar value is within ±2% of 60%.
+    - After reaching the target band, the progress value remains stable (not increasing) for at least 1 second.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 60
+        variant: determinate
+      tolerance:
+        value_percent: 2
+        stability_ms: 1000
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress is paused outside the allowed band (e.g., 55% or 65%+).
+  - Progress briefly enters the band but continues increasing (not actually paused).
+  - Progress is reset to 0% instead of being paused near 60%.
+  expected_interaction_path: Click “Start upload” → monitor percent text → click “Pause” when near 60% → ensure it stays fixed.
+  notes: 'Checker note: implement stability by sampling percent over time; do not rely on the Pause button state.'
+- id: progress_bar-antd-T06
+  name: Cancel an in-progress upload and confirm
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'') + Popconfirm'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Cancel the Primary upload and confirm the cancellation so the progress stops and shows as canceled. The task will finish automatically when done.
+  ui_copy: Cancel the Primary upload and confirm the cancellation so the progress stops and shows as canceled. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Upload simulator”.
+
+    Target component: one Ant Design line Progress bar labeled “Primary upload”, currently running at ~40% with status “active”.
+
+    Controls:
+    - “Cancel upload” button: opens an AntD Popconfirm anchored to the button, with two actions: “Yes, cancel” and “Keep uploading”.
+    - “Reset” button: sets progress to 0% but keeps status “normal” (distractor; should not count as cancellation).
+
+    Cancellation behavior (after confirming “Yes, cancel”):
+    - Progress percent becomes 0%.
+    - Progress status becomes “exception” (canceled/error styling) and remains stopped.
+
+    Feedback: the Popconfirm must be responded to; if the user clicks outside, it dismisses and the upload continues.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires interacting with a confirmation overlay and choosing the correct action; cancellation has a distinct status change on the progress bar.
+  success_trigger:
+    human_readable:
+    - The “Primary upload” progress bar status is “exception” (canceled/error state).
+    - The progress bar value is 0% and remains stopped (no longer increasing).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 0
+        variant: determinate
+        status: exception
+      tolerance:
+        value_percent: 0
+        stability_ms: 1000
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The cancel popover is opened but “Keep uploading” is chosen or the popover is dismissed.
+  - The Reset button is used (value becomes 0% but status remains “normal”).
+  - The progress continues running (value keeps increasing).
+  expected_interaction_path: Click “Cancel upload” → in Popconfirm click “Yes, cancel” → verify progress shows exception state at 0% and is stopped.
+  notes: 'Instrumentation: map AntD Progress status prop to canonical status; treat canceled state as status=''exception''.'
+- id: progress_bar-antd-T07
+  name: Match Target progress to a Reference bar (45%)
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'') x2'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Adjust the Target progress bar so it matches the Reference progress (45%). The task will finish automatically when done.
+  ui_copy: Adjust the Target progress bar so it matches the Reference progress (45%). The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Progress matching”.
+
+    Target components on page (instances=2 of the same canonical type):
+    1) “Reference” progress bar (AntD Progress, line): fixed at 45% and shows its percent text.
+    2) “Target” progress bar (AntD Progress, line): starts at 10%. Its percent text is hidden (showInfo=false) so the user relies on the bar fill and the label “Target”.
+
+    Controls (affect ONLY the Target bar):
+    - “–5%” and “+5%” small buttons directly to the right of the Target bar.
+    - A “Reset Target” link sets Target back to 10% (distractor).
+
+    Feedback: the Target bar fill updates immediately after each button press. The Reference bar never changes.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires matching to a reference with two similar progress bars; the target bar hides its numeric label, increasing reliance on visual comparison and correct-instance selection.
+  success_trigger:
+    human_readable:
+    - The Target progress bar value is within ±1% of 45%.
+    - The Reference bar remains unchanged at 45%.
+    - Only the Target instance is considered for success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 45
+        variant: determinate
+      tolerance:
+        value_percent: 1
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Target
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The Reference bar is modified (should be impossible, but must not be counted).
+  - The Target bar is close but outside tolerance (e.g., 43% or 47%).
+  - The Target bar is reset to 10% after matching.
+  - Any attempt focuses on the wrong instance (Reference) instead of Target.
+  expected_interaction_path: Compare Reference fill → click Target “+5%” until visually aligned → stop when Target reaches ~45%.
+  notes: 'Instrumentation: give each Progress a stable data-testid and an instance label (Reference/Target) in the DOM for disambiguation.'
+- id: progress_bar-antd-T08
+  name: 'Dashboard: pause Primary sync near 72%'
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Progress (type=''line'') in dashboard cards'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Sync dashboard, start the Primary sync and pause it when it is around 72%. The task will finish automatically when done.
+  ui_copy: In the Sync dashboard, start the Primary sync and pause it when it is around 72%. The task will finish automatically when done.
+  setup_description: |
+    Layout: dashboard. The page uses a dark theme with a top app bar and a 2-column grid of cards.
+
+    Target components: three Ant Design line Progress bars (instances=3), each inside a card:
+    - Card A: “Primary sync” (TARGET)
+    - Card B: “Secondary sync”
+    - Card C: “Backup sync”
+    Each card shows a Progress bar with percent text and a small row of buttons (“Start”, “Pause/Resume”, “Reset”).
+
+    Initial state:
+    - Primary sync progress is 0% and idle.
+    - Secondary and Backup show 10% and 25% respectively (static unless started).
+
+    Interaction:
+    - Clicking “Start” in a card starts that card’s progress increasing.
+    - “Pause” stops that card’s progress at its current value.
+
+    Distractors/clutter:
+    - Each card has identical controls; only the card title differentiates them.
+    - A non-functional “Refresh” icon in the top bar (distractor).
+
+    Feedback: percent text updates continuously for the running card; on pause it freezes.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Multiple same-type instances in a cluttered dashboard require correct card selection plus timing-sensitive pausing near a target percent.
+  success_trigger:
+    human_readable:
+    - The progress bar in the “Primary sync” card is within ±2% of 72%.
+    - The Primary sync value is stable (not increasing) for at least 1 second.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 72
+        variant: determinate
+      tolerance:
+        value_percent: 2
+        stability_ms: 1000
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Primary sync
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different card’s progress bar (Secondary/Backup) is paused near 72% instead of Primary sync.
+  - Primary sync is paused outside tolerance (e.g., 68% or 76%+).
+  - Primary sync passes through the target region but continues increasing (not paused).
+  expected_interaction_path: Locate “Primary sync” card → click its “Start” → watch percent → click its “Pause” near 72% → confirm it stays fixed.
+  notes: 'Instrumentation: each card should carry data-testid like progress-card-primary; checker must bind to the Primary sync instance only.'
+- id: progress_bar-antd-T09
+  name: 'Table: run Nightly build #7 to completion'
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: mini
+  implementation_component: 'AntD: Progress (type=''line'', size=''small'') in Table cells'
+  task_template: scroll_find
+  secondary_template: table_operation
+  browsergym_goal: 'In the builds table, find Nightly build #7 and run it until its progress reaches 100%. The task will finish automatically when done.'
+  ui_copy: 'In the builds table, find Nightly build #7 and run it until its progress reaches 100%. The task will finish automatically when done.'
+  setup_description: |
+    Layout: table_cell inside a “Builds” panel anchored near the bottom-left of the viewport. Spacing is compact and the table uses small typography.
+
+    Target components: multiple AntD mini line Progress bars embedded in the “Progress” column of a table (instances=4 visible at a time due to pagination/virtualization).
+
+    Table details:
+    - Columns: “Build”, “Owner”, “Progress”, “Action”.
+    - Each visible row has a mini Progress bar (showInfo enabled but very small) and a small “Run” button in the Action column.
+    - The table is scrollable vertically within a fixed-height container; Nightly build #7 is not initially visible and requires scrolling the table body.
+
+    Initial state:
+    - Some rows show partially complete progress (static).
+    - The target row “Nightly build #7” shows 0% with status “normal” until started.
+
+    Interaction:
+    - Clicking “Run” in a row starts that row’s progress filling to 100% and then switching to status “success”.
+
+    Distractors/clutter:
+    - Search input above the table (not required).
+    - Column sort icons (not required).
+    - Other rows’ “Run” buttons and progress bars are similar and should not be used for success.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_left
+    scale: small
+    instances: 4
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Small, dense table-cell targets with scrolling required and multiple similar rows increase both acquisition difficulty and instance disambiguation.
+  success_trigger:
+    human_readable:
+    - 'The progress bar in the row labeled “Nightly build #7” reaches 100%.'
+    - That progress bar status is “success”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+        status: success
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: 'Nightly build #7'
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - 'A different build row reaches 100% while Nightly build #7 remains below 100%.'
+  - 'Nightly build #7 is started but the agent stops before it reaches 100%.'
+  - 'Nightly build #7 reaches 100% but remains in a non-success status (e.g., exception).'
+  expected_interaction_path: 'Scroll the table body until “Nightly build #7” is visible → click its “Run” → wait for its mini Progress to reach 100% and success state.'
+  notes: 'Instrumentation: each table row should include a stable row-id (e.g., data-row-key=''build-7''); bind the progress instance under that row only.'
+- id: progress_bar-antd-T10
+  name: 'Segmented wizard: reach step 3 of 5'
+  canonical_type: progress_bar
+  implementation_source: antd
+  implementation_variant: steps
+  implementation_component: 'AntD: Progress (type=''line'', steps=5)'
+  task_template: set_scalar
+  secondary_template: null
+  browsergym_goal: Set the Setup wizard progress to step 3 of 5 (three segments filled). The task will finish automatically when done.
+  ui_copy: Set the Setup wizard progress to step 3 of 5 (three segments filled). The task will finish automatically when done.
+  setup_description: |
+    Layout: settings_panel. The page looks like a product setup screen with a left-aligned settings sidebar (static) and a main content panel.
+
+    Target component: an AntD segmented line Progress bar labeled “Setup wizard progress”. It uses the `steps=5` configuration so the bar is divided into 5 discrete segments. The percent text is shown below the bar as “Step X of 5”.
+
+    Initial state:
+    - Setup wizard progress starts at step 1 of 5 (20%).
+
+    Controls directly below the wizard progress:
+    - “Back” button: decreases step by 1 (min 1).
+    - “Next step” button: increases step by 1 (max 5).
+
+    Distractor instance (instances=2):
+    - A separate standard Progress bar labeled “Disk usage” (continuous) is shown further down the panel and must not be used.
+
+    Guidance (mixed):
+    - Text instruction on the page: “Target: Step 3 of 5”.
+    - Visual: the segmented bar clearly shows how many segments are filled.
+
+    Feedback: each click updates the filled segment count immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Discrete step-based progress requires exact granularity (3 of 5) and correct-instance selection in a settings panel with another progress bar present.
+  success_trigger:
+    human_readable:
+    - The “Setup wizard progress” segmented bar shows exactly 3 filled segments out of 5.
+    - Canonical percent for the wizard progress equals 60% (3/5).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 60
+        variant: segmented
+        steps_total: 5
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Setup wizard progress
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Wizard progress is at step 2 (40%) or step 4 (80%) instead of step 3.
+  - The Disk usage progress bar is modified instead of the wizard progress.
+  - Wizard progress shows three segments briefly but ends on a different step.
+  expected_interaction_path: Locate “Setup wizard progress” → click “Next step” until step 3 of 5 → stop when three segments are filled.
+  notes: 'Checker note: compute step_index from value_percent and steps_total or track discrete step state directly.'
+- id: progress_bar-mui-T01
+  name: Complete file upload to 100% (determinate)
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress (variant=''determinate'')'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Start the file upload and let the progress bar reach 100%. The task will finish automatically when done.
+  ui_copy: Start the file upload and let the progress bar reach 100%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered (Material UI Paper card titled “Upload”).
+
+    Target component: one MUI LinearProgress component configured as determinate. It is labeled “Upload progress” via aria-label and a nearby text label. Initial value is 0%.
+
+    Controls:
+    - “Start upload” button: starts incrementing LinearProgress value from 0 to 100.
+    - “Pause” button: stops incrementing (distractor for this task).
+    - “Reset” button: returns to 0% (distractor).
+
+    Feedback: a small inline text “0% … 100%” updates alongside the bar; on completion the value stays at 100%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single determinate progress bar with a clear Start action; completion is unambiguous once it reaches 100%.
+  success_trigger:
+    human_readable:
+    - The “Upload progress” LinearProgress value equals 100%.
+    - The variant remains determinate.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress remains below 100%.
+  - The progress is reset before reaching 100%.
+  - The progress bar is switched to an indeterminate/query mode so it no longer has a determinate value.
+  expected_interaction_path: Click “Start upload” → wait until the bar reaches 100%.
+  notes: 'Instrumentation: read MUI LinearProgress ''value'' prop (0–100) as canonical value_percent; store ''variant''.'
+- id: progress_bar-mui-T02
+  name: Switch progress bar to indeterminate mode
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress (variant toggle: determinate ↔ indeterminate)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on indeterminate mode for the loading progress bar. The task will finish automatically when done.
+  ui_copy: Turn on indeterminate mode for the loading progress bar. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Loading indicator”.
+
+    Target component: one MUI LinearProgress. It starts in determinate mode at 30% (a static filled bar).
+
+    Sub-control:
+    - A switch labeled “Indeterminate mode”.
+      - OFF: LinearProgress uses variant='determinate' with value=30.
+      - ON: LinearProgress switches to variant='indeterminate' (no meaningful progress value; animated bar).
+
+    Distractors:
+    - A “Reset” button that sets determinate value back to 0% (not needed).
+
+    Feedback: when indeterminate is enabled, the bar changes to the moving/animated indeterminate appearance.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Binary switch with immediate visual feedback; success depends only on the progress bar variant.
+  success_trigger:
+    human_readable:
+    - The LinearProgress variant is set to “indeterminate”.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        variant: indeterminate
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The switch remains OFF and the progress bar stays determinate.
+  - The progress bar is changed to another variant (e.g., query or buffer) instead of indeterminate.
+  - Only the numeric label changes while the underlying LinearProgress variant is still determinate.
+  expected_interaction_path: Click the “Indeterminate mode” switch to ON → confirm the bar becomes animated.
+  notes: 'Checker: read LinearProgress ''variant'' prop; treat ''query'' as distinct from ''indeterminate''.'
+- id: progress_bar-mui-T03
+  name: Reset determinate progress to 0%
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress (variant=''determinate'')'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the upload progress bar back to 0%. The task will finish automatically when done.
+  ui_copy: Reset the upload progress bar back to 0%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Upload”.
+
+    Target component: one determinate MUI LinearProgress labeled “Upload progress”. It starts at 80% (static).
+
+    Controls:
+    - “Reset” button: sets LinearProgress value to 0% immediately.
+    - “Start upload” button: would run the progress forward again (distractor).
+
+    Feedback: the filled portion shrinks to empty and the displayed percent label updates to 0%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Immediate reset of a single determinate progress bar; the target state (0%) is clearly visible.
+  success_trigger:
+    human_readable:
+    - The LinearProgress value equals 0% and remains determinate.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 0
+        variant: determinate
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress remains above 0%.
+  - Progress is switched to indeterminate/query mode.
+  - Reset is applied to a non-target element (none exist here).
+  expected_interaction_path: Click “Reset” → verify progress reads 0%.
+  notes: 'Instrumentation: if using aria-valuenow, ensure it matches the canonical value_percent.'
+- id: progress_bar-mui-T04
+  name: 'Dialog: start and reach 50% in details view'
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress in Dialog'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Upload details dialog and start the upload until the progress reaches 50%. The task will finish automatically when done.
+  ui_copy: Open the Upload details dialog and start the upload until the progress reaches 50%. The task will finish automatically when done.
+  setup_description: |
+    Layout: modal_flow. The main page shows a card titled “Upload” with a button “Open upload details”.
+
+    Target component: one MUI LinearProgress labeled “Upload progress”, located inside a Material UI Dialog (not visible until opened).
+
+    Overlay behavior:
+    - Clicking “Open upload details” opens a dialog titled “Upload details”.
+    - Inside the dialog, the LinearProgress starts at 0% and is idle.
+    - A “Start” button inside the dialog begins filling the bar. The simulation auto-pauses exactly at 50% (so the user does not need precise timing).
+
+    Distractors inside the dialog:
+    - A “Close” icon button in the top-right.
+    - A “Cancel upload” button (opens a confirm dialog; not needed).
+
+    Feedback: the percent label next to the bar updates as it fills, then stops at 50%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening a dialog overlay and using an in-dialog Start control; progress changes dynamically and must reach a mid-way target.
+  success_trigger:
+    human_readable:
+    - The dialog’s “Upload progress” LinearProgress value is within ±1% of 50%.
+    - The value is stable (auto-paused) for at least 0.8 seconds.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 50
+        variant: determinate
+      tolerance:
+        value_percent: 1
+        stability_ms: 800
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The dialog is not opened (progress bar not started).
+  - The upload runs past 50% (e.g., reaches 60%+) before being paused/stopped.
+  - A different progress indicator outside the dialog is changed (none exist here).
+  expected_interaction_path: Click “Open upload details” → click “Start” inside dialog → wait until bar stops at ~50%.
+  notes: 'Instrumentation: ensure the dialog-scoped progress bar has a stable identifier; checker should ignore any background page elements.'
+- id: progress_bar-mui-T05
+  name: Pause download near 70%
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress (determinate) with pause control'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Start the download and pause it when the progress is around 70%. The task will finish automatically when done.
+  ui_copy: Start the download and pause it when the progress is around 70%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Download”.
+
+    Target component: one MUI LinearProgress (determinate) labeled “Download progress” with a visible percent number to the right.
+    Initial value: 0%.
+
+    Controls:
+    - “Start download”: begins steadily increasing the value.
+    - “Pause”: stops the value where it is; button toggles to “Resume” when paused.
+    - “Reset”: returns to 0% (distractor).
+
+    Feedback: while running, the percent updates continuously; when paused, the percent freezes.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Timing-sensitive pause on a continuously changing determinate value; tolerance allows minor error but still requires monitoring and quick action.
+  success_trigger:
+    human_readable:
+    - The “Download progress” LinearProgress value is within ±3% of 70%.
+    - The value remains stable (not increasing) for at least 1 second.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 70
+        variant: determinate
+      tolerance:
+        value_percent: 3
+        stability_ms: 1000
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Download is paused outside the allowed band.
+  - Download passes through the band but continues (not paused).
+  - Reset is used (value becomes 0%).
+  expected_interaction_path: Click “Start download” → watch percent → click “Pause” near 70% → confirm it stays fixed.
+  notes: 'Checker: use stability window to ensure the agent actually paused rather than briefly observing 70% while running.'
+- id: progress_bar-mui-T06
+  name: Match Target buffer progress to Reference (value & buffer)
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: buffer
+  implementation_component: 'MUI: LinearProgress (variant=''buffer'') x2'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Adjust the Target buffer progress so it matches the Reference bar (both the filled progress and the buffer). The task will finish automatically when done.
+  ui_copy: Adjust the Target buffer progress so it matches the Reference bar (both the filled progress and the buffer). The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Buffered loading”.
+
+    Target components (instances=2 of MUI LinearProgress):
+    - “Reference” LinearProgress: variant='buffer', fixed at value=40 and valueBuffer=70. It has a small caption “Reference”.
+    - “Target” LinearProgress: variant='buffer', starts at value=10 and valueBuffer=20. It has a caption “Target”.
+
+    Controls (affect ONLY the Target bar):
+    - “+10 Loaded” / “-10 Loaded”: adjusts Target value by ±10.
+    - “+10 Buffered” / “-10 Buffered”: adjusts Target valueBuffer by ±10.
+
+    Guidance: numeric labels are not shown on the bars; the only guidance is the visual fill/buffer lengths and the Reference vs Target captions.
+
+    Feedback: each button press immediately updates the Target bar’s filled segment and buffer segment.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Two-dimensional progress state (value and buffer) must be matched visually across two similar instances, increasing observability and disambiguation demands.
+  success_trigger:
+    human_readable:
+    - The Target LinearProgress value is within ±2% of the Reference filled progress (40%).
+    - The Target LinearProgress buffer value (valueBuffer) is within ±2% of the Reference buffer (70%).
+    - Only the Target instance is considered for success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 40
+        buffer_percent: 70
+        variant: buffer
+      tolerance:
+        value_percent: 2
+        buffer_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Target
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only the filled progress is matched, but the buffer segment is not (or vice versa).
+  - Target is close but outside tolerance on value or buffer.
+  - Actions change the Reference instance (should be impossible, but must not be counted).
+  expected_interaction_path: Visually compare Target vs Reference → use Loaded/Buffered buttons to align both segments → stop when both match.
+  notes: 'Instrumentation: expose both MUI props {value,valueBuffer,variant}; for visual-only guidance, do not render explicit percent text.'
+- id: progress_bar-mui-T07
+  name: Navigate to Downloads tab and reach 30%
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Tabs + LinearProgress (determinate)'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Go to the Downloads tab and start the Episode download until the progress reaches 30%. The task will finish automatically when done.
+  ui_copy: Go to the Downloads tab and start the Episode download until the progress reaches 30%. The task will finish automatically when done.
+  setup_description: |
+    Layout: form_section. The page resembles a media app settings area with tabs at the top: “Overview”, “Downloads”, and “History”.
+
+    Target component: one MUI LinearProgress labeled “Episode download” located inside the “Downloads” tab panel (not visible on initial load because “Overview” tab is selected).
+
+    Initial state:
+    - On page load: “Overview” tab is active; the progress bar is hidden.
+    - In “Downloads” tab: the progress bar starts at 0% and is idle.
+
+    Controls in the Downloads tab:
+    - “Start download” button: begins incrementing the progress and auto-pauses at exactly 30%.
+    - “Reset” button: returns to 0% (distractor).
+
+    Distractors/clutter:
+    - Other form fields (checkboxes for “Wi‑Fi only”, “Notify on completion”) are present but irrelevant.
+
+    Feedback: progress becomes visible only after navigating to the Downloads tab; once started, it fills until 30% and stops.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires navigation to the correct tab to reveal the progress bar and then triggering it to reach a mid-way target.
+  success_trigger:
+    human_readable:
+    - The “Episode download” LinearProgress value is within ±1% of 30%.
+    - The value is stable (auto-paused) for at least 0.8 seconds.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 30
+        variant: determinate
+      tolerance:
+        value_percent: 1
+        stability_ms: 800
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The agent stays on the Overview tab so the target progress never changes.
+  - The download runs past 30% (not paused) or is reset to 0%.
+  - A different tab’s content is manipulated while the Episode download progress remains at 0%.
+  expected_interaction_path: Click the “Downloads” tab → click “Start download” → wait until progress stops at ~30%.
+  notes: 'Checker: ensure the progress bar is identified by its aria-label ''Episode download'' within the Downloads tab panel.'
+- id: progress_bar-mui-T08
+  name: 'Table: process Dataset B to 95%'
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: compact_table
+  implementation_component: 'MUI: LinearProgress (determinate) in DataGrid/Table cells'
+  task_template: table_operation
+  secondary_template: scroll_find
+  browsergym_goal: In the datasets table, start processing Dataset B and wait until its progress reaches 95%. The task will finish automatically when done.
+  ui_copy: In the datasets table, start processing Dataset B and wait until its progress reaches 95%. The task will finish automatically when done.
+  setup_description: |
+    Layout: table_cell. A compact datasets table is shown in a fixed-height container (Material UI table/DataGrid style). The overall page has a toolbar with filters (not required).
+
+    Target components: multiple MUI LinearProgress bars rendered inside the “Progress” column (instances=4 visible at a time).
+
+    Table details:
+    - Rows: Dataset A, Dataset B (TARGET), Dataset C, Dataset D (some off-screen).
+    - Each row contains:
+      - A name cell.
+      - A small LinearProgress bar cell with an adjacent tiny percent text.
+      - An “Action” cell with a small “Start” button.
+
+    Initial state:
+    - Dataset B progress starts at 0% and idle.
+    - Other rows show various static values (e.g., 20%, 60%) to create interference.
+
+    Interaction:
+    - Clicking “Start” in the Dataset B row begins increasing its progress and auto-pauses at 95%.
+
+    Distractors/clutter:
+    - Column header sort icons.
+    - A filter TextField above the table (not needed).
+    - Other rows’ Start buttons and progress bars.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 4
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Dense compact table layout with small targets and multiple similar progress bars requires careful row identification and precise interaction within a crowded area.
+  success_trigger:
+    human_readable:
+    - The progress bar in the row labeled “Dataset B” is within ±1% of 95%.
+    - The Dataset B progress value is stable (auto-paused) for at least 0.8 seconds.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 95
+        variant: determinate
+      tolerance:
+        value_percent: 1
+        stability_ms: 800
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Dataset B
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different dataset row reaches 95% while Dataset B remains below 95%.
+  - Dataset B runs past 95% (not paused).
+  - Dataset B is filtered out and never started.
+  expected_interaction_path: Locate Dataset B row → click its “Start” button → wait until its progress stops near 95%.
+  notes: 'Instrumentation: bind the progress instance using the dataset row key; for DataGrid, use row id to locate the correct cell subtree.'
+- id: progress_bar-mui-T09
+  name: Stop a running job via confirmation dialog
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress + confirm Dialog'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: Stop the running job and confirm the stop so the progress shows as canceled. The task will finish automatically when done.
+  ui_copy: Stop the running job and confirm the stop so the progress shows as canceled. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Background job”.
+
+    Target component: one MUI LinearProgress labeled “Job progress”. It starts running immediately on page load (value increases steadily).
+
+    Controls:
+    - “Stop job” button: opens a Material UI Dialog asking for confirmation.
+      - Dialog actions: “Stop” (destructive) and “Keep running”.
+    - “Pause” button: pauses the job without canceling (distractor).
+
+    Cancellation behavior:
+    - When the user confirms “Stop”, the LinearProgress freezes at its current value and its styling changes to a disabled/canceled appearance.
+    - A small caption “Canceled” appears next to the bar (state reflected in the progress component wrapper as status='canceled').
+
+    Feedback/overlays:
+    - The confirmation dialog must be dismissed by choosing one action; clicking outside dismisses and keeps running.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: A running progress bar must be stopped through a confirmation dialog while the value is changing, combining overlay interaction with dynamic feedback.
+  success_trigger:
+    human_readable:
+    - The job progress enters the canonical status “canceled”.
+    - After cancellation, the progress value remains stable (not increasing) for at least 1 second.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        status: canceled
+      tolerance:
+        stability_ms: 1000
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The stop dialog is opened but “Keep running” is chosen or the dialog is dismissed.
+  - The job is only paused (stable value) but not canceled (status not 'canceled').
+  - The job continues increasing after the dialog interaction.
+  expected_interaction_path: Click “Stop job” → in dialog click “Stop” → confirm the bar freezes and shows canceled styling/caption.
+  notes: 'Checker note: define canonical status=''canceled'' in the wrapper state; verify stability after status change.'
+- id: progress_bar-mui-T10
+  name: 'Drawer task manager: complete Report export'
+  canonical_type: progress_bar
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: LinearProgress in Drawer'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Task manager drawer and complete the Report export until its progress reaches 100%. The task will finish automatically when done.
+  ui_copy: Open the Task manager drawer and complete the Report export until its progress reaches 100%. The task will finish automatically when done.
+  setup_description: |
+    Layout: drawer_flow with dark theme. A small floating “Task manager” button is anchored at the bottom-right corner of the viewport.
+
+    Target components: two MUI LinearProgress bars (instances=2) shown only inside the Task manager drawer:
+    - “Report export” (TARGET)
+    - “Thumbnail generation” (distractor)
+
+    Overlay behavior:
+    - Clicking the floating “Task manager” button opens a right-side Drawer titled “Tasks”.
+    - Each task row contains: a task name, a LinearProgress bar, and a small “Start” button.
+
+    Initial state:
+    - Both tasks start at 0% and idle (no animation).
+
+    Interaction:
+    - Clicking “Start” in a task row begins that task’s progress increasing to 100% and then freezing at completion.
+
+    Distractors/clutter:
+    - The drawer header contains a search field (not required).
+    - The second task has identical controls and an identically styled progress bar.
+
+    Feedback: progress fills smoothly while running; at 100% the task shows a “Done” chip and stops.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: drawer_flow
+    placement: bottom_right
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires opening a drawer anchored in the corner, selecting the correct task row among multiple similar instances, and monitoring dynamic progress to completion.
+  success_trigger:
+    human_readable:
+    - The “Report export” progress bar value equals 100%.
+    - The “Report export” task is in the completed/success state (done).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+        status: success
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Report export
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The drawer is not opened, so the task cannot be started.
+  - The wrong task (“Thumbnail generation”) is completed instead of “Report export”.
+  - Report export is started but does not reach 100%.
+  expected_interaction_path: Click floating “Task manager” → in drawer find “Report export” row → click its “Start” → wait until it reaches 100% and shows done state.
+  notes: 'Instrumentation: mark each task row with data-task-id; compute canonical status=''success'' when done chip is shown and progress value=100.'
+- id: progress_bar-mantine-T01
+  name: Complete media upload to 100%
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Progress'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: Start the media upload and let the progress reach 100%. The task will finish automatically when done.
+  ui_copy: Start the media upload and let the progress reach 100%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered (Mantine Card titled “Media upload”).
+
+    Target component: one Mantine Progress bar labeled “Upload progress” (aria-label set). It starts at 0% and is horizontal with default size.
+
+    Controls:
+    - “Start upload” button: increases Progress value from 0% to 100% over ~10 seconds.
+    - “Pause” button (disabled initially): pauses the progress (not needed).
+    - “Reset” button: sets value back to 0% (distractor).
+
+    Feedback: the bar fill grows smoothly; a percent text label next to the bar updates; at 100% the bar stops.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single Mantine Progress instance with a clear Start action; completion at 100% is unambiguous.
+  success_trigger:
+    human_readable:
+    - The “Upload progress” Mantine Progress value equals 100%.
+    - Progress is determinate (has a numeric value).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress stays below 100%.
+  - Progress is reset before reaching 100%.
+  - A different progress bar is completed (none exist here).
+  expected_interaction_path: Click “Start upload” → wait until Progress reaches 100%.
+  notes: 'Instrumentation: Mantine Progress sections use role=''progressbar'' and aria-valuenow; use that for canonical value_percent when available.'
+- id: progress_bar-mantine-T02
+  name: Enable striped style on progress bar
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: striped
+  implementation_component: 'Mantine: Progress (striped toggle)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Turn on the striped style for the progress bar. The task will finish automatically when done.
+  ui_copy: Turn on the striped style for the progress bar. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Progress styling”.
+
+    Target component: one Mantine Progress bar at 55% (static).
+
+    Sub-controls:
+    - Checkbox labeled “Striped”: toggles Progress striped prop.
+    - Checkbox labeled “Animated stripes”: toggles Progress animated prop (distractor; not required).
+
+    Initial state:
+    - Striped OFF.
+    - Animated stripes OFF.
+
+    Feedback: when striped is enabled, diagonal stripe pattern appears on the filled portion of the bar.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single checkbox toggles a binary visual state on one progress bar with immediate feedback.
+  success_trigger:
+    human_readable:
+    - The progress bar has striped styling enabled (striped=true).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        striped: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Animated stripes is toggled without enabling striped (no stripes should appear).
+  - Striped remains OFF.
+  - Progress value changes but striped style is still disabled.
+  expected_interaction_path: Check the “Striped” checkbox → confirm stripes appear on the progress fill.
+  notes: 'Instrumentation: expose Mantine Progress props {striped,animated,value} in canonical state; checker for this task uses striped only.'
+- id: progress_bar-mantine-T03
+  name: Reset progress to 0%
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Progress'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the task progress back to 0%. The task will finish automatically when done.
+  ui_copy: Reset the task progress back to 0%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Task progress”.
+
+    Target component: one Mantine Progress bar labeled “Task progress”, starting at 65% (static).
+
+    Controls:
+    - “Reset” button: sets Progress value to 0%.
+    - “Start” button: starts incrementing from current value (distractor).
+
+    Feedback: the bar becomes empty and the percent text reads 0%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Immediate reset on a single progress component; target state is clearly observable.
+  success_trigger:
+    human_readable:
+    - The Mantine Progress value equals 0%.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 0
+        variant: determinate
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress remains above 0%.
+  - Progress is started instead of reset.
+  - Any unrelated UI is changed while the progress stays at 65%.
+  expected_interaction_path: Click “Reset” → verify progress reads 0%.
+  notes: 'Checker: read aria-valuenow for canonical value_percent when possible.'
+- id: progress_bar-mantine-T04
+  name: 'Drawer: start upload until 40%'
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Progress inside Drawer'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Upload queue drawer and start the upload until the progress reaches 40%. The task will finish automatically when done.
+  ui_copy: Open the Upload queue drawer and start the upload until the progress reaches 40%. The task will finish automatically when done.
+  setup_description: |
+    Layout: drawer_flow. The page shows a card “Uploads” with a button “Open upload queue”.
+
+    Target component: one Mantine Progress bar labeled “File upload”, located inside a left-side Drawer titled “Upload queue”.
+
+    Overlay behavior:
+    - Clicking “Open upload queue” opens the Drawer.
+    - Inside the Drawer, a single upload item is shown with its Progress bar and a “Start” button.
+
+    Initial state:
+    - Progress value is 0% and idle.
+    - After clicking “Start”, the progress increases and auto-pauses at exactly 40%.
+
+    Distractors:
+    - A “Close” button in the Drawer header.
+    - A “Clear queue” link (does not affect the progress bar in this task).
+
+    Feedback: progress fill increases until it stops at 40%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: drawer_flow
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires opening a drawer to access the progress bar and then starting it to reach a mid-way target value.
+  success_trigger:
+    human_readable:
+    - The “File upload” progress value is within ±1% of 40%.
+    - The value is stable (auto-paused) for at least 0.8 seconds.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 40
+        variant: determinate
+      tolerance:
+        value_percent: 1
+        stability_ms: 800
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Drawer is not opened, so progress never starts.
+  - Progress runs past 40% (not paused).
+  - Progress is reset or cleared instead of reaching 40%.
+  expected_interaction_path: Click “Open upload queue” → click “Start” for the upload → wait until progress stops at ~40%.
+  notes: 'Instrumentation: add data-testid for drawer content; ensure the progress bar has aria-label=''File upload'' for robust selection.'
+- id: progress_bar-mantine-T05
+  name: Expand Advanced section and reach 65%
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Accordion/Collapse + Progress'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Open the Advanced section and start the optimization until the progress reaches 65%. The task will finish automatically when done.
+  ui_copy: Open the Advanced section and start the optimization until the progress reaches 65%. The task will finish automatically when done.
+  setup_description: |
+    Layout: settings_panel. The page resembles an app settings screen with a vertical list of sections.
+
+    Target component: one Mantine Progress bar labeled “Optimization progress” located inside an Accordion item titled “Advanced”. The progress bar is not visible until the “Advanced” accordion item is expanded.
+
+    Initial state:
+    - The “General” accordion item is expanded by default.
+    - The “Advanced” item is collapsed.
+    - Inside “Advanced”, the progress starts at 0% and is idle.
+
+    Controls inside the “Advanced” panel:
+    - “Start optimization” button: begins increasing progress and auto-pauses at exactly 65%.
+    - “Reset” link: sets progress back to 0% (distractor).
+
+    Feedback: expanding the accordion reveals the progress bar; after starting, it fills until it stops at 65%.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The progress bar is hidden behind a disclosure control and must be revealed before it can be started to a target value.
+  success_trigger:
+    human_readable:
+    - The “Optimization progress” value is within ±1% of 65%.
+    - The value is stable for at least 0.8 seconds.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 65
+        variant: determinate
+      tolerance:
+        value_percent: 1
+        stability_ms: 800
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The Advanced section is not opened, so the progress bar remains hidden and unchanged.
+  - Progress is reset or runs past 65%.
+  - A different progress indicator (none in other sections) is manipulated.
+  expected_interaction_path: Click Accordion header “Advanced” → click “Start optimization” → wait until progress stops at ~65%.
+  notes: 'Instrumentation: ensure the Accordion header has accessible name ''Advanced''; ensure progress uses role=''progressbar'' for easy detection.'
+- id: progress_bar-mantine-T06
+  name: Match Target progress to Reference (33%)
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Progress x2'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Adjust the Target progress bar so it visually matches the Reference progress. The task will finish automatically when done.
+  ui_copy: Adjust the Target progress bar so it visually matches the Reference progress. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Progress match”.
+
+    Target components (instances=2):
+    - “Reference” Mantine Progress: fixed at 33% and shows a small caption “Reference”.
+    - “Target” Mantine Progress: starts at 5% with caption “Target”.
+
+    Controls (affect Target only):
+    - Small “+1” and “-1” buttons to the right of the Target bar for fine adjustments.
+    - “Reset Target” link returns Target to 5% (distractor).
+
+    Guidance: No numeric percent text is shown for either bar; the task must be done by visual alignment using the bar fill lengths.
+
+    Feedback: Target bar fill updates immediately after each click.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Visual-only matching with fine-step adjustments across two similar instances increases precision and disambiguation requirements.
+  success_trigger:
+    human_readable:
+    - The Target progress value is within ±1% of the Reference value (33%).
+    - Only the Target instance is considered for success.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 33
+        variant: determinate
+      tolerance:
+        value_percent: 1
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Target
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Target is close but outside tolerance.
+  - Reference is modified (should be impossible).
+  - Target is reset after matching.
+  expected_interaction_path: Compare fill lengths → click Target +1/-1 until aligned → stop when Target matches Reference.
+  notes: 'Checker note: store Reference value (33) but check only Target against it to avoid accidental dependence on Reference DOM state.'
+- id: progress_bar-mantine-T07
+  name: 'Compound sections: set storage allocation segments'
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: sections
+  implementation_component: 'Mantine: Progress.Root + Progress.Section + Progress.Label'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Set the Storage allocation progress segments to Documents 35%, Photos 28%, and Other 15%. The task will finish automatically when done.
+  ui_copy: Set the Storage allocation progress segments to Documents 35%, Photos 28%, and Other 15%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card centered, titled “Storage”.
+
+    Target components on page (instances=2 of canonical progress_bar):
+    1) TARGET: A Mantine compound progress labeled “Storage allocation”, built with Progress.Root and three Progress.Section segments:
+       - Section label “Documents”
+       - Section label “Photos”
+       - Section label “Other”
+       Each section renders a Progress.Label inside the segment, and each segment has its own aria-label (e.g., “Documents segment”).
+    2) Distractor: A separate simple Progress bar labeled “Network usage” (static at 60%).
+
+    Initial state (Storage allocation):
+    - Documents: 20%
+    - Photos: 20%
+    - Other: 20%
+    - The remaining 40% of the bar is unfilled background.
+
+    Controls (affect Storage allocation only):
+    - For each segment (Documents/Photos/Other), there are “+5” and “-5” buttons next to its label.
+    - A “Reset allocation” link restores all three to 20%.
+
+    Guidance (mixed):
+    - A small legend above the bar lists the targets: “Documents 35% • Photos 28% • Other 15%”.
+    - The segments’ fill widths update visually.
+
+    Feedback: each press updates one segment width immediately; the total fill changes accordingly.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: mixed
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Multi-segment progress requires coordinating several values with discrete step controls while ignoring a distractor progress bar on the same page.
+  success_trigger:
+    human_readable:
+    - 'Within the “Storage allocation” progress bar: Documents segment value is within ±2% of 35%.'
+    - Photos segment value is within ±2% of 28%.
+    - Other segment value is within ±2% of 15%.
+    - The Network usage progress bar is ignored (not checked).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        variant: segmented
+        sections:
+        - label: Documents
+          value_percent: 35
+        - label: Photos
+          value_percent: 28
+        - label: Other
+          value_percent: 15
+      tolerance:
+        per_section_value_percent: 2
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Storage allocation
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only some segments match while at least one segment is outside tolerance.
+  - Values are correct but applied to the wrong progress bar (e.g., Network usage—should not count).
+  - Segments briefly match but end on different values after extra clicks.
+  - A segment label is matched but the underlying aria-valuenow/value state is incorrect.
+  expected_interaction_path: Use +5/-5 next to each segment label to reach Documents 35, Photos 28, Other 15 → stop when all are within tolerance.
+  notes: 'Instrumentation: expose per-section values from component state; assign stable aria-labels to each Progress.Section for checkability.'
+- id: progress_bar-mantine-T08
+  name: 'Vertical small progress: pause near 73%'
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: vertical
+  implementation_component: 'Mantine: Progress (orientation=''vertical'')'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: Start the vertical progress and pause it when it is around 73%. The task will finish automatically when done.
+  ui_copy: Start the vertical progress and pause it when it is around 73%. The task will finish automatically when done.
+  setup_description: |
+    Layout: isolated_card anchored near the top-left of the viewport. Spacing is compact and the component scale is small.
+
+    Target component: one Mantine Progress configured with orientation="vertical" and a fixed height (e.g., 180–220px). It is labeled “Vertical progress”. Initial value is 0%.
+
+    Controls:
+    - “Start” button: begins increasing the value steadily.
+    - “Pause” button: freezes the value; toggles to “Resume” after pausing.
+    - “Reset” link: returns to 0% (distractor).
+
+    Feedback: because the bar is vertical, the fill grows upward; a small numeric percent label below the bar updates while running.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Non-standard orientation plus small/compact rendering increases perceptual difficulty and target acquisition while still requiring timing-sensitive pausing near a target percent.
+  success_trigger:
+    human_readable:
+    - The vertical progress value is within ±2% of 73%.
+    - After reaching the band, the value remains stable (paused) for at least 1 second.
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 73
+        variant: determinate
+        orientation: vertical
+      tolerance:
+        value_percent: 2
+        stability_ms: 1000
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Progress is paused outside the tolerance band.
+  - Progress passes through the band but keeps increasing (not paused).
+  - Progress is reset to 0% instead of paused near 73%.
+  expected_interaction_path: Click “Start” → watch the percent label/fill → click “Pause” near 73% → confirm it stays fixed.
+  notes: 'Checker: treat orientation as metadata; still read canonical value_percent from aria-valuenow.'
+- id: progress_bar-mantine-T09
+  name: 'Dark settings panel: run Uploads check to 90%'
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Progress x2 in settings sections'
+  task_template: activate
+  secondary_template: null
+  browsergym_goal: In the Storage checks settings, run the Uploads check until its progress reaches 90%. The task will finish automatically when done.
+  ui_copy: In the Storage checks settings, run the Uploads check until its progress reaches 90%. The task will finish automatically when done.
+  setup_description: |
+    Layout: settings_panel with dark theme. The page shows a right-side main panel titled “Storage checks” with multiple sections and switches.
+
+    Target components (instances=2):
+    - Section “Uploads check” (TARGET): includes a Mantine Progress bar labeled “Uploads progress” and a “Run check” button.
+    - Section “Downloads check” (distractor): includes a similar Progress bar labeled “Downloads progress” and its own “Run check” button.
+
+    Initial state:
+    - Both progress bars start at 0% and idle.
+
+    Interaction:
+    - Clicking “Run check” in a section starts that section’s progress increasing and auto-pauses at 90%.
+
+    Distractors/clutter:
+    - Toggle switches like “Run nightly” and “Send notifications”.
+    - The Downloads section is visually similar to Uploads and is placed nearby.
+
+    Feedback: progress fills while running and then stops at 90%; a small caption “Paused at 90%” appears in the same section.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Dark theme reduces contrast and the settings panel contains two similar progress instances; success requires selecting the correct section and monitoring progress to a high target value.
+  success_trigger:
+    human_readable:
+    - The “Uploads progress” value is within ±1% of 90%.
+    - The Uploads progress value is stable for at least 0.8 seconds.
+    - Only the Uploads instance counts (Downloads is ignored).
+    canonical_predicate:
+      predicate_type: within_tolerance
+      target_state:
+        value_percent: 90
+        variant: determinate
+      tolerance:
+        value_percent: 1
+        stability_ms: 800
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Uploads check
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Downloads check reaches 90% while Uploads remains below target.
+  - Uploads runs past 90% (not paused) or is reset.
+  - Uploads is not started because the wrong section’s button is clicked.
+  expected_interaction_path: Locate “Uploads check” section → click its “Run check” → wait until Uploads progress stops near 90%.
+  notes: 'Instrumentation: assign section container data-testid=''uploads-check'' and ''downloads-check''; bind checker to uploads-check subtree.'
+- id: progress_bar-mantine-T10
+  name: 'Dashboard list: complete Photo sync task'
+  canonical_type: progress_bar
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Progress in scrollable dashboard list'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Operations dashboard, find the Photo sync task and run it until the progress reaches 100%. The task will finish automatically when done.
+  ui_copy: In the Operations dashboard, find the Photo sync task and run it until the progress reaches 100%. The task will finish automatically when done.
+  setup_description: |
+    Layout: dashboard. The page shows multiple panels (charts, recent events, and an “Operations” panel). The Operations panel contains a vertically scrollable list of tasks.
+
+    Target components: three Mantine Progress bars (instances=3), one per task row in the Operations list:
+    - “Log cleanup”
+    - “Photo sync” (TARGET)
+    - “Backup verification”
+    Only two rows are visible at a time; the list must be scrolled to reveal “Photo sync”.
+
+    Each task row contains:
+    - Task name text.
+    - A Mantine Progress bar labeled with aria-label like “Photo sync progress”.
+    - A small “Run” button.
+
+    Initial state:
+    - All tasks start at 0% and idle.
+
+    Interaction:
+    - Clicking “Run” in a row starts that row’s progress filling to 100% and then stopping.
+
+    Distractors/clutter:
+    - Other dashboard panels contain buttons and links unrelated to progress.
+    - Other tasks have similar Run buttons and progress bars.
+
+    Feedback: when running, the progress bar fill advances; at completion it reaches 100% and stays there.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: High clutter dashboard plus a scrollable list and multiple similar task rows create substantial search and disambiguation load with small targets.
+  success_trigger:
+    human_readable:
+    - The progress bar for the “Photo sync” task reaches 100%.
+    - Only the Photo sync instance counts (other tasks ignored).
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        value_percent: 100
+        variant: determinate
+      tolerance:
+        value_percent: 0
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Photo sync
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different task reaches 100% while Photo sync remains incomplete.
+  - Photo sync is started but the agent stops before it reaches 100%.
+  - The agent scrolls but never runs the Photo sync task.
+  expected_interaction_path: Scroll the Operations list until “Photo sync” row is visible → click its “Run” → wait for its progress to reach 100%.
+  notes: 'Instrumentation: identify task rows by task name text or a data-task-id; progress checker should scope to the Photo sync row only.'

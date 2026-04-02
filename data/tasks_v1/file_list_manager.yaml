@@ -1,0 +1,2309 @@
+- id: file_list_manager-antd-T01
+  name: Remove an outdated draft attachment
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Upload (controlled fileList) + Table/List + row action icons (composite manager)'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: In the Attachments list, remove the file named "draft-proposal.docx". The task will finish automatically
+    when done.
+  ui_copy: Remove "draft-proposal.docx" from the Attachments list.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page shows a single centered card titled "Project attachments" (isolated_card layout). Inside
+      the card is an Ant Design-styled file list manager rendered like an Upload file list in a compact
+      table: columns include File name, Type, Size, and Actions. The list is pre-populated with 5 files:
+      "contract-signed.pdf", "draft-proposal.docx", "receipt.png", "invoice-feb.pdf", and "notes.txt".
+      Each row has an Actions cell with icon buttons (tooltip on hover): Rename, Download (disabled), and
+      Remove (trash). Remove deletes immediately (no confirmation) and a small toast "Removed" appears. A
+      disabled "Add files" button is present above the list as a distractor but is not required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single-step removal in a short list; the main challenge is clicking the correct row’s small Remove icon.
+  success_trigger:
+    human_readable:
+    - '"draft-proposal.docx" is not present anywhere in the Attachments list.'
+    - All other files remain present (no extra deletions).
+    canonical_predicate:
+      predicate_type: file_absent
+      target_state:
+        instance: Attachments
+        file_name: draft-proposal.docx
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Removing a different file (e.g., "contract-signed.pdf") instead of "draft-proposal.docx".
+  - '"draft-proposal.docx" still appears in the list (even if scrolled off-screen or filtered).'
+  - The file is only visually hidden by a filter/search but still exists in the underlying list state.
+  - Deleting additional files beyond the target.
+  expected_interaction_path: |-
+    Click the Remove (trash) icon in the "draft-proposal.docx" row → verify the row disappears.
+  notes: |-
+    Instrumentation: add data-testid on manager root (flm-root), instance (flm-Attachments), each row
+    (flm-row-<fileId>), and row actions (flm-action-remove, flm-action-rename). AntD Upload supports
+    controlled file list patterns via fileList; this task assumes a controlled list to allow
+    deterministic checking.
+- id: file_list_manager-antd-T02
+  name: Select the signed contract file
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + Checkbox selection + row highlight (composite manager)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Attachments list, select the file named "contract-signed.pdf" (check its row checkbox). The task
+    will finish automatically when done.
+  ui_copy: Select "contract-signed.pdf" in the Attachments list.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A centered "Project attachments" card contains one file list manager. The manager is a table with a
+      leading checkbox column for row selection and 6 preloaded files. No rows are selected initially.
+      Selecting a row checks its checkbox and highlights the row. A header counter reads "Selected: 0" and
+      updates live. Other row action icons (Rename/Remove) exist but are not needed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Selecting a single checkbox is straightforward; success requires choosing the correct row in a small table.
+  success_trigger:
+    human_readable:
+    - Exactly one row is selected.
+    - The selected row corresponds to the file "contract-signed.pdf".
+    canonical_predicate:
+      predicate_type: file_selection_equals
+      target_state:
+        instance: Attachments
+        selected_file_names:
+        - contract-signed.pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting a different file (wrong checkbox).
+  - Selecting multiple files (more than one checkbox checked).
+  - Only focusing the row (keyboard focus) without actually selecting it.
+  - Selecting the correct file but in the wrong instance (if additional instances are present—should not apply here).
+  expected_interaction_path: |-
+    Find the "contract-signed.pdf" row → click its checkbox → confirm it is checked and the counter
+    shows Selected: 1.
+  notes: |-
+    Checker should read the manager’s selected set (by stable file IDs) rather than DOM focus state.
+- id: file_list_manager-antd-T03
+  name: Rename a receipt image for clarity
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + inline rename editor (Input) + Save/Cancel controls (composite manager)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Attachments list, rename the file "receipt.png" to "lunch-receipt.png" and save the change. The
+    task will finish automatically when done.
+  ui_copy: Rename "receipt.png" to "lunch-receipt.png" in Attachments.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Attachments manager is a table with 6 files. Each row has a Rename (pencil) icon. Clicking
+      Rename switches that row into edit mode: the File name cell becomes a text input prefilled with the
+      current name, and two buttons appear: "Save" and "Cancel". Only one row can be in edit mode at a
+      time. A small helper text under the input says "Name must be unique" (but the target name is
+      unique). No other overlays are used.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires entering an exact new filename and committing it with Save, but the UI is otherwise simple and
+      isolated.
+  success_trigger:
+    human_readable:
+    - The file previously named "receipt.png" now has the displayed name "lunch-receipt.png" in the Attachments list.
+    - The rename is committed (no active edit mode remains).
+    canonical_predicate:
+      predicate_type: file_name_equals
+      target_state:
+        instance: Attachments
+        original_file_name: receipt.png
+        new_file_name: lunch-receipt.png
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the new name but not clicking "Save" (leaving edit mode uncommitted).
+  - Renaming the wrong file row.
+  - Name is close but not exact (extra spaces, wrong hyphenation, wrong extension/case).
+  - Creating a duplicate name error state (should not happen with the target name).
+  expected_interaction_path: |-
+    Click Rename on "receipt.png" → edit the text to "lunch-receipt.png" → click Save → verify the row
+    shows the new name.
+  notes: |-
+    Checker should map the renamed row via stable fileId, not by positional index (since names change).
+- id: file_list_manager-antd-T04
+  name: Mark an invoice to keep
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + Switch/Checkbox per row (composite manager)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Attachments list, turn ON the "Keep" toggle for the file "invoice-feb.pdf". The task will finish
+    automatically when done.
+  ui_copy: Turn on Keep for "invoice-feb.pdf".
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single file list manager shows a "Keep" column with an on/off toggle per file. The list includes 6
+      files and is not scrollable. "invoice-feb.pdf" currently has Keep = Off. Toggling Keep updates
+      immediately and shows a subtle check icon in the row for 1 second. Other files have mixed Keep
+      states to avoid a trivial pattern.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single toggle flip in an isolated table; the key is targeting the correct row.
+  success_trigger:
+    human_readable:
+    - For "invoice-feb.pdf", the Keep flag is ON in the Attachments manager.
+    - No other file’s Keep flag is changed.
+    canonical_predicate:
+      predicate_type: file_flag_equals
+      target_state:
+        instance: Attachments
+        file_name: invoice-feb.pdf
+        flag: keep
+        value: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling Keep for a different file.
+  - Leaving Keep for "invoice-feb.pdf" Off.
+  - Changing multiple toggles (unintended edits).
+  - Only opening a row menu without changing the Keep state.
+  expected_interaction_path: |-
+    Locate the "invoice-feb.pdf" row → click its Keep toggle to turn it on.
+  notes: |-
+    Expose Keep state in accessibility tree (aria-checked) to support AX-based agents.
+- id: file_list_manager-antd-T05
+  name: Bulk-remove two draft files in a form
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + bulk selection + Popconfirm/Modal confirm (composite manager)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Attachments section, select the files "draft-v1.docx" and "draft-v2.docx", then remove the selected
+    files and confirm the removal. The task will finish automatically when done.
+  ui_copy: 'Remove the selected drafts: draft-v1.docx and draft-v2.docx.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: form_section
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: low
+    Overlay: popover (opened as described in the UI)
+    UI details:
+      The page is a "Submit report" form section (form_section layout) with several standard inputs above
+      (Title, Department, Notes) as low clutter. Below, an "Attachments" file list manager (AntD table)
+      contains 9 files with checkboxes and a toolbar. The toolbar includes "Remove selected" (disabled
+      until ≥1 file is selected) and "Select all". When "Remove selected" is clicked, a confirmation
+      popover appears anchored to the button with two actions: "Cancel" and "Confirm remove". Only after
+      confirming are the files deleted. Initially, no files are selected and both drafts are present.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Requires selecting an exact set of rows, using a bulk action, and confirming in a popover amid light form
+      clutter.
+  success_trigger:
+    human_readable:
+    - Both "draft-v1.docx" and "draft-v2.docx" are absent from the Attachments list after the confirmed bulk removal.
+    - All other files remain present.
+    canonical_predicate:
+      predicate_type: file_set_absent
+      target_state:
+        instance: Attachments
+        file_names:
+        - draft-v1.docx
+        - draft-v2.docx
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm remove
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two drafts is removed.
+  - The drafts are selected but the agent never confirms the removal (popover left open or canceled).
+  - A different file is removed instead (wrong selection).
+  - The drafts are merely filtered out of view but still exist in the underlying list state.
+  expected_interaction_path: |-
+    Check the boxes for "draft-v1.docx" and "draft-v2.docx" → click "Remove selected" → click "Confirm
+    remove" in the popover → verify both rows disappear.
+  notes: |-
+    Checker should verify deletion in underlying model, not just DOM visibility. Provide testids for
+    popover buttons.
+- id: file_list_manager-antd-T06
+  name: Filter and select a warranty document
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Input.Search + Table selection (composite manager)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Use the Attachments search box to find "warranty-card.pdf" and select it. The task will finish automatically
+    when done.
+  ui_copy: Search for and select "warranty-card.pdf".
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: top_right
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single Attachments manager is positioned near the top-right of the viewport (top_right placement)
+      within an isolated card. The manager contains a search field labeled "Search files" above the table.
+      Typing filters the visible rows by substring match on filename. The file list contains 14 items
+      (some with similar names like "warranty.pdf", "warranty-card.pdf", and "warranty-card-old.pdf"). Row
+      selection is via a checkbox column; selection persists even when the list is filtered. Initially,
+      nothing is selected and the search box is empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The main challenge is disambiguating similar filenames in a longer list and using the search field to locate
+      the exact target.
+  success_trigger:
+    human_readable:
+    - '"warranty-card.pdf" is selected in the Attachments manager.'
+    - No other files are selected.
+    canonical_predicate:
+      predicate_type: file_selection_equals
+      target_state:
+        instance: Attachments
+        selected_file_names:
+        - warranty-card.pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "warranty.pdf" or "warranty-card-old.pdf" instead of the exact target.
+  - Selecting multiple files.
+  - Only typing the search query but not selecting the file.
+  - Selecting the correct file but then clearing selection (final state not selected).
+  expected_interaction_path: |-
+    Click the "Search files" input → type part of the filename (e.g., "warranty-card") → locate the
+    exact row → check its checkbox.
+  notes: |-
+    For robustness, keep filtering purely client-side and deterministic; expose search input value to
+    checker if needed for debugging.
+- id: file_list_manager-antd-T07
+  name: Move a file into the correct folder (two managers on page)
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table + per-row Folder Select/Dropdown (composite manager)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the "Client uploads" file list, move the file "passport.jpg" to the folder "ID Photos". The task will
+    finish automatically when done.
+  ui_copy: 'Client uploads: move passport.jpg to ID Photos.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 2
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page contains two file list managers (instances=2) stacked in one centered card: "Client
+      uploads" (top) and "Internal notes" (bottom). They look similar. Each manager is an AntD table with
+      columns: File name, Folder, and Actions. The Folder column is editable via a dropdown selector in
+      each row (options: Unsorted, ID Photos, Contracts, Receipts). In "Client uploads", the file
+      "passport.jpg" currently has Folder = Unsorted. "Internal notes" contains a different file also
+      named "passport.jpg" as a distractor, but its folder should not be changed. Changing Folder applies
+      immediately (no Save button), and the selected folder label updates in the cell.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires acting in the correct instance (two similar managers) and choosing the right folder option from
+      a dropdown.
+  success_trigger:
+    human_readable:
+    - In the "Client uploads" manager, "passport.jpg" has Folder set to "ID Photos".
+    - No folder changes occur in the "Internal notes" manager.
+    canonical_predicate:
+      predicate_type: file_metadata_equals
+      target_state:
+        instance: Client uploads
+        file_name: passport.jpg
+        field: folder
+        value: ID Photos
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Client uploads
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the folder for the "passport.jpg" row in the "Internal notes" manager (wrong instance).
+  - Setting the folder to a different option (e.g., Contracts) instead of "ID Photos".
+  - Opening the folder dropdown but not making a selection (final folder still Unsorted).
+  - Changing additional rows’ folders unintentionally.
+  expected_interaction_path: |-
+    Locate the "Client uploads" section → find the "passport.jpg" row → open its Folder dropdown → click
+    "ID Photos" → verify the cell updates.
+  notes: |-
+    Disambiguation relies on the visible section headers; add data-testid per instance header and for
+    each Folder select control.
+- id: file_list_manager-antd-T08
+  name: Reorder files by dragging in compact mode
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table/List + drag handles for row reordering (composite manager)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Attachments list, drag "final-checklist.pdf" so it becomes the first file in the list. The task
+    will finish automatically when done.
+  ui_copy: Drag final-checklist.pdf to the top of the Attachments list.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: compact
+      - layout: isolated_card
+      - placement: center
+      - scale: small
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single Attachments manager is shown in an isolated card, but rendered in compact spacing with
+      small scale: rows are short, text is smaller, and the drag handle is a small grip icon at the far
+      left of each row. The list contains 8 files in this initial order: agenda.pdf, budget.xlsx, final-
+      checklist.pdf, hotel-confirmation.pdf, map.png, minutes.docx, packing-list.txt, team-photo.jpg.
+      Reordering is done by dragging the grip handle; the row follows the cursor and a thin insertion line
+      indicates the drop position. The new order applies immediately on drop (no Apply button).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Tiny drag handles in compact/small mode require precise target acquisition and careful placement to achieve
+      an exact ordering.
+  success_trigger:
+    human_readable:
+    - '"final-checklist.pdf" is the first item in the Attachments list.'
+    - All other files remain present and keep their relative order after the move.
+    canonical_predicate:
+      predicate_type: file_order_equals
+      target_state:
+        instance: Attachments
+        ordered_file_names:
+        - final-checklist.pdf
+        - agenda.pdf
+        - budget.xlsx
+        - hotel-confirmation.pdf
+        - map.png
+        - minutes.docx
+        - packing-list.txt
+        - team-photo.jpg
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dropping "final-checklist.pdf" in the wrong position (e.g., second).
+  - Accidentally reordering other rows (final overall order does not match).
+  - Dragging by the filename cell instead of the handle if the UI restricts dragging to the handle (no reorder occurs).
+  - Only scrolling the list without changing order.
+  expected_interaction_path: |-
+    Grab the drag handle on the "final-checklist.pdf" row → drag upward until the insertion marker is at
+    the top → drop → verify it is now first.
+  notes: |-
+    For deterministic checking, record order by stable file IDs; drag handle should have aria-label like
+    "Reorder".
+- id: file_list_manager-antd-T09
+  name: Remove the image that matches a reference preview
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: List with thumbnails + row actions (composite manager)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Images attachments list, remove the image that matches the reference preview shown above the list.
+    The task will finish automatically when done.
+  ui_copy: Delete the image that matches the reference preview.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: dark
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: visual
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page uses a dark theme. A single centered card titled "Images" contains a file list manager
+      specialized for image attachments. At the top of the card, a "Reference preview" panel shows a
+      medium-sized thumbnail (the target image). Below, the image list shows 8 rows with small thumbnails,
+      generic camera filenames (e.g., IMG_1021.jpg, IMG_1022.jpg, ...), and a Remove (trash) icon per row.
+      Thumbnails are visually distinct but filenames are intentionally similar. Removing a row deletes it
+      immediately (no confirmation) and the list reflows.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target is specified visually, requiring reliable perception and matching among many similar-looking
+      rows; deletion must hit the correct row action.
+  success_trigger:
+    human_readable:
+    - The image that matches the Reference preview is removed from the Images list.
+    - No other image rows are removed.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance: Images
+        reference_id: ref-preview-1
+        expected_effect: target_file_removed
+        target_file_id: img-1024
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Images
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Removing an image that does not match the reference preview.
+  - Removing multiple images.
+  - Only selecting/highlighting the matching image without deleting it.
+  - The matching image is still present but scrolled out of view or filtered.
+  expected_interaction_path: |-
+    Compare the reference thumbnail to the row thumbnails → identify the matching row → click its Remove
+    (trash) icon → confirm the row disappears.
+  notes: |-
+    Provide stable reference_id and file_id in the DOM for the checker; ensure thumbnails have alt text
+    for AX-tree observability experiments.
+- id: file_list_manager-antd-T10
+  name: Sort attachments by size inside a table cell
+  canonical_type: file_list_manager
+  implementation_source: antd
+  implementation_variant: composite
+  implementation_component: 'AntD: Table-in-table (project table cell opens Popover containing file list table) (composite
+    manager)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Projects table, open the Attachments for "Q1 Audit" and sort the attachment list by Size so the
+    largest files are first. The task will finish automatically when done.
+  ui_copy: 'Q1 Audit attachments: sort by Size (largest first).'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: table_cell
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: medium
+    Overlay: popover (opened as described in the UI)
+    UI details:
+      The main page is a simple Projects table (table_cell layout) with several rows ("Q1 Audit", "Website
+      refresh", "Vendor onboarding", etc.) and columns like Owner, Status, Due date, and Attachments. This
+      creates medium clutter, but only the "Q1 Audit" row has an interactive Attachments control: a small
+      "3 files" pill button. Clicking that pill opens a popover anchored to the cell, showing a mini file
+      list manager as a table with sortable headers (Name, Size, Modified). Initially the attachment list
+      is unsorted (default order). Clicking the Size header cycles: ascending → descending → none. A sort
+      arrow icon indicates the active direction. No confirmation is required; the sort state updates
+      immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires locating the correct row in a cluttered table, opening a nested popover, and setting the exact
+      sort direction using small header targets.
+  success_trigger:
+    human_readable:
+    - In the "Q1 Audit" attachments popover, the file list is sorted by Size in descending order (largest first).
+    canonical_predicate:
+      predicate_type: file_list_sorted_by
+      target_state:
+        instance: Q1 Audit Attachments
+        sort_key: size
+        sort_direction: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Q1 Audit Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting by Size ascending (smallest first) instead of descending.
+  - Sorting a different column (e.g., Modified) instead of Size.
+  - Interacting with the wrong table row (not "Q1 Audit").
+  - Opening the popover but leaving the list in the default unsorted state.
+  expected_interaction_path: |-
+    Find the "Q1 Audit" row → click its "3 files" Attachments pill → click the Size column header until
+    the arrow indicates descending → verify largest files appear first.
+  notes: |-
+    Checker should read sort state from component model (sort_key + direction), not infer from DOM
+    order. Add testid on the Q1 Audit attachments trigger.
+- id: file_list_manager-mui-T01
+  name: Remove a stray notes file
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + ListItemSecondaryAction IconButton (delete) (composite manager)'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: In the Attachments list, remove the file named "notes.txt". The task will finish automatically when done.
+  ui_copy: Delete notes.txt from Attachments.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: dialog modal (opened as described in the UI)
+    UI details:
+      A centered card contains one MUI-styled file list manager rendered as a vertical List. Each ListItem
+      shows a file icon, the filename, and a trailing delete IconButton (trash). The list is pre-populated
+      with 6 files including "notes.txt". Clicking the delete icon removes the item immediately and shows
+      a Snackbar message "File removed". No confirmation dialog is used in this task.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: Single click deletion on an isolated list; low density and clear filename make it easy.
+  success_trigger:
+    human_readable:
+    - '"notes.txt" is not present in the Attachments list.'
+    - All other files remain present.
+    canonical_predicate:
+      predicate_type: file_absent
+      target_state:
+        instance: Attachments
+        file_name: notes.txt
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Removing a different file instead of "notes.txt".
+  - '"notes.txt" remains in the underlying list state.'
+  - Hiding the file via search/filter without deleting it.
+  - Deleting extra files.
+  expected_interaction_path: |-
+    Locate the "notes.txt" list item → click its delete (trash) icon → confirm it disappears.
+  notes: |-
+    Use aria-labels on IconButtons (e.g., "Delete notes.txt") to support accessibility-tree observation
+    modes.
+- id: file_list_manager-mui-T02
+  name: Rename a scanned image
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List + inline TextField rename + Save IconButton (composite manager)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Attachments list, rename "scan_001.jpg" to "passport_scan.jpg" and save the change. The task will
+    finish automatically when done.
+  ui_copy: Rename scan_001.jpg to passport_scan.jpg.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: modal (opened as described in the UI)
+    UI details:
+      One file list manager is shown inside a centered card. The manager is a MUI List with per-item
+      actions. Each item has an Edit (pencil) IconButton. Clicking Edit turns the filename into an inline
+      TextField and shows two controls: a "Save" IconButton and a "Cancel" IconButton. The TextField is
+      prefilled with the current filename. Validation is minimal (non-empty) and the target name is valid.
+      No modal is used; rename is committed only when Save is clicked.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires exact text entry and committing via a Save control, but the interaction is localized and unambiguous.
+  success_trigger:
+    human_readable:
+    - The file originally named "scan_001.jpg" is now named "passport_scan.jpg" in the Attachments list.
+    - The rename is committed (not left in edit mode).
+    canonical_predicate:
+      predicate_type: file_name_equals
+      target_state:
+        instance: Attachments
+        original_file_name: scan_001.jpg
+        new_file_name: passport_scan.jpg
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the text but not clicking Save.
+  - Renaming a different item.
+  - Name is close but not exact (wrong underscore/case/extension).
+  - Leaving the list in an error state (empty name).
+  expected_interaction_path: |-
+    Click Edit on "scan_001.jpg" → type "passport_scan.jpg" → click Save → verify the displayed name
+    updates.
+  notes: |-
+    Checker should verify the committed model value, not transient TextField content while editing.
+- id: file_list_manager-mui-T03
+  name: Select a spreadsheet file
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Table/List with Checkbox selection (composite manager)'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Attachments list, select the file "budget.xlsx". The task will finish automatically when done.
+  ui_copy: Select budget.xlsx in Attachments.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Attachments manager is rendered as a compact MUI Table with a leading checkbox column and 7
+      rows. No rows are selected initially. Selecting a row checks its checkbox and updates a small
+      caption "1 selected" under the table. Other action icons exist but do not affect selection.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single checkbox selection in an uncluttered table; the target filename is clearly visible.
+  success_trigger:
+    human_readable:
+    - 'Exactly one file is selected: "budget.xlsx".'
+    canonical_predicate:
+      predicate_type: file_selection_equals
+      target_state:
+        instance: Attachments
+        selected_file_names:
+        - budget.xlsx
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting the wrong file.
+  - Selecting multiple files.
+  - Only focusing the row without checking the checkbox.
+  - Selecting and then deselecting (final selection empty).
+  expected_interaction_path: |-
+    Find the "budget.xlsx" row → click its checkbox → confirm it is selected.
+  notes: |-
+    Expose selection state via aria-checked on the checkbox input.
+- id: file_list_manager-mui-T04
+  name: Select three invoices in the correct manager
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Two Tables with Checkbox selection (composite manager)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the "Billing attachments" list, select "invoice-jan.pdf", "invoice-feb.pdf", and "invoice-mar.pdf".
+    The task will finish automatically when done.
+  ui_copy: 'Billing attachments: select invoices for Jan, Feb, and Mar.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 2
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page contains two file list managers (instances=2) in a single centered card: "Billing
+      attachments" (left) and "Support tickets" (right). Both are MUI Tables with a checkbox selection
+      column. The Billing list contains several invoices and receipts, including the three target invoice
+      PDFs. The Support tickets list also contains PDFs with similar names (e.g., "invoice-help.pdf") as
+      distractors. No files are selected initially; selection is immediate with no confirmation.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: The task requires selecting an exact set of three files and doing it in the correct one of two similar
+      managers.
+  success_trigger:
+    human_readable:
+    - 'In "Billing attachments", the selected set is exactly: invoice-jan.pdf, invoice-feb.pdf, invoice-mar.pdf.'
+    - No files are selected in "Support tickets".
+    canonical_predicate:
+      predicate_type: file_selection_equals
+      target_state:
+        instance: Billing attachments
+        selected_file_names:
+        - invoice-jan.pdf
+        - invoice-feb.pdf
+        - invoice-mar.pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Billing attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting any file in the wrong manager (Support tickets).
+  - Selecting only some of the three invoices.
+  - Selecting additional files beyond the three invoices.
+  - Selecting the correct set but in a different instance than "Billing attachments".
+  expected_interaction_path: |-
+    Identify the "Billing attachments" table → check the boxes for the three invoice rows → verify only
+    those three are selected.
+  notes: |-
+    Checker should evaluate selection per instance independently. Add per-instance data-testid (flm-
+    Billing, flm-Support).
+- id: file_list_manager-mui-T05
+  name: Delete a draft contract with confirmation
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List/Table + Dialog confirmation (composite manager)'
+  task_template: confirm_cancel
+  secondary_template: null
+  browsergym_goal: In the Attachments list, delete the file "draft_contract.docx" and confirm the deletion in the dialog.
+    The task will finish automatically when done.
+  ui_copy: Delete draft_contract.docx (confirm in dialog).
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: dialog modal (opened as described in the UI)
+    UI details:
+      A single Attachments manager is displayed in a centered card. Each row has a delete (trash)
+      IconButton. Clicking delete opens a Material UI Dialog titled "Delete file?" with body text showing
+      the filename to be deleted. The dialog has two buttons: "Cancel" and a primary red "Delete". No
+      deletion happens until the "Delete" button is pressed. After deletion, a Snackbar "Deleted" appears.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Introduces an interruptive modal confirmation step; success depends on confirming the right action rather
+      than just clicking the delete icon.
+  success_trigger:
+    human_readable:
+    - '"draft_contract.docx" is removed from the Attachments list.'
+    - The delete action was confirmed (not canceled).
+    canonical_predicate:
+      predicate_type: file_absent
+      target_state:
+        instance: Attachments
+        file_name: draft_contract.docx
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Clicking delete but then pressing "Cancel" (file remains).
+  - Closing the dialog without confirming.
+  - Deleting a different file.
+  - The file disappears only temporarily due to filtering (should be true deletion).
+  expected_interaction_path: |-
+    Click the delete icon on "draft_contract.docx" → in the dialog click "Delete" → verify the row is
+    gone.
+  notes: |-
+    Dialog should trap focus and have accessible labels; checker can also verify the dialog was
+    confirmed via emitted action event.
+- id: file_list_manager-mui-T06
+  name: Search and mark the correct file as Primary
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Search TextField + List with Star (primary) toggle (composite manager)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: In the "Shared files" list, use the search box to find "warranty-card.pdf" and mark it as Primary (star
+    it). The task will finish automatically when done.
+  ui_copy: 'Shared files: star warranty-card.pdf as Primary.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 2
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page contains two similar file list managers (instances=2): "Shared files" and "Private files".
+      Each manager has a search TextField labeled "Search" that filters visible rows by filename
+      substring. Rows include a star IconButton used to mark a single Primary file (filled star =
+      Primary). Initially, in "Shared files" a different document is Primary, and "warranty-card.pdf" is
+      not. The "Private files" manager also contains a "warranty-card.pdf" entry as a distractor.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Requires disambiguating between two managers and similar filenames, using search, and correctly toggling
+      the Primary (star) state.
+  success_trigger:
+    human_readable:
+    - In the "Shared files" manager, the Primary file is "warranty-card.pdf".
+    canonical_predicate:
+      predicate_type: file_flag_equals
+      target_state:
+        instance: Shared files
+        file_name: warranty-card.pdf
+        flag: primary
+        value: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Shared files
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Starring the file in the wrong manager ("Private files").
+  - Selecting the file but not marking it as Primary (star remains off).
+  - Marking a similarly named file (e.g., "warranty.pdf") as Primary.
+  - Leaving multiple files starred if the UI allows it (should be single-primary).
+  expected_interaction_path: |-
+    In "Shared files", type "warranty-card" into Search → find the matching row → click the star
+    IconButton to set it as Primary.
+  notes: |-
+    Expose which manager is active via headings and per-instance testids; star buttons should have aria-
+    label like "Set primary".
+- id: file_list_manager-mui-T07
+  name: Reset a modified file list back to the original
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Toolbar button "Reset changes" restoring baseline list state (composite manager)'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: Reset the Attachments list back to its original state by using the "Reset changes" control. The task will
+    finish automatically when done.
+  ui_copy: Reset changes in the Attachments list.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: bottom_left
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Attachments manager appears near the bottom-left of the viewport (bottom_left placement) in an
+      isolated card. At the top of the manager is a small warning banner: "You have unsaved changes" and a
+      button labeled "Reset changes". The list is intentionally not in its original state: (1) the file
+      order has been changed so "summary.txt" appears above "final_report.pdf", and (2) the file "old-
+      data.csv" is marked as Archived (badge "Archived"). Clicking "Reset changes" restores the original
+      order and clears all temporary flags back to the baseline snapshot.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The agent must recognize the reset affordance and return the manager to a specific baseline state; the
+      placement variation adds mild acquisition overhead.
+  success_trigger:
+    human_readable:
+    - 'The Attachments manager matches the baseline snapshot: original order restored and temporary flags (like Archived)
+      cleared.'
+    canonical_predicate:
+      predicate_type: file_list_equals_baseline
+      target_state:
+        instance: Attachments
+        baseline_snapshot_id: initial
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving the list in the modified state (reset not clicked).
+  - Only fixing one aspect (order restored but Archived badge still set, or vice versa).
+  - Using browser refresh or navigation instead of the in-UI reset control (should not count unless it triggers the same baseline
+    state).
+  - Resetting the wrong list if multiple are present.
+  expected_interaction_path: |-
+    Locate the banner → click "Reset changes" → verify the banner disappears and the list returns to the
+    original order/state.
+  notes: |-
+    Checker can compare current list state to a stored baseline (order + per-file flags). Add testid for
+    reset button.
+- id: file_list_manager-mui-T08
+  name: Drag-reorder in dark theme
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List with drag handles (Sortable) in dark theme (composite manager)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Attachments list, drag "final_report.pdf" so it ends up directly above "summary.txt". The task will
+    finish automatically when done.
+  ui_copy: 'Reorder: final_report.pdf should be directly above summary.txt.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: dark
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page is in dark theme. The Attachments manager is an isolated centered card with a sortable MUI
+      List. Each row has a small drag handle icon (grip) on the left; dragging by the handle reorders
+      items. The list contains 6 files in this initial order: draft.md, figures.png, summary.txt,
+      final_report.pdf, appendix.pdf, raw-data.csv. The goal requires placing "final_report.pdf"
+      immediately before "summary.txt" (between figures.png and summary.txt). Order changes apply
+      immediately on drop; there is no Apply button.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Requires a precise drag-and-drop reorder to achieve an exact adjacency relation, with dark theme reducing
+      visual contrast for small handles.
+  success_trigger:
+    human_readable:
+    - 'The Attachments list order is: draft.md, figures.png, final_report.pdf, summary.txt, appendix.pdf, raw-data.csv.'
+    canonical_predicate:
+      predicate_type: file_order_equals
+      target_state:
+        instance: Attachments
+        ordered_file_names:
+        - draft.md
+        - figures.png
+        - final_report.pdf
+        - summary.txt
+        - appendix.pdf
+        - raw-data.csv
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - '"final_report.pdf" is moved but not directly above "summary.txt".'
+  - Other rows are reordered so the overall order does not match the expected sequence.
+  - Dragging without dropping (no committed reorder).
+  - Attempting to reorder by clicking the row (if drag requires the handle).
+  expected_interaction_path: |-
+    Grab the drag handle for "final_report.pdf" → drag upward until the insertion marker is above
+    "summary.txt" → drop → verify the new order.
+  notes: |-
+    Make drag handles keyboard-focusable for accessibility experiments; expose current order as a
+    serialized attribute for checker debugging.
+- id: file_list_manager-mui-T09
+  name: Delete the document that matches a preview thumbnail
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: List with document thumbnails + IconButton delete (composite manager)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Documents list, remove the file that matches the preview thumbnail shown in the Reference panel.
+    The task will finish automatically when done.
+  ui_copy: Delete the file that matches the Reference preview.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: top_left
+      - scale: default
+      - instances: 1
+      - guidance: visual
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Documents manager is placed near the top-left of the viewport (top_left placement) in an
+      otherwise simple page. Above the list, a "Reference" panel shows a small preview thumbnail of the
+      target PDF (first page image). The list contains 12 PDF items with very similar names (e.g.,
+      document-01.pdf, document-02.pdf, ...). Each item includes its own small thumbnail and a trailing
+      delete IconButton. Deletion is immediate (no confirmation) and the item is removed from the list.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: top_left
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: The target must be identified by visual thumbnail matching among many similar items; small delete buttons
+      add acquisition difficulty.
+  success_trigger:
+    human_readable:
+    - The file matching the Reference preview thumbnail is removed from the Documents list.
+    - No other document is removed.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance: Documents
+        reference_id: ref-preview-1
+        expected_effect: target_file_removed
+        target_file_id: pdf-07
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Documents
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Removing a different PDF whose thumbnail does not match the reference.
+  - Removing multiple PDFs.
+  - Only selecting the matching PDF without deleting it.
+  - The matching PDF remains in the underlying list state.
+  expected_interaction_path: |-
+    Compare the reference thumbnail to list thumbnails → identify the matching row → click its delete
+    icon → confirm it disappears.
+  notes: |-
+    Ensure thumbnails have alt text and the delete button has aria-label including filename/id for
+    robust checking.
+- id: file_list_manager-mui-T10
+  name: Sort a dense attachment table in small scale
+  canonical_type: file_list_manager
+  implementation_source: mui
+  implementation_variant: composite
+  implementation_component: 'MUI: Table with sortable headers (TableSortLabel) in small scale (composite manager)'
+  task_template: table_operation
+  secondary_template: null
+  browsergym_goal: In the Attachments table, sort by Size so the largest files are shown first. The task will finish automatically
+    when done.
+  ui_copy: Sort Attachments by Size (largest first).
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: small
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single Attachments manager is shown in a centered card, but rendered in small scale: reduced font
+      size and tighter row height. The manager is a MUI Table with sortable headers (Name, Size, Type).
+      There are 25 files spanning many sizes. Initially the table is unsorted. Clicking the Size header
+      cycles through ascending and descending sort; an arrow indicator shows direction. No confirmation is
+      required; sorting updates immediately.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small-scale rendering makes the sortable header a small target, and the dense list increases visual interference
+      when verifying sort direction.
+  success_trigger:
+    human_readable:
+    - The Attachments table is sorted by Size in descending order (largest first).
+    canonical_predicate:
+      predicate_type: file_list_sorted_by
+      target_state:
+        instance: Attachments
+        sort_key: size
+        sort_direction: desc
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Sorting by Size ascending (smallest first).
+  - Sorting a different column.
+  - Leaving the table unsorted.
+  - Achieving the correct visual order but without the component’s sort state set (checker reads sort model).
+  expected_interaction_path: |-
+    Click the Size header until the sort arrow indicates descending → confirm largest sizes appear at
+    the top.
+  notes: |-
+    Checker should use the table’s sort model state (e.g., orderBy/order). Expose sort state via data
+    attributes for debugging.
+- id: file_list_manager-mantine-T01
+  name: Make an image file public
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + Checkbox/Switch per row (composite manager)'
+  task_template: toggle_state
+  secondary_template: null
+  browsergym_goal: In the Attachments list, turn ON the "Public" toggle for the file "team_photo.png". The task will finish
+    automatically when done.
+  ui_copy: Turn on Public for team_photo.png.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single centered card contains a Mantine-styled file list manager displayed as a Table. Columns:
+      File, Size, Public. The Public column uses a checkbox-style toggle per row. The list has 6 files;
+      "team_photo.png" currently has Public unchecked. Toggling Public applies immediately and the
+      checkbox reflects the state.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: A single per-row toggle in a small table; minimal layering and clear label.
+  success_trigger:
+    human_readable:
+    - '"team_photo.png" has Public enabled in the Attachments manager.'
+    - No other Public toggles change.
+    canonical_predicate:
+      predicate_type: file_flag_equals
+      target_state:
+        instance: Attachments
+        file_name: team_photo.png
+        flag: public
+        value: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Toggling Public for a different file.
+  - Leaving Public for "team_photo.png" off.
+  - Changing multiple toggles unintentionally.
+  - Only selecting the row without changing the Public state.
+  expected_interaction_path: |-
+    Find the "team_photo.png" row → click its Public checkbox to enable it.
+  notes: |-
+    Use Mantine Checkbox/Switch with proper aria-checked for semantic observability.
+- id: file_list_manager-mantine-T02
+  name: Remove an outdated logo file
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + ActionIcon (delete) (composite manager)'
+  task_template: file_manage
+  secondary_template: null
+  browsergym_goal: In the Attachments list, remove the file named "old_logo.svg". The task will finish automatically when
+    done.
+  ui_copy: Delete old_logo.svg from Attachments.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Attachments manager is a Mantine Table inside an isolated centered card. Rows show file name and
+      type icons. The Actions column contains ActionIcon buttons for Rename and Remove. Remove deletes the
+      row immediately (no confirmation) and shows a small notification "Removed". The list includes
+      "old_logo.svg" among 7 items.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 1
+      disambiguation_load: 1
+    justification: One-step removal in a short, uncluttered list.
+  success_trigger:
+    human_readable:
+    - '"old_logo.svg" is absent from the Attachments list.'
+    - All other files remain present.
+    canonical_predicate:
+      predicate_type: file_absent
+      target_state:
+        instance: Attachments
+        file_name: old_logo.svg
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Removing a different file.
+  - '"old_logo.svg" remains present (even if hidden).'
+  - Deleting multiple files.
+  - Only opening a context menu without completing removal.
+  expected_interaction_path: |-
+    Locate the "old_logo.svg" row → click its Remove ActionIcon → verify the row disappears.
+  notes: |-
+    Action icons should include title/aria-label per Mantine accessibility guidance.
+- id: file_list_manager-mantine-T03
+  name: Rename an audio clip
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Inline TextInput rename with Save button (composite manager)'
+  task_template: enter_text
+  secondary_template: null
+  browsergym_goal: In the Attachments list, rename "meeting.m4a" to "meeting-clip.m4a" and save the change. The task will
+    finish automatically when done.
+  ui_copy: Rename meeting.m4a → meeting-clip.m4a.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single file list manager is displayed as a Mantine Table in the center of the page. Each row has a
+      Rename ActionIcon. Clicking it turns the filename cell into a TextInput with the current name
+      prefilled, and shows two small buttons: "Save" and "Cancel". "meeting.m4a" is present and not
+      currently being edited. The new name "meeting-clip.m4a" is unique and accepted without warnings.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires exact text entry and an explicit save action, but in a simple isolated table.
+  success_trigger:
+    human_readable:
+    - The file originally named "meeting.m4a" is now named "meeting-clip.m4a" in the Attachments list.
+    - The rename is committed (edit mode closed).
+    canonical_predicate:
+      predicate_type: file_name_equals
+      target_state:
+        instance: Attachments
+        original_file_name: meeting.m4a
+        new_file_name: meeting-clip.m4a
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Typing the new name but not clicking Save.
+  - Renaming the wrong row.
+  - Name differs from target (missing hyphen, wrong extension).
+  - Leaving the row in edit mode (uncommitted).
+  expected_interaction_path: |-
+    Click Rename on "meeting.m4a" → edit to "meeting-clip.m4a" → click Save → confirm the table shows
+    the new name.
+  notes: |-
+    Checker should use stable fileId mapping; avoid relying on DOM order.
+- id: file_list_manager-mantine-T04
+  name: Search and select a specific invoice
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: TextInput search + Table selection checkbox (composite manager)'
+  task_template: search_and_select
+  secondary_template: null
+  browsergym_goal: Use the Attachments search field to find "invoice_2025.pdf" and select it. The task will finish automatically
+    when done.
+  ui_copy: Search for invoice_2025.pdf and select it.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: bottom_right
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Attachments manager is placed near the bottom-right of the viewport (bottom_right placement)
+      within an isolated card. A search TextInput labeled "Search files" filters the table rows by
+      filename. The table contains 18 files including similarly named items like "invoice_2024.pdf",
+      "invoice_2025.pdf", and "invoice_2025_draft.pdf". Row selection is via a checkbox column; initially
+      no rows are selected and the search field is empty.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_right
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Disambiguating similarly named invoices benefits from search; placement variation adds minor overhead.
+  success_trigger:
+    human_readable:
+    - 'Exactly one file is selected: "invoice_2025.pdf".'
+    canonical_predicate:
+      predicate_type: file_selection_equals
+      target_state:
+        instance: Attachments
+        selected_file_names:
+        - invoice_2025.pdf
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Selecting "invoice_2025_draft.pdf" or another similar file.
+  - Selecting multiple rows.
+  - Only typing in search without selecting the file.
+  - Selecting then clearing selection (final state not selected).
+  expected_interaction_path: |-
+    Click the search input → type "invoice_2025" → find the exact row → check its selection box.
+  notes: |-
+    Search should filter by filename substring deterministically; checker focuses on selection state,
+    not search text.
+- id: file_list_manager-mantine-T05
+  name: Bulk-delete two screenshots from a form
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table + bulk actions + Modal confirmation (composite manager)'
+  task_template: select_many
+  secondary_template: null
+  browsergym_goal: In the Screenshots attachments list, select "error-1.png" and "error-2.png", then delete the selected files
+    and confirm. The task will finish automatically when done.
+  ui_copy: 'Delete selected screenshots: error-1.png and error-2.png.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: form_section
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: low
+    Overlay: modal (opened as described in the UI)
+    UI details:
+      The page is a "Report a bug" form section (form_section layout) with a few inputs (Title, Severity,
+      Description) as low clutter. Below is a "Screenshots" file list manager rendered with Mantine Table.
+      The table has checkboxes for selection and a toolbar with a "Delete selected" button (disabled until
+      at least one row is selected). Clicking "Delete selected" opens a centered Mantine Modal titled
+      "Delete selected files?" with buttons "Cancel" and "Delete". Only after clicking "Delete" are the
+      selected files removed. Initially, both target screenshots are present and nothing is selected.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Selecting multiple targets plus a modal confirmation introduces layering and recovery considerations amid
+      light form clutter.
+  success_trigger:
+    human_readable:
+    - '"error-1.png" and "error-2.png" are both removed from the Screenshots list after confirming deletion.'
+    - No other files are removed.
+    canonical_predicate:
+      predicate_type: file_set_absent
+      target_state:
+        instance: Screenshots
+        file_names:
+        - error-1.png
+        - error-2.png
+      tolerance: null
+      require_confirm: true
+      confirm_control: Delete
+      require_correct_instance: true
+      target_instance_label_or_id: Screenshots
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Only one of the two screenshots is deleted.
+  - The delete modal is opened but canceled or closed (files remain).
+  - Deleting other files instead or in addition.
+  - Targets are only filtered out, not actually deleted in state.
+  expected_interaction_path: |-
+    Select both screenshot rows → click "Delete selected" → in the modal click "Delete" → verify both
+    rows disappear.
+  notes: |-
+    Provide testids for modal controls; checker should validate deletion via underlying model state.
+- id: file_list_manager-mantine-T06
+  name: Move a file to a new folder (choose the correct manager)
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Two Tables + per-row Select "Folder" (composite manager)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the "Internal files" list, move "profile_pic.jpg" to the folder "Images". The task will finish automatically
+    when done.
+  ui_copy: 'Internal files: move profile_pic.jpg to Images.'
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 2
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      Two file list managers (instances=2) appear in one centered card: "Client files" and "Internal
+      files". Each is a Mantine Table with columns: File name, Folder, Actions. Folder is editable via a
+      Select control in each row (options: Unsorted, Images, Contracts, Receipts). In "Internal files",
+      the row "profile_pic.jpg" currently shows Folder = Unsorted. In "Client files", there is another
+      "profile_pic.jpg" entry as a distractor that should not be changed.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Requires operating in the correct of two similar managers and selecting the correct folder value from a
+      dropdown.
+  success_trigger:
+    human_readable:
+    - In "Internal files", "profile_pic.jpg" has Folder set to "Images".
+    canonical_predicate:
+      predicate_type: file_metadata_equals
+      target_state:
+        instance: Internal files
+        file_name: profile_pic.jpg
+        field: folder
+        value: Images
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Internal files
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the folder in the wrong manager ("Client files").
+  - Setting the folder to the wrong value (e.g., Contracts).
+  - Opening the folder Select but leaving the value unchanged.
+  - Changing additional rows unintentionally.
+  expected_interaction_path: |-
+    Locate the "Internal files" section → find "profile_pic.jpg" → open its Folder select → choose
+    "Images" → verify the cell updates.
+  notes: |-
+    Add per-instance headings and testids; ensure Select options are keyboard accessible for AX-tree
+    agents.
+- id: file_list_manager-mantine-T07
+  name: Precisely reorder markdown files in compact small mode
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Table with drag handles for row reordering (composite manager)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the Attachments list, drag "release-notes.md" so it becomes the second item (right after "README.md").
+    The task will finish automatically when done.
+  ui_copy: Make release-notes.md second (after README.md).
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: compact
+      - layout: isolated_card
+      - placement: center
+      - scale: small
+      - instances: 1
+      - guidance: text
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The Attachments manager is an isolated centered card rendered with compact spacing and small scale
+      (tight rows, smaller text). A small drag handle (grip) appears at the left of each row; dragging
+      reorders rows immediately. Initial order is: README.md, design.png, build.zip, release-notes.md,
+      changelog.md, license.txt. The goal is to place "release-notes.md" directly after "README.md" (as
+      the second row) while keeping the other files’ relative order.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: isolated_card
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Compact small mode makes the drag handle a tiny target and increases risk of dropping in the wrong insertion
+      position, while success requires an exact final order.
+  success_trigger:
+    human_readable:
+    - 'The Attachments list order is: README.md, release-notes.md, design.png, build.zip, changelog.md, license.txt.'
+    canonical_predicate:
+      predicate_type: file_order_equals
+      target_state:
+        instance: Attachments
+        ordered_file_names:
+        - README.md
+        - release-notes.md
+        - design.png
+        - build.zip
+        - changelog.md
+        - license.txt
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - '"release-notes.md" is moved but not to the second position.'
+  - Other files are reordered so the full order does not match the expected sequence.
+  - Dragging without dropping (no committed reorder).
+  - Using any non-drag control if drag is required (no state change).
+  expected_interaction_path: |-
+    Grab the drag handle for "release-notes.md" → drag up until the insertion marker is between
+    README.md and design.png → drop → verify it is second.
+  notes: |-
+    Expose order state by file IDs; ensure the drag handle is the only draggable region to make the task
+    diagnostic of handle acquisition.
+- id: file_list_manager-mantine-T08
+  name: Mark the visually-matching image as Primary in dark theme
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: List/Table with thumbnails + ActionIcon star (primary) (composite manager)'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Images list, mark the file that matches the Reference preview as Primary (star it). The task will
+    finish automatically when done.
+  ui_copy: Star the image that matches the Reference preview (set as Primary).
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: dark
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: visual
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      The page uses a dark theme. A centered card titled "Images" shows a Reference preview panel at the
+      top with a medium thumbnail (the target). Below is a list of 10 image files with small thumbnails
+      and a star ActionIcon per row. Exactly one file can be Primary; the active Primary has a filled
+      star. Initially, a different image is Primary. Filenames are similar camera-style names, so the most
+      reliable cue is thumbnail matching.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: visual
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 3
+      density_choice_interference: 5
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 4
+      disambiguation_load: 2
+    justification: Requires visual thumbnail matching and correct use of a small star control to set Primary, with dark theme
+      reducing contrast.
+  success_trigger:
+    human_readable:
+    - The image that matches the Reference preview is set as Primary (filled star) in the Images list.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        instance: Images
+        reference_id: ref-preview-1
+        expected_effect: target_file_primary_true
+        target_file_id: img-05
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Images
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Starring a non-matching image.
+  - Leaving the previous Primary unchanged.
+  - Selecting the row without setting Primary.
+  - Setting Primary for multiple rows (if UI allows, should not count).
+  expected_interaction_path: |-
+    Compare reference thumbnail to row thumbnails → identify match → click its star ActionIcon → verify
+    it becomes filled (Primary).
+  notes: |-
+    Add alt text for thumbnails and aria-labels for star icons; checker uses target_file_id bound to
+    reference.
+- id: file_list_manager-mantine-T09
+  name: Scroll to a deep item and change its status in a dashboard
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Scrollable Table + per-row Select status (composite manager)'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: In the Attachments list, find the file "2019_archive.zip" (you may need to scroll) and set its Status to
+    "Archived". The task will finish automatically when done.
+  ui_copy: Set 2019_archive.zip status to Archived.
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: dashboard
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: text
+      - clutter: high
+    Overlay: none (inline)
+    UI details:
+      The page is a small dashboard layout with a left sidebar, a header, and several statistic cards
+      (high clutter). In the main panel is the Attachments file list manager as a scrollable Mantine Table
+      with 40 files; only ~10 rows are visible at once. Rows include a Status column implemented as a
+      Select control (options: Active, Reviewed, Archived). "2019_archive.zip" appears far down the list
+      and is not initially visible without scrolling. Its initial Status is Active. Changing the Status
+      updates immediately and shows a brief "Saved" indicator in the row.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Finding a specific target requires scrolling within a long list amid high dashboard clutter, then precisely
+      interacting with a per-row dropdown.
+  success_trigger:
+    human_readable:
+    - For "2019_archive.zip", the Status field is set to "Archived" in the Attachments manager.
+    canonical_predicate:
+      predicate_type: file_metadata_equals
+      target_state:
+        instance: Attachments
+        file_name: 2019_archive.zip
+        field: status
+        value: Archived
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the status of a different file (wrong row).
+  - Setting the status to the wrong value (e.g., Reviewed).
+  - Only scrolling to the file but not changing its status.
+  - Changing multiple files’ statuses unintentionally.
+  expected_interaction_path: |-
+    Scroll within the attachments table until "2019_archive.zip" is visible → open its Status select →
+    choose "Archived" → verify the status label updates.
+  notes: |-
+    Important: scrolling must be within the table container, not the page. Add testid for scroll
+    container and for each row’s status select.
+- id: file_list_manager-mantine-T10
+  name: Rename a duplicate file using a required date format
+  canonical_type: file_list_manager
+  implementation_source: mantine
+  implementation_variant: composite
+  implementation_component: 'Mantine: Rename editor with validation (TextInput) + Save (composite manager)'
+  task_template: enter_formatted
+  secondary_template: null
+  browsergym_goal: In the Attachments list, rename "report (1).pdf" to "report-2026-02-02.pdf" and save the change. The task
+    will finish automatically when done.
+  ui_copy: Rename report (1).pdf to report-2026-02-02.pdf (must match required format).
+  setup_description: |-
+    Scene context (E1–E8):
+      - theme: light
+      - spacing: comfortable
+      - layout: isolated_card
+      - placement: center
+      - scale: default
+      - instances: 1
+      - guidance: mixed
+      - clutter: none
+    Overlay: none (inline)
+    UI details:
+      A single centered Attachments manager is displayed as a Mantine Table. The list contains two similar
+      files: "report.pdf" and "report (1).pdf" (the one to rename), plus several other PDFs. Clicking the
+      Rename ActionIcon opens an inline rename editor with a TextInput and Save/Cancel buttons. The rename
+      field enforces a format for reports: it must match "report-YYYY-MM-DD.pdf". A small "Naming format"
+      badge is shown above the table (visual cue) and an error message appears under the input if the
+      format is wrong; the Save button is disabled until the input is valid. The target name
+      "report-2026-02-02.pdf" is valid.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: mixed
+    clutter: none
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Exact formatted text entry with validation increases precision and feedback complexity, and the duplicate
+      filenames raise disambiguation risk.
+  success_trigger:
+    human_readable:
+    - '"report (1).pdf" is renamed to exactly "report-2026-02-02.pdf" in the Attachments list.'
+    - The rename is committed (Save pressed; no active edit mode).
+    canonical_predicate:
+      predicate_type: file_name_equals
+      target_state:
+        instance: Attachments
+        original_file_name: report (1).pdf
+        new_file_name: report-2026-02-02.pdf
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save
+      require_correct_instance: true
+      target_instance_label_or_id: Attachments
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Renaming the wrong file (e.g., "report.pdf" instead of "report (1).pdf").
+  - Entering a name that is close but not exact (wrong date, missing dashes, wrong extension).
+  - Leaving the input valid but not clicking Save (uncommitted edit).
+  - Bypassing validation so Save remains disabled (no commit).
+  expected_interaction_path: |-
+    Click Rename on "report (1).pdf" → enter "report-2026-02-02.pdf" → click Save → verify the table
+    shows the new filename.
+  notes: |-
+    Checker should treat filename as exact string match (case-sensitive). Provide data-testid for
+    validation message and disabled/enabled Save state.

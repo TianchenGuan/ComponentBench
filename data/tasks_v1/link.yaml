@@ -1,0 +1,1996 @@
+- id: link-antd-T01
+  name: Navigate via Support Center link
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Open the Support Center page by clicking the "Support Center" link. The task will finish automatically when done.
+  ui_copy: |-
+    Account Help
+    Need assistance? Visit the Support Center.
+    Link: Support Center
+  setup_description: |-
+    A single isolated card is centered in the viewport with the heading "Account Help". Inside the card, there is a short paragraph of text and exactly one Ant Design Typography.Link labeled "Support Center". The link is rendered in the default AntD link style (blue text), with normal underline behavior on hover. This is an SPA-style demo: clicking the link updates the in-app route to "/support" and shows a new view title "Support Center" in the card header area; the same link remains visible and is marked active with aria-current="page".
+
+    There are no other Link components on the page (instances=1). No modals, drawers, or popovers are involved.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single, clearly labeled link with immediate route/heading feedback and no distractors.
+  success_trigger:
+    human_readable:
+    - The link labeled "Support Center" (data-testid="link-support") was activated (click or keyboard Enter).
+    - The current route pathname equals "/support".
+    - The activated link is marked as the current page (aria-current="page").
+    canonical_predicate:
+      state_key: link_navigation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-support
+        url:
+          pathname: /support
+        link_aria_current: page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-support
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Navigate to "/support" without activating the requested link (e.g., typing the URL, using browser navigation, or programmatic redirect).
+  - Activate any other element that changes the route but is not the "Support Center" link.
+  - Click the link but the route does not change to "/support" (e.g., link is focused but not activated).
+  - Link becomes focused/hovered only; aria-current is not set to "page".
+  expected_interaction_path: Click the "Support Center" Typography.Link → observe the card header update to "Support Center" and URL/pathname becomes /support.
+  notes: 'Instrumentation: set data-testid="link-support" on the Typography.Link; on activation, update router to /support and set aria-current="page" on the active link; expose lastActivatedLinkTestId for checker.'
+- id: link-antd-T02
+  name: Expand details with a "Show tax details" link
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Expand the Tax Details section by clicking the "Show tax details" link. The task will finish automatically when done.
+  ui_copy: |-
+    Invoice Summary
+    Tax Details: hidden
+    Link: Show tax details
+  setup_description: |-
+    A centered isolated card titled "Invoice Summary" contains a short summary and a collapsed disclosure area labeled "Tax Details". The disclosure control is implemented as a single Ant Design Typography.Link that visually looks like an inline link and is labeled "Show tax details". It has button-like semantics for accessibility: role="button", aria-controls="tax-details-panel", and aria-expanded="false" initially.
+
+    When activated, the link toggles the disclosure open: aria-expanded becomes "true", the link text changes to "Hide tax details", and a read-only panel appears directly below showing a few lines (e.g., "State tax", "City tax"). There are no other links on the page (instances=1), and no overlay layers—everything is inline.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single inline disclosure link with immediate expanded-state feedback via aria-expanded and visible panel.
+  success_trigger:
+    human_readable:
+    - The "Show tax details" link (data-testid="link-tax-details") was activated.
+    - The link's aria-expanded attribute equals "true".
+    - The controlled panel (id="tax-details-panel") is present and visible.
+    canonical_predicate:
+      state_key: link_disclosure
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-tax-details
+        link_aria_expanded: true
+        controlled_panel_visible: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-tax-details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - The Tax Details panel becomes visible without activating the requested link.
+  - The link receives focus but aria-expanded remains false.
+  - A different disclosure on the page is opened (should not exist in this task).
+  - Partial disclosure state (panel visible but aria-expanded not updated, or vice versa).
+  expected_interaction_path: Click the "Show tax details" Typography.Link → panel expands and link updates to "Hide tax details" with aria-expanded=true.
+  notes: 'Instrumentation: data-testid="link-tax-details"; ensure aria-expanded is updated on the link and the panel visibility is reflected via DOM presence + computed visibility.'
+- id: link-antd-T03
+  name: Open a help popover from an inline link
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Business Day help popover by clicking the "What is a business day?" link. The task will finish automatically when done.
+  ui_copy: |-
+    Payout Schedule
+    Need clarification?
+    Link: What is a business day?
+  setup_description: |-
+    A centered isolated card titled "Payout Schedule" includes a short description and a single Ant Design Typography.Link labeled "What is a business day?". The link is the trigger for an AntD Popover-like overlay.
+
+    Initial state: the popover is closed, the link has aria-expanded="false" and aria-haspopup="dialog". On activation, a small popover appears directly under the link with a short definition and a bold title "Business Day". No other links exist (instances=1). The popover has a close "×" icon, but closing is not required for success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: One overlay layer triggered by a single link; success is immediately observable via the popover opening.
+  success_trigger:
+    human_readable:
+    - The "What is a business day?" link (data-testid="link-business-day") was activated.
+    - The link's aria-expanded attribute equals "true".
+    - The popover element (role="dialog", data-testid="popover-business-day") is visible.
+    canonical_predicate:
+      state_key: link_overlay_open
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-business-day
+        link_aria_expanded: true
+        overlay_visible: true
+        overlay_testid: popover-business-day
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-business-day
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Popover becomes visible without activating the link (e.g., auto-open on load).
+  - The link is hovered/focused but the popover is not opened.
+  - A different overlay opens (should not exist in this task).
+  - Overlay opens but is immediately closed before the terminal check.
+  expected_interaction_path: Click the "What is a business day?" link → popover appears anchored to the link and aria-expanded flips to true.
+  notes: 'Instrumentation: data-testid on trigger link and popover container; set aria-expanded on the link while popover is open.'
+- id: link-antd-T04
+  name: Select the Invoices tab link
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Switch to the "Invoices" tab by clicking the "Invoices" link in the tab row. The task will finish automatically when done.
+  ui_copy: |-
+    Account Tabs
+    Links: Overview | Usage | Invoices
+    Current tab: Overview
+  setup_description: |-
+    A centered isolated card titled "Account Tabs" contains a horizontal row of three Ant Design Typography.Link elements acting as tab links: "Overview", "Usage", and "Invoices". Only one is active at a time.
+
+    Initial state: "Overview" is active (aria-current="page" on the Overview link), and the content panel below shows a heading "Overview". The three links are visually similar (same font size), separated by small spacing, with the active one styled slightly bolder/underlined. No additional links exist beyond these three (instances=3).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Small set of clearly labeled link-tabs; selecting one updates aria-current and the visible content header.
+  success_trigger:
+    human_readable:
+    - The "Invoices" tab link (data-testid="tab-invoices") was activated.
+    - The "Invoices" link has aria-current="page".
+    - The content panel heading reads "Invoices" (data-testid="panel-heading").
+    canonical_predicate:
+      state_key: link_tab_select
+      predicate_type: equals
+      target_state:
+        activated_link_testid: tab-invoices
+        active_link_testid: tab-invoices
+        active_link_aria_current: page
+        active_panel: invoices
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: tab-invoices
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - A different tab link is activated (Overview or Usage).
+  - The Invoices panel becomes visible without activating the Invoices link (e.g., via keyboard shortcuts unrelated to the link).
+  - Invoices link is focused but aria-current is not updated to "page".
+  - Multiple tabs appear active at once (should not count as success).
+  expected_interaction_path: Click the "Invoices" link in the tab row → active styling moves to Invoices and the panel heading changes to "Invoices".
+  notes: 'Instrumentation: data-testid on each tab link; set aria-current="page" on the active link; expose active panel key for checker.'
+- id: link-antd-T05
+  name: Scroll to footer and open Privacy Policy
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the bottom of the terms card and click the "Privacy Policy" link. The task will finish automatically when done.
+  ui_copy: |-
+    Terms of Service
+    (Scrollable text)
+    Footer link: Privacy Policy
+  setup_description: |-
+    A centered isolated card titled "Terms of Service" contains a long, scrollable block of placeholder legal text (several screens tall). The scroll container is the main card body (not a separate modal).
+
+    Exactly one Ant Design Typography.Link exists on the entire page: a footer-style link labeled "Privacy Policy" placed after the long text, below the initial fold so it is not visible at load. When the link is activated, the SPA navigates to pathname "/privacy" and the card title updates to "Privacy Policy". No other links or overlays exist (instances=1, clutter=none).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: The main challenge is locating a single link that starts off-screen inside a scrollable container.
+  success_trigger:
+    human_readable:
+    - The "Privacy Policy" link (data-testid="link-privacy") was activated.
+    - The current route pathname equals "/privacy".
+    - The card header title reads "Privacy Policy".
+    canonical_predicate:
+      state_key: link_scroll_find_navigation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-privacy
+        url:
+          pathname: /privacy
+        header_title: Privacy Policy
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-privacy
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reach "/privacy" without activating the "Privacy Policy" link.
+  - Activate the link but navigation does not occur (e.g., prevented default).
+  - Scroll to bottom but click in the footer area without actually activating the link.
+  - Open a different destination or hash (should not count).
+  expected_interaction_path: Scroll the card body until the footer is visible → click "Privacy Policy" link → observe route/title update.
+  notes: 'Checker hint: verify link activation via lastActivatedLinkTestId; ensure the link is initially off-screen so scroll is required.'
+- id: link-antd-T06
+  name: Choose the quick link that matches a reference icon
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the Quick Links section, click the link whose icon matches the reference badge (a shield icon). The task will finish automatically when done.
+  ui_copy: |-
+    Quick Links
+    Reference badge: (shield icon)
+    Links with icons: Billing, Security Center, Notifications, API Keys
+  setup_description: |-
+    A form_section layout titled "Quick Links" appears centered on the page. At the top of the section, a small "Reference badge" is shown: a monochrome shield icon inside a rounded square. Below it is a vertical list of four Ant Design Typography.Link items, each rendered as an inline link row with a left icon and a text label:
+    1) Billing (credit-card icon)
+    2) Security Center (shield icon)
+    3) Notifications (bell icon)
+    4) API Keys (key icon)
+
+    All four are the same font size and spacing. Only the icon is meant to be used to match the reference (guidance=visual). Initial state route is "/home"; clicking a link navigates the SPA to a corresponding pathname (e.g., Security Center → "/security"). No other overlays; clutter is low (a couple of non-interactive helper sentences).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 4
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires visually matching the target icon among multiple similar link rows; labels are present but not relied on by the instruction.
+  success_trigger:
+    human_readable:
+    - The link row whose icon matches the reference badge was activated (data-testid="quicklink-security").
+    - The current route pathname equals "/security".
+    - The activated link is recorded as the last activated link test id.
+    canonical_predicate:
+      state_key: link_matches_reference_icon
+      predicate_type: matches_reference
+      target_state:
+        reference: icon:shield
+        activated_link_testid: quicklink-security
+        url:
+          pathname: /security
+      tolerance:
+        reference_match: exact_icon_id
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: quicklink-security
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click a different link (even if you later reach "/security" through other navigation).
+  - Reach "/security" without activating the icon-matched link (e.g., typing URL).
+  - Click the correct text label but wrong icon row (if duplicated labels exist; should not in this task).
+  - Open the correct route but the checker cannot confirm the reference-icon match (missing icon id instrumentation).
+  expected_interaction_path: Visually compare the reference badge icon to the icons in the link list → click the row with the shield icon.
+  notes: 'Instrumentation: assign stable icon ids (e.g., data-icon="shield") and link testids per row; checker uses (reference icon id) + lastActivatedLinkTestId + pathname.'
+- id: link-antd-T07
+  name: Reset Billing Preferences using the correct reset link
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Billing Preferences section, click the "Reset to defaults" link to reset Billing Preferences. The task will finish automatically when done.
+  ui_copy: |-
+    Settings
+    Section: Billing Preferences (has applied settings)
+    Link: Reset to defaults
+    Section: Shipping Preferences
+    Link: Reset to defaults
+  setup_description: |-
+    A settings_panel layout shows two stacked sections with bordered headers:
+    - "Billing Preferences"
+    - "Shipping Preferences"
+
+    Each section contains a few read-only setting rows (not interactive for this task) and an Ant Design Typography.Link on the right side of the section header labeled "Reset to defaults". Both reset links have identical text and styling.
+
+    Initial state: Billing Preferences are marked as "Customized" with a small status pill. Shipping Preferences are already at default. Therefore, the Billing reset link is enabled (aria-disabled="false"), while the Shipping reset link is disabled (aria-disabled="true") and visually muted.
+
+    When the correct Billing reset link is activated, Billing Preferences switch to "Default" and that same link becomes disabled (aria-disabled="true") to indicate there is nothing left to reset. No modals or confirmations are used.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two visually similar reset links require selecting the correct instance based on section context and verifying state change via disabled styling.
+  success_trigger:
+    human_readable:
+    - The Billing Preferences reset link (data-testid="reset-billing") was activated.
+    - After activation, the Billing reset link has aria-disabled="true" (disabled).
+    - The Billing section status reads "Default".
+    canonical_predicate:
+      state_key: link_reset_section
+      predicate_type: equals
+      target_state:
+        activated_link_testid: reset-billing
+        billing_reset_link_aria_disabled: true
+        billing_status: Default
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: reset-billing
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the Shipping reset link (should remain disabled and should not count as success).
+  - Billing status becomes Default without activating the Billing reset link.
+  - Billing reset link is clicked but remains enabled (reset did not apply).
+  - Activate a different control (button/keyboard shortcut) that resets settings without using the link.
+  expected_interaction_path: Locate the Billing Preferences header → click its "Reset to defaults" link → verify Billing status becomes Default and the same link becomes disabled.
+  notes: 'Instrumentation: data-testid on each reset link (reset-billing, reset-shipping); expose per-section status text; use aria-disabled on Typography.Link wrappers for consistent checking.'
+- id: link-antd-T08
+  name: Navigate to Security via the sidebar link (dark dashboard)
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the left sidebar under "Account navigation", click the "Security" link to open Security Settings. The task will finish automatically when done.
+  ui_copy: |-
+    Account Dashboard (dark)
+    Sidebar: Profile | Billing | Security
+    Main card contains an article with an inline "Security" link
+  setup_description: |-
+    A dashboard layout in dark theme fills the viewport. On the left, a vertical sidebar labeled "Account navigation" contains three Ant Design Typography.Link items: "Profile", "Billing", and "Security". The main content area shows a card titled "Getting started" with a short help article that also includes an inline Typography.Link labeled "Security" inside a sentence (a distractor link).
+
+    Initial route: "/settings/profile" with the sidebar "Profile" link marked active (aria-current="page"). Goal requires clicking the sidebar instance of the "Security" link—not the inline article link. When the correct sidebar link is activated, the route changes to "/settings/security" and the sidebar "Security" link becomes active (aria-current="page"). The inline article link remains non-active and does not carry aria-current.
+
+    Clutter is medium due to the presence of a header bar (non-interactive text), the sidebar, and the article content, but only the Link components determine success.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 4
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Requires disambiguating between same-label links in different regions under dark theme and dashboard clutter; success must confirm the sidebar instance was used.
+  success_trigger:
+    human_readable:
+    - The sidebar "Security" link (data-testid="nav-security") was activated.
+    - The current route pathname equals "/settings/security".
+    - The sidebar "Security" link has aria-current="page".
+    canonical_predicate:
+      state_key: link_navigation_with_instance
+      predicate_type: equals
+      target_state:
+        activated_link_testid: nav-security
+        url:
+          pathname: /settings/security
+        active_link_testid: nav-security
+        active_link_aria_current: page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: nav-security
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the inline article "Security" link (data-testid="article-security") even if it navigates to the same route.
+  - Reach "/settings/security" without activating the sidebar link (typing URL, browser back/forward).
+  - Activate a different sidebar item (Profile or Billing).
+  - Route changes but aria-current is not set correctly on the sidebar link.
+  expected_interaction_path: Locate the left sidebar labeled "Account navigation" → click the "Security" link there → confirm the Security Settings view and active sidebar state.
+  notes: 'Instrumentation: distinct data-testid for nav-security vs article-security; checker must rely on lastActivatedLinkTestId to enforce correct instance.'
+- id: link-antd-T09
+  name: Open a specific report from a dense table of View links
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Reports table, click the "View" link for the row named "Q4 Finance". The task will finish automatically when done.
+  ui_copy: |-
+    Reports
+    Table rows: Q1 Summary, Q2 Summary, Q3 Summary, Q4 Finance, Annual Review
+    Each row has a "View" link
+  setup_description: |-
+    The link component is embedded in a realistic table_cell layout: a compact Reports table is centered in the viewport. The table has 5 rows and 3 columns: "Report", "Updated", and "Action".
+
+    In the "Action" column, each row contains an Ant Design Typography.Link labeled exactly "View" (identical text across rows). Row labels in the first column differentiate the target ("Q4 Finance"). Spacing mode is compact, making row height smaller and targets closer together.
+
+    Initial route: "/reports". Activating a row's View link navigates to a report detail route (e.g., Q4 Finance → "/reports/q4-finance") and shows the report title in the header above the table. There are no other links on the page besides these row action links (instances=5).
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: center
+    scale: default
+    instances: 5
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Many identical "View" links in a compact table require precise target acquisition and correct row-based disambiguation.
+  success_trigger:
+    human_readable:
+    - The "View" link in the "Q4 Finance" row (data-testid="report-q4-view") was activated.
+    - The current route pathname equals "/reports/q4-finance".
+    - The report detail header shows "Q4 Finance".
+    canonical_predicate:
+      state_key: table_row_link_activation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: report-q4-view
+        url:
+          pathname: /reports/q4-finance
+        detail_title: Q4 Finance
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: report-q4-view
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click "View" in any other row (Q1/Q2/Q3/Annual Review).
+  - Reach "/reports/q4-finance" without clicking the correct row's View link.
+  - Click the correct row label but not the View link (no activation recorded).
+  - Open the report view but the checker cannot confirm the specific link instance was activated.
+  expected_interaction_path: Scan the table for the "Q4 Finance" row → click the corresponding "View" link in the Action column → observe navigation to the Q4 Finance detail view.
+  notes: 'Instrumentation: add data-testid per row action link (report-q4-view, report-q1-view, etc.); ensure compact mode reduces row height to stress acquisition.'
+- id: link-antd-T10
+  name: Open Audit Log from a More actions link popover
+  canonical_type: link
+  implementation_source: antd
+  implementation_variant: null
+  implementation_component: 'AntD: Typography.Link'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Audit Log drawer by first opening "More actions" and then clicking "Audit log". The task will finish automatically when done.
+  ui_copy: |-
+    User Access
+    Link: More actions
+    Popover links: Role assignments, Audit log
+  setup_description: |-
+    A modal_flow scene anchored near the bottom-right of the viewport shows a small card titled "User Access". In the card header, there is an Ant Design Typography.Link labeled "More actions" that triggers a popover menu.
+
+    Initial state: popover closed. Activating "More actions" opens a small popover containing two link-style actions implemented as Typography.Link rows:
+    - "Role assignments"
+    - "Audit log"
+
+    Clicking "Audit log" opens a right-side Drawer overlay titled "Audit Log". The "Audit log" link acts as the drawer control and sets aria-expanded="true" while the drawer is open. The drawer includes read-only content; no additional confirmation is required.
+
+    Instances of the canonical link on the page: 3 (More actions trigger + two popover links). Other UI elements (drawer content, headers) are not part of success.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: bottom_right
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Requires two-step interaction across overlay layers (popover then drawer) and verifying the correct link inside the popover was selected.
+  success_trigger:
+    human_readable:
+    - The "Audit log" link inside the More actions popover (data-testid="action-audit-log") was activated.
+    - The Audit Log drawer is visible (data-testid="drawer-audit-log").
+    - The "Audit log" link reflects the open state (aria-expanded="true").
+    canonical_predicate:
+      state_key: nested_overlay_link_flow
+      predicate_type: equals
+      target_state:
+        activated_link_testid: action-audit-log
+        drawer_visible: true
+        drawer_testid: drawer-audit-log
+        link_aria_expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: action-audit-log
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Open the More actions popover but click "Role assignments" instead of "Audit log".
+  - Open the Audit Log drawer through any other mechanism that does not activate the "Audit log" link instance.
+  - Drawer becomes visible but aria-expanded is not updated on the controlling link.
+  - Only the popover opens (drawer remains closed).
+  expected_interaction_path: Click "More actions" → popover opens → click "Audit log" → drawer slides in and link indicates expanded/open.
+  notes: 'Instrumentation: ensure each link has a stable data-testid; expose drawer visibility via data-testid; set aria-expanded on the controlling link while the drawer is open.'
+- id: link-mui-T01
+  name: Navigate via Support Center link (MUI)
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Open the Support Center page by clicking the "Support Center" link. The task will finish automatically when done.
+  ui_copy: |-
+    Help
+    Link: Support Center
+  setup_description: |-
+    A centered isolated card titled "Help" contains exactly one Material UI Link component labeled "Support Center". The Link uses MUI defaults (inherits typography variant and uses the theme primary color; underline visible by default).
+
+    Initial route is "/home". Activating the link performs client-side navigation to pathname "/support" and updates the card title to "Support Center". The link remains visible at the top of the card and is marked active with aria-current="page" to make state observable.
+
+    No other Link components exist (instances=1), and there are no modals/popovers/drawers.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single MUI Link with clear label and immediate navigation feedback.
+  success_trigger:
+    human_readable:
+    - The "Support Center" MUI Link (data-testid="link-support") was activated.
+    - The current route pathname equals "/support".
+    - The activated link is marked as current (aria-current="page").
+    canonical_predicate:
+      state_key: link_navigation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-support
+        url:
+          pathname: /support
+        link_aria_current: page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-support
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reach "/support" without activating the link (typing URL, browser history).
+  - Activate a different element (should not exist) that navigates to "/support".
+  - Link is focused but not activated (no navigation).
+  - aria-current is not set on the active link.
+  expected_interaction_path: Click the "Support Center" MUI Link → observe navigation to /support and active state.
+  notes: MUI Link is built on Typography and supports keyboard Enter activation; ensure data-testid and aria-current are exposed for the checker.
+- id: link-mui-T02
+  name: Expand Shipping Details with a button-style Link
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Expand Shipping Details by clicking the "Show shipping details" link. The task will finish automatically when done.
+  ui_copy: |-
+    Order Summary
+    Shipping Details: hidden
+    Link: Show shipping details
+  setup_description: |-
+    A centered isolated card titled "Order Summary" contains a collapsed section labeled "Shipping Details". The disclosure control is implemented using the Material UI Link component rendered as a button-style link (Link with component="button") so it behaves like a link visually but acts like a button semantically.
+
+    Initial state: the Link label is "Show shipping details", aria-expanded="false", aria-controls="shipping-details". On activation, the details panel becomes visible and the Link toggles to "Hide shipping details" with aria-expanded="true".
+
+    There are no other links on the page (instances=1) and no overlays.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single disclosure link with clear expanded-state feedback via aria-expanded and visible panel.
+  success_trigger:
+    human_readable:
+    - The "Show shipping details" link (data-testid="link-shipping-details") was activated.
+    - The link's aria-expanded attribute equals "true".
+    - The Shipping Details panel (id="shipping-details") is visible.
+    canonical_predicate:
+      state_key: link_disclosure
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-shipping-details
+        link_aria_expanded: true
+        controlled_panel_visible: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-shipping-details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Panel becomes visible without activating the link.
+  - Link is focused but aria-expanded remains false.
+  - Panel visible but aria-expanded not updated (or vice versa).
+  - Any other control toggles the panel (should not exist).
+  expected_interaction_path: Click the MUI Link labeled "Show shipping details" → details expand and aria-expanded becomes true.
+  notes: Use MUI Link component="button" for accessibility when there is no meaningful href; ensure aria-expanded/controls are set and data-testid is stable.
+- id: link-mui-T03
+  name: Open a refund info popover from a Link
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the Refund Policy popover by clicking the "Refund policy" link. The task will finish automatically when done.
+  ui_copy: |-
+    Payments
+    Need info?
+    Link: Refund policy
+  setup_description: |-
+    A centered isolated card titled "Payments" contains a short sentence and a single Material UI Link labeled "Refund policy". The Link is the trigger for a small Popover overlay anchored to the link.
+
+    Initial state: popover closed, link has aria-expanded="false" and aria-haspopup="dialog". On activation, the popover opens below the link with title "Refund Policy" and a few lines of read-only text.
+
+    There are no other links on the page (instances=1). Closing the popover is not required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single overlay opened from one link with immediate visible feedback.
+  success_trigger:
+    human_readable:
+    - The "Refund policy" link (data-testid="link-refund") was activated.
+    - The link's aria-expanded equals "true".
+    - The popover element (data-testid="popover-refund") is visible.
+    canonical_predicate:
+      state_key: link_overlay_open
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-refund
+        link_aria_expanded: true
+        overlay_visible: true
+        overlay_testid: popover-refund
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-refund
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Popover opens without activating the link.
+  - Link is hovered/focused only (no activation).
+  - Different overlay opens (should not exist).
+  - Popover opens then immediately closes before evaluation.
+  expected_interaction_path: Click "Refund policy" link → popover opens and aria-expanded toggles to true.
+  notes: 'Instrumentation: data-testid on link and popover; set aria-expanded on the Link while the popover is open.'
+- id: link-mui-T04
+  name: Select the Security section link from a 4-link nav row
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Switch to the "Security" section by clicking the "Security" link in the navigation row. The task will finish automatically when done.
+  ui_copy: |-
+    Account Navigation
+    Links: Overview | Billing | Security | Notifications
+    Current section: Overview
+  setup_description: |-
+    A centered isolated card titled "Account Navigation" contains a horizontal navigation row of four Material UI Link components: "Overview", "Billing", "Security", and "Notifications". The links are placed close together and share the same typography style.
+
+    Initial state: "Overview" is active (aria-current="page" on the Overview link) and the content panel below shows "Overview". Activating a different link updates the active styling and sets aria-current="page" on the selected link. No other links exist beyond these four (instances=4).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 4
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Selecting one among multiple similar links requires correct choice; state is observable via aria-current and the panel header.
+  success_trigger:
+    human_readable:
+    - The "Security" link (data-testid="nav-security") was activated.
+    - The "Security" link has aria-current="page".
+    - The active panel key equals "security".
+    canonical_predicate:
+      state_key: link_tab_select
+      predicate_type: equals
+      target_state:
+        activated_link_testid: nav-security
+        active_link_testid: nav-security
+        active_link_aria_current: page
+        active_panel: security
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: nav-security
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Activate Overview, Billing, or Notifications instead of Security.
+  - Security panel becomes active without activating the Security link.
+  - Link is focused but aria-current does not update to page.
+  - Multiple links marked aria-current=page simultaneously.
+  expected_interaction_path: Click the "Security" link in the nav row → active state moves to Security and panel updates.
+  notes: 'Instrumentation: data-testid per nav link; enforce single aria-current=page.'
+- id: link-mui-T05
+  name: Scroll to footer and open Cookie settings (bottom-left placement)
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the bottom of the policy card and click the "Cookie settings" link. The task will finish automatically when done.
+  ui_copy: |-
+    Privacy Notice
+    (Scrollable text)
+    Footer link: Cookie settings
+  setup_description: |-
+    A single isolated card is anchored to the bottom-left of the viewport (placement=bottom_left). The card title is "Privacy Notice" and the body contains a long scrollable text block.
+
+    Only one Material UI Link exists on the page: a footer link labeled "Cookie settings" placed at the end of the scrollable content, initially off-screen. Activating the link navigates the SPA to pathname "/cookies" and updates the card title to "Cookie settings".
+
+    No other links, no popovers/modals, and no additional clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: bottom_left
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Requires scrolling within a card to locate an off-screen link; non-central placement can affect acquisition and attention.
+  success_trigger:
+    human_readable:
+    - The "Cookie settings" link (data-testid="link-cookies") was activated.
+    - The current route pathname equals "/cookies".
+    - The card header title reads "Cookie settings".
+    canonical_predicate:
+      state_key: link_scroll_find_navigation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-cookies
+        url:
+          pathname: /cookies
+        header_title: Cookie settings
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-cookies
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reach "/cookies" without activating the footer link.
+  - Scroll but click outside the link area (no activation).
+  - Activate the link but the route/title does not update.
+  - Open a different policy destination.
+  expected_interaction_path: Scroll down the card content → reveal "Cookie settings" link → click it → observe /cookies state and header change.
+  notes: Ensure the link is initially below the fold. Placement bottom_left is intended to test viewport anchoring effects.
+- id: link-mui-T06
+  name: Match a reference chip to choose the correct API link
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: Click the link that matches the reference chip ("API Playground" with a "BETA" badge). The task will finish automatically when done.
+  ui_copy: |-
+    Developer Dashboard
+    Reference chip: API Playground [BETA]
+    Link list includes two "API Playground" links with different badges
+  setup_description: |-
+    A lightweight dashboard card titled "Developer Dashboard" shows a small reference chip at the top reading "API Playground" with a distinct "BETA" badge. Below is a list of five Material UI Link rows, each with a left icon, a main label, and an optional badge chip on the right:
+    - API Playground (badge: BETA)  ← target
+    - API Playground (badge: LEGACY)
+    - API Reference (no badge)
+    - API Status (no badge)
+    - API Changelog (badge: NEW)
+
+    The two "API Playground" options share the same main label, so the badge is necessary to choose the correct one (guidance=mixed). Activating a link navigates within the SPA to a route (target: "/api/playground"). Clutter is low: aside from the reference chip and list header, there are no other interactables.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 5
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Two links share the same label; the agent must incorporate the badge shown in the reference chip to select the correct instance.
+  success_trigger:
+    human_readable:
+    - The link matching the reference chip (API Playground with BETA badge) was activated (data-testid="link-api-playground-beta").
+    - The current route pathname equals "/api/playground".
+    - The activated link id equals the target link id (not the LEGACY variant).
+    canonical_predicate:
+      state_key: link_matches_reference_chip
+      predicate_type: matches_reference
+      target_state:
+        reference: label:API Playground + badge:BETA
+        activated_link_testid: link-api-playground-beta
+        url:
+          pathname: /api/playground
+      tolerance:
+        badge_match: exact_text
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-api-playground-beta
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the "API Playground" link with the LEGACY badge.
+  - Reach "/api/playground" without activating the correct BETA link.
+  - Click a different API link (Reference/Status/Changelog).
+  - Select the correct row but the accessible name/badge text is not captured (missing instrumentation).
+  expected_interaction_path: Compare the reference chip (API Playground + BETA) to the list → click the API Playground row with the BETA badge → route updates to /api/playground.
+  notes: 'Instrumentation: ensure badge text is included in an accessible label or adjacent text node; assign distinct data-testid for beta vs legacy rows.'
+- id: link-mui-T07
+  name: Reset Email Notifications using the correct reset link (compact settings panel)
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the Email notifications section, click the "Reset" link to restore defaults. The task will finish automatically when done.
+  ui_copy: |-
+    Notification Settings
+    Section: Email notifications (Customized) — Link: Reset
+    Section: Push notifications — Link: Reset
+  setup_description: |-
+    A settings_panel layout titled "Notification Settings" contains two stacked sections with compact spacing (denser row heights and tighter padding): "Email notifications" and "Push notifications".
+
+    Each section header includes a right-aligned Material UI Link labeled "Reset". The two links look identical and are close together vertically due to compact spacing. Initial state: Email notifications are marked "Customized" and its Reset link is enabled; Push notifications are already default and its Reset link is disabled.
+
+    When the Email Reset link is activated, the Email section status flips to "Default" and that same Reset link becomes disabled (aria-disabled="true"). No confirmation dialog is used; feedback is immediate and persistent in the section header.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 2
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 4
+    justification: Compact layout increases risk of clicking the wrong identical Reset link; success requires correct section-based disambiguation.
+  success_trigger:
+    human_readable:
+    - The Email notifications Reset link (data-testid="reset-email") was activated.
+    - After activation, the Email Reset link has aria-disabled="true".
+    - The Email section status reads "Default".
+    canonical_predicate:
+      state_key: link_reset_section
+      predicate_type: equals
+      target_state:
+        activated_link_testid: reset-email
+        email_reset_link_aria_disabled: true
+        email_status: Default
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: reset-email
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the Push notifications Reset link.
+  - Email becomes Default without activating the Email Reset link.
+  - Reset link is activated but remains enabled (reset did not apply).
+  - Any other control resets the section without using the link.
+  expected_interaction_path: Find the Email notifications header → click its "Reset" link → verify Email shows Default and link becomes disabled.
+  notes: 'Instrumentation: data-testid reset-email/reset-push; use aria-disabled consistently on MUI Link rendered as button or anchor.'
+- id: link-mui-T08
+  name: Navigate to Security from sidebar in a dark dashboard (MUI)
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the sidebar labeled "Navigation", click the "Security" link to open Security Settings. The task will finish automatically when done.
+  ui_copy: |-
+    Dashboard (dark)
+    Sidebar "Navigation": Profile | Billing | Security
+    Main content includes an inline "Security" help link and a footer "Security" link
+  setup_description: |-
+    A dark-themed dashboard layout fills the screen. A left sidebar titled "Navigation" contains three Material UI Link items: "Profile", "Billing", and "Security". The main content card includes a paragraph with an inline link also labeled "Security" (help-article link), and the footer contains a small "Security" link as well.
+
+    Initial route: "/settings/profile" with the sidebar Profile link active (aria-current="page"). The task requires using the sidebar instance of the Security link (data-testid="sidebar-security"). Activating it navigates to "/settings/security" and sets aria-current="page" on the sidebar Security link.
+
+    Clutter is medium due to multiple regions (sidebar, content, footer) and repeated labels.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: dashboard
+    placement: center
+    scale: default
+    instances: 5
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Multiple same-label links across regions under dark theme require correct-instance selection and robust observability.
+  success_trigger:
+    human_readable:
+    - The sidebar Security link (data-testid="sidebar-security") was activated.
+    - The current route pathname equals "/settings/security".
+    - The sidebar Security link has aria-current="page".
+    canonical_predicate:
+      state_key: link_navigation_with_instance
+      predicate_type: equals
+      target_state:
+        activated_link_testid: sidebar-security
+        url:
+          pathname: /settings/security
+        active_link_testid: sidebar-security
+        active_link_aria_current: page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: sidebar-security
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the inline article Security link or the footer Security link (even if it navigates to the same route).
+  - Reach "/settings/security" without activating the sidebar link.
+  - Activate the wrong sidebar item (Profile/Billing).
+  - Route changes but active state is not reflected on the sidebar Security link.
+  expected_interaction_path: Locate sidebar titled "Navigation" → click Security link in sidebar → observe navigation and aria-current update.
+  notes: Use distinct data-testid for sidebar vs inline vs footer instances; rely on lastActivatedLinkTestId to enforce correct instance.
+- id: link-mui-T09
+  name: Open the correct user from a small-scale table of Details links
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the Users table, click the "Details" link for "Alicia Keys". The task will finish automatically when done.
+  ui_copy: |-
+    Users
+    Table rows include: Alicia Keys, Albert King, Alice Johnson, Alina Chen...
+    Each row has a "Details" link
+  setup_description: |-
+    A table_cell scene presents a compact Users table rendered at small scale (smaller typography and tighter column widths). The table has 8 rows; the first column shows the user name, and the last column contains a Material UI Link labeled "Details" for each row.
+
+    All action links have the same visible label ("Details"), making row-based selection necessary. Initial route is "/users". Activating the Details link for a row navigates to a detail view route (target: "/users/alicia-keys") and shows the user name in a header above the table.
+
+    No other links exist beyond the 8 Details links (instances=8).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: center
+    scale: small
+    instances: 8
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Small-scale table increases pointing difficulty; many identical action links require accurate row disambiguation.
+  success_trigger:
+    human_readable:
+    - The "Details" link in the "Alicia Keys" row (data-testid="user-alicia-details") was activated.
+    - The current route pathname equals "/users/alicia-keys".
+    - The detail header displays "Alicia Keys".
+    canonical_predicate:
+      state_key: table_row_link_activation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: user-alicia-details
+        url:
+          pathname: /users/alicia-keys
+        detail_title: Alicia Keys
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: user-alicia-details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the Details link for any other user.
+  - Reach "/users/alicia-keys" without clicking the correct row's Details link.
+  - Click the Alicia Keys row text but not the Details link.
+  - Open a user detail view but cannot verify the exact link instance (missing testids).
+  expected_interaction_path: Find the row labeled "Alicia Keys" → click its "Details" link → observe navigation to /users/alicia-keys and header update.
+  notes: 'Instrumentation: stable data-testid for each row action link; small scale intended to stress target acquisition.'
+- id: link-mui-T10
+  name: Open Changelog from a resources popover (top-left modal flow)
+  canonical_type: link
+  implementation_source: mui
+  implementation_variant: null
+  implementation_component: 'MUI: Link'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the Changelog panel by clicking "More resources" and then clicking "Changelog". The task will finish automatically when done.
+  ui_copy: |-
+    Resources
+    Link: More resources
+    Popover links: Documentation, Changelog, Status
+  setup_description: |-
+    A modal_flow scene is anchored near the top-left of the viewport (placement=top_left). A small card titled "Resources" contains a Material UI Link labeled "More resources" that opens a Popover menu.
+
+    Initial state: menu closed. Activating "More resources" reveals a popover containing three Link items: "Documentation", "Changelog", and "Status". Selecting "Changelog" opens a right-side panel (drawer) titled "Changelog". The selected link indicates expanded/open state with aria-expanded="true" while the drawer is visible.
+
+    Instances of Link on the page: 4 (trigger + 3 menu links). Clutter is low; all other content is read-only.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: top_left
+    scale: default
+    instances: 4
+    guidance: text
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: Two-step selection across an overlay menu and a drawer, with multiple adjacent link options in the popover.
+  success_trigger:
+    human_readable:
+    - The "Changelog" link inside the resources popover (data-testid="resource-changelog") was activated.
+    - The Changelog drawer/panel (data-testid="drawer-changelog") is visible.
+    - The controlling "Changelog" link has aria-expanded="true".
+    canonical_predicate:
+      state_key: nested_overlay_link_flow
+      predicate_type: equals
+      target_state:
+        activated_link_testid: resource-changelog
+        drawer_visible: true
+        drawer_testid: drawer-changelog
+        link_aria_expanded: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: resource-changelog
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Open the popover but click Documentation or Status instead of Changelog.
+  - Drawer becomes visible via any other mechanism that does not activate the Changelog link instance.
+  - Popover opens but drawer remains closed.
+  - aria-expanded is not updated on the controlling link while the drawer is open.
+  expected_interaction_path: Click "More resources" → popover opens → click "Changelog" → drawer opens and link reflects expanded/open.
+  notes: 'Instrumentation: data-testid for trigger and each menu link; expose drawer visibility; placement=top_left tests non-central anchoring.'
+- id: link-mantine-T01
+  name: Navigate via Support Center anchor (Mantine)
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: Open the Support Center page by clicking the "Support Center" link. The task will finish automatically when done.
+  ui_copy: |-
+    Help
+    Link: Support Center
+  setup_description: |-
+    A centered isolated card titled "Help" contains exactly one Mantine Anchor component labeled "Support Center". The Anchor uses default Mantine styling (text link with hover underline).
+
+    Initial route is "/home". Activating the Anchor performs client-side navigation to "/support" and updates the card title to "Support Center". The Anchor remains visible and is marked active via aria-current="page" for observability.
+
+    No other links exist (instances=1) and there are no overlays.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single clearly labeled Anchor with immediate navigation feedback.
+  success_trigger:
+    human_readable:
+    - The "Support Center" Anchor (data-testid="link-support") was activated.
+    - The current route pathname equals "/support".
+    - The activated link has aria-current="page".
+    canonical_predicate:
+      state_key: link_navigation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-support
+        url:
+          pathname: /support
+        link_aria_current: page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-support
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Navigate to /support without activating the Anchor (typing URL, history).
+  - Activate a different element that causes navigation (should not exist).
+  - Link is focused but not activated.
+  - aria-current not applied on the active link.
+  expected_interaction_path: Click "Support Center" Anchor → observe route/title update and active state.
+  notes: Mantine Anchor is polymorphic; ensure the default root is <a> with stable data-testid and aria-current on active state.
+- id: link-mantine-T02
+  name: Expand Plan Details with a button-style Anchor
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: disclose
+  secondary_template: null
+  browsergym_goal: Expand Plan Details by clicking the "Show plan details" link. The task will finish automatically when done.
+  ui_copy: |-
+    Subscription
+    Plan Details: hidden
+    Link: Show plan details
+  setup_description: |-
+    A centered isolated card titled "Subscription" contains a collapsed section labeled "Plan Details". The disclosure control is a Mantine Anchor rendered as a button-like control (Anchor with component="button") so it is focusable and activates like a button while keeping link styling.
+
+    Initial state: aria-expanded="false" and aria-controls="plan-details" on the Anchor; the details panel is hidden. On activation, the panel becomes visible and aria-expanded becomes "true"; the Anchor text changes to "Hide plan details".
+
+    Only one link exists (instances=1), no overlays.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 1
+    justification: Single disclosure Anchor with explicit aria-expanded state and visible panel feedback.
+  success_trigger:
+    human_readable:
+    - The "Show plan details" Anchor (data-testid="link-plan-details") was activated.
+    - The Anchor's aria-expanded equals "true".
+    - The Plan Details panel (id="plan-details") is visible.
+    canonical_predicate:
+      state_key: link_disclosure
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-plan-details
+        link_aria_expanded: true
+        controlled_panel_visible: true
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-plan-details
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Panel becomes visible without activating the Anchor.
+  - Anchor is focused but aria-expanded stays false.
+  - Panel visible but aria-expanded not updated (or vice versa).
+  - Any other UI toggles the panel (should not exist).
+  expected_interaction_path: Click "Show plan details" → panel expands and aria-expanded becomes true.
+  notes: Mantine Anchor supports component prop; ensure aria-expanded/controls are present for the checker.
+- id: link-mantine-T03
+  name: Open a seat definition popover from an Anchor
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: open_overlay
+  secondary_template: null
+  browsergym_goal: Open the "Seat" info popover by clicking the "What is a seat?" link. The task will finish automatically when done.
+  ui_copy: |-
+    Pricing
+    Link: What is a seat?
+  setup_description: |-
+    A centered isolated card titled "Pricing" includes one Mantine Anchor labeled "What is a seat?". The Anchor triggers a small popover overlay (Mantine Popover/Tooltip-style) anchored to the link.
+
+    Initial state: popover closed; the Anchor has aria-expanded="false" and aria-haspopup="dialog". On activation, a popover appears below the link with a short definition and a title "Seat".
+
+    No other links exist (instances=1). Closing the popover is not required.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: easy
+    tier: L0
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 1
+      density_choice_interference: 1
+      depth_layering: 2
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single Anchor triggers a single overlay with clear visible open-state feedback.
+  success_trigger:
+    human_readable:
+    - The "What is a seat?" Anchor (data-testid="link-seat") was activated.
+    - The Anchor's aria-expanded equals "true".
+    - The popover (data-testid="popover-seat") is visible.
+    canonical_predicate:
+      state_key: link_overlay_open
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-seat
+        link_aria_expanded: true
+        overlay_visible: true
+        overlay_testid: popover-seat
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-seat
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Popover opens without activating the Anchor.
+  - Anchor is hovered/focused only (no activation).
+  - Different overlay opens (should not exist).
+  - Popover opens then closes before terminal condition.
+  expected_interaction_path: Click "What is a seat?" → popover opens anchored to the link and aria-expanded becomes true.
+  notes: 'Instrumentation: data-testid on Anchor and popover; ensure aria-expanded updates while popover is open.'
+- id: link-mantine-T04
+  name: Select the Invoices section from a 5-link row (Mantine)
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: Switch to the "Invoices" section by clicking the "Invoices" link in the navigation row. The task will finish automatically when done.
+  ui_copy: |-
+    Account Sections
+    Links: Overview | Usage | Invoices | Payments | Team
+    Current section: Overview
+  setup_description: |-
+    A centered isolated card titled "Account Sections" contains a horizontal row of five Mantine Anchor links used as in-card navigation: "Overview", "Usage", "Invoices", "Payments", and "Team".
+
+    Initial state: Overview is active (aria-current="page" on the Overview Anchor) and the panel below shows "Overview". Selecting another Anchor updates aria-current="page" and the visible panel heading.
+
+    No other links are present (instances=5).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 5
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 3
+      disambiguation_load: 3
+    justification: More link options in a tight row increases choice interference; state remains observable via aria-current and panel heading.
+  success_trigger:
+    human_readable:
+    - The "Invoices" Anchor (data-testid="nav-invoices") was activated.
+    - The "Invoices" Anchor has aria-current="page".
+    - The active panel key equals "invoices".
+    canonical_predicate:
+      state_key: link_tab_select
+      predicate_type: equals
+      target_state:
+        activated_link_testid: nav-invoices
+        active_link_testid: nav-invoices
+        active_link_aria_current: page
+        active_panel: invoices
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: nav-invoices
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Activate any other section link (Overview/Usage/Payments/Team).
+  - Invoices panel becomes active without activating the Invoices link.
+  - Invoices link focused but aria-current not set to page.
+  - Multiple links marked as current simultaneously.
+  expected_interaction_path: Click the "Invoices" link in the row → panel heading switches to Invoices and aria-current updates.
+  notes: 'Instrumentation: data-testid per nav Anchor; enforce a single active aria-current=page at any time.'
+- id: link-mantine-T05
+  name: Pick the link that matches a reference color dot
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: match_reference
+  secondary_template: null
+  browsergym_goal: In the link list, click the link with the same color dot as the reference swatch (green). The task will finish automatically when done.
+  ui_copy: |-
+    Quick Access
+    Reference swatch: green dot
+    Links each have a colored dot: red, blue, green, orange
+  setup_description: |-
+    A form_section titled "Quick Access" is centered on the page. At the top of the section is a small reference swatch: a solid green circular dot with the label "Reference".
+
+    Below is a vertical list of four Mantine Anchor rows. Each row starts with a small colored dot (visual indicator) followed by a text label:
+    - Red dot — "Billing"
+    - Blue dot — "Usage"
+    - Green dot — "Status"
+    - Orange dot — "Changelog"
+
+    The task instruction relies on the color dot (guidance=visual), not the text label. Activating the target row navigates to pathname "/status".
+
+    Clutter is low: there is only the section title, the reference swatch, and the link list.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 4
+    guidance: visual
+    clutter: low
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 3
+    justification: Requires visual matching (color dot) across multiple similar link rows; labels exist but are not used by the instruction.
+  success_trigger:
+    human_readable:
+    - The link row whose dot color matches the reference swatch (green) was activated (data-testid="link-status-green").
+    - The current route pathname equals "/status".
+    canonical_predicate:
+      state_key: link_matches_reference_color
+      predicate_type: matches_reference
+      target_state:
+        reference: dot_color:green
+        activated_link_testid: link-status-green
+        url:
+          pathname: /status
+      tolerance:
+        color_match: exact_token
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-status-green
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click any non-green dot link (Billing/Usage/Changelog).
+  - Navigate to /status without activating the green-dot link (typing URL).
+  - Click the correct text label but the wrong dot row (if duplicated labels appear; should not).
+  - Reference color swatch missing from DOM (checker cannot verify match).
+  expected_interaction_path: Look at the reference green dot → find the link row with the same green dot → click it.
+  notes: 'Instrumentation: represent dot color as a stable token (e.g., data-dot="green") so the checker can verify reference matching without pixel thresholds.'
+- id: link-mantine-T06
+  name: Scroll to bottom and open Contact support
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: scroll_find
+  secondary_template: null
+  browsergym_goal: Scroll to the bottom of the FAQ card and click the "Contact support" link. The task will finish automatically when done.
+  ui_copy: |-
+    FAQ
+    (Scrollable list of questions)
+    Footer link: Contact support
+  setup_description: |-
+    A centered isolated card titled "FAQ" contains a long scrollable list of Q&A items (several screens). At the very bottom, after the last item, there is exactly one Mantine Anchor labeled "Contact support".
+
+    The link is initially off-screen. Activating it navigates the SPA to pathname "/contact" and updates the card title to "Contact support".
+
+    No other Anchor/Link components exist (instances=1). No overlays and no extra clutter.
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: isolated_card
+    placement: center
+    scale: default
+    instances: 1
+    guidance: text
+    clutter: none
+  difficulty:
+    difficulty_bucket: mid
+    tier: L1
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 2
+      density_choice_interference: 1
+      depth_layering: 3
+      feedback_dynamics: 1
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Single off-screen link inside a long scroll container; the primary challenge is search/scroll rather than choice.
+  success_trigger:
+    human_readable:
+    - The "Contact support" Anchor (data-testid="link-contact") was activated.
+    - The current route pathname equals "/contact".
+    - The card header title reads "Contact support".
+    canonical_predicate:
+      state_key: link_scroll_find_navigation
+      predicate_type: equals
+      target_state:
+        activated_link_testid: link-contact
+        url:
+          pathname: /contact
+        header_title: Contact support
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: link-contact
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reach /contact without activating the Contact support link.
+  - Scroll but click outside the link (no activation).
+  - Activate the link but route/title does not update.
+  - Open a different destination.
+  expected_interaction_path: Scroll down through the FAQ list → reveal footer "Contact support" link → click it → observe navigation.
+  notes: Ensure the scroll container is the card body; link should not be visible on initial load.
+- id: link-mantine-T07
+  name: Navigate to Security via settings nav in dark theme (Mantine)
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: navigate_to
+  secondary_template: null
+  browsergym_goal: In the "Settings navigation" list, click the "Security" link to open Security Settings. The task will finish automatically when done.
+  ui_copy: |-
+    Settings (dark)
+    Settings navigation: Profile | Billing | Security
+    Main panel contains a help sentence with an inline "Security" link
+  setup_description: |-
+    A dark-themed settings_panel fills the center of the screen. On the left side of the panel, a vertical list titled "Settings navigation" contains three Mantine Anchor links: "Profile", "Billing", and "Security". On the right, the main content area shows a small help paragraph that includes an inline Anchor also labeled "Security" (distractor instance).
+
+    Initial route: "/settings/profile" with the Profile nav link marked active (aria-current="page"). The task requires activating the "Security" link from the Settings navigation list (data-testid="settings-nav-security"), not the inline help link.
+
+    Activating the correct nav link navigates to "/settings/security" and sets aria-current="page" on the nav Security link.
+  scene_context:
+    theme: dark
+    spacing: comfortable
+    layout: settings_panel
+    placement: center
+    scale: default
+    instances: 4
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Same-label links in different regions under dark theme require correct-instance selection and robust state verification.
+  success_trigger:
+    human_readable:
+    - The Settings navigation Security link (data-testid="settings-nav-security") was activated.
+    - The current route pathname equals "/settings/security".
+    - The nav Security link has aria-current="page".
+    canonical_predicate:
+      state_key: link_navigation_with_instance
+      predicate_type: equals
+      target_state:
+        activated_link_testid: settings-nav-security
+        url:
+          pathname: /settings/security
+        active_link_testid: settings-nav-security
+        active_link_aria_current: page
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: settings-nav-security
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click the inline help "Security" link (data-testid="help-security") even if it navigates to the same route.
+  - Reach /settings/security without activating the navigation link (typing URL, history).
+  - Activate the wrong nav link (Profile/Billing).
+  - Route changes but aria-current is not set correctly on the nav link.
+  expected_interaction_path: Find the left list labeled "Settings navigation" → click "Security" there → observe navigation and active nav state.
+  notes: 'Instrumentation: distinct testids for settings-nav-security vs help-security; use aria-current on the active nav Anchor.'
+- id: link-mantine-T08
+  name: Reset the GitHub integration in a cluttered integrations form
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: clear_reset
+  secondary_template: null
+  browsergym_goal: In the GitHub integration section, click the "Restore defaults" link to reset that integration. The task will finish automatically when done.
+  ui_copy: |-
+    Integrations
+    Sections: Slack | GitHub | Jira
+    Each section has a "Restore defaults" link
+  setup_description: |-
+    A form_section layout titled "Integrations" presents three stacked integration panels: "Slack", "GitHub", and "Jira". Each panel contains several read-only fields (e.g., "Webhook URL", "Connected workspace") and toggle-like status indicators (not interactive in this task), plus a right-aligned Mantine Anchor link in the panel header labeled "Restore defaults".
+
+    Spacing is compact, so the three panels and their header links appear close together. Clutter is high due to many labeled rows and status chips in each panel.
+
+    Initial state: GitHub is "Customized" and its Restore defaults link is enabled. Slack and Jira are already at default and their Restore defaults links are disabled (aria-disabled="true"). When the GitHub link is activated, GitHub flips to "Default" and its Restore defaults link becomes disabled.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: form_section
+    placement: center
+    scale: default
+    instances: 3
+    guidance: text
+    clutter: high
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: High clutter and multiple similar reset links require robust section identification and correct instance activation under compact spacing.
+  success_trigger:
+    human_readable:
+    - The GitHub Restore defaults link (data-testid="reset-github") was activated.
+    - After activation, the GitHub reset link has aria-disabled="true".
+    - The GitHub section status reads "Default".
+    canonical_predicate:
+      state_key: link_reset_section
+      predicate_type: equals
+      target_state:
+        activated_link_testid: reset-github
+        github_reset_link_aria_disabled: true
+        github_status: Default
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: reset-github
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click Slack or Jira Restore defaults links (should be disabled and not count).
+  - GitHub becomes Default without activating the GitHub link.
+  - Activate the GitHub link but it remains enabled (reset did not apply).
+  - Use any other non-link control to reset integration state.
+  expected_interaction_path: Locate the GitHub integration panel → click its "Restore defaults" link → verify GitHub status becomes Default and the link becomes disabled.
+  notes: 'Instrumentation: data-testid per reset link (reset-slack/reset-github/reset-jira); expose per-panel status strings; use aria-disabled to reflect disabled state.'
+- id: link-mantine-T09
+  name: Download the correct invoice from a small-scale table (top-right placement)
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: select_one
+  secondary_template: null
+  browsergym_goal: In the invoices table, click the "Download" link for invoice "INV-1042". The task will finish automatically when done.
+  ui_copy: |-
+    Invoices
+    Table includes invoice IDs like INV-1039, INV-1040, INV-1041, INV-1042...
+    Each row has a "Download" link
+  setup_description: |-
+    A table_cell scene is anchored near the top-right of the viewport (placement=top_right). The table is rendered at small scale (smaller text and tighter columns) and lists 10 invoices. Columns include "Invoice ID", "Date", "Total", and "Action".
+
+    In the Action column, each row contains a Mantine Anchor link labeled "Download" (identical label across rows). The row is uniquely identified by the Invoice ID in the first column.
+
+    When a row's Download link is activated, it simulates a successful download by changing that link's label to "Downloaded" and disabling it (aria-disabled="true"). No actual file download is initiated; feedback is immediate on the link itself.
+
+    No other links exist beyond the 10 action links (instances=10).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: table_cell
+    placement: top_right
+    scale: small
+    instances: 10
+    guidance: text
+    clutter: medium
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 1
+      feedback_dynamics: 2
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Many identical action links in a small-scale table require precise clicking and correct row selection, compounded by non-central placement.
+  success_trigger:
+    human_readable:
+    - The "Download" link in the "INV-1042" row (data-testid="inv-1042-download") was activated.
+    - That same link becomes disabled (aria-disabled="true").
+    - That same link's visible label changes to "Downloaded".
+    canonical_predicate:
+      state_key: table_row_link_activation_with_state_change
+      predicate_type: equals
+      target_state:
+        activated_link_testid: inv-1042-download
+        link_aria_disabled: true
+        link_label: Downloaded
+      tolerance: null
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: inv-1042-download
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click Download for any other invoice row.
+  - INV-1042 row is selected but the link is not activated.
+  - The link is activated but does not change to disabled/Downloaded state.
+  - Any other non-link control marks the invoice as downloaded.
+  expected_interaction_path: Scan invoice IDs to find INV-1042 → click the Download link in that row → verify it changes to "Downloaded" and becomes disabled.
+  notes: 'Instrumentation: data-testid per row action link; implement deterministic link-state change (label + aria-disabled) so success depends on the link component state.'
+- id: link-mantine-T10
+  name: Open API Status from a resources popover using a reference icon
+  canonical_type: link
+  implementation_source: mantine
+  implementation_variant: null
+  implementation_component: 'Mantine: Anchor'
+  task_template: open_and_select
+  secondary_template: null
+  browsergym_goal: Open the API Status page by clicking "More resources" and then selecting the link that matches the reference icon (heartbeat line). The task will finish automatically when done.
+  ui_copy: |-
+    Developer Resources
+    Reference icon: heartbeat line
+    Link: More resources
+    Popover contains several resource links including two "status" options
+  setup_description: |-
+    A modal_flow scene shows a small card titled "Developer Resources" centered in the viewport. At the top of the card, a reference icon is displayed: a heartbeat line glyph. Below it is a Mantine Anchor labeled "More resources" that opens a popover menu.
+
+    When the popover is open, it lists five Anchor links, each with a left icon and a text label:
+    - API Status (heartbeat line icon)  ← target
+    - System Status (signal bars icon)
+    - Rate limits (gauge icon)
+    - SDK download (download icon)
+    - Changelog (list icon)
+
+    Two options include the word "Status"; the instruction requires using the reference icon to choose the correct one (guidance=mixed). Activating the target navigates to pathname "/api/status" and updates the card title to "API Status".
+
+    Instances of Link on the page: 6 (trigger + 5 menu links).
+  scene_context:
+    theme: light
+    spacing: comfortable
+    layout: modal_flow
+    placement: center
+    scale: default
+    instances: 6
+    guidance: mixed
+    clutter: low
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 1
+      target_acquisition: 3
+      density_choice_interference: 4
+      depth_layering: 4
+      feedback_dynamics: 2
+      semantic_observability: 2
+      disambiguation_load: 4
+    justification: Combines a two-step overlay flow with reference-based disambiguation among multiple similar menu links.
+  success_trigger:
+    human_readable:
+    - The "API Status" link inside the resources popover (data-testid="resource-api-status") was activated.
+    - The current route pathname equals "/api/status".
+    - The page/card title reads "API Status".
+    canonical_predicate:
+      state_key: nested_overlay_reference_select
+      predicate_type: matches_reference
+      target_state:
+        reference: icon:heartbeat
+        activated_link_testid: resource-api-status
+        url:
+          pathname: /api/status
+        header_title: API Status
+      tolerance:
+        reference_match: exact_icon_id
+      require_confirm: false
+      confirm_control: null
+      require_correct_instance: true
+      target_instance_label_or_id: resource-api-status
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Click "System Status" instead of "API Status".
+  - Navigate to /api/status without activating the API Status link instance.
+  - Open the popover but do not make a selection.
+  - Activate a different resource link (Rate limits/SDK download/Changelog).
+  expected_interaction_path: Click "More resources" → popover opens → match the reference heartbeat icon to the menu item → click "API Status" → observe navigation/title update.
+  notes: 'Instrumentation: stable icon ids (e.g., data-icon="heartbeat"); data-testid for each menu link; checker uses lastActivatedLinkTestId + pathname + reference icon id.'

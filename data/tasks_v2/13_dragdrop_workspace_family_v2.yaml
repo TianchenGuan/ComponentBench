@@ -1,0 +1,4202 @@
+- id: drag_drop_sortable_list-antd-v2-T01
+  name: 'AntD: Apply exact order in the correct list instance'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_sortable_handle_only
+  implementation_component: 'AntD: Settings panel + two sortable lists + Button + external dnd-kit Sortable (composite)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Pinned views" list, move "Engagement" so it is directly below "Overview". Do not change the "Saved views" list. Then click "Apply order" and confirm. The task will finish automatically when done.
+  ui_copy: In the "Pinned views" list, move "Engagement" so it is directly below "Overview". Do not change the "Saved views" list. Then click "Apply order" and confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout is a compact settings_panel anchored off-center. The page shows a left navigation rail, two unrelated toggles, and a main card titled "Workspace layout". Inside the card are two sortable lists with identical row chrome and small grip handles:
+    - "Pinned views" (target)
+    - "Saved views" (distractor)
+
+    Initial Pinned views order: Overview, Revenue, Conversion, Engagement, Funnels.
+    Initial Saved views order: Overview, Engagement, Changelog, Notes, Archive.
+
+    Row dragging is handle-only. Reordering is staged locally until the card footer button "Apply order" is clicked. Clicking "Apply order" opens a small confirmation popover with "Confirm" and "Cancel". Only Confirm commits the new order.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - spacing
+    factor_rationale: Two visually similar sortable instances create wrong-list risk, the rows are compact with handle-only activation, and the staged Apply-plus-Confirm flow forces the agent to verify the edited list before committing.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: This is hard because the target list must be disambiguated from a near-match, the drag affordance is compact and handle-only, and a nested confirmation flow must be completed correctly.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Overview, Engagement, Revenue, Conversion, Funnels.'
+    - Changes must be committed by activating 'Confirm'.
+    - Only the instance labeled 'Pinned views' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Overview
+        - Engagement
+        - Revenue
+        - Conversion
+        - Funnels
+        saved: true
+        non_target_instances_must_remain:
+          Saved views:
+          - Overview
+          - Engagement
+          - Changelog
+          - Notes
+          - Archive
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Pinned views
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reordering the "Saved views" list instead of "Pinned views".
+  - Stopping after the draft order looks right without clicking "Apply order" and "Confirm".
+  - Placing "Engagement" above "Overview" or below "Revenue" instead of directly below "Overview".
+  - Changing both lists.
+  expected_interaction_path:
+  - Locate the "Pinned views" list inside the Workspace layout card.
+  - Drag "Engagement" by its handle so it lands directly below "Overview".
+  - Leave "Saved views" unchanged.
+  - Click "Apply order", then click "Confirm".
+  notes: Checker should scope to the list labeled 'Pinned views', verify the sibling list is unchanged, and require a committed saved state rather than only reading the draft DOM order.
+- id: drag_drop_sortable_list-antd-v2-T02
+  name: 'AntD: Long drawer list with hidden target and save'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_sortable_scrollable
+  implementation_component: 'AntD: Drawer + scrollable sortable list + Button + external dnd-kit Sortable (composite)'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: Open the "Board sections" drawer, scroll inside the list to find "Postmortem", move it to the very top, and then click "Save layout". The task will finish automatically when done.
+  ui_copy: Open the "Board sections" drawer, scroll inside the list to find "Postmortem", move it to the very top, and then click "Save layout". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow in dark theme with compact spacing and medium clutter. The main page shows a release dashboard with KPI cards and a read-only timeline. Clicking "Edit board sections" opens a right-side Ant Design Drawer titled "Board sections".
+
+    Inside the drawer is one fixed-height scrollable sortable list with small handle-only rows. Only about 6 rows are visible at once. Initial order is:
+    Overview, Health, Revenue, Conversion, Funnels, Risks, Incidents, Owners, Dependencies, Rollout, Support, Postmortem.
+
+    The footer contains "Cancel" and "Save layout". Row order changes are staged until "Save layout" is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: The target row starts below the fold inside the drawer-local scroll region, so the task combines hidden-target acquisition, long-distance drag placement, and a drawer-local save step.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The hard part is revealing and moving an off-screen row within a constrained drawer list, then committing the change explicitly.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Postmortem, Overview, Health, Revenue, Conversion, Funnels, Risks, Incidents, Owners, Dependencies, Rollout, Support.'
+    - Changes must be committed by activating 'Save layout'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Postmortem
+        - Overview
+        - Health
+        - Revenue
+        - Conversion
+        - Funnels
+        - Risks
+        - Incidents
+        - Owners
+        - Dependencies
+        - Rollout
+        - Support
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save layout
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the drawer list, leaving "Postmortem" hidden.
+  - Moving "Postmortem" near the top but not to the first position.
+  - Dropping the row successfully but not clicking "Save layout".
+  - Closing the drawer without saving.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll inside the sortable list until "Postmortem" is visible.
+  - Drag "Postmortem" to the first position.
+  - Click "Save layout".
+  notes: For long sortable lists, implement drag overlay or autoscroll so the item remains visible during the move. Checker should validate committed order after drawer close.
+- id: drag_drop_sortable_list-antd-v2-T03
+  name: 'AntD: Compact table row reorder with exact full order'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_sortable_table_rows
+  implementation_component: 'AntD: Table + compact handle cells + Button + external dnd-kit Sortable (composite)'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: 'In the "Lane priority" table, reorder the rows so the order is: Blocked, Review, In progress, To do, Done. Then click "Apply". The task will finish automatically when done.'
+  ui_copy: 'In the "Lane priority" table, reorder the rows so the order is: Blocked, Review, In progress, To do, Done. Then click "Apply". The task will finish automatically when done.'
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. The target table is embedded in the bottom-right of an incident-settings page. The compact card title is "Lane priority".
+
+    The table rows are draggable only from a tiny grip icon in the first column. Initial row order is:
+    To do, In progress, Review, Done, Blocked.
+
+    Other columns show read-only lane descriptions and a disabled checkbox. The footer has "Cancel" and "Apply". Changes remain draft-only until Apply is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - scale
+    - clutter
+    factor_rationale: The table-cell carrier makes the drag handle physically small and crowded, while the full exact-order requirement plus Apply step turns a simple reorder into a high-precision state-tracking task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: This is a dense, handle-only full-order task where both acquisition and exactness are high-pressure, and the final state still has to be explicitly applied.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Blocked, Review, In progress, To do, Done.'
+    - Changes must be committed by activating 'Apply'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Blocked
+        - Review
+        - In progress
+        - To do
+        - Done
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Getting some rows into the right region but not the exact full order.
+  - Dragging by the row body instead of the handle so no reorder occurs.
+  - Reaching the correct draft order but not clicking "Apply".
+  - Changing non-target controls in the table and leaving the order wrong.
+  expected_interaction_path:
+  - Locate the Lane priority table.
+  - Use the small drag handles to reorder all five rows into the target sequence.
+  - Verify the draft order visually.
+  - Click "Apply".
+  notes: Checker should compare committed DOM row order, not transient drag placeholders.
+- id: drag_drop_sortable_list-antd-v2-T04
+  name: 'AntD: Analytics list only in a three-list dashboard'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_sortable_multi_instance
+  implementation_component: 'AntD: Dashboard panel + three sortable lists + Button + external dnd-kit Sortable (composite)'
+  task_template: drag_operation
+  secondary_template: confirm_cancel
+  browsergym_goal: In the "Analytics widgets" list, move "Funnels" so it sits directly above "Retention". Do not change the "Home widgets" or "Ops widgets" lists. Then click "Save dashboard". The task will finish automatically when done.
+  ui_copy: In the "Analytics widgets" list, move "Funnels" so it sits directly above "Retention". Do not change the "Home widgets" or "Ops widgets" lists. Then click "Save dashboard". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and high clutter. Three sortable widget lists are visible in separate cards on the same page:
+    - Home widgets
+    - Analytics widgets (target)
+    - Ops widgets
+
+    All three lists share the labels Overview, Alerts, Retention, Notes, and at least one list also includes Funnels. In the Analytics widgets list, initial order is:
+    Overview, Revenue, Retention, Funnels, Notes.
+
+    Each card has its own tiny "Save dashboard" button in the footer. Only the Analytics card should be changed, and only its footer button should be used.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Three nearby sortable lists with overlapping labels raise disambiguation load, and the card-local save control forces the agent to preserve non-target lists while committing the intended one.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The reorder itself is small, but the scene is deliberately packed with overlapping labels and multiple local save buttons, making wrong-instance errors likely.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Overview, Revenue, Funnels, Retention, Notes.'
+    - Changes must be committed by activating 'Save dashboard'.
+    - Only the instance labeled 'Analytics widgets' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Overview
+        - Revenue
+        - Funnels
+        - Retention
+        - Notes
+        saved: true
+        non_target_instances_must_remain:
+          Home widgets:
+          - Overview
+          - Tasks
+          - Notes
+          - Alerts
+          - Calendar
+          Ops widgets:
+          - Alerts
+          - Overview
+          - Owners
+          - Incidents
+          - Notes
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save dashboard
+      require_correct_instance: true
+      target_instance_label_or_id: Analytics widgets
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing Home widgets or Ops widgets instead of Analytics widgets.
+  - Placing "Funnels" below "Retention" or anywhere other than directly above it.
+  - Clicking the wrong card-local "Save dashboard" button.
+  - Changing multiple lists.
+  expected_interaction_path:
+  - Identify the Analytics widgets card.
+  - Drag "Funnels" above "Retention" in that list only.
+  - Leave the other two lists untouched.
+  - Click the Analytics card’s "Save dashboard" button.
+  notes: Each sortable instance and each local Save control should have a distinct label/id so the checker can reject wrong-card commits.
+- id: drag_drop_sortable_list-antd-v2-T05
+  name: 'AntD: Modal reference ranking with handle-only moves'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_sortable_visual_reference
+  implementation_component: 'AntD: Modal + sortable list + reference panel + external dnd-kit Sortable (composite)'
+  task_template: match_reference
+  secondary_template: open_overlay
+  browsergym_goal: Open "Edit agenda order". In the "Workshop agenda" list, match the Reference order shown in the modal, then click "Save order". The task will finish automatically when done.
+  ui_copy: Open "Edit agenda order". In the "Workshop agenda" list, match the Reference order shown in the modal, then click "Save order". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. The base page contains a workshop summary card with a button "Edit agenda order". Clicking it opens an Ant Design Modal titled "Workshop agenda".
+
+    Inside the modal are:
+    - a handle-only sortable list with items Intro, Demo, Breakout, Q&A, Wrap-up
+    - a compact "Reference order" panel rendered as numbered chips showing the desired final ranking visually
+
+    Initial list order is Intro, Breakout, Demo, Wrap-up, Q&A. The footer contains "Cancel" and "Save order". The modal closes only after Save order.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - confirmation_model
+    - scale
+    factor_rationale: The goal is specified by a visual reference rather than repeated textual order, and the compact handle-only rows inside a modal force deliberate interpretation and commit verification.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The agent must read a visual target ordering, perform multiple handle-only moves in a compact modal, and commit the result explicitly.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Demo, Intro, Breakout, Q&A, Wrap-up.'
+    - Changes must be committed by activating 'Save order'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Demo
+        - Intro
+        - Breakout
+        - Q&A
+        - Wrap-up
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save order
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching only part of the reference order.
+  - Dragging by the row body and leaving the list unchanged.
+  - Reaching the correct draft order but not clicking "Save order".
+  - Closing the modal without saving.
+  expected_interaction_path:
+  - Open the modal.
+  - Inspect the Reference order panel.
+  - Reorder the Workshop agenda list to match it exactly.
+  - Click "Save order".
+  notes: Checker may compute the target ordering from the rendered reference panel, but must still validate the committed modal result.
+- id: drag_drop_sortable_list-antd-v2-T06
+  name: 'AntD: Reorder then discard from the drawer confirmation flow'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_sortable_discard_flow
+  implementation_component: 'AntD: Drawer + sortable list + close/discard confirmation + external dnd-kit Sortable (composite)'
+  task_template: confirm_cancel
+  secondary_template: drag_operation
+  browsergym_goal: Open the "Incident sidebar order" drawer, drag "Latency" to the top to create a draft change, then close the drawer and click "Discard changes". The task will finish automatically when done.
+  ui_copy: Open the "Incident sidebar order" drawer, drag "Latency" to the top to create a draft change, then close the drawer and click "Discard changes". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow in dark theme with compact spacing and high clutter. The base incident page contains charts and logs plus a button "Edit incident sidebar". Clicking it opens a right-side drawer titled "Incident sidebar order".
+
+    The drawer contains one handle-only sortable list with initial order:
+    Summary, Timeline, Owners, Latency, Error budget, Links.
+
+    Reordering updates the draft order immediately and shows an "Unsaved changes" banner in the drawer footer. Clicking the drawer close button opens a confirmation dialog with buttons "Keep editing" and "Discard changes". Only "Discard changes" closes the drawer and restores the original order.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - clutter
+    factor_rationale: 'This keeps the family drag-centric but adds recovery pressure: the agent must create a draft reorder, track unsaved state, and intentionally take the discard path rather than a reset shortcut.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The final target is the original order, but reaching it requires a real drag action plus correct navigation through a nested discard-confirmation flow.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Summary, Timeline, Owners, Latency, Error budget, Links.'
+    - Changes must be committed by activating 'Discard changes'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Summary
+        - Timeline
+        - Owners
+        - Latency
+        - Error budget
+        - Links
+        discarded: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Discard changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the drawer without first making any reorder.
+  - Dragging "Latency" but then saving or keeping the draft instead of discarding it.
+  - Ending with Latency still at the top.
+  - Using any non-drag reset control (none should exist for this task).
+  expected_interaction_path:
+  - Open the drawer.
+  - Drag "Latency" to the top to create an unsaved draft.
+  - Click the drawer close control.
+  - In the confirmation dialog, click "Discard changes".
+  notes: Checker should require evidence that a dirty-state discard path was taken, not merely that the final order equals the original.
+- id: drag_drop_sortable_list-mui-v2-T07
+  name: 'MUI: Dark compact adjacency reorder with Apply'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_sortable_handle_only_dense
+  implementation_component: 'MUI: Paper + dense sortable list + Button + external dnd-kit Sortable (composite)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the "Accessibility sections" list, move "Keyboard support" so it sits directly below "Color contrast". Then click "Apply order". The task will finish automatically when done.
+  ui_copy: In the "Accessibility sections" list, move "Keyboard support" so it sits directly below "Color contrast". Then click "Apply order". The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface in dark theme with compact spacing and high clutter. The target list is embedded in a dense MUI settings surface surrounded by toggles, status chips, and read-only counts.
+
+    The sortable list is labeled "Accessibility sections" and uses handle-only rows with bug-like labels:
+    Color contrast, Focus ring, Keyboard support, Screen reader notes, Motion settings, Labels.
+    Initial order places Keyboard support below Focus ring.
+
+    The footer shows "Cancel" and "Apply order". Reorders remain draft-only until Apply order is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - clutter
+    factor_rationale: This task relies on dense dark styling and small handles to raise acquisition cost while keeping the semantic goal local and human-solvable.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Dense dark presentation makes the handle hard to acquire, and the task still requires an exact relative placement plus an Apply step.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Color contrast, Keyboard support, Focus ring, Screen reader notes, Motion settings, Labels.'
+    - Changes must be committed by activating 'Apply order'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Color contrast
+        - Keyboard support
+        - Focus ring
+        - Screen reader notes
+        - Motion settings
+        - Labels
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply order
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Placing Keyboard support above Color contrast instead of directly below it.
+  - Leaving Keyboard support below Focus ring.
+  - Dragging the wrong section because the dense rows are visually similar.
+  - Stopping before clicking "Apply order".
+  expected_interaction_path:
+  - Locate the Accessibility sections list.
+  - Drag Keyboard support by its handle to the slot immediately below Color contrast.
+  - Verify the relative order.
+  - Click "Apply order".
+  notes: Relative-placement tasks should still validate the full committed order to reject partial coincidences.
+- id: drag_drop_sortable_list-mui-v2-T08
+  name: 'MUI: Export columns only in a paired table editor'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_sortable_table_rows_multi_instance
+  implementation_component: 'MUI: Two compact tables + row handles + Button + external dnd-kit Sortable (composite)'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: 'In the "Export columns" table, reorder the rows so the order is: Status, Owner, Last updated, Name. Do not change the "Default columns" table. Then click "Apply export order". The task will finish automatically when done.'
+  ui_copy: 'In the "Export columns" table, reorder the rows so the order is: Status, Owner, Last updated, Name. Do not change the "Default columns" table. Then click "Apply export order". The task will finish automatically when done.'
+  setup_description: |-
+    Layout is table_cell with compact spacing and small scale. Two compact row-reorder tables are visible in the same card:
+    - Default columns (distractor)
+    - Export columns (target)
+
+    Both tables contain the same labels: Name, Status, Owner, Last updated. Each row is draggable only from a tiny IconButton handle in the first cell. Initial Export columns order is Name, Owner, Status, Last updated. Initial Default columns order is Name, Status, Owner, Last updated.
+
+    Only the target table's footer button "Apply export order" should be used. The card also contains a disabled search icon and a caption line, increasing clutter slightly.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - scale
+    factor_rationale: Two near-identical row-reorder tables with overlapping labels create strong wrong-instance pressure, while small table handles keep the drag itself nontrivial.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Small row handles and two overlapping table instances make this a high-disambiguation, high-exactness reorder task with a local apply requirement.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Status, Owner, Last updated, Name.'
+    - Changes must be committed by activating 'Apply export order'.
+    - Only the instance labeled 'Export columns' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Status
+        - Owner
+        - Last updated
+        - Name
+        saved: true
+        non_target_instances_must_remain:
+          Default columns:
+          - Name
+          - Status
+          - Owner
+          - Last updated
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply export order
+      require_correct_instance: true
+      target_instance_label_or_id: Export columns
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reordering the Default columns table instead of Export columns.
+  - Applying the correct order in draft but not clicking "Apply export order".
+  - Producing any order other than the exact target sequence.
+  - Changing both tables.
+  expected_interaction_path:
+  - Identify the Export columns table.
+  - Use the tiny row handles to reorder all four rows into the target order.
+  - Leave Default columns unchanged.
+  - Click "Apply export order".
+  notes: Checker should verify exact committed order in the target table and unchanged order in the non-target table.
+- id: drag_drop_sortable_list-mui-v2-T09
+  name: 'MUI: Hidden widget to top in nested scroll panel'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_sortable_scrollable_panel
+  implementation_component: 'MUI: Nested scroll panel + scrollable sortable list + Button + external dnd-kit Sortable (composite)'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: In the "Dashboard widgets" list, scroll to find "Weather", move it to the very top, and then click "Save panel". The task will finish automatically when done.
+  ui_copy: In the "Dashboard widgets" list, scroll to find "Weather", move it to the very top, and then click "Save panel". The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing and medium clutter. A right-side management panel contains a fixed-height sortable list labeled "Dashboard widgets". The surrounding page also has its own outer scroll region with charts and filters.
+
+    Only about six widget rows are visible in the inner list. Initial order is:
+    Overview, Revenue, Active users, Conversion, Traffic sources, Top pages, Devices, Locations, Campaigns, Funnels, Retention, Cohorts, Alerts, Notes, Tasks, Weather.
+
+    The list uses handle-only dragging and autoscroll near the top and bottom edges. A button labeled "Save panel" commits the final order.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - placement
+    - spacing
+    factor_rationale: The task stresses inner-versus-outer scroll discrimination and long-distance drag control in a compact off-center panel, then requires an explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target starts deep below the fold, so the task combines reveal, long-range drag, and explicit save in a nested-scroll layout.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Weather, Overview, Revenue, Active users, Conversion, Traffic sources, Top pages, Devices, Locations, Campaigns, Funnels, Retention, Cohorts, Alerts, Notes, Tasks.'
+    - Changes must be committed by activating 'Save panel'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Weather
+        - Overview
+        - Revenue
+        - Active users
+        - Conversion
+        - Traffic sources
+        - Top pages
+        - Devices
+        - Locations
+        - Campaigns
+        - Funnels
+        - Retention
+        - Cohorts
+        - Alerts
+        - Notes
+        - Tasks
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save panel
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page but not the inner widget list.
+  - Moving Weather near the top but not to the first position.
+  - Dropping Weather correctly but leaving the panel unsaved.
+  - Dragging a different hidden widget instead.
+  expected_interaction_path:
+  - Scroll inside the Dashboard widgets list until Weather becomes visible.
+  - Drag Weather to the top of the list, using autoscroll if needed.
+  - Verify Weather is first.
+  - Click "Save panel".
+  notes: For long-distance drag tasks, checker should compare the full committed order rather than only the new index of the moved item.
+- id: drag_drop_sortable_list-mui-v2-T10
+  name: 'MUI: Apply only the right rail reorder'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_sortable_dual_rail
+  implementation_component: 'MUI: Inline surface + two sortable rails + Button + external dnd-kit Sortable (composite)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the "Right rail items" list, move "Calendar" to the bottom so it is last. Do not change the "Left rail items" list. Then click "Apply right rail". The task will finish automatically when done.
+  ui_copy: In the "Right rail items" list, move "Calendar" to the bottom so it is last. Do not change the "Left rail items" list. Then click "Apply right rail". The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing and medium clutter. Two narrow sortable rails are visible side by side inside a configuration surface:
+    - Left rail items
+    - Right rail items (target)
+
+    Both rails share the labels Home, Calendar, Notes, and Search. In the target Right rail, initial order is Search, Calendar, Notes, Home. Each rail has a local footer button; the target button reads "Apply right rail". Rows are handle-only and compact.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - spacing
+    - confirmation_model
+    factor_rationale: Overlapping labels across two narrow rails raise wrong-instance risk, and the card-local apply control forces the agent to track which rail it actually changed.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Although the target move is simple, compact rails with overlapping labels and local apply buttons make it a hard grounded sortable task.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Search, Notes, Home, Calendar.'
+    - Changes must be committed by activating 'Apply right rail'.
+    - Only the instance labeled 'Right rail items' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Search
+        - Notes
+        - Home
+        - Calendar
+        saved: true
+        non_target_instances_must_remain:
+          Left rail items:
+          - Home
+          - Search
+          - Notes
+          - Calendar
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply right rail
+      require_correct_instance: true
+      target_instance_label_or_id: Right rail items
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reordering the Left rail instead of the Right rail.
+  - Moving Calendar but not leaving it last.
+  - Applying the change with the wrong footer button.
+  - Changing both rails.
+  expected_interaction_path:
+  - Locate the Right rail items list.
+  - Drag Calendar to the final slot.
+  - Leave the Left rail untouched.
+  - Click "Apply right rail".
+  notes: Each rail root and each local apply button should expose a unique semantic label for reliable checker scoping.
+- id: drag_drop_sortable_list-mui-v2-T11
+  name: 'MUI: Left drawer reference ranking with confirm'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_sortable_visual_reference_drawer
+  implementation_component: 'MUI: Temporary Drawer + sortable list + reference chips + confirm action'
+  task_template: match_reference
+  secondary_template: open_overlay
+  browsergym_goal: Open the "Edit feature ranking" drawer. In the "Feature ranking" list, match the Reference order shown in the drawer, then click "Apply ranking". The task will finish automatically when done.
+  ui_copy: Open the "Edit feature ranking" drawer. In the "Feature ranking" list, match the Reference order shown in the drawer, then click "Apply ranking". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing and medium clutter. A button in the dashboard header opens a left-side MUI Drawer titled "Edit feature ranking".
+
+    Inside the drawer is one handle-only sortable list labeled "Feature ranking" with items Security, Collaboration, Analytics, Automation, Customization. The current order is Analytics, Automation, Collaboration, Customization, Security.
+    A visual "Reference order" chip stack displays the desired final ranking. The drawer footer has "Close" and "Apply ranking". Changes stay local to the drawer until Apply ranking is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - guidance
+    - layout
+    - confirmation_model
+    factor_rationale: A temporary drawer makes the reorder contextual rather than isolated, and the visual reference forces the agent to translate a non-text target into a committed exact ordering.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This combines layered acquisition inside a drawer, multiple handle-only moves, and visual-reference interpretation with an explicit commit.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Security, Collaboration, Analytics, Automation, Customization.'
+    - Changes must be committed by activating 'Apply ranking'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Security
+        - Collaboration
+        - Analytics
+        - Automation
+        - Customization
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply ranking
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching the reference partially but not exactly.
+  - Stopping at the correct draft order without clicking "Apply ranking".
+  - Closing the drawer instead of applying the change.
+  - Dragging rows by the body instead of the handle and leaving the order unchanged.
+  expected_interaction_path:
+  - Open the drawer.
+  - Read the Reference order chips.
+  - Reorder the Feature ranking list to match them exactly.
+  - Click "Apply ranking".
+  notes: Checker may derive the target order from the reference chip stack, but must validate the committed drawer result.
+- id: drag_drop_sortable_list-mantine-v2-T12
+  name: 'Mantine: High-contrast escalation table exact reorder'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_sortable_table_rows
+  implementation_component: 'Mantine: Table + ActionIcon handles + Button + external dnd-kit Sortable (composite)'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: 'In the "Escalation order" table, reorder the rows so the order is: Chloe Park, Alice Chen, Evelyn Patel, Bruno Silva, Diego Ruiz. Then click "Apply". The task will finish automatically when done.'
+  ui_copy: 'In the "Escalation order" table, reorder the rows so the order is: Chloe Park, Alice Chen, Evelyn Patel, Bruno Silva, Diego Ruiz. Then click "Apply". The task will finish automatically when done.'
+  setup_description: |-
+    Layout is table_cell in high_contrast theme with compact spacing, small scale, and medium clutter. The compact card title is "On-call escalation".
+
+    The table rows are draggable only from a small grip icon in the first column. Initial order is:
+    Alice Chen, Bruno Silva, Chloe Park, Diego Ruiz, Evelyn Patel.
+
+    Other columns show role text and a disabled active toggle. The footer contains "Cancel" and "Apply". A small dropdown for escalation delay and a tooltip icon sit above the table but are irrelevant.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: table_cell
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - theme
+    - scale
+    - layout
+    factor_rationale: The table itself is already interaction-heavy, so high contrast is used as a robustness slice while the small table layout keeps acquisition and exactness pressure high.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 5
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A full exact reorder with tiny table handles is intrinsically hard; the high-contrast slice adds robustness without lowering the drag burden.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Chloe Park, Alice Chen, Evelyn Patel, Bruno Silva, Diego Ruiz.'
+    - Changes must be committed by activating 'Apply'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Chloe Park
+        - Alice Chen
+        - Evelyn Patel
+        - Bruno Silva
+        - Diego Ruiz
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Getting the top row correct but not the full sequence.
+  - Reaching the draft order but not clicking "Apply".
+  - Dragging the wrong row because multiple names must move.
+  - Changing non-target controls instead of the table.
+  expected_interaction_path:
+  - Use the row handles to reorder all five rows into the requested sequence.
+  - Verify the exact order visually.
+  - Click "Apply".
+  notes: Checker should read committed row order after Apply. Do not accept partial-order constraints for this task.
+- id: drag_drop_sortable_list-mantine-v2-T13
+  name: 'Mantine: Dense dashboard list with hidden changelog and save'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_sortable_scrollable_dense
+  implementation_component: 'Mantine: Dashboard card + ScrollArea list + Button + external dnd-kit Sortable (composite)'
+  task_template: scroll_find
+  secondary_template: drag_operation
+  browsergym_goal: In the "Report sections" list, scroll to find "Changelog", move it so it sits directly above "Appendix", and then click "Save sections". The task will finish automatically when done.
+  ui_copy: In the "Report sections" list, scroll to find "Changelog", move it so it sits directly above "Appendix", and then click "Save sections". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel in dark theme with compact spacing, small scale, and high clutter. The target card titled "Report sections" sits near the bottom-left of the viewport under a mini chart and beside filter chips.
+
+    The card contains a fixed-height Mantine ScrollArea with a handle-only sortable list. Only six rows are visible at once. Initial order ends with "... Legal, Appendix, Changelog". Moving items uses autoscroll near edges. A footer button "Save sections" commits the list.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: none
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - clutter
+    - placement
+    factor_rationale: A hidden target in a cluttered corner card raises visual acquisition cost and inner-scroll demands, while the direct-above constraint still keeps the final state precise.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The target is hidden in a dense corner dashboard card, and the adjacency requirement plus Save step prevents this from collapsing into a generic long-list move.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Executive summary, Key metrics, Revenue, Costs, Customer feedback, Roadmap, Risks, Compliance, Operations, Marketing, Sales, Support, Engineering, HR, Legal, Changelog, Appendix.'
+    - Changes must be committed by activating 'Save sections'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Executive summary
+        - Key metrics
+        - Revenue
+        - Costs
+        - Customer feedback
+        - Roadmap
+        - Risks
+        - Compliance
+        - Operations
+        - Marketing
+        - Sales
+        - Support
+        - Engineering
+        - HR
+        - Legal
+        - Changelog
+        - Appendix
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save sections
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving Changelog below Appendix.
+  - Moving Changelog far upward instead of directly above Appendix.
+  - Scrolling the page rather than the inner list and never revealing Changelog.
+  - Not clicking "Save sections".
+  expected_interaction_path:
+  - Scroll within the Report sections list until Changelog is visible.
+  - Drag Changelog to the slot immediately above Appendix.
+  - Verify the local order at the bottom of the list.
+  - Click "Save sections".
+  notes: Checker should validate the full final order because long-list drags can produce unintended side effects elsewhere in the sequence.
+- id: drag_drop_sortable_list-mantine-v2-T14
+  name: 'Mantine: Save only the secondary badge ordering'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_sortable_multi_instance
+  implementation_component: 'Mantine: Settings panel + three sortable lists + local Save buttons'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the "Secondary status badges" list, move "Blocked" to the bottom so it is last. Do not change the "Primary status badges" or "Email badges" lists. Then click "Save secondary badges". The task will finish automatically when done.
+  ui_copy: In the "Secondary status badges" list, move "Blocked" to the bottom so it is last. Do not change the "Primary status badges" or "Email badges" lists. Then click "Save secondary badges". The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing and medium clutter. Three compact sortable lists appear one above another and share overlapping labels such as Open, Blocked, and Review:
+    - Primary status badges
+    - Secondary status badges (target)
+    - Email badges
+
+    Initial Secondary status badges order is Open, Blocked, Muted, Review. Each list has its own small footer action. The target footer button reads "Save secondary badges". Rows are handle-only and compact.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: Three vertically stacked lists with overlapping labels increase wrong-instance risk, and the local Save action forces the agent to commit the intended list only.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Wrong-list and wrong-save failures are both plausible here, so even a simple move becomes hard in a compact stacked settings panel.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Open, Muted, Review, Blocked.'
+    - Changes must be committed by activating 'Save secondary badges'.
+    - Only the instance labeled 'Secondary status badges' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Open
+        - Muted
+        - Review
+        - Blocked
+        saved: true
+        non_target_instances_must_remain:
+          Primary status badges:
+          - Open
+          - Review
+          - Blocked
+          - Closed
+          Email badges:
+          - Important
+          - Blocked
+          - Muted
+          - Archive
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save secondary badges
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary status badges
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Primary status badges or Email badges.
+  - Moving Blocked within the wrong list.
+  - Leaving Blocked above any other item in Secondary status badges.
+  - Clicking the wrong local save button.
+  expected_interaction_path:
+  - Locate the Secondary status badges list.
+  - Drag Blocked to the final slot.
+  - Leave the other two lists untouched.
+  - Click "Save secondary badges".
+  notes: Local save buttons should expose unique labels/ids so the checker can reject wrong-control commits.
+- id: drag_drop_sortable_list-mantine-v2-T15
+  name: 'Mantine: Modal sprint steps match and confirm'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_sortable_visual_reference_confirm
+  implementation_component: 'Mantine: Modal + sortable list + reference panel + Save + confirm dialog'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open "Edit sprint steps". In the "Sprint steps" list, match the Reference order shown in the modal, then click "Save order" and confirm. The task will finish automatically when done.
+  ui_copy: Open "Edit sprint steps". In the "Sprint steps" list, match the Reference order shown in the modal, then click "Save order" and confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking "Edit sprint steps" opens a Mantine Modal titled "Sprint steps". The modal contains:
+    - a handle-only sortable list with items Plan, Build, Review, Release, Monitor, Retrospective
+    - a read-only "Reference order" stack showing the desired final ranking visually
+
+    Initial order is Plan, Review, Build, Release, Retrospective, Monitor. Clicking "Save order" opens a confirmation dialog with "Confirm" and "Cancel". Only Confirm commits the new order and closes both overlays.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The visual reference keeps the task grounded in rendered UI rather than copied text, and the save-plus-confirm chain introduces the verification burden missing from v1 toy reorders.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple handle-only moves in a modal are already demanding; adding a nested confirmation step makes state tracking and completion verification meaningfully harder.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Build, Plan, Review, Monitor, Release, Retrospective.'
+    - Changes must be committed by activating 'Confirm'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Build
+        - Plan
+        - Review
+        - Monitor
+        - Release
+        - Retrospective
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Matching only part of the reference order.
+  - Clicking Save order but cancelling the confirmation dialog.
+  - Leaving the modal open with only a draft reorder.
+  - Dragging rows by the body instead of the handle.
+  expected_interaction_path:
+  - Open the modal.
+  - Use the visual reference to reorder all six steps.
+  - Click "Save order".
+  - Click "Confirm".
+  notes: Checker should require committed saved state and closed overlays, not just a matching transient draft.
+- id: drag_drop_sortable_list-mantine-v2-T16
+  name: 'Mantine: Inline audit navigation exact relative reorder'
+  canonical_type: drag_drop_sortable_list
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_sortable_inline
+  implementation_component: 'Mantine: Inline surface + sortable list + Button + external dnd-kit Sortable (composite)'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the "Audit navigation" list, move "Audit log" so it is directly below "Access control". Then click "Save navigation". The task will finish automatically when done.
+  ui_copy: In the "Audit navigation" list, move "Audit log" so it is directly below "Access control". Then click "Save navigation". The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing and medium clutter. The target list sits inside a dense admin settings section between a permissions table and a read-only summary panel.
+
+    The sortable list "Audit navigation" has initial order:
+    Overview, Sessions, Audit log, Access control, API keys, Retention.
+    Rows are handle-only and compact. The section footer contains "Save navigation". There is no other sortable list nearby, but the surrounding controls create visual interference.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - spacing
+    - clutter
+    - confirmation_model
+    factor_rationale: This is the simplest carrier in the packet, but the dense inline-surface placement still makes the handle harder to acquire and forces a saved exact relative reorder.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The list is short, but compact inline placement plus the direct-below constraint and Save step keep it above a trivial baseline.
+  success_trigger:
+    human_readable:
+    - 'Target sortable list order (top → bottom) must be: Overview, Sessions, Access control, Audit log, API keys, Retention.'
+    - Changes must be committed by activating 'Save navigation'.
+    - Task ends when the order predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        ordered_labels:
+        - Overview
+        - Sessions
+        - Access control
+        - Audit log
+        - API keys
+        - Retention
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save navigation
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Placing Audit log above Access control instead of below it.
+  - Leaving Audit log in its original position.
+  - Dragging the wrong row because the handles are small.
+  - Not clicking "Save navigation".
+  expected_interaction_path:
+  - Locate the Audit navigation list in the admin section.
+  - Drag Audit log to the slot directly below Access control.
+  - Verify the local order.
+  - Click "Save navigation".
+  notes: Checker should validate committed order after the save action, not the draft DOM order alone.
+- id: drag_drop_between_lists-antd-v2-T17
+  name: 'AntD: Modal reviewer assignment with exact destination order'
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_multiple_containers_modal
+  implementation_component: 'AntD: Modal + dual-list drag/drop + Done commit (composite)'
+  task_template: open_overlay
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Assign reviewers" dialog, drag "Jordan Lee" from Available reviewers into Assigned reviewers so it sits between "Avery Patel" and "Riley Chen", then click "Done". The task will finish automatically when done.
+  ui_copy: Open the "Assign reviewers" dialog, drag "Jordan Lee" from Available reviewers into Assigned reviewers so it sits between "Avery Patel" and "Riley Chen", then click "Done". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. The base page shows a review settings row and a button "Edit reviewers". Clicking it opens an Ant Design Modal titled "Assign reviewers".
+
+    Inside the modal is one dual-list drag/drop selector:
+    - Available reviewers: Jordan Lee, Kai Nguyen
+    - Assigned reviewers: Avery Patel, Riley Chen
+
+    Rows are handle-only and compact. The destination list supports exact insertion placement. The modal footer contains "Cancel" and "Done". Draft changes are visible immediately in the dialog, but committed state updates only after "Done" is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - precision_surface
+    - layout
+    factor_rationale: The destination order matters, not just membership, and the modal-local Done step forces the agent to distinguish draft list state from committed list state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This is harder than a simple transfer because the inserted reviewer must land in the exact middle slot and the modal change must be committed.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Done'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available reviewers:
+          - Kai Nguyen
+          Assigned reviewers:
+          - Avery Patel
+          - Jordan Lee
+          - Riley Chen
+        order_matters: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving Jordan Lee into Assigned reviewers but placing the card above Avery Patel or below Riley Chen.
+  - Dragging the right reviewer but clicking Cancel or closing the modal.
+  - Moving Kai Nguyen instead of Jordan Lee.
+  - Leaving Jordan Lee in Available reviewers.
+  expected_interaction_path:
+  - Open the modal.
+  - Drag Jordan Lee into Assigned reviewers and drop it between Avery Patel and Riley Chen.
+  - Verify the destination order.
+  - Click "Done".
+  notes: Expose committed reviewer chips on the base page so the checker can verify post-dialog state.
+- id: drag_drop_between_lists-antd-v2-T18
+  name: 'AntD: Apply only the secondary workspace sections'
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_multiple_containers_multi_instance
+  implementation_component: 'AntD: Settings panel + two dual-list selectors + Apply button (composite)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the "Secondary workspace sections" selector, drag "Billing" and "Audit" from Available to Enabled so the Enabled order becomes Overview, Alerts, Billing, Audit. Do not change the "Primary workspace sections" selector. Then click "Apply secondary sections". The task will finish automatically when done.
+  ui_copy: In the "Secondary workspace sections" selector, drag "Billing" and "Audit" from Available to Enabled so the Enabled order becomes Overview, Alerts, Billing, Audit. Do not change the "Primary workspace sections" selector. Then click "Apply secondary sections". The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing and high clutter. Two same-type dual-list selectors are stacked in the main pane:
+    - Primary workspace sections
+    - Secondary workspace sections (target)
+
+    In the target selector, initial Enabled sections are Overview, Alerts. Available sections are Billing, Audit, Notes.
+    In the non-target selector, Billing also appears but should remain untouched.
+
+    Each selector has a local footer button. The target footer button reads "Apply secondary sections". Rows are compact and handle-only.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Two similar selectors with overlapping section labels make wrong-instance edits plausible, while the exact Enabled order plus local apply step adds verification burden.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The task requires two correct transfers, exact destination order, preserving the sibling selector, and using the correct local apply control.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Apply secondary sections'.
+    - Only the instance labeled 'Secondary workspace sections' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available sections:
+          - Notes
+          Enabled sections:
+          - Overview
+          - Alerts
+          - Billing
+          - Audit
+        order_matters: true
+        saved: true
+        non_target_instances_must_remain:
+          Primary workspace sections__Enabled:
+          - Overview
+          - Billing
+          - Alerts
+          Primary workspace sections__Available:
+          - Audit
+          - Notes
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply secondary sections
+      require_correct_instance: true
+      target_instance_label_or_id: Secondary workspace sections
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the Primary workspace sections selector.
+  - Moving Billing and Audit into Enabled but in the wrong order.
+  - Applying the changes with the wrong local button.
+  - Moving Notes instead of one of the requested sections.
+  expected_interaction_path:
+  - Locate the Secondary workspace sections selector.
+  - Drag Billing and Audit from Available into Enabled in the requested order.
+  - Leave the Primary selector untouched.
+  - Click "Apply secondary sections".
+  notes: Checker should read committed container state for both selectors and reject cross-instance edits.
+- id: drag_drop_between_lists-antd-v2-T19
+  name: 'AntD: Hidden engineer to top of on-call drawer'
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_multiple_containers_scrollable_drawer
+  implementation_component: 'AntD: Drawer + scrollable dual-list selector + Save button (composite)'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Escalation recipients" drawer. In the selector inside the drawer, scroll the Available engineers list to find "Zoe Martinez", drag her into "On-call this week" at the top of that list, then click "Save rotation". The task will finish automatically when done.
+  ui_copy: Open the "Escalation recipients" drawer. In the selector inside the drawer, scroll the Available engineers list to find "Zoe Martinez", drag her into "On-call this week" at the top of that list, then click "Save rotation". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow in dark theme with compact spacing and medium clutter. Clicking "Edit escalation recipients" opens a right-side drawer titled "Escalation recipients".
+
+    Inside is a dual-list drag/drop selector:
+    - Available engineers: a fixed-height scrollable list showing only six rows at once
+    - On-call this week: Ava Chen, Leo Garcia
+
+    Zoe Martinez is near the bottom of Available engineers and starts below the fold. Rows are compact and handle-only. The drawer footer contains "Cancel" and "Save rotation".
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: The source item is hidden inside a drawer-local scroll region, and the task also requires exact placement in the destination list and an explicit save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A hidden source item, constrained drag path, exact destination placement, and drawer-local Save make this a robust hard transfer task.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save rotation'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available engineers:
+          - Aiden Ross
+          - Ben Patel
+          - Chris Johnson
+          - Dana Kim
+          - Eli Nguyen
+          - Fatima Ali
+          - Grace Liu
+          - Hiro Tanaka
+          - Ivy Brooks
+          - Mina Hassan
+          On-call this week:
+          - Zoe Martinez
+          - Ava Chen
+          - Leo Garcia
+        order_matters: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save rotation
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page instead of the Available engineers list.
+  - Moving Zoe Martinez into On-call this week but not placing her first.
+  - Dragging the wrong hidden engineer.
+  - Leaving the drawer without clicking "Save rotation".
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll inside Available engineers until Zoe Martinez is visible.
+  - Drag Zoe Martinez to the top of On-call this week.
+  - Click "Save rotation".
+  notes: Checker should validate committed state after the drawer closes; long lists should use stable ids for hidden items.
+- id: drag_drop_between_lists-antd-v2-T20
+  name: 'AntD: Match quick actions to the visual preview'
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_multiple_containers_reference
+  implementation_component: 'AntD: Dashboard card + dual-list selector + reference chip panel + Save (composite)'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: Make the "Quick actions" selector match the Reference preview, then click "Save actions". The task will finish automatically when done.
+  ui_copy: Make the "Quick actions" selector match the Reference preview, then click "Save actions". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and high clutter. The card titled "Quick actions" contains:
+    - Available actions list
+    - Pinned actions list
+    - a read-only "Reference preview" showing the desired pinned chips visually, in order
+
+    Initial Available actions: Export, Compare, Share, Archive.
+    Initial Pinned actions: Open, Edit.
+    The reference preview shows the target pinned order: Open, Share, Compare.
+
+    Rows are handle-only. The card footer has "Save actions". Achieving the target requires one removal and two insertions.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - confirmation_model
+    factor_rationale: The target is specified by a visual chip preview rather than textual end-state instructions on the page, so the agent must track both membership and order before committing.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: This requires multiple transfers in both directions, exact pinned order, and interpretation of a visual preview in a cluttered dashboard card.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save actions'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available actions:
+          - Export
+          - Archive
+          - Edit
+          Pinned actions:
+          - Open
+          - Share
+          - Compare
+        order_matters: true
+        saved: true
+        reference_id: ref-quick-actions
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save actions
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Getting the right pinned membership but the wrong order.
+  - Leaving Edit pinned instead of moving it out.
+  - Adding the wrong action from Available.
+  - Matching the draft state but not clicking "Save actions".
+  expected_interaction_path:
+  - Inspect the Reference preview.
+  - Move Edit out of Pinned actions if needed.
+  - Drag Share and Compare into Pinned actions in the preview order.
+  - Click "Save actions".
+  notes: Checker may derive the target order from the visual preview but must still validate the committed selector state.
+- id: drag_drop_between_lists-antd-v2-T21
+  name: 'AntD: Create a draft transfer and discard it'
+  canonical_type: drag_drop_between_lists
+  implementation_source: antd
+  implementation_variant: composite_dnd_kit_multiple_containers_discard_flow
+  implementation_component: 'AntD: Drawer + dual-list selector + close/discard confirmation (composite)'
+  task_template: confirm_cancel
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Notification channels" drawer, drag "Critical alerts" from Disabled to Enabled to create a draft change, then close the drawer and click "Discard changes". The task will finish automatically when done.
+  ui_copy: Open the "Notification channels" drawer, drag "Critical alerts" from Disabled to Enabled to create a draft change, then close the drawer and click "Discard changes". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing and medium clutter. Clicking "Edit notification channels" opens an Ant Design Drawer titled "Notification channels".
+
+    Inside the drawer is one dual-list selector:
+    - Enabled: Email, Push
+    - Disabled: Critical alerts, Digest, SMS
+
+    Dragging updates draft lists immediately and shows an "Unsaved changes" banner. The drawer close button opens a confirmation popover with "Keep editing" and "Discard changes". There is no reset button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - layout
+    factor_rationale: 'The task intentionally targets recovery and state tracking: a real drag must happen first, and success depends on abandoning the draft through the discard flow rather than a reset shortcut.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The final state is the original membership, but the path requires a genuine drag, unsaved-state recognition, and a nested discard-confirmation decision.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored unless explicitly specified in the target state.
+    - The changes must be committed by clicking 'Discard changes'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Enabled:
+          - Email
+          - Push
+          Disabled:
+          - Critical alerts
+          - Digest
+          - SMS
+        order_matters: false
+        discarded: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Discard changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the drawer without ever creating a draft transfer.
+  - Dragging Critical alerts and then saving or keeping the draft.
+  - Ending with Critical alerts in Enabled.
+  - Using any external control that bypasses the drag interaction.
+  expected_interaction_path:
+  - Open the drawer.
+  - Drag Critical alerts from Disabled to Enabled to create a dirty state.
+  - Click the drawer close control.
+  - Choose "Discard changes".
+  notes: Checker should require a discarded dirty-state path, not merely the original final membership.
+- id: drag_drop_between_lists-mui-v2-T22
+  name: 'MUI: Sales row exact widget transfer and row save'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_multiple_containers_table_row
+  implementation_component: 'MUI: Table row + embedded dual-list selector + row-local Save'
+  task_template: table_operation
+  secondary_template: transfer_move
+  browsergym_goal: In the "Sales dashboard" row, drag "Revenue" from Hidden to Visible and place it at the top of Visible. Do not change the "Support dashboard" row. Then click "Save" in the Sales row. The task will finish automatically when done.
+  ui_copy: In the "Sales dashboard" row, drag "Revenue" from Hidden to Visible and place it at the top of Visible. Do not change the "Support dashboard" row. Then click "Save" in the Sales row. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. The page shows a table titled "Dashboard presets". Two rows are expanded:
+    - Sales dashboard (target)
+    - Support dashboard (distractor)
+
+    Each expanded row embeds a dual-list drag/drop selector inside the Widgets cell.
+    Sales row initial state:
+      Visible: Sales, Orders
+      Hidden: Revenue, Refunds
+    Support row initial state:
+      Visible: Tickets, SLA
+      Hidden: Revenue, Escalations
+
+    Each row has its own small "Save" button. Rows are handle-only and exact insertion order matters.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Row-embedded selectors and row-local save buttons create both acquisition difficulty and strong wrong-row pressure while preserving genuine transfer semantics.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: The table-cell carrier makes the lists physically small, the label overlap across rows increases confusion, and the Sales row must be committed locally.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'save-sales-row'.
+    - Only the instance labeled 'Sales dashboard' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Visible:
+          - Revenue
+          - Sales
+          - Orders
+          Hidden:
+          - Refunds
+        order_matters: true
+        saved: true
+        non_target_instances_must_remain:
+          Support dashboard__Visible:
+          - Tickets
+          - SLA
+          Support dashboard__Hidden:
+          - Revenue
+          - Escalations
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-sales-row
+      require_correct_instance: true
+      target_instance_label_or_id: Sales dashboard
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Editing the Support dashboard row instead of Sales dashboard.
+  - Moving Revenue into Visible but not placing it first.
+  - Reaching the correct Sales draft state but clicking Save in the wrong row or not saving at all.
+  - Changing both rows.
+  expected_interaction_path:
+  - Locate the Sales dashboard row.
+  - Drag Revenue from Hidden into the top of Visible.
+  - Leave the Support dashboard row unchanged.
+  - Click Save in the Sales row.
+  notes: Row ids and row-local save controls should be instrumented separately; checker must reject correct state in the wrong row.
+- id: drag_drop_between_lists-mui-v2-T23
+  name: 'MUI: Modal reviewers with two transfers and commit'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_multiple_containers_dialog
+  implementation_component: 'MUI: Dialog + dual-list selector + Done commit'
+  task_template: open_overlay
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Assign reviewers" dialog, drag "Jordan Lee" and "Kai Nguyen" from Available reviewers to Assigned reviewers, and then click "Done". The task will finish automatically when done.
+  ui_copy: Open the "Assign reviewers" dialog, drag "Jordan Lee" and "Kai Nguyen" from Available reviewers to Assigned reviewers, and then click "Done". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with comfortable spacing but medium clutter from dialog chrome and helper text. The base page has a settings row with a button "Edit reviewers". Clicking it opens a centered MUI Dialog titled "Assign reviewers".
+
+    Initial dialog state:
+    - Assigned reviewers: Avery Patel
+    - Available reviewers: Jordan Lee, Kai Nguyen, Riley Chen
+
+    Dragging updates the dialog lists immediately, but the committed assignment updates only when "Done" is clicked. The target end state requires two transfers and exact destination order: Avery Patel, Jordan Lee, Kai Nguyen.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - confirmation_model
+    - layout
+    - precision_surface
+    factor_rationale: Requiring two transfers makes the task clearly multi-step, and the staged dialog commit still forces the agent to verify the final order before closing.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Two transfers inside a compact dialog plus staged commit semantics make this clearly harder than a simple one-item modal assignment.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Done'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available reviewers:
+          - Riley Chen
+          Assigned reviewers:
+          - Avery Patel
+          - Jordan Lee
+          - Kai Nguyen
+        order_matters: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Done
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Transferring only one reviewer.
+  - Getting the right membership but the wrong destination order.
+  - Closing the dialog or clicking Cancel instead of Done.
+  - Moving Riley Chen instead of one of the requested reviewers.
+  expected_interaction_path:
+  - Open the dialog.
+  - Drag Jordan Lee and Kai Nguyen into Assigned reviewers in that order.
+  - Verify the destination order.
+  - Click "Done".
+  notes: Checker should validate post-dialog committed state, not just the in-dialog draft lists.
+- id: drag_drop_between_lists-mui-v2-T24
+  name: 'MUI: Dark compact sections selector with exact final order'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_multiple_containers_dense
+  implementation_component: 'MUI: Dark compact dual-list selector + Save button (composite)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the "App sections" selector, drag "Billing" and "Security" from Available sections to Enabled sections so the Enabled order becomes Profile, Notifications, Billing, Security. Then click "Save sections". The task will finish automatically when done.
+  ui_copy: In the "App sections" selector, drag "Billing" and "Security" from Available sections to Enabled sections so the Enabled order becomes Profile, Notifications, Billing, Security. Then click "Save sections". The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface in dark theme with compact spacing, small scale, and medium clutter. The dual-list selector sits inside a dense settings surface beside a summary chip row and two unrelated toggles.
+
+    Initial state:
+    - Enabled sections: Profile, Notifications
+    - Available sections: Billing, Security, Integrations
+
+    The destination order matters exactly. Drag handles are small and the insertion indicator is subtle in dark mode. A footer button labeled "Save sections" commits the selector state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: none
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - confirmation_model
+    factor_rationale: This keeps a single selector but pushes acquisition pressure upward through dark compact styling in a dense inline surface, then makes completion nontrivial through exact final order plus an explicit save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 5
+      density_choice_interference: 2
+      depth_layering: 1
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 1
+    justification: Even with one selector, two handle-only transfers under dense dark styling are error-prone, and the final exact order still has to be saved.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save sections'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available sections:
+          - Integrations
+          Enabled sections:
+          - Profile
+          - Notifications
+          - Billing
+          - Security
+        order_matters: true
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save sections
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving only Billing or only Security.
+  - Getting the right membership but wrong order in Enabled sections.
+  - Dropping outside the target list so one section snaps back.
+  - Not clicking "Save sections".
+  expected_interaction_path:
+  - Drag Billing into Enabled sections below Notifications.
+  - Drag Security into Enabled sections below Billing.
+  - Verify the final order.
+  - Click "Save sections".
+  notes: Because the carrier is simpler than most other v2 tasks, the hard floor comes from compact dark handle-only transfers plus explicit commit.
+- id: drag_drop_between_lists-mui-v2-T25
+  name: 'MUI: Product filters only, with two ordered insertions'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_multiple_containers_multi_instance
+  implementation_component: 'MUI: Dashboard panel + two dual-list selectors + Apply button (composite)'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: In the "Product Filters" selector, drag "Brand" and "Price" from Inactive filters to Active filters so the Active order becomes Category, Brand, Price. Do not change "User Filters". Then click "Apply filters". The task will finish automatically when done.
+  ui_copy: In the "Product Filters" selector, drag "Brand" and "Price" from Inactive filters to Active filters so the Active order becomes Category, Brand, Price. Do not change "User Filters". Then click "Apply filters". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and medium clutter. Two dual-list selectors are stacked vertically:
+    - Product Filters (target)
+    - User Filters (distractor)
+
+    Product Filters initial state:
+      Active filters: Category
+      Inactive filters: Price, Brand, Rating
+    User Filters initial state:
+      Active filters: Country
+      Inactive filters: Price, Language
+
+    Both selectors share the label Price. The target footer button reads "Apply filters". Exact Active order matters.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: The shared label Price appears in both selectors, so the task deliberately stresses instance disambiguation while still requiring two transfers and exact destination order.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Two ordered insertions in the correct selector plus overlapping labels across instances produce a high-disambiguation hard task.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Apply filters'.
+    - Only the instance labeled 'Product Filters' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Inactive filters:
+          - Rating
+          Active filters:
+          - Category
+          - Brand
+          - Price
+        order_matters: true
+        saved: true
+        non_target_instances_must_remain:
+          User Filters__Active:
+          - Country
+          User Filters__Inactive:
+          - Price
+          - Language
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply filters
+      require_correct_instance: true
+      target_instance_label_or_id: Product Filters
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging Price in the User Filters selector instead of Product Filters.
+  - Adding Brand and Price to Active filters but in the wrong order.
+  - Changing User Filters in addition to Product Filters.
+  - Not clicking "Apply filters".
+  expected_interaction_path:
+  - Locate the Product Filters selector.
+  - Drag Brand and Price from Inactive to Active in the requested order.
+  - Leave User Filters unchanged.
+  - Click "Apply filters".
+  notes: Checker should scope by selector heading and require unchanged state in the non-target selector.
+- id: drag_drop_between_lists-mui-v2-T26
+  name: 'MUI: Favorite metrics long-list preview match'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_multiple_containers_scrollable_reference
+  implementation_component: 'MUI: Dashboard panel + scrollable dual-list selector + reference chips + Save (composite)'
+  task_template: match_reference
+  secondary_template: scroll_find
+  browsergym_goal: In the "Favorite metrics" selector, use the Available metrics list to make Favorite metrics match the Reference preview exactly, then click "Save metrics". The task will finish automatically when done.
+  ui_copy: In the "Favorite metrics" selector, use the Available metrics list to make Favorite metrics match the Reference preview exactly, then click "Save metrics". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and high clutter. The target card contains:
+    - a scrollable Available metrics list on the left
+    - a Favorite metrics list on the right
+    - a visual Reference preview chip row showing the desired final Favorite metrics order
+
+    Initial Favorite metrics: Revenue.
+    Available metrics include Active users, Bounce rate, Churn rate, Net promoter score, Sessions, Page views, Conversion rate, MRR, and more; some are below the fold.
+    The reference preview shows the desired final order: Revenue, Churn rate, Net promoter score.
+    The card footer button "Save metrics" commits the state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - internal_scroll_region
+    - clutter
+    factor_rationale: The task combines hidden-source discovery with visual-reference matching, which adds observability pressure without drifting away from the core between-lists drag idiom.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A hidden source list, exact favorite order, and a visual preview target make this a multi-step hard transfer task in a cluttered card.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save metrics'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available metrics:
+          - Active users
+          - Bounce rate
+          - Sessions
+          - Page views
+          - Conversion rate
+          - MRR
+          Favorite metrics:
+          - Revenue
+          - Churn rate
+          - Net promoter score
+        order_matters: true
+        saved: true
+        reference_id: ref-favorite-metrics
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save metrics
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Adding the correct metrics but in the wrong order.
+  - Leaving one of the target metrics in Available metrics.
+  - Dragging a non-target metric such as Bounce rate.
+  - Matching the draft state but not clicking "Save metrics".
+  expected_interaction_path:
+  - Inspect the Reference preview.
+  - Scroll Available metrics until the needed metrics are visible.
+  - Drag Churn rate and Net promoter score into Favorite metrics in the preview order.
+  - Click "Save metrics".
+  notes: If virtualization is used, stable backing state should remain available to the checker regardless of current scroll position.
+- id: drag_drop_between_lists-mui-v2-T27
+  name: 'MUI: Manage fields popover with exact insertion and apply'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mui
+  implementation_variant: composite_dnd_kit_multiple_containers_popover
+  implementation_component: 'MUI: Popover + compact dual-list selector + Apply (composite)'
+  task_template: open_overlay
+  secondary_template: transfer_move
+  browsergym_goal: Open "Manage fields". In the popover selector, drag "Email" from Available fields to Shown fields so it sits between "Name" and "Phone", then click "Apply". The task will finish automatically when done.
+  ui_copy: Open "Manage fields". In the popover selector, drag "Email" from Available fields to Shown fields so it sits between "Name" and "Phone", then click "Apply". The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface with compact spacing and medium clutter. A toolbar button "Manage fields" opens a compact anchored popover containing one dual-list selector.
+
+    Initial selector state:
+    - Available fields: Company, Address, Email
+    - Shown fields: Name, Phone
+
+    The popover is small, rows are handle-only, and the destination insertion line is narrow. The footer contains "Cancel" and "Apply". The base table updates only after Apply.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: inline_surface
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: popover
+  design_intent:
+    active_factors:
+    - overlay_model
+    - spacing
+    - confirmation_model
+    factor_rationale: The anchored popover makes the interaction area physically tight, so the task stresses precise insertion as well as the distinction between transient popover state and applied base-page state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The task is compact and overlay-bound, so even one transfer becomes hard once exact insertion and Apply semantics are required.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Apply'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available fields:
+          - Company
+          - Address
+          Shown fields:
+          - Name
+          - Email
+          - Phone
+        order_matters: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Dragging Email into Shown fields but placing it above Name or below Phone.
+  - Dragging Company instead of Email.
+  - Closing the popover without clicking Apply.
+  - Leaving Email in Available fields.
+  expected_interaction_path:
+  - Open the Manage fields popover.
+  - Drag Email into Shown fields between Name and Phone.
+  - Verify the destination order.
+  - Click "Apply".
+  notes: Checker should validate the committed base-page field order, not only the popover draft.
+- id: drag_drop_between_lists-mantine-v2-T28
+  name: 'Mantine: Quick actions preview match with local save'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_multiple_containers_reference
+  implementation_component: 'Mantine: Dashboard card + dual-list selector + preview chips + Save (composite)'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: Make the "Quick actions" selector match the Reference preview exactly, then click "Save actions". The task will finish automatically when done.
+  ui_copy: Make the "Quick actions" selector match the Reference preview exactly, then click "Save actions". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel in dark theme with compact spacing and high clutter. The target card "Quick actions" contains Available actions and Pinned actions lists, both using small drag handles. A read-only preview chip row shows the target pinned order visually.
+
+    Initial Available actions: Export, Compare, Share, Archive.
+    Initial Pinned actions: Open, Edit.
+    The preview chips show the desired final Pinned order: Open, Share, Compare.
+    The card footer button "Save actions" commits changes.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: bottom_left
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - theme
+    - clutter
+    factor_rationale: 'This is intentionally preview-driven: the target is visible but not restated textually inside the card, so the agent must solve membership plus order under dense dark styling.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Multiple transfers, one removal, exact order, and dense dark styling make this a strong hard between-lists task.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save actions'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available actions:
+          - Export
+          - Archive
+          - Edit
+          Pinned actions:
+          - Open
+          - Share
+          - Compare
+        order_matters: true
+        saved: true
+        reference_id: ref-quick-actions-dark
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save actions
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Getting the right pinned items but wrong order.
+  - Leaving Edit in the pinned list.
+  - Adding the wrong available action.
+  - Forgetting to click "Save actions".
+  expected_interaction_path:
+  - Inspect the preview chips.
+  - Drag Edit out if needed.
+  - Drag Share and Compare into Pinned actions in the preview order.
+  - Click "Save actions".
+  notes: Preview chips should be non-interactive; checker must validate the committed selector state.
+- id: drag_drop_between_lists-mantine-v2-T29
+  name: 'Mantine: EU markets row only with exact save'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_multiple_containers_table_row_multi_instance
+  implementation_component: 'Mantine: Table rows + embedded dual-list selectors + row-local Save'
+  task_template: table_operation
+  secondary_template: transfer_move
+  browsergym_goal: In the "EU region" row, drag "Germany" and "France" from Disabled markets to Enabled markets so Enabled becomes Spain, Germany, France. Do not change the "US region" row. Then click "Save" in the EU row. The task will finish automatically when done.
+  ui_copy: In the "EU region" row, drag "Germany" and "France" from Disabled markets to Enabled markets so Enabled becomes Spain, Germany, France. Do not change the "US region" row. Then click "Save" in the EU row. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with high_contrast theme, compact spacing, small scale, and high clutter. A region-settings table shows two expanded rows with embedded dual-list selectors:
+    - US region (distractor)
+    - EU region (target)
+
+    EU row initial state:
+      Enabled markets: Spain
+      Disabled markets: Germany, France, Italy
+    US row also contains Germany as a disabled market to increase overlap.
+
+    Each row has its own small Save button. Exact Enabled order matters.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: table_cell
+    placement: top_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - instances
+    - layout
+    - theme
+    factor_rationale: 'This is a strong row-scoped disambiguation task: overlapping labels across regions, tiny row-local controls, and an exact saved order keep the transfer semantics central.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Row-embedded selectors plus overlapping labels across regions make wrong-row edits very likely, and the required order-sensitive save keeps the task hard.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'save-eu-row'.
+    - Only the instance labeled 'EU region' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Disabled markets:
+          - Italy
+          Enabled markets:
+          - Spain
+          - Germany
+          - France
+        order_matters: true
+        saved: true
+        non_target_instances_must_remain:
+          US region__Enabled markets:
+          - California
+          - Texas
+          US region__Disabled markets:
+          - Germany
+          - Nevada
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-eu-row
+      require_correct_instance: true
+      target_instance_label_or_id: EU region
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the US region row.
+  - Getting the right EU membership but wrong order.
+  - Adding Italy or leaving Germany/France disabled.
+  - Clicking Save in the wrong row.
+  expected_interaction_path:
+  - Locate the EU region row.
+  - Drag Germany and France into Enabled markets after Spain.
+  - Leave the US row unchanged.
+  - Click Save in the EU row.
+  notes: Checker should key off the row label and row-local save control; this is intentionally strict about non-target row preservation.
+- id: drag_drop_between_lists-mantine-v2-T30
+  name: 'Mantine: Hidden on-call engineer into second position'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_multiple_containers_scrollable
+  implementation_component: 'Mantine: Drawer + ScrollArea source list + Save button (composite)'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Open the "On-call rotation" drawer. Scroll the Available engineers list to find "Zoe Martinez", drag her into "On-call this week" so she sits directly below "Ava Chen", then click "Save rotation". The task will finish automatically when done.
+  ui_copy: Open the "On-call rotation" drawer. Scroll the Available engineers list to find "Zoe Martinez", drag her into "On-call this week" so she sits directly below "Ava Chen", then click "Save rotation". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing and medium clutter. Clicking "Edit on-call rotation" opens a right-side Mantine Drawer titled "On-call rotation". Inside is a dual-list drag/drop selector with a fixed-height scrollable Available engineers list.
+
+    Initial destination list:
+    - On-call this week: Ava Chen, Leo Garcia
+    Zoe Martinez is hidden low in Available engineers and must be revealed by inner scrolling. Rows use small drag handles. The drawer footer button "Save rotation" commits the state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - confirmation_model
+    - placement
+    factor_rationale: The task stresses hidden-source discovery and exact destination placement inside an off-center drawer rather than allowing a trivial append.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A hidden source item, exact second-slot placement, and an explicit drawer save keep this above a simple transfer baseline.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save rotation'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available engineers:
+          - Aiden Ross
+          - Ben Patel
+          - Chris Johnson
+          - Dana Kim
+          - Eli Nguyen
+          - Fatima Ali
+          - Grace Liu
+          - Hiro Tanaka
+          - Ivy Brooks
+          - Mina Hassan
+          On-call this week:
+          - Ava Chen
+          - Zoe Martinez
+          - Leo Garcia
+        order_matters: true
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save rotation
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Appending Zoe Martinez to the end instead of placing her directly below Ava Chen.
+  - Scrolling the page instead of the source list.
+  - Dragging the wrong hidden engineer.
+  - Leaving the drawer unsaved.
+  expected_interaction_path:
+  - Open the drawer.
+  - Scroll the source list until Zoe Martinez is visible.
+  - Drag her into the second slot of On-call this week.
+  - Click "Save rotation".
+  notes: Stable ids are important because the source item begins outside the visible viewport.
+- id: drag_drop_between_lists-mantine-v2-T31
+  name: 'Mantine: Discard integration draft after real transfers'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_multiple_containers_discard_flow
+  implementation_component: 'Mantine: Modal + dual-list selector + cancel/discard confirmation (composite)'
+  task_template: confirm_cancel
+  secondary_template: transfer_move
+  browsergym_goal: Open "Edit integrations", drag "Slack" into Connected integrations and drag "Zapier" back to Available integrations to create a draft change, then click "Cancel" and choose "Discard changes". The task will finish automatically when done.
+  ui_copy: Open "Edit integrations", drag "Slack" into Connected integrations and drag "Zapier" back to Available integrations to create a draft change, then click "Cancel" and choose "Discard changes". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking "Edit integrations" opens a Mantine Modal titled "Edit integrations".
+
+    Initial selector state:
+    - Available integrations: Jira, Slack
+    - Connected integrations: GitHub, Zapier
+
+    Dragging updates the draft lists immediately and shows an "Unsaved changes" indicator. Clicking "Cancel" opens a confirmation dialog with "Keep editing" and "Discard changes". Only the discard path restores the original committed state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - theme
+    factor_rationale: This preserves genuine drag semantics while forcing explicit recovery from a dirty multi-transfer draft; the hard part is state tracking, not label reading.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Two real transfers followed by a nested discard path make this a high-recovery-pressure task without relying on benchmark-only reset shortcuts.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Item order is ignored unless explicitly specified in the target state.
+    - The changes must be committed by clicking 'Discard changes'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        containers:
+          Available integrations:
+          - Jira
+          - Slack
+          Connected integrations:
+          - GitHub
+          - Zapier
+        order_matters: false
+        discarded: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Discard changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Cancelling without first making any transfers.
+  - Saving the draft or choosing Keep editing instead of Discard changes.
+  - Leaving Slack connected or Zapier available in the final state.
+  - Achieving the original final state through any non-drag reset shortcut.
+  expected_interaction_path:
+  - Open the modal.
+  - Drag Slack into Connected integrations.
+  - Drag Zapier back to Available integrations.
+  - Click Cancel, then choose Discard changes.
+  notes: Checker should require both a dirty-state discard event and restoration of the original committed membership.
+- id: drag_drop_between_lists-mantine-v2-T32
+  name: 'Mantine: Reports selector only, matched to reference order'
+  canonical_type: drag_drop_between_lists
+  implementation_source: mantine
+  implementation_variant: composite_dnd_kit_multiple_containers_multi_instance_reference
+  implementation_component: 'Mantine: Settings panel + three selectors + reference preview + Save'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: In the "Reports" selector, make the Enabled reports match the Reference preview exactly, do not change the "Navigation" or "Admin" selectors, and then click "Save reports". The task will finish automatically when done.
+  ui_copy: In the "Reports" selector, make the Enabled reports match the Reference preview exactly, do not change the "Navigation" or "Admin" selectors, and then click "Save reports". The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing and high clutter. Three dual-list selectors are visible in one pane:
+    - Navigation
+    - Reports (target)
+    - Admin
+
+    Only the Reports selector has a small reference preview card showing the desired Enabled order visually as chips: Revenue, Churn, MRR.
+    Initial Reports selector state:
+      Enabled reports: Revenue
+      Available reports: Churn, MRR, Sessions
+    The footer button for the target selector reads "Save reports". Other selectors share some overlapping labels and must remain unchanged.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: mixed
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - guidance
+    - confirmation_model
+    factor_rationale: Three selectors create heavy instance pressure, but only one has a local visual preview; the task therefore stresses choosing the correct selector and matching its exact saved end state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The target selector is only one of three, and the agent must use a local visual preview to produce exact membership and order before saving the correct instance.
+  success_trigger:
+    human_readable:
+    - The drag-and-drop between-lists component has the required final distribution of items.
+    - Within each container list, the item order must match the target order.
+    - The changes must be committed by clicking 'Save reports'.
+    - Only the instance labeled 'Reports' counts toward success and non-target instances must remain unchanged.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        containers:
+          Available reports:
+          - Sessions
+          Enabled reports:
+          - Revenue
+          - Churn
+          - MRR
+        order_matters: true
+        saved: true
+        reference_id: ref-reports-order
+        non_target_instances_must_remain:
+          Navigation__Enabled:
+          - Overview
+          - Search
+          Navigation__Available:
+          - Reports
+          - Settings
+          Admin__Enabled:
+          - Users
+          Admin__Available:
+          - Roles
+          - Billing
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save reports
+      require_correct_instance: true
+      target_instance_label_or_id: Reports
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing Navigation or Admin instead of Reports.
+  - Getting the right Reports membership but wrong order.
+  - Ignoring the reference preview and adding Sessions instead of one target item.
+  - Using the wrong save button or not saving at all.
+  expected_interaction_path:
+  - Locate the Reports selector and its Reference preview.
+  - Drag Churn and MRR into Enabled reports in the preview order.
+  - Leave the other two selectors unchanged.
+  - Click "Save reports".
+  notes: Each selector and each local save control should expose a distinct label/id for reliable scoping.
+- id: kanban_board_drag_drop-antd-v2-T33
+  name: 'AntD: Modal board move plus destination reorder and save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite_modal_board_staged
+  implementation_component: 'AntD: Modal + Kanban board + Save button + external dnd-kit (composite)'
+  task_template: open_overlay
+  secondary_template: drag_operation
+  browsergym_goal: Open the "Sprint Board" modal. Move "DEP-7 Deploy to staging" into the "Review" column so it sits directly above "REL-2 Update docs", then click "Save board". The task will finish automatically when done.
+  ui_copy: Open the "Sprint Board" modal. Move "DEP-7 Deploy to staging" into the "Review" column so it sits directly above "REL-2 Update docs", then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. The base page contains a release summary and a button "Open Sprint Board". Clicking it opens an Ant Design Modal titled "Sprint Board".
+
+    Inside the modal is a four-column Kanban board: Backlog, To do, Review, Done.
+    Initial state:
+    - DEP-7 Deploy to staging is in To do
+    - REL-2 Update docs is in Review with at least one card below it
+
+    Card moves update the draft board immediately and reveal a footer bar with "Cancel" and "Save board". The move is not committed until Save board is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - precision_surface
+    factor_rationale: This retains the useful modal-board template from v1 but removes the one-drag simplicity by requiring both a cross-column move and an exact landing position before a board-level save.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A modal board is already layered; adding an exact destination adjacency and Save step makes the task clearly harder than a simple modal transfer.
+  success_trigger:
+    human_readable:
+    - Within the board 'Sprint Board (modal)', the specified ordering constraint in column 'Review' must hold.
+    - The board change must be committed by clicking 'Save board'.
+    - Only the board instance labeled 'Sprint Board (modal)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Sprint Board (modal)
+        column_id: review
+        column_label: Review
+        adjacency_constraint:
+          upper_card_id: card_dep_7
+          lower_card_id: card_rel_2
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: true
+      target_instance_label_or_id: Sprint Board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving DEP-7 to Review but not placing it directly above REL-2.
+  - Leaving DEP-7 in To do or moving it to the wrong column.
+  - Reaching the right draft state without clicking "Save board".
+  - Closing the modal instead of saving.
+  expected_interaction_path:
+  - Open the modal board.
+  - Drag DEP-7 from To do into Review and place it directly above REL-2.
+  - Verify the Review column order locally.
+  - Click "Save board".
+  notes: Checker should validate committed modal-board state, not just the transient DOM while dragging.
+- id: kanban_board_drag_drop-antd-v2-T34
+  name: 'AntD: Engineering board only with overlapping title and local save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite_multi_board_staged
+  implementation_component: 'AntD: Dashboard + two Kanban boards + board-local Save buttons'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the "Engineering" board, move the card "Prepare demo" into the "To do" column. Do not change the "Marketing" board. Then click "Save Engineering board". The task will finish automatically when done.
+  ui_copy: On the "Engineering" board, move the card "Prepare demo" into the "To do" column. Do not change the "Marketing" board. Then click "Save Engineering board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and high clutter. Two Kanban boards are shown side by side:
+    - Marketing
+    - Engineering (target)
+
+    Both boards contain a card titled "Prepare demo". On the Engineering board, "Prepare demo" starts in In progress. On the Marketing board, a different "Prepare demo" card exists in Backlog.
+    Each board has its own footer action. The target button reads "Save Engineering board". Dragging updates only draft state until the corresponding board-local save is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Two boards with overlapping card titles create a strong grounded-instance test, and the local save button prevents the task from collapsing into one drag.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: Overlapping titles across boards plus board-local Save controls make wrong-board and wrong-save failures central.
+  success_trigger:
+    human_readable:
+    - Within the board 'Engineering', the card 'Prepare demo' must be in column 'To do'.
+    - The board change must be committed by clicking 'Save Engineering board'.
+    - Only the board instance labeled 'Engineering' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Engineering
+        card_id: card_prepare_demo_eng
+        card_title: Prepare demo
+        column_id: todo
+        column_label: To do
+        saved: true
+        non_target_instances_must_remain:
+          Marketing__Prepare demo: backlog
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save Engineering board
+      require_correct_instance: true
+      target_instance_label_or_id: Engineering
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving the Marketing board’s Prepare demo card instead of the Engineering one.
+  - Moving the Engineering card to a column other than To do.
+  - Clicking the wrong board-local save button.
+  - Changing both boards.
+  expected_interaction_path:
+  - Identify the Engineering board, not Marketing.
+  - Drag the Engineering "Prepare demo" card into To do.
+  - Leave the Marketing board untouched.
+  - Click "Save Engineering board".
+  notes: Board roots and local save controls must be distinguishable so the checker can reject the wrong board instance.
+- id: kanban_board_drag_drop-antd-v2-T35
+  name: 'AntD: Drawer board to hidden far-right column'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite_drawer_board_horizontal_scroll
+  implementation_component: 'AntD: Drawer + horizontally scrollable Kanban board + Save button'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Incident board" drawer. Move "OPS-14 Update status page" from "To do" into the far-right "Blocked" column, then click "Save board". The task will finish automatically when done.
+  ui_copy: Open the "Incident board" drawer. Move "OPS-14 Update status page" from "To do" into the far-right "Blocked" column, then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow in dark theme with compact spacing and high clutter. Clicking "Open incident board" opens a right-side drawer containing a horizontally scrollable Kanban board with columns:
+    Backlog, To do, In progress, Review, Done, Blocked.
+
+    The drawer width is constrained, so the Blocked column is initially offscreen to the right and must be revealed by horizontal scrolling inside the board region. OPS-14 Update status page starts in To do. Draft changes are not committed until the drawer footer button "Save board" is clicked.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - clutter
+    factor_rationale: 'A horizontally scrollable board inside a drawer adds a realistic carrier-specific burden: the target column exists, but it is not initially visible and still requires a committed board save.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The far-right destination column must be revealed within the drawer-local board viewport, so the task combines layered reveal, cross-column move, and explicit commit.
+  success_trigger:
+    human_readable:
+    - Within the board 'Incident board (drawer)', the card 'OPS-14 Update status page' must be in column 'Blocked'.
+    - The board change must be committed by clicking 'Save board'.
+    - Only the board instance labeled 'Incident board (drawer)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Incident board (drawer)
+        card_id: card_ops_14
+        card_title: OPS-14 Update status page
+        column_id: blocked
+        column_label: Blocked
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: true
+      target_instance_label_or_id: Incident board (drawer)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving OPS-14 in a visible intermediate column instead of moving it to Blocked.
+  - Scrolling the page rather than the board region and never revealing the Blocked column.
+  - Reaching the correct draft board state without clicking "Save board".
+  - Closing the drawer without saving.
+  expected_interaction_path:
+  - Open the drawer board.
+  - Horizontally scroll inside the board until Blocked is visible.
+  - Drag OPS-14 from To do into Blocked.
+  - Click "Save board".
+  notes: Checker should validate committed board state after the drawer closes; horizontal board scrolling should be instrumented as part of the component region, not the page.
+- id: kanban_board_drag_drop-antd-v2-T36
+  name: 'AntD: Gateway row board only with row save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite_table_row_board
+  implementation_component: 'AntD: Table rows + embedded mini-kanban boards + row-local Save'
+  task_template: table_operation
+  secondary_template: transfer_move
+  browsergym_goal: In the "Gateway" row board, move "GW-7 Rotate cert" into the "Review" column so it becomes the top card there. Do not change the "Billing" row board. Then click "Save" in the Gateway row. The task will finish automatically when done.
+  ui_copy: In the "Gateway" row board, move "GW-7 Rotate cert" into the "Review" column so it becomes the top card there. Do not change the "Billing" row board. Then click "Save" in the Gateway row. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. A service table shows two expanded rows, "Gateway" and "Billing". Each expanded row contains a compact three-column mini-kanban board and a row-local Save button.
+
+    In the Gateway row, GW-7 Rotate cert starts in To do, and the Review column already contains at least one card.
+    The Billing row also contains a Review column and must remain unchanged. Draft moves are row-local until that row's Save button is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Embedding boards in table rows makes the target acquisition problem much tighter and creates a strong wrong-row / wrong-save failure mode while remaining a true kanban manipulation task.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: Small row boards and row-local save controls make this a hard grounded kanban task even though the semantic goal is simple.
+  success_trigger:
+    human_readable:
+    - Within the board 'Gateway', the specified ordering constraint in column 'Review' must hold.
+    - The board change must be committed by clicking 'save-gateway-row'.
+    - Only the board instance labeled 'Gateway' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Gateway
+        column_id: review
+        column_label: Review
+        top_card_id: card_gw_7
+        saved: true
+        non_target_instances_must_remain:
+          Billing__card_bill_5: review
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-gateway-row
+      require_correct_instance: true
+      target_instance_label_or_id: Gateway
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving the card in the Billing row instead of Gateway.
+  - Moving GW-7 into Review but not to the top position.
+  - Saving the wrong row or not saving at all.
+  - Changing both row boards.
+  expected_interaction_path:
+  - Locate the Gateway row board.
+  - Drag GW-7 into the Review column and place it first.
+  - Leave the Billing row unchanged.
+  - Click Save in the Gateway row.
+  notes: Checker should scope by row id and validate the row-local committed board state only.
+- id: kanban_board_drag_drop-antd-v2-T37
+  name: 'AntD: Discard a real kanban draft from the release modal'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: antd
+  implementation_variant: composite_modal_board_discard
+  implementation_component: 'AntD: Modal + Kanban board + close/discard confirmation'
+  task_template: confirm_cancel
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Release board" modal, move "REL-4 Update changelog" from Backlog to In progress to create a draft change, then close the modal and click "Discard changes". The task will finish automatically when done.
+  ui_copy: Open the "Release board" modal, move "REL-4 Update changelog" from Backlog to In progress to create a draft change, then close the modal and click "Discard changes". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking "Open release board" opens an Ant Design Modal titled "Release board".
+
+    REL-4 Update changelog starts in Backlog. Dragging cards creates a dirty board state and reveals an unsaved changes banner. Closing the modal opens a confirmation dialog with "Keep editing" and "Discard changes". Only the discard path restores the original committed board state.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - layout
+    factor_rationale: 'This is a recovery-focused kanban task: the agent must first perform a real cross-column move, recognize the resulting dirty state, and then intentionally discard it through the modal''s nested confirmation path.'
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 2
+      target_acquisition: 4
+      density_choice_interference: 2
+      depth_layering: 4
+      feedback_dynamics: 5
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The final target is the original board, but reaching it requires a genuine drag plus correct navigation of an unsaved-state discard flow.
+  success_trigger:
+    human_readable:
+    - Within the board 'Release board (modal)', the card 'REL-4 Update changelog' must be in column 'Backlog'.
+    - The board change must be committed by clicking 'Discard changes'.
+    - Only the board instance labeled 'Release board (modal)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Release board (modal)
+        card_id: card_rel_4
+        card_title: REL-4 Update changelog
+        column_id: backlog
+        column_label: Backlog
+        discarded: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Discard changes
+      require_correct_instance: true
+      target_instance_label_or_id: Release board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Closing the modal without first moving REL-4.
+  - Moving REL-4 but keeping or saving the draft instead of discarding it.
+  - Ending with REL-4 in In progress.
+  - Using any non-drag reset path (none should exist).
+  expected_interaction_path:
+  - Open the modal board.
+  - Drag REL-4 from Backlog to In progress.
+  - Close the modal.
+  - Choose "Discard changes".
+  notes: Checker should require evidence of a discarded dirty-state path in addition to the restored final membership.
+- id: kanban_board_drag_drop-mui-v2-T38
+  name: 'MUI: Dense handle-only adjacency plus Apply'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite_dense_handle_only_staged
+  implementation_component: 'MUI: Dense board + IconButton handles + Apply changes + external dnd-kit'
+  task_template: drag_operation
+  secondary_template: null
+  browsergym_goal: In the "In progress" column, move "BUG-320 Fix modal focus" so it sits directly below "BUG-314 Fix tooltip". Then click "Apply changes". The task will finish automatically when done.
+  ui_copy: In the "In progress" column, move "BUG-320 Fix modal focus" so it sits directly below "BUG-314 Fix tooltip". Then click "Apply changes". The task will finish automatically when done.
+  setup_description: |-
+    Layout is inline_surface in dark theme with compact spacing and small scale. The board titled "Accessibility fixes" is dense and uses small handle-only drag icons on each card. The In progress column contains eight similar BUG-3xx cards.
+
+    BUG-320 Fix modal focus starts in In progress but not directly below BUG-314 Fix tooltip. Moving any card creates an "Unsaved changes" footer with "Apply changes" and "Cancel". Only Apply changes commits the board state.
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: inline_surface
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - theme
+    - spacing
+    - confirmation_model
+    factor_rationale: This preserves the high-value dense handle-only kanban idiom from v1 but removes the one-drag terminal path by requiring a saved adjacency outcome.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 4
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: Small handles, similar card titles, and a required Apply step make this a strong interaction-knowledge and verification task.
+  success_trigger:
+    human_readable:
+    - Within the board 'Accessibility fixes', the specified ordering constraint in column 'In progress' must hold.
+    - The board change must be committed by clicking 'Apply changes'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Accessibility fixes
+        column_id: in_progress
+        column_label: In progress
+        adjacency_constraint:
+          upper_card_id: card_bug_314
+          lower_card_id: card_bug_320
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Apply changes
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Leaving BUG-320 separated from BUG-314 by another card.
+  - Moving BUG-320 to another column.
+  - Dragging by the card body instead of the handle and leaving the board unchanged.
+  - Getting the right draft order but not clicking "Apply changes".
+  expected_interaction_path:
+  - Use the small drag handle on BUG-320.
+  - Place BUG-320 directly below BUG-314 in In progress.
+  - Verify adjacency.
+  - Click "Apply changes".
+  notes: Checker should compare committed card indices within the In progress column.
+- id: kanban_board_drag_drop-mui-v2-T39
+  name: 'MUI: Highlighted cards must match the mini-board and save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite_visual_reference_staged
+  implementation_component: 'MUI: Board + highlighted mini-board reference + Save button'
+  task_template: match_reference
+  secondary_template: transfer_move
+  browsergym_goal: Arrange the highlighted cards so they match the visual Reference board, then click "Save board". The task will finish automatically when done.
+  ui_copy: Arrange the highlighted cards so they match the visual Reference board, then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and high clutter. The card titled "Weekly priorities" contains:
+    - an interactive Kanban board with columns Backlog, To do, Review, Done
+    - a small non-interactive visual Reference mini-board above it
+
+    Three highlighted cards appear on both boards:
+    - PM-2 Draft Q2 roadmap
+    - QA-12 Smoke test signup
+    - SEC-9 Rotate API keys
+
+    The reference mini-board indicates the target end state:
+    - PM-2 should be first in To do
+    - QA-12 should be in Review
+    - SEC-9 should be in Done
+
+    Card moves create a dirty state and reveal a footer button "Save board".
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 1
+    guidance: visual
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - guidance
+    - clutter
+    - confirmation_model
+    factor_rationale: The target is conveyed by a visual mini-board rather than repeated instructions in the scene, and saving is required so the task measures both interpretation and committed board state.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 4
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: Three coordinated moves plus one exact top-position requirement and a Save step make this a strong mixed kanban task.
+  success_trigger:
+    human_readable:
+    - On the board 'Weekly priorities', PM-2 must be the first card in 'To do'.
+    - On the same board, QA-12 must be in 'Review'.
+    - On the same board, SEC-9 must be in 'Done'.
+    - The board change must be committed by clicking 'Save board'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: matches_reference
+      target_state:
+        board_instance: Weekly priorities
+        reference_id: ref-mini-board-highlighted
+        expected:
+          card_pm_2:
+            column_id: todo
+            order_index: 0
+          card_qa_12:
+            column_id: review
+          card_sec_9:
+            column_id: done
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Putting PM-2 in To do but not in the first position.
+  - Moving only one or two highlighted cards correctly.
+  - Matching the reference in draft but not clicking "Save board".
+  - Changing non-highlighted cards while failing the highlighted-card constraints.
+  expected_interaction_path:
+  - Inspect the mini-board reference.
+  - Drag PM-2 into the first slot of To do.
+  - Move QA-12 to Review and SEC-9 to Done.
+  - Click "Save board".
+  notes: Checker should scope to the highlighted cards only and validate committed state after the save action.
+- id: kanban_board_drag_drop-mui-v2-T40
+  name: 'MUI: Modal board with hidden card in a long column'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite_modal_board_column_scroll
+  implementation_component: 'MUI: Dialog + board with scrollable column + Save button'
+  task_template: open_overlay
+  secondary_template: scroll_find
+  browsergym_goal: Open the "Project board" modal. In the "To do" column, scroll to find "BUG-9 Fix notifications", move it into "In progress", and then click "Save board". The task will finish automatically when done.
+  ui_copy: Open the "Project board" modal. In the "To do" column, scroll to find "BUG-9 Fix notifications", move it into "In progress", and then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking "Open project board" opens a centered MUI Dialog titled "Project board". The board has columns To do, In progress, Review, Done.
+
+    The To do column is a fixed-height scrollable lane with many cards. BUG-9 Fix notifications starts near the bottom of that lane and is not initially visible. Dragging cards creates a draft state; the modal footer button "Save board" commits the final board.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - internal_scroll_region
+    - confirmation_model
+    factor_rationale: The card is hidden inside a lane-local scroll region within a modal, so the task isolates reveal-plus-transfer behavior and still requires an explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The modal and scrollable column add depth, and the final board state still has to be saved explicitly.
+  success_trigger:
+    human_readable:
+    - Within the board 'Project board (modal)', the card 'BUG-9 Fix notifications' must be in column 'In progress'.
+    - The board change must be committed by clicking 'Save board'.
+    - Only the board instance labeled 'Project board (modal)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Project board (modal)
+        card_id: card_bug_9
+        card_title: BUG-9 Fix notifications
+        column_id: in_progress
+        column_label: In progress
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: true
+      target_instance_label_or_id: Project board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page or the wrong column instead of To do.
+  - Moving a different BUG card into In progress.
+  - Leaving BUG-9 in To do.
+  - Not clicking "Save board".
+  expected_interaction_path:
+  - Open the modal board.
+  - Scroll within the To do column until BUG-9 is visible.
+  - Drag BUG-9 into In progress.
+  - Click "Save board".
+  notes: Checker should read committed board state after the dialog closes.
+- id: kanban_board_drag_drop-mui-v2-T41
+  name: 'MUI: Team board only with overlapping card title and save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite_multi_board_staged
+  implementation_component: 'MUI: Settings panel + two boards + board-local Save buttons'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the "Team" board, move the card "Prepare demo" into the "Done" column. Do not change the "Personal" board. Then click "Save Team board". The task will finish automatically when done.
+  ui_copy: On the "Team" board, move the card "Prepare demo" into the "Done" column. Do not change the "Personal" board. Then click "Save Team board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is settings_panel with compact spacing and medium clutter. Two stacked boards share the same column labels:
+    - Personal
+    - Team (target)
+
+    Both boards contain a card titled "Prepare demo". On the Team board, the card starts in In progress; on the Personal board, a different Prepare demo card starts in To do.
+    Each board has a local Save button. Draft moves are not committed until the appropriate board-local save is clicked.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: settings_panel
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - confirmation_model
+    - placement
+    factor_rationale: Overlapping card titles across two stacked boards make grounded targeting harder, and the board-local save step prevents a trivial one-drag success path.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The movement is easy to describe, but differentiating the correct board and committing the correct board’s change are the core sources of difficulty.
+  success_trigger:
+    human_readable:
+    - Within the board 'Team', the card 'Prepare demo' must be in column 'Done'.
+    - The board change must be committed by clicking 'Save Team board'.
+    - Only the board instance labeled 'Team' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Team
+        card_id: card_team_prepare_demo
+        card_title: Prepare demo
+        column_id: done
+        column_label: Done
+        saved: true
+        non_target_instances_must_remain:
+          Personal__Prepare demo: todo
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save Team board
+      require_correct_instance: true
+      target_instance_label_or_id: Team
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving the Prepare demo card on the Personal board.
+  - Moving the Team card to the wrong column.
+  - Clicking the wrong board-local save button.
+  - Changing both boards.
+  expected_interaction_path:
+  - Identify the Team board.
+  - Drag its Prepare demo card into Done.
+  - Leave Personal unchanged.
+  - Click "Save Team board".
+  notes: Board ids and board-local save ids should be distinct to support robust checker scoping.
+- id: kanban_board_drag_drop-mui-v2-T42
+  name: 'MUI: Drawer board exact destination plus confirm'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mui
+  implementation_variant: composite_drawer_board_confirm
+  implementation_component: 'MUI: Drawer + board + Save + confirm dialog'
+  task_template: open_overlay
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the "Docs board" drawer. Move "DOC-11 Update API docs" into the "Review" column so it sits directly above "DOC-9 Check links", then click "Save changes" and confirm. The task will finish automatically when done.
+  ui_copy: Open the "Docs board" drawer. Move "DOC-11 Update API docs" into the "Review" column so it sits directly above "DOC-9 Check links", then click "Save changes" and confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow with compact spacing and medium clutter. A button "Open Docs board" opens a left-side MUI Drawer containing a four-column board. DOC-11 Update API docs starts in To do. DOC-9 Check links is already in Review.
+
+    Dragging cards updates the draft board immediately. Clicking "Save changes" opens a confirm dialog with "Confirm" and "Cancel". Only Confirm commits the new board state and closes the drawer.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: drawer_flow
+    placement: top_left
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - overlay_model
+    - confirmation_model
+    - precision_surface
+    factor_rationale: This combines a real cross-column move, an exact destination adjacency, and a nested confirm step, which together create a much cleaner hard kanban task than a one-drag drawer move.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The drawer move is already layered; requiring an exact slot and a confirm step pushes both verification and recovery demands upward.
+  success_trigger:
+    human_readable:
+    - Within the board 'Docs board (drawer)', the specified ordering constraint in column 'Review' must hold.
+    - The board change must be committed by clicking 'Confirm'.
+    - Only the board instance labeled 'Docs board (drawer)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Docs board (drawer)
+        column_id: review
+        column_label: Review
+        adjacency_constraint:
+          upper_card_id: card_doc_11
+          lower_card_id: card_doc_9
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Docs board (drawer)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving DOC-11 into Review but not directly above DOC-9.
+  - Saving the draft and then cancelling the confirmation dialog.
+  - Leaving DOC-11 in To do or moving it to another column.
+  - Closing the drawer without committing.
+  expected_interaction_path:
+  - Open the drawer board.
+  - Drag DOC-11 into Review directly above DOC-9.
+  - Click "Save changes".
+  - Click "Confirm".
+  notes: Checker should require the committed saved state and closed overlays.
+- id: kanban_board_drag_drop-mantine-v2-T43
+  name: 'Mantine: Project modal board with top-of-review placement'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite_modal_board_staged
+  implementation_component: 'Mantine: Modal + board + Save button'
+  task_template: open_overlay
+  secondary_template: drag_operation
+  browsergym_goal: Open the "Project board" modal. Move "PROJ-2 Draft proposal" into the "Review" column so it becomes the top card there, then click "Save board". The task will finish automatically when done.
+  ui_copy: Open the "Project board" modal. Move "PROJ-2 Draft proposal" into the "Review" column so it becomes the top card there, then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking "Open Project board" opens a Mantine Modal titled "Project board". The board has columns To do, In progress, Review, Done.
+
+    PROJ-2 Draft proposal starts in In progress. The Review column already contains at least one card. Any drag creates a dirty-state footer with "Save board" and "Cancel". The board state is committed only by Save board.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - layout
+    - confirmation_model
+    - precision_surface
+    factor_rationale: A modal board plus an exact top-of-column constraint ensures the task is more than a simple move and still requires an explicit commit.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The destination is exact rather than coarse column membership, and the modal Save step forces the agent to finish the staged interaction cleanly.
+  success_trigger:
+    human_readable:
+    - Within the board 'Project board (modal)', the specified ordering constraint in column 'Review' must hold.
+    - The board change must be committed by clicking 'Save board'.
+    - Only the board instance labeled 'Project board (modal)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Project board (modal)
+        column_id: review
+        column_label: Review
+        top_card_id: card_proj_2
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: true
+      target_instance_label_or_id: Project board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving PROJ-2 to Review but not making it the top card.
+  - Moving PROJ-2 to the wrong column.
+  - Reaching the correct draft state without clicking Save board.
+  - Closing the modal without saving.
+  expected_interaction_path:
+  - Open the modal board.
+  - Drag PROJ-2 into Review and place it at the top.
+  - Verify the local Review order.
+  - Click "Save board".
+  notes: Checker should use committed board state after modal close.
+- id: kanban_board_drag_drop-mantine-v2-T44
+  name: 'Mantine: Scroll within the To do lane, then save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite_lane_scroll_staged
+  implementation_component: 'Mantine: Card + ScrollArea lane + Save button'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: On the "Sprint queue" board, scroll within the "To do" column to find "BUG-9 Fix notifications", move it into "In progress", and then click "Save board". The task will finish automatically when done.
+  ui_copy: On the "Sprint queue" board, scroll within the "To do" column to find "BUG-9 Fix notifications", move it into "In progress", and then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is nested_scroll with compact spacing and medium clutter. The board titled "Sprint queue" appears inside a centered Mantine Card. The To do lane is a fixed-height ScrollArea with many cards; BUG-9 Fix notifications starts near the bottom and is not initially visible.
+
+    Dragging a card updates the draft board and reveals a footer action "Save board". The page outside the board also scrolls, so the lane must be scrolled deliberately.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: nested_scroll
+    placement: center
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: none
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - layout
+    - confirmation_model
+    factor_rationale: The hidden source card sits inside a lane-local ScrollArea on a page that also scrolls, so the task isolates correct scroll targeting and requires an explicit save after the move.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L2
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 3
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 2
+    justification: The main difficulty is revealing the correct card in the correct scroll region and then committing the board rather than stopping at the draft move.
+  success_trigger:
+    human_readable:
+    - Within the board 'Sprint queue', the card 'BUG-9 Fix notifications' must be in column 'In progress'.
+    - The board change must be committed by clicking 'Save board'.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Sprint queue
+        card_id: card_bug_9
+        card_title: BUG-9 Fix notifications
+        column_id: in_progress
+        column_label: In progress
+        saved: true
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: false
+      target_instance_label_or_id: null
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Scrolling the page or another lane instead of the To do lane.
+  - Moving the wrong card into In progress.
+  - Leaving BUG-9 in To do.
+  - Not clicking Save board.
+  expected_interaction_path:
+  - Scroll within the To do lane until BUG-9 becomes visible.
+  - Drag BUG-9 into In progress.
+  - Verify the lane membership.
+  - Click "Save board".
+  notes: Lane-local scrolling should be instrumented distinctly from page scroll.
+- id: kanban_board_drag_drop-mantine-v2-T45
+  name: 'Mantine: Ops board only among three boards'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite_three_boards_staged
+  implementation_component: 'Mantine: Dashboard panel + three boards + board-local Save'
+  task_template: transfer_move
+  secondary_template: null
+  browsergym_goal: On the "Ops" board, move "OPS-5 Rotate keys" into the "Blocked" column. Do not change the "Home" or "Work" boards. Then click "Save Ops board". The task will finish automatically when done.
+  ui_copy: On the "Ops" board, move "OPS-5 Rotate keys" into the "Blocked" column. Do not change the "Home" or "Work" boards. Then click "Save Ops board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is dashboard_panel with compact spacing and high clutter. Three boards are visible in one workspace:
+    - Home
+    - Work
+    - Ops (target)
+
+    All three boards share the same column labels To do, In progress, Done, Blocked. The target card OPS-5 Rotate keys appears only on the Ops board and starts in In progress. Each board has its own local Save button; the target button reads "Save Ops board".
+  scene_context:
+    theme: dark
+    spacing: compact
+    layout: dashboard_panel
+    placement: off_center
+    scale: small
+    instances: 3
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: none
+  design_intent:
+    active_factors:
+    - instances
+    - clutter
+    - confirmation_model
+    factor_rationale: Three nearby boards increase search and mis-targeting cost, and the board-local save keeps the state-verification burden on the target board rather than the page as a whole.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 3
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 5
+    justification: The move is not complex semantically, but three-board disambiguation plus local save makes it a strong hard kanban instance.
+  success_trigger:
+    human_readable:
+    - Within the board 'Ops', the card 'OPS-5 Rotate keys' must be in column 'Blocked'.
+    - The board change must be committed by clicking 'Save Ops board'.
+    - Only the board instance labeled 'Ops' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: set_membership
+      target_state:
+        board_instance: Ops
+        card_id: card_ops_5
+        card_title: OPS-5 Rotate keys
+        column_id: blocked
+        column_label: Blocked
+        saved: true
+        non_target_instances_must_remain:
+          Home__dirty: false
+          Work__dirty: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save Ops board
+      require_correct_instance: true
+      target_instance_label_or_id: Ops
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the Home or Work boards.
+  - Moving OPS-5 to the wrong column.
+  - Saving the wrong board or not saving the Ops board.
+  - Creating dirty state in multiple boards.
+  expected_interaction_path:
+  - Identify the Ops board among the three boards.
+  - Drag OPS-5 Rotate keys into Blocked.
+  - Leave Home and Work untouched.
+  - Click "Save Ops board".
+  notes: Checker should reject success if any non-target board becomes dirty or changed.
+- id: kanban_board_drag_drop-mantine-v2-T46
+  name: 'Mantine: Mobile app row board exact bottom-of-done save'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite_table_row_board
+  implementation_component: 'Mantine: Table row + mini-board + row-local Save'
+  task_template: table_operation
+  secondary_template: drag_operation
+  browsergym_goal: In the "Mobile app" row board, move "APP-3 Finish paywall" into the "Done" column so it becomes the bottom card there. Do not change the "Web app" row board. Then click "Save" in the Mobile app row. The task will finish automatically when done.
+  ui_copy: In the "Mobile app" row board, move "APP-3 Finish paywall" into the "Done" column so it becomes the bottom card there. Do not change the "Web app" row board. Then click "Save" in the Mobile app row. The task will finish automatically when done.
+  setup_description: |-
+    Layout is table_cell with compact spacing, small scale, and high clutter. Two application rows are expanded in a release table:
+    - Web app
+    - Mobile app (target)
+
+    Each expanded row contains a compact mini-board with columns To do, Review, Done. APP-3 Finish paywall starts in Review on the Mobile app row. The Done lane already contains at least one card. Each row has its own Save button.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: table_cell
+    placement: bottom_right
+    scale: small
+    instances: 2
+    guidance: text
+    clutter: high
+  component_context:
+    overlay_model: none
+    internal_scroll_region: false
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: table
+  design_intent:
+    active_factors:
+    - layout
+    - instances
+    - confirmation_model
+    factor_rationale: Mini-boards inside table rows raise both target acquisition and wrong-row risk, and the bottom-of-column constraint prevents the move from being reducible to coarse lane membership.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 5
+      density_choice_interference: 3
+      depth_layering: 2
+      feedback_dynamics: 3
+      semantic_observability: 2
+      disambiguation_load: 5
+    justification: This is hard because the board is physically compact, the target row must be disambiguated, and the destination requires an exact bottom position plus local save.
+  success_trigger:
+    human_readable:
+    - Within the board 'Mobile app', the specified ordering constraint in column 'Done' must hold.
+    - The board change must be committed by clicking 'save-mobile-row'.
+    - Only the board instance labeled 'Mobile app' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Mobile app
+        column_id: done
+        column_label: Done
+        bottom_card_id: card_app_3
+        saved: true
+        non_target_instances_must_remain:
+          Web app__dirty: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: save-mobile-row
+      require_correct_instance: true
+      target_instance_label_or_id: Mobile app
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Changing the Web app row board.
+  - Moving APP-3 into Done but not to the bottom position.
+  - Leaving APP-3 in Review or another lane.
+  - Not clicking Save in the Mobile app row.
+  expected_interaction_path:
+  - Locate the Mobile app row board.
+  - Drag APP-3 into the Done column and place it last.
+  - Leave Web app unchanged.
+  - Click Save in the Mobile app row.
+  notes: Checker should compare committed card order within the Mobile app row only.
+- id: kanban_board_drag_drop-mantine-v2-T47
+  name: 'Mantine: High-contrast drawer board with hidden Done column'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite_drawer_board_horizontal_scroll
+  implementation_component: 'Mantine: Drawer + horizontally scrollable board + Save button'
+  task_template: scroll_find
+  secondary_template: transfer_move
+  browsergym_goal: Open the "Security board" drawer. Move "SEC-9 Rotate API keys" into the "Done" column so it sits directly above "AUD-2 Review logs", then click "Save board". The task will finish automatically when done.
+  ui_copy: Open the "Security board" drawer. Move "SEC-9 Rotate API keys" into the "Done" column so it sits directly above "AUD-2 Review logs", then click "Save board". The task will finish automatically when done.
+  setup_description: |-
+    Layout is drawer_flow in high_contrast theme with compact spacing and medium clutter. Clicking "Open Security board" opens a right-side Mantine Drawer containing a horizontally scrollable board with columns Backlog, To do, Review, Done.
+
+    The Done column starts partly offscreen to the right. SEC-9 Rotate API keys begins in Review. AUD-2 Review logs is already in Done. Dragging cards updates the draft board immediately; the drawer footer button "Save board" commits the change.
+  scene_context:
+    theme: high_contrast
+    spacing: compact
+    layout: drawer_flow
+    placement: top_right
+    scale: small
+    instances: 1
+    guidance: text
+    clutter: medium
+  component_context:
+    overlay_model: single_overlay
+    internal_scroll_region: true
+    confirmation_model: explicit_apply
+    precision_surface: mixed
+    secondary_supporting_primitive: drawer
+  design_intent:
+    active_factors:
+    - internal_scroll_region
+    - theme
+    - confirmation_model
+    factor_rationale: The hard part is not understanding the destination label but revealing and targeting it inside a constrained drawer board, then saving the exact adjacency outcome.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 3
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: A partially hidden destination column plus an exact adjacency requirement and Save step produce a robust hard kanban task.
+  success_trigger:
+    human_readable:
+    - Within the board 'Security board (drawer)', the specified ordering constraint in column 'Done' must hold.
+    - The board change must be committed by clicking 'Save board'.
+    - Only the board instance labeled 'Security board (drawer)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Security board (drawer)
+        column_id: done
+        column_label: Done
+        adjacency_constraint:
+          upper_card_id: card_sec_9
+          lower_card_id: card_aud_2
+        saved: true
+        overlay_open: false
+      tolerance: null
+      require_confirm: true
+      confirm_control: Save board
+      require_correct_instance: true
+      target_instance_label_or_id: Security board (drawer)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Moving SEC-9 to Done but not directly above AUD-2.
+  - Leaving SEC-9 in Review.
+  - Failing to reveal the Done column and dropping into another visible column.
+  - Not clicking Save board.
+  expected_interaction_path:
+  - Open the drawer board.
+  - Horizontally scroll until the Done column is fully visible.
+  - Drag SEC-9 into Done directly above AUD-2.
+  - Click "Save board".
+  notes: Checker should read committed state after the drawer closes; horizontal reveal is part of the intended interaction.
+- id: kanban_board_drag_drop-mantine-v2-T48
+  name: 'Mantine: Review lane must match the visual reference and confirm'
+  canonical_type: kanban_board_drag_drop
+  implementation_source: mantine
+  implementation_variant: composite_visual_reference_confirm
+  implementation_component: 'Mantine: Modal + board + review reference panel + Save + confirm'
+  task_template: match_reference
+  secondary_template: confirm_cancel
+  browsergym_goal: Open the "Review board" modal. Reorder the cards in the "Review" column so they match the Reference order shown in the modal, then click "Save order" and confirm. The task will finish automatically when done.
+  ui_copy: Open the "Review board" modal. Reorder the cards in the "Review" column so they match the Reference order shown in the modal, then click "Save order" and confirm. The task will finish automatically when done.
+  setup_description: |-
+    Layout is modal_flow with compact spacing and medium clutter. Clicking "Open Review board" opens a Mantine Modal containing a board with columns To do, Review, Done. To the right of the Review column is a read-only "Reference (Review)" panel that shows the desired top-to-bottom order as numbered cards.
+
+    The Review column contains the same three cards but in the wrong order:
+    PR-17 Refactor date utils, PR-12 Add loading skeleton, PR-19 Remove dead code.
+
+    Dragging reorders the Review lane as a draft only. Clicking "Save order" opens a confirm dialog with "Confirm" and "Cancel". Only Confirm commits the new order.
+  scene_context:
+    theme: light
+    spacing: compact
+    layout: modal_flow
+    placement: center
+    scale: small
+    instances: 1
+    guidance: mixed
+    clutter: medium
+  component_context:
+    overlay_model: nested_overlay
+    internal_scroll_region: false
+    confirmation_model: explicit_confirm
+    precision_surface: mixed
+    secondary_supporting_primitive: dialog
+  design_intent:
+    active_factors:
+    - guidance
+    - overlay_model
+    - confirmation_model
+    factor_rationale: The reference is visible and human-solvable, but the combination of modal context, explicit column reorder, and save-plus-confirm is exactly the kind of layered verification pressure v2 needs.
+  difficulty:
+    difficulty_bucket: hard
+    tier: L3
+    axes_ratings:
+      precision_requirement: 4
+      target_acquisition: 4
+      density_choice_interference: 3
+      depth_layering: 4
+      feedback_dynamics: 4
+      semantic_observability: 3
+      disambiguation_load: 2
+    justification: The target order is explicit, but it still requires precise within-lane dragging and a nested confirm path before the board state is committed.
+  success_trigger:
+    human_readable:
+    - Within the board 'Review board (modal)', the specified ordering constraint in column 'Review' must hold.
+    - The board change must be committed by clicking 'Confirm'.
+    - Only the board instance labeled 'Review board (modal)' counts toward success.
+    - Task ends when the predicate holds.
+    canonical_predicate:
+      predicate_type: equals
+      target_state:
+        board_instance: Review board (modal)
+        column_id: review
+        column_label: Review
+        ordered_card_ids:
+        - card_pr_12
+        - card_pr_17
+        - card_pr_19
+        saved: true
+        overlay_open: false
+        reference_id: ref-review-order
+      tolerance: null
+      require_confirm: true
+      confirm_control: Confirm
+      require_correct_instance: true
+      target_instance_label_or_id: Review board (modal)
+      terminal_condition: task ends when predicate holds
+  negative_cases:
+  - Reordering Review but not matching the reference exactly.
+  - Saving the correct draft order and then cancelling the confirmation dialog.
+  - Moving cards across columns instead of only reordering Review.
+  - Closing the modal without confirming.
+  expected_interaction_path:
+  - Open the modal board.
+  - Read the Reference (Review) panel.
+  - Reorder the Review column to match it exactly.
+  - Click "Save order" and then "Confirm".
+  notes: Checker should compare committed order in Review after confirmation, not the transient draft lane order.
