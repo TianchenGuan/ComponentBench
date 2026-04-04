@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,29 @@ const benchModes = [
 ];
 
 export default function SiteNav() {
+  return (
+    <Suspense fallback={<SiteNavFallback />}>
+      <SiteNavInner />
+    </Suspense>
+  );
+}
+
+function SiteNavFallback() {
+  return (
+    <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <span className="flex items-center gap-2">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-slate-900 text-white text-sm font-bold">C</span>
+            <span className="text-lg font-bold text-gray-900 tracking-tight">ComponentBench</span>
+          </span>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function SiteNavInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
