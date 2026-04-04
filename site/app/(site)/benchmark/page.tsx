@@ -9,7 +9,7 @@ import { isImplemented, getRecommendedTemplates, getImplementedCount } from '@/r
 import { filterTasksByFactors } from '@/registry/taskRegistry';
 import type { Library, LibraryFilter, SceneContext, TaskSpec, CanonicalComponent, FilterFactors, ViewMode, BenchmarkVersion } from '@/types';
 import { FACTOR_OPTIONS, DEFAULT_FILTER_FACTORS, DEFAULT_BENCHMARK_VERSION, BENCHMARK_VERSIONS } from '@/types';
-import { getViewMode, setViewMode as saveViewMode, getTaskUrlWithMode } from '@/utils/viewMode';
+import { getTaskUrlWithMode } from '@/utils/viewMode';
 import { parseBenchVersionFromUrl, setBenchmarkVersion, getBenchmarkVersion } from '@/lib/benchmarkVersion';
 import dynamic from 'next/dynamic';
 
@@ -66,10 +66,12 @@ function HomePageContent() {
   const [selectedLib, setSelectedLib] = useState<LibraryFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [factors, setFactors] = useState<FilterFactors>({ ...DEFAULT_FILTER_FACTORS });
-  const [viewMode, setViewModeState] = useState<ViewMode>('presentation');
   const searchParams = useSearchParams();
   const router = useRouter();
   const isLogMode = searchParams.get('mode') === 'log';
+
+  // View mode from URL param (set by SiteNav), fallback to presentation
+  const viewMode: ViewMode = searchParams.get('viewMode') === 'benchmark' ? 'benchmark' : 'presentation';
 
   // Benchmark version from URL param, falling back to localStorage
   const benchFromUrl = parseBenchVersionFromUrl(searchParams);
@@ -85,18 +87,6 @@ function HomePageContent() {
       setBenchVersionState(stored);
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    setViewModeState(getViewMode());
-  }, []);
-
-  const handleSetViewMode = (mode: ViewMode) => {
-    setViewModeState(mode);
-    saveViewMode(mode);
-    if (isLogMode) {
-      router.push(`/?bench=${benchVersion}`);
-    }
-  };
 
   const handleSetBenchVersion = (v: BenchmarkVersion) => {
     setBenchVersionState(v);
@@ -273,58 +263,6 @@ function HomePageContent() {
               Reset Factors
             </button>
 
-            {/* Mode toggle */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
-              <span style={{ fontSize: 14, color: '#666' }}>Mode:</span>
-              <button
-                onClick={() => handleSetViewMode('presentation')}
-                style={{
-                  padding: '6px 12px',
-                  border: `2px solid ${!isLogMode && viewMode === 'presentation' ? '#52c41a' : '#d9d9d9'}`,
-                  borderRadius: 6,
-                  background: !isLogMode && viewMode === 'presentation' ? '#f6ffed' : '#fff',
-                  color: !isLogMode && viewMode === 'presentation' ? '#52c41a' : '#333',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  fontSize: 13,
-                }}
-              >
-                Presentation
-              </button>
-              <button
-                onClick={() => handleSetViewMode('benchmark')}
-                style={{
-                  padding: '6px 12px',
-                  border: `2px solid ${!isLogMode && viewMode === 'benchmark' ? '#fa8c16' : '#d9d9d9'}`,
-                  borderRadius: 6,
-                  background: !isLogMode && viewMode === 'benchmark' ? '#fff7e6' : '#fff',
-                  color: !isLogMode && viewMode === 'benchmark' ? '#fa8c16' : '#333',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  fontSize: 13,
-                }}
-              >
-                Benchmark
-              </button>
-              <Link
-                href={`/?mode=log&bench=${benchVersion}`}
-                prefetch={false}
-                style={{
-                  padding: '6px 12px',
-                  border: `2px solid ${isLogMode ? '#722ed1' : '#d9d9d9'}`,
-                  borderRadius: 6,
-                  background: isLogMode ? '#f9f0ff' : '#fff',
-                  color: isLogMode ? '#722ed1' : '#333',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  fontSize: 13,
-                  textDecoration: 'none',
-                  display: 'inline-block',
-                }}
-              >
-                Logs
-              </Link>
-            </div>
           </div>
 
           {/* Factor dropdowns - 2 rows of 4 */}
