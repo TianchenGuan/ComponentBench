@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-// Framer Motion animations temporarily disabled for compatibility
-// import { motion, type Variants } from 'framer-motion';
 import {
   Layers,
   Target,
@@ -22,34 +20,6 @@ import { Badge } from '@/components/ui/badge';
 import modelResults from '@/generated/model-results.json';
 import comparisonMatrix from '@/generated/comparison-matrix.json';
 
-/* ------------------------------------------------------------------ */
-/*  Animation helpers                                                  */
-/* ------------------------------------------------------------------ */
-
-const fadeUp = {
-  hidden: { opacity: 1, y: 0 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const staggerContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const sectionProps: any = {
-  initial: { opacity: 1, y: 0 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.4, ease: 'easeOut' },
-};
-
-const staggerProps: any = {
-  initial: { opacity: 1 },
-  whileInView: { opacity: 1 },
-  viewport: { once: true, margin: '-60px' },
-  variants: staggerContainer,
-};
 
 /* ------------------------------------------------------------------ */
 /*  Mode metadata                                                      */
@@ -172,9 +142,6 @@ export default function HomePage() {
             {/* Right column — Mode comparison card */}
             <div
               className="lg:col-span-2"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
             >
               <Card className="overflow-hidden">
                 {/* Tabs */}
@@ -258,7 +225,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       <section className="bg-gray-50 py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div {...sectionProps} className="mb-12 text-center">
+          <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
               Why this benchmark
             </h2>
@@ -266,9 +233,6 @@ export default function HomePage() {
 
           <div
             className="grid grid-cols-1 gap-6 md:grid-cols-3"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
                      >
             {[
               {
@@ -319,9 +283,6 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div
             className="grid grid-cols-1 gap-8 md:grid-cols-3"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
                      >
             {[
               {
@@ -348,8 +309,6 @@ export default function HomePage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                variants={fadeUp}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="text-center"
               >
                 <div className="text-4xl font-bold text-gray-900">
@@ -373,7 +332,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       <section className="bg-gray-50 py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div {...sectionProps} className="mb-12 text-center">
+          <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
               14 Interaction Families
             </h2>
@@ -385,15 +344,10 @@ export default function HomePage() {
 
           <div
             className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
                      >
             {sortedFamilies.map((family) => (
               <div
                 key={family.id}
-                variants={fadeUp}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
               >
                 <Link href={`/benchmark#${family.id}`}>
                   <Card className="h-full transition-all hover:shadow-md hover:-translate-y-0.5">
@@ -441,7 +395,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div {...sectionProps} className="mb-12 text-center">
+          <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
               How Models Compare
             </h2>
@@ -522,7 +476,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       <section className="bg-gray-50 py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div {...sectionProps} className="mb-14 text-center">
+          <div className="mb-14 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
               How It Works
             </h2>
@@ -530,9 +484,6 @@ export default function HomePage() {
 
           <div
             className="relative grid grid-cols-1 gap-8 md:grid-cols-5 md:gap-0"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
                      >
             {/* Connecting line (desktop only) */}
             <div className="absolute left-0 right-0 top-6 z-0 hidden h-0.5 bg-gray-200 md:block" />
@@ -566,8 +517,6 @@ export default function HomePage() {
             ].map((item) => (
               <div
                 key={item.step}
-                variants={fadeUp}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="relative flex flex-col items-center text-center md:px-3"
               >
                 <div className="relative z-10 mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-gray-900 bg-white text-sm font-bold text-gray-900">
@@ -592,9 +541,6 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div
             className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
                      >
             {[
               {
@@ -628,8 +574,6 @@ export default function HomePage() {
             ].map((artifact) => (
               <div
                 key={artifact.title}
-                variants={fadeUp}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
               >
                 <a href={artifact.href}>
                   <Card className="h-full transition-all hover:shadow-lg hover:-translate-y-1">
