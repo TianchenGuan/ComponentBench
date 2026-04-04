@@ -16,9 +16,8 @@ const navLinks = [
 ];
 
 const benchModes = [
-  { key: 'presentation', label: 'Presentation', href: '/benchmark', color: 'text-emerald-600 border-emerald-500 bg-emerald-50' },
-  { key: 'benchmark', label: 'Benchmark', href: '/benchmark?viewMode=benchmark', color: 'text-orange-600 border-orange-500 bg-orange-50' },
-  { key: 'log', label: 'Logs', href: '/benchmark?mode=log', color: 'text-purple-600 border-purple-500 bg-purple-50' },
+  { key: 'presentation', label: 'Presentation', color: 'text-emerald-600 border-emerald-500 bg-emerald-50' },
+  { key: 'benchmark', label: 'Benchmark', color: 'text-orange-600 border-orange-500 bg-orange-50' },
 ];
 
 export default function SiteNav() {
@@ -34,18 +33,15 @@ export default function SiteNav() {
   const isBenchmarkPage = pathname === '/benchmark';
 
   // Determine current bench mode
-  const currentMode = searchParams.get('mode') === 'log'
-    ? 'log'
-    : searchParams.get('viewMode') === 'benchmark'
-      ? 'benchmark'
-      : 'presentation';
+  const currentMode = searchParams.get('viewMode') === 'benchmark'
+    ? 'benchmark'
+    : 'presentation';
 
   // Preserve bench version param when switching modes
   const benchParam = searchParams.get('bench');
   const buildModeHref = (mode: typeof benchModes[number]) => {
     const params = new URLSearchParams();
     if (benchParam) params.set('bench', benchParam);
-    if (mode.key === 'log') params.set('mode', 'log');
     if (mode.key === 'benchmark') params.set('viewMode', 'benchmark');
     const qs = params.toString();
     return `/benchmark${qs ? `?${qs}` : ''}`;

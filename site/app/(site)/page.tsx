@@ -227,9 +227,7 @@ export default function HomePage() {
                               {rate !== null && (
                                 <div
                                   className={`h-full rounded-full ${modes[activeMode].color}`}
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${rate}%` }}
-                                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                                  style={{ width: `${rate}%` }}
                                 />
                               )}
                             </div>

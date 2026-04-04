@@ -26,7 +26,9 @@ logger = logging.getLogger(__name__)
 # Legacy alias still accepted on input: "webarena"
 # Display label: "AX-tree"
 
-MODE_ALIASES: dict[str, str] = {}
+MODE_ALIASES: dict[str, str] = {
+    "set_of_marks": "som",
+}
 
 VALID_MODES = ("ax_tree", "som", "pixel_grid", "pixel", "ui_tars_native")
 

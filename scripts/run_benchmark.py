@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 # Valid modes
-VALID_MODES = ["ax_tree", "set_of_marks", "pixel", "browser_use", "ui_tars_native", "all"]
+VALID_MODES = ["ax_tree", "som", "set_of_marks", "pixel", "browser_use", "ui_tars_native", "all"]
 
 
 def parse_args():
@@ -380,11 +380,12 @@ def main():
         strategy=args.shard_strategy,
     )
     
-    # Determine modes
+    # Determine modes (normalize aliases: set_of_marks → som)
+    from benchmark.core.task import normalize_mode
     if args.mode == "all":
-        modes = ["ax_tree", "set_of_marks", "pixel"]
+        modes = ["ax_tree", "som", "pixel"]
     else:
-        modes = [args.mode]
+        modes = [normalize_mode(args.mode)]
     
     # Calculate total tasks to run
     total_tasks_to_run = len(sharded_tasks) * len(modes)
