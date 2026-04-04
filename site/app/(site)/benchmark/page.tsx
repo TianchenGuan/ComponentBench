@@ -93,7 +93,7 @@ function HomePageContent() {
     setBenchmarkVersion(v);
     const params = new URLSearchParams(searchParams.toString());
     params.set('bench', v);
-    router.push(`/?${params.toString()}`);
+    router.push(`/benchmark?${params.toString()}`);
   };
 
   const activeIndex = benchVersion === 'v2' ? taskIndexV2 : taskIndexV1;
