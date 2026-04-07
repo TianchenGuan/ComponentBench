@@ -498,7 +498,7 @@ function TaskPageContent() {
                       Success Conditions
                     </div>
                     <ul className={`list-disc list-inside text-sm space-y-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      {task.success_trigger.human_readable.map((item, i) => (
+                      {(task.success_trigger?.human_readable ?? []).map((item, i) => (
                         <li key={i}>{item}</li>
                       ))}
                     </ul>
