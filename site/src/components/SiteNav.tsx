@@ -11,6 +11,7 @@ const navLinks = [
   { href: '/benchmark', label: 'Benchmark' },
   { href: '/compare', label: 'Compare' },
   { href: '/results', label: 'Results' },
+  { href: '/tasklab', label: 'Task Lab' },
   { href: '/docs', label: 'Docs' },
   { href: '/paper', label: 'Paper' },
 ];

@@ -244,8 +244,8 @@ export default function HomePage() {
               {
                 icon: Target,
                 iconBg: 'bg-amber-100 text-mode-som',
-                title: 'Grounding benchmarks stop too early',
-                body: "Static localization tests don't capture dynamic interactions \u2014 dropdowns, drag operations, nested overlays \u2014 that define real UI use.",
+                title: 'Measured against human trajectories',
+                body: 'Every task ships with cold and warm human recordings. Agents are scored against real human time and step counts \u2014 not just pass / fail.',
               },
               {
                 icon: AlertTriangle,

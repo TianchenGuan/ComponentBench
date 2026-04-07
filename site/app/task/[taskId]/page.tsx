@@ -178,6 +178,7 @@ function TaskPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [activeTab, setActiveTab] = useState<'verifier' | 'setup' | 'metadata'>('verifier');
   const router = useRouter();
 
   const handleRecordFinalized = useCallback(async (status: 'SUCCESS' | 'SKIPPED' | 'ABORTED') => {
@@ -383,13 +384,16 @@ function TaskPageContent() {
   }
 
   // Presentation mode: Full UI with navigation, goal, and details
+  const humanRef = (humanReference as Record<string, { steps: number; duration_ms: number }>)[task.id];
+  const diffBucket = task.difficulty.difficulty_bucket;
+  const libColorMap: Record<string, string> = { antd: 'bg-blue-100 text-blue-700', mui: 'bg-purple-100 text-purple-700', mantine: 'bg-cyan-100 text-cyan-700' };
+  const libChipClass = libColorMap[task.implementation_source] || 'bg-gray-100 text-gray-700';
+  const diffColorClass = diffBucket === 'easy' ? 'bg-green-100 text-green-700' : diffBucket === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700';
+  const isDark = themeColors.isDark;
+
   return (
     <div
-      style={{ 
-        minHeight: '100vh', 
-        background: themeColors.bgColor,
-        color: themeColors.textColor,
-      }}
+      className={`min-h-screen ${isDark ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}
       data-canonical-type={task.canonical_type}
       data-library={task.implementation_source}
       data-task-id={task.id}
@@ -417,160 +421,255 @@ function TaskPageContent() {
         </div>
       )}
 
-      {/* Header */}
-      <header
-        style={{
-          background: themeColors.headerBg,
-          borderBottom: `1px solid ${themeColors.headerBorder}`,
-          padding: '16px 24px',
-          marginTop: completed ? 48 : 0,
-        }}
-      >
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-            <Link href={benchVersion === 'v2' ? '/?bench=v2' : '/'} style={{ color: themeColors.isDark ? '#aaa' : '#666', textDecoration: 'none', fontSize: 14 }}>
-              ← Dashboard
-            </Link>
-            <span style={{ color: themeColors.headerBorder }}>|</span>
-            <span style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999' }}>
-              {task.canonical_type} / {task.implementation_source}
-            </span>
-          </div>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 600, color: themeColors.textColor }}>{task.name}</h1>
-          <p style={{ margin: '8px 0 0', color: themeColors.isDark ? '#ccc' : '#333', fontSize: 14 }}>
-            Task ID: <code style={{ background: themeColors.isDark ? '#333' : '#f0f0f0', padding: '2px 6px', borderRadius: 4 }}>{task.id}</code>
-          </p>
+      {/* Header Bar */}
+      <header className={`border-b ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} ${completed ? 'mt-12' : ''}`}>
+        <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
+          <Link href={benchVersion === 'v2' ? '/?bench=v2' : '/'} className={`text-sm font-medium hover:underline ${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-900'}`}>
+            &larr; Benchmark
+          </Link>
+          <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+            {task.canonical_type} / {task.implementation_source}
+          </span>
+          <code className={`text-xs px-2 py-0.5 rounded ${isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
+            {task.id}
+          </code>
         </div>
       </header>
 
-      {/* Goal */}
-      <div style={{ background: themeColors.headerBg, borderBottom: `1px solid ${themeColors.headerBorder}`, padding: '16px 24px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', marginBottom: 4, textTransform: 'uppercase', fontWeight: 500 }}>
-            BrowserGym Goal
-          </div>
-          <div style={{ fontSize: 16, color: themeColors.isDark ? '#ddd' : '#333', lineHeight: 1.5 }}>
-            {task.browsergym_goal}
-          </div>
-        </div>
-      </div>
+      {/* Two-Column Layout */}
+      <div className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
 
-      {/* Human Reference */}
-      {(() => {
-        const ref = (humanReference as Record<string, { steps: number; duration_ms: number }>)[task.id];
-        if (!ref) return null;
-        const secs = (ref.duration_ms / 1000).toFixed(1);
-        return (
-          <div style={{ background: themeColors.headerBg, borderBottom: `1px solid ${themeColors.headerBorder}`, padding: '12px 24px' }}>
-            <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', textTransform: 'uppercase', fontWeight: 500 }}>
-                Human Reference
-              </div>
-              <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
-                <span style={{ color: themeColors.isDark ? '#ddd' : '#333' }}>
-                  <strong>{ref.steps}</strong> {ref.steps === 1 ? 'step' : 'steps'}
-                </span>
-                <span style={{ color: themeColors.isDark ? '#aaa' : '#666' }}>
-                  {secs}s
-                </span>
-              </div>
+        {/* Left Column */}
+        <div className="min-w-0">
+          {/* Task Name */}
+          <h1 className="text-2xl font-bold mb-4">{task.name}</h1>
+
+          {/* Instruction Panel */}
+          <div className={`rounded-lg border p-4 mb-6 ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+            <div className={`text-[11px] font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              Instruction
+            </div>
+            <div className={`text-sm leading-relaxed ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+              {task.browsergym_goal}
             </div>
           </div>
-        );
-      })()}
 
-      {/* Details (collapsible) */}
-      <div style={{ background: themeColors.headerBg, borderBottom: `1px solid ${themeColors.headerBorder}` }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <button
-            onClick={() => setShowDetails(!showDetails)}
-            style={{
-              width: '100%',
-              padding: '12px 24px',
-              background: 'none',
-              border: 'none',
-              textAlign: 'left',
-              cursor: 'pointer',
-              fontSize: 14,
-              color: themeColors.isDark ? '#aaa' : '#666',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-            }}
-          >
-            <span style={{ transform: showDetails ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>
-              ▶
-            </span>
-            Details
-          </button>
-          
-          {showDetails && (
-            <div style={{ padding: '0 24px 16px', borderTop: `1px solid ${themeColors.headerBorder}` }}>
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', marginBottom: 4, fontWeight: 500 }}>UI Copy</div>
-                <div style={{ fontSize: 14, color: themeColors.isDark ? '#ddd' : '#333' }}>{task.ui_copy}</div>
-              </div>
-              
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', marginBottom: 4, fontWeight: 500 }}>Setup Description</div>
-                <div style={{ fontSize: 14, color: themeColors.isDark ? '#ddd' : '#333', whiteSpace: 'pre-wrap' }}>{task.setup_description}</div>
-              </div>
-              
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', marginBottom: 4, fontWeight: 500 }}>Scene Context</div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {Object.entries(task.scene_context).map(([key, value]) => (
-                    <span
-                      key={key}
-                      style={{
-                        fontSize: 11,
-                        background: themeColors.isDark ? '#333' : '#f0f0f0',
-                        color: themeColors.isDark ? '#ddd' : '#333',
-                        padding: '2px 8px',
-                        borderRadius: 4,
-                      }}
-                    >
-                      {key}: {String(value)}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 12, color: themeColors.isDark ? '#888' : '#999', marginBottom: 4, fontWeight: 500 }}>Difficulty</div>
-                <span
-                  style={{
-                    fontSize: 11,
-                    background: task.difficulty.difficulty_bucket === 'easy' ? '#f6ffed' : 
-                               task.difficulty.difficulty_bucket === 'medium' ? '#fffbe6' : '#fff2e8',
-                    color: task.difficulty.difficulty_bucket === 'easy' ? '#52c41a' :
-                           task.difficulty.difficulty_bucket === 'medium' ? '#faad14' : '#ff4d4f',
-                    padding: '2px 8px',
-                    borderRadius: 4,
-                  }}
-                >
-                  {task.difficulty.difficulty_bucket} ({task.difficulty.tier})
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Task Runner */}
-      <main style={{ padding: 24 }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <TaskRunner key={`${taskId}-${recordPass}`} task={task} />
+          {/* Live Task Component */}
+          <div className={`rounded-lg border shadow-sm p-6 mb-6 ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+            <TaskRunner key={`${taskId}-${recordPass}`} task={task} />
+          </div>
 
           {/* Log Viewer (shown when mode=log) */}
           {isLogMode && logRunId && logMode && (
-            <LogViewer
-              episodeUrl={`/api/logs/runs/${logRunId}/episodes/${taskId}?mode=${logMode}`}
-              videoBaseUrl={`/api/logs/blob?run=${logRunId}&mode=${logMode}&task=${taskId}`}
-            />
+            <div className="mb-6">
+              <LogViewer
+                episodeUrl={`/api/logs/runs/${logRunId}/episodes/${taskId}?mode=${logMode}`}
+                videoBaseUrl={`/api/logs/blob?run=${logRunId}&mode=${logMode}&task=${taskId}`}
+              />
+            </div>
           )}
+
+          {/* Tabs Section */}
+          <div className={`rounded-lg border ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+            {/* Tab Headers */}
+            <div className={`flex border-b ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
+              {(['verifier', 'setup', 'metadata'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-3 text-sm font-medium capitalize transition-colors ${
+                    activeTab === tab
+                      ? `border-b-2 ${isDark ? 'border-blue-400 text-blue-400' : 'border-blue-600 text-blue-600'}`
+                      : `${isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="p-4">
+              {activeTab === 'verifier' && (
+                <div className="space-y-4">
+                  {/* Success Conditions */}
+                  <div>
+                    <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      Success Conditions
+                    </div>
+                    <ul className={`list-disc list-inside text-sm space-y-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {task.success_trigger.human_readable.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Negative Cases */}
+                  {task.negative_cases && task.negative_cases.length > 0 && (
+                    <div>
+                      <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        Negative Cases
+                      </div>
+                      <ul className={`list-disc list-inside text-sm space-y-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {task.negative_cases.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Canonical Predicate */}
+                  <div>
+                    <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      Canonical Predicate
+                    </div>
+                    <code className={`text-xs block p-2 rounded whitespace-pre-wrap ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-50 text-gray-600'}`}>
+                      {JSON.stringify(task.success_trigger.canonical_predicate, null, 2)}
+                    </code>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'setup' && (
+                <div className="space-y-4">
+                  <div>
+                    <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      Setup Description
+                    </div>
+                    <div className={`text-sm whitespace-pre-wrap ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {task.setup_description}
+                    </div>
+                  </div>
+                  <div>
+                    <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      UI Copy
+                    </div>
+                    <div className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {task.ui_copy}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'metadata' && (
+                <div className="space-y-4">
+                  {/* Difficulty Axes */}
+                  {task.difficulty.axes_ratings && (
+                    <div>
+                      <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        Difficulty Axes
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(task.difficulty.axes_ratings).map(([axis, rating]) => (
+                          <span key={axis} className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                            {axis}: {String(rating)}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Justification */}
+                  {task.difficulty.justification && (
+                    <div>
+                      <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        Justification
+                      </div>
+                      <div className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {task.difficulty.justification}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Expected Interaction Path */}
+                  {task.expected_interaction_path && (
+                    <div>
+                      <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        Expected Interaction Path
+                      </div>
+                      <div className={`text-sm whitespace-pre-wrap ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {Array.isArray(task.expected_interaction_path) ? task.expected_interaction_path.join(' → ') : String(task.expected_interaction_path)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </main>
+
+        {/* Right Column (sticky sidebar) */}
+        <div className="lg:self-start lg:sticky lg:top-4 space-y-4">
+          {/* Task Info Card */}
+          <div className={`rounded-lg border p-4 ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+            <div className={`text-xs font-semibold uppercase tracking-wider mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              Task Info
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Type</span>
+                <span className={`text-xs px-2 py-0.5 rounded font-medium ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+                  {task.canonical_type}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Library</span>
+                <span className={`text-xs px-2 py-0.5 rounded font-medium ${isDark ? 'bg-gray-800 text-gray-300' : libChipClass}`}>
+                  {task.implementation_source}
+                </span>
+              </div>
+              {task.task_template && (
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Template</span>
+                  <span className={`text-xs px-2 py-0.5 rounded font-medium ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+                    {task.task_template}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Difficulty</span>
+                <span className={`text-xs px-2 py-0.5 rounded font-medium ${isDark ? 'bg-gray-800 text-gray-300' : diffColorClass}`}>
+                  {diffBucket} ({task.difficulty.tier})
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Human Reference Card */}
+          {humanRef && (
+            <div className={`rounded-lg border p-4 ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+              <div className={`text-xs font-semibold uppercase tracking-wider mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                Human Reference
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <span className={isDark ? 'text-gray-200' : 'text-gray-700'}>
+                  <strong>{humanRef.steps}</strong> {humanRef.steps === 1 ? 'step' : 'steps'}
+                </span>
+                <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>
+                  {(humanRef.duration_ms / 1000).toFixed(1)}s
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Scene Context Card */}
+          <div className={`rounded-lg border p-4 ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+            <div className={`text-xs font-semibold uppercase tracking-wider mb-3 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              Scene Context
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {Object.entries(task.scene_context).map(([key, value]) => (
+                <span
+                  key={key}
+                  className={`text-[11px] px-2 py-0.5 rounded ${isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}
+                >
+                  {key}: {String(value)}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Recording overlay (shown when record=1) */}
       {isRecordMode && recordRunId && (
