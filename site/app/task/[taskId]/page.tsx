@@ -385,7 +385,7 @@ function TaskPageContent() {
 
   // Presentation mode: Full UI with navigation, goal, and details
   const humanRef = (humanReference as Record<string, { steps: number; duration_ms: number }>)[task.id];
-  const diffBucket = task.difficulty.difficulty_bucket;
+  const diffBucket = task.difficulty?.difficulty_bucket;
   const libColorMap: Record<string, string> = { antd: 'bg-blue-100 text-blue-700', mui: 'bg-purple-100 text-purple-700', mantine: 'bg-cyan-100 text-cyan-700' };
   const libChipClass = libColorMap[task.implementation_source] || 'bg-gray-100 text-gray-700';
   const diffColorClass = diffBucket === 'easy' ? 'bg-green-100 text-green-700' : diffBucket === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700';
@@ -524,7 +524,7 @@ function TaskPageContent() {
                       Canonical Predicate
                     </div>
                     <code className={`text-xs block p-2 rounded whitespace-pre-wrap ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-50 text-gray-600'}`}>
-                      {JSON.stringify(task.success_trigger.canonical_predicate, null, 2)}
+                      {JSON.stringify(task.success_trigger?.canonical_predicate ?? null, null, 2)}
                     </code>
                   </div>
                 </div>
@@ -554,13 +554,13 @@ function TaskPageContent() {
               {activeTab === 'metadata' && (
                 <div className="space-y-4">
                   {/* Difficulty Axes */}
-                  {task.difficulty.axes_ratings && (
+                  {task.difficulty?.axes_ratings && (
                     <div>
                       <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                         Difficulty Axes
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {Object.entries(task.difficulty.axes_ratings).map(([axis, rating]) => (
+                        {Object.entries(task.difficulty?.axes_ratings).map(([axis, rating]) => (
                           <span key={axis} className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
                             {axis}: {String(rating)}
                           </span>
@@ -570,13 +570,13 @@ function TaskPageContent() {
                   )}
 
                   {/* Justification */}
-                  {task.difficulty.justification && (
+                  {task.difficulty?.justification && (
                     <div>
                       <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                         Justification
                       </div>
                       <div className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {task.difficulty.justification}
+                        {task.difficulty?.justification}
                       </div>
                     </div>
                   )}
@@ -629,7 +629,7 @@ function TaskPageContent() {
               <div className="flex items-center justify-between">
                 <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Difficulty</span>
                 <span className={`text-xs px-2 py-0.5 rounded font-medium ${isDark ? 'bg-gray-800 text-gray-300' : diffColorClass}`}>
-                  {diffBucket} ({task.difficulty.tier})
+                  {diffBucket ?? '—'}{task.difficulty?.tier ? ` (${task.difficulty.tier})` : ''}
                 </span>
               </div>
             </div>
