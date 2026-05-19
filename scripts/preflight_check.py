@@ -120,7 +120,7 @@ def main():
     parser.add_argument("--output-csv", "--output_csv", type=str, default="reports/tables/preflight_health.csv")
     parser.add_argument("--allow-failures", "--allow_failures", action="store_true",
                         help="Exit 0 even if failures exist")
-    parser.add_argument("--data-dir", "--data_dir", type=str, default="data/tasks_v1")
+    parser.add_argument("--data-dir", "--data_dir", type=str, default="data/releases/v0.5.0/tasks_v1")
     args = parser.parse_args()
 
     os.chdir(Path(__file__).parent.parent)

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://componentbench.com/schema/trace.schema.json",
+  "title": "ComponentBench Trace (human or agent)",
+  "description": "A trace is a sequence of steps for one task. Each step records an action and the post-action state. Same shape for cleaned human reference traces and for sanitized agent traces.",
+  "type": "object",
+  "required": ["task_id", "viewport", "steps"],
+  "properties": {
+    "task_id": { "type": "string" },
+    "source": {
+      "type": "string",
+      "enum": ["human", "agent"],
+      "description": "Whether this trace came from a human recorder or an agent."
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "If source=agent, identifier for which agent (e.g. gpt-5.4 + mode)."
+    },
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "normalized_steps": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Step count after merging adjacent character-by-character typing into single type actions."
+    },
+    "raw_steps": { "type": "integer", "minimum": 0, "description": "Step count before normalization." },
+    "passed": { "type": "boolean" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action_type"],
+        "properties": {
+          "step_index": { "type": "integer", "minimum": 0 },
+          "action_type": {
+            "type": "string",
+            "enum": ["click", "double_click", "right_click", "type", "key", "drag", "drop", "scroll", "hover", "select", "wait", "noop"]
+          },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "dx": { "type": "number" },
+          "dy": { "type": "number" },
+          "text": { "type": "string", "description": "For action_type=type." },
+          "key": { "type": "string", "description": "For action_type=key, e.g. Enter, Tab, Escape." },
+          "target_bid": { "type": ["string", "null"], "description": "BrowserGym bid of the target element, when applicable." },
+          "timestamp_ms": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

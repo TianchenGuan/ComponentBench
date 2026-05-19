@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://componentbench.com/schema/task.schema.json",
+  "title": "ComponentBench Task",
+  "description": "A single benchmark task: one canonical UI component interaction with a programmatic success condition.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "canonical_type",
+    "implementation_source",
+    "browsergym_goal",
+    "scene_context",
+    "difficulty",
+    "success_trigger"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier, e.g. `button-antd-T01`. Format: <canonical_type>-<library>-T<NN>.",
+      "pattern": "^[a-z0-9_]+-(antd|mui|mantine)-T[0-9]+$"
+    },
+    "name": { "type": "string", "description": "Short human-readable label." },
+    "canonical_type": {
+      "type": "string",
+      "description": "One of the 97 canonical component types in the ontology (see metadata/canonical_components.csv)."
+    },
+    "implementation_source": {
+      "type": "string",
+      "enum": ["antd", "mui", "mantine"],
+      "description": "Underlying UI library used to instantiate the component."
+    },
+    "implementation_variant": { "type": ["string", "null"] },
+    "implementation_component": { "type": "string" },
+    "task_template": { "type": "string" },
+    "secondary_template": { "type": ["string", "null"] },
+    "browsergym_goal": {
+      "type": "string",
+      "description": "Natural-language goal shown to the agent."
+    },
+    "ui_copy": { "type": "string" },
+    "setup_description": { "type": "string" },
+    "scene_context": {
+      "type": "object",
+      "required": ["theme", "spacing", "layout", "placement", "scale", "instances", "guidance", "clutter"],
+      "properties": {
+        "theme": { "enum": ["light", "dark", "high_contrast"] },
+        "spacing": { "enum": ["comfortable", "compact", "condensed"] },
+        "layout": {
+          "enum": [
+            "isolated_card", "form_section", "settings_panel", "dashboard",
+            "table_cell", "modal_flow", "drawer_flow"
+          ]
+        },
+        "placement": { "enum": ["center", "top_left", "top_right", "bottom_left", "bottom_right"] },
+        "scale": { "enum": ["default", "small", "large"] },
+        "instances": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "guidance": { "enum": ["text", "visual", "mixed"] },
+        "clutter": { "enum": ["none", "low", "medium", "high"] }
+      }
+    },
+    "difficulty": {
+      "type": "object",
+      "required": ["difficulty_bucket", "tier", "axes_ratings"],
+      "properties": {
+        "difficulty_bucket": { "enum": ["easy", "medium", "hard", "mid"] },
+        "tier": { "enum": ["L0", "L1", "L2", "L3"] },
+        "axes_ratings": {
+          "type": "object",
+          "required": [
+            "precision_requirement", "target_acquisition", "density_choice_interference",
+            "depth_layering", "feedback_dynamics", "semantic_observability", "disambiguation_load"
+          ],
+          "additionalProperties": { "type": "integer", "minimum": 1, "maximum": 5 }
+        },
+        "justification": { "type": "string" }
+      }
+    },
+    "success_trigger": {
+      "type": "object",
+      "required": ["human_readable", "canonical_predicate"],
+      "properties": {
+        "human_readable": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Human-readable description of what counts as success."
+        },
+        "canonical_predicate": {
+          "type": "object",
+          "required": ["predicate_type", "target_state"],
+          "properties": {
+            "predicate_type": { "type": "string", "description": "e.g. equals, contains, count_at_least" },
+            "target_state": { "type": "object", "additionalProperties": true },
+            "tolerance": {},
+            "require_confirm": { "type": "boolean" },
+            "confirm_control": { "type": ["string", "null"] },
+            "require_correct_instance": { "type": "boolean" },
+            "target_instance_label_or_id": { "type": ["string", "null"] },
+            "terminal_condition": { "type": "string" }
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+    "negative_cases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Concrete states/events that explicitly do not count as success."
+    },
+    "expected_interaction_path": { "type": "string" },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

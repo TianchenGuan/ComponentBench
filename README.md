@@ -1,90 +1,146 @@
 # ComponentBench
 
-**Diagnosing Component-Level Failures in Computer-Use Agents**
+**Diagnosing Component-Level Failures in Computer-Use Agents.**
 
-## Overview
+ComponentBench is a diagnostic benchmark for computer-use agents at the layer between atomic GUI grounding and long-horizon workflows. It evaluates agents on isolated interactions with real React UI components — toggling button groups, setting sliders, using date pickers, editing data grids — that are short enough to pinpoint failures and rich enough to reflect modern web interfaces.
 
-ComponentBench is a diagnostic benchmark for computer-use agents that targets the "missing middle layer" between atomic GUI-grounding tests (ScreenSpot) and long-horizon workflow benchmarks (WebArena, OSWorld). It evaluates agents on individual UI component interactions -- toggling button groups, setting sliders, using date pickers -- that are short enough to diagnose specific failures but complex enough to reflect real modern web interfaces.
+- **Website:** https://www.interfacegym.com — interactive benchmark, log viewer, task browser.
+- **Paper:** *ComponentBench: Diagnosing Component-Level Failures in Computer-Use Agents* (COLM 2026 under review).
+- **Dataset on HuggingFace:** https://huggingface.co/datasets/TianchenGuan/ComponentBench
 
-The benchmark includes 97 canonical UI component types organized into 14 interaction families, with 2,910 programmatically verified tasks across three React libraries (Ant Design, MUI, Mantine). Each task has controlled scene-context factors, difficulty ratings, and human reference trajectories. A distilled hard subset, **ComponentBench-Core**, provides 912 tasks for tracking frontier model progress.
+## What this repository is
 
-ComponentBench uses a live Next.js site that renders real React components, a hidden success banner for programmatic verification, and multiple observation modes (AX-tree, Set-of-Marks, pixel screenshots, browser-use) to isolate where agents break down.
+This is the **public benchmark artifact repository** — it contains released benchmark data, schemas, documentation, runner code, and public results.
 
-## Key Numbers
+The interactive site that runs benchmark tasks in a browser is **not** in this repository. It lives in the private InterfaceGym monorepo and is deployed at `componentbench.com`. See [`docs/release-boundary.md`](docs/release-boundary.md) for what stays here vs. upstream.
+
+## Headline numbers
 
 | Metric | Value |
-|--------|-------|
-| Canonical component types | 97 |
+|---|---:|
+| Canonical UI component types | **97** |
 | Interaction families | 14 |
-| Tasks (Full / Core) | 2,910 / 912 |
-| UI libraries | 3 (Ant Design, MUI, Mantine) |
-| Observation modes | 4 (AX-tree, Set-of-Marks, Pixel, Browser-Use) |
+| Tasks (Full / Core) | **2,910 / 912** |
+| UI libraries | Ant Design, MUI, Mantine |
+| Observation modes evaluated | AX-tree, SoM, Pixel, Browser-Use |
 | Task templates | 24 |
-| Human reference traces | avg 2.7 steps, median 2 |
+| Human reference traces | avg 2.7 steps on v1; 5.2 on v2 |
 
-## Quick Start
-
-```bash
-# Clone
-git clone https://github.com/TianchenGuan/ComponentBench.git
-cd ComponentBench
-
-# Python dependencies
-pip install -e .
-playwright install chromium
-
-# Site
-cd site && npm install && npm run prebuild && npm run build
-npm run dev  # http://localhost:3002
-
-# Smoke test (dry run)
-cd ..
-python scripts/run_benchmark.py --mode pixel --canonical_types button --libraries antd --max_tasks 2 --dry_run
-```
-
-## Running Evaluations
-
-Run the full benchmark or target specific slices by observation mode and model.
-
-```bash
-# GPT-5.4 (pixel mode)
-python scripts/run_benchmark.py --mode pixel --agent_config gpt --model_id gpt-5.4
-
-# Gemini (ax_tree mode)
-python scripts/run_benchmark.py --mode ax_tree --agent_config gemini
-
-# Open-weight models via vLLM (UI-TARS)
-python scripts/run_benchmark.py --mode ui_tars_native --agent_config ui_tars
-```
-
-Results are written to `results/` by default. Each run produces a JSON log with per-task pass/fail, step traces, and timing information.
-
-## Benchmark Structure
-
-**Task YAML format.** Each task is defined by a YAML file specifying the canonical component type, UI library, scene-context factors (e.g., theme, density, disabled states), the natural-language instruction, and the expected success condition. Tasks are grouped by interaction family and difficulty.
-
-**Observation modes.** ComponentBench supports four observation modes that control what the agent sees at each step:
-- **AX-tree** -- the browser accessibility tree, serialized as text.
-- **Set-of-Marks (SoM)** -- a screenshot with numbered bounding-box overlays on interactive elements.
-- **Pixel** -- a raw screenshot with no annotations.
-- **Browser-Use** -- the agent controls a live browser session directly.
-
-**Programmatic verification.** Each task page contains a hidden success banner that appears only when the component reaches its target state. The harness checks for this banner after every agent action to determine pass/fail, eliminating the need for vision-based or LLM-based grading.
-
-## Human Traces
-
-ComponentBench includes human reference trajectories collected through a built-in recording interface at `/record` on the benchmark site. Annotators complete each task while the interface captures mouse events, keystrokes, and DOM mutations. A trace-cleaning pipeline normalizes these recordings into the same action format used by agents, enabling direct comparison of step counts and action sequences.
-
-## Results
-
-Headline results on ComponentBench-Core (912 tasks), reported as task success rate (%):
+### Results on Core (912 tasks), task success rate (%)
 
 | Model | Browser-Use | AX-tree | SoM | Pixel |
-|-------|-------------|---------|-----|-------|
+|---|---:|---:|---:|---:|
 | Gemini 3 Flash | 95.2 | 89.6 | 87.1 | 85.4 |
 | GPT-5.4 | 90.4 | 81.5 | 77.0 | 83.8 |
 | GPT-5 mini | 87.0 | 83.1 | 78.5 | 49.0 |
-| UI-TARS-1.5-7B | -- | -- | -- | 12.6 |
+| UI-TARS-1.5-7B | — | — | — | 12.6 |
+
+Switching observation/action space can shift a single model's success rate by **30+ percentage points** — GPT-5 mini moves from 87.0% (Browser-Use) to 49.0% (pixel-only).
+
+## Repository layout
+
+```
+ComponentBench/
+├── README.md
+├── LICENSE
+├── CITATION.cff
+├── pyproject.toml
+├── docs/
+│   ├── overview.md
+│   ├── methodology.md
+│   ├── evaluation-protocol.md
+│   ├── data-format.md
+│   ├── release-boundary.md
+│   └── ... (existing runbooks)
+├── schema/
+│   ├── task.schema.json
+│   ├── result.schema.json
+│   └── trace.schema.json
+├── data/
+│   └── releases/
+│       └── 0.5.0/
+│           ├── tasks_v1/    # 97 YAMLs (Full benchmark)
+│           ├── tasks_v2/    # 19 YAMLs (Core benchmark)
+│           ├── human_traces/
+│           └── metadata/
+├── benchmark/              # Python harness (agents/, core/, utils/)
+├── configs/                # Agent + benchmark configs (YAML)
+├── scripts/
+│   ├── run_benchmark.py    # main runner
+│   ├── validate-release.py # schema/structure checker
+│   ├── eval_*.sh           # per-mode wrappers
+│   ├── slurm/              # cluster scripts
+│   ├── browser_use/        # browser-use baseline
+│   └── logpack/            # log archival
+├── examples/
+│   └── minimal-runner/     # no-dependency example
+├── results/public/         # published model results
+├── tests/
+└── archive/                # internal-only material moved here during repo reconstruction; do not depend on it
+```
+
+## Quick start
+
+```bash
+git clone https://github.com/TianchenGuan/ComponentBench
+cd ComponentBench
+pip install -e .
+playwright install chromium
+
+# Smoke test (requires running benchmark site at http://localhost:3002 — see Website setup below)
+python scripts/run_benchmark.py \
+  --mode pixel \
+  --canonical_types button \
+  --libraries antd \
+  --max_tasks 2
+
+# Full v1 run with your model
+python scripts/run_benchmark.py --mode pixel --agent_config gpt --model_id gpt-5.4
+
+# v2 (Core)
+python scripts/run_benchmark.py --benchmark_version v2 --mode pixel ...
+```
+
+Results go to `results/`; structure them as `results/public/<model>-<mode>-<version>.json` (conforming to `schema/result.schema.json`) when you're ready to publish.
+
+## Website setup
+
+The benchmark site is not in this repository. To self-host the site for local evaluation:
+
+- **Easiest:** point at the public site, `https://www.interfacegym.com`. Task URLs follow `https://www.interfacegym.com/task/<taskId>?mode=benchmark`. Be polite about request rates.
+- **Self-hosted:** clone the private InterfaceGym repo and run `apps/componentbench-web` on port 3002. Or build a stripped public bundle from that source with the `BENCHMARK_BUILD=1` env var, which disables the log viewer.
+
+We are working on shipping a self-contained public site bundle from a future release. Until then, use the public hosted site or run the private InterfaceGym fork.
+
+## Schemas
+
+See `schema/task.schema.json`, `schema/result.schema.json`, `schema/trace.schema.json`. Validate a release with:
+
+```bash
+python scripts/validate-release.py --version 0.5.0
+```
+
+## Documentation
+
+| Doc | Purpose |
+|---|---|
+| [`docs/overview.md`](docs/overview.md) | What the benchmark is and why this layer matters |
+| [`docs/methodology.md`](docs/methodology.md) | How tasks, difficulty axes, and human traces were built |
+| [`docs/evaluation-protocol.md`](docs/evaluation-protocol.md) | How to run and what to report |
+| [`docs/data-format.md`](docs/data-format.md) | On-disk shape of a release |
+| [`docs/release-boundary.md`](docs/release-boundary.md) | Public ↔ private repo boundary |
+
+## Contributing
+
+Issues and PRs welcome. See [`docs/release-boundary.md`](docs/release-boundary.md) for what's appropriate here vs. upstream:
+
+- Bugs in tasks, missing edge cases, schema fixes → here.
+- Site bugs, Task Lab issues, log viewer fixes → upstream (file at the interfacegym.com contact).
+- New tasks / new templates → upstream (they're authored in the Task Lab).
+
+## License
+
+MIT. See `LICENSE`.
 
 ## Citation
 
@@ -97,6 +153,4 @@ Headline results on ComponentBench-Core (912 tasks), reported as task success ra
 }
 ```
 
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+See `CITATION.cff` for the machine-readable form.

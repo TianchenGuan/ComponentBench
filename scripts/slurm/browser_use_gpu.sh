@@ -238,7 +238,7 @@ python3 scripts/browser_use/run_and_pack.py \
     --shard-id "${WORKER_ID}" \
     --num-shards "${SHARDS}" \
     --benchmark-version "${VERSION}" \
-    --data-dir "data/tasks_v1" \
+    --data-dir "data/releases/v0.5.0/tasks_v1" \
     --resume \
     ${TASK_FLAGS} \
     2>&1 | tee "${LOGS_DIR}/benchmark.log"

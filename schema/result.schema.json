@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://componentbench.com/schema/result.schema.json",
+  "title": "ComponentBench Per-Task Result",
+  "description": "One row from results.jsonl — the outcome of running one agent against one task.",
+  "type": "object",
+  "required": ["task_id", "passed", "n_steps", "elapsed_s"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Matches `id` in the task spec.",
+      "pattern": "^[a-z0-9_]+-(antd|mui|mantine)-T[0-9]+$"
+    },
+    "canonical_type": { "type": "string" },
+    "library": { "type": "string", "enum": ["antd", "mui", "mantine"] },
+    "benchmark_version": { "type": "string", "enum": ["v1", "v2"] },
+    "model_id": { "type": "string", "description": "Model identifier, e.g. gpt-5.4, gemini-3-flash, ui-tars-1.5-7b." },
+    "mode": {
+      "type": "string",
+      "enum": ["ax_tree", "som", "pixel", "pixel_grid", "browser_use", "ui_tars_native"],
+      "description": "Observation/action mode."
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "Whether the #cb-success-banner appeared before max_steps."
+    },
+    "cum_reward": { "type": "number", "description": "BrowserGym reward (1.0 on success, 0.0 otherwise)." },
+    "n_steps": { "type": "integer", "minimum": 0, "description": "Number of agent steps taken." },
+    "elapsed_s": { "type": "number", "minimum": 0, "description": "Wall-clock seconds for the trial." },
+    "agent_elapsed_s": { "type": "number", "description": "Time spent in the agent (LLM calls) only." },
+    "tokens_prompt": { "type": "integer", "minimum": 0 },
+    "tokens_completion": { "type": "integer", "minimum": 0 },
+    "tokens_total": { "type": "integer", "minimum": 0 },
+    "terminated": { "type": "boolean", "description": "Episode terminated (e.g. success or hard failure)." },
+    "truncated": { "type": "boolean", "description": "Episode truncated by max_steps." },
+    "err_msg": { "type": ["string", "null"] },
+    "stack_trace": { "type": ["string", "null"] },
+    "trace_dir": { "type": "string", "description": "Relative path to the per-task trace directory, if exported." }
+  },
+  "additionalProperties": true
+}

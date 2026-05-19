@@ -583,13 +583,13 @@ def parse_args():
     p.add_argument("--retry-delay", type=int, default=30,
                     help="Seconds to wait after API error before retrying")
 
-    p.add_argument("--data-dir", default="data/tasks_v1")
+    p.add_argument("--data-dir", default="data/releases/v0.5.0/tasks_v1")
     p.add_argument("--benchmark-version", choices=["v1", "v2"], default="v1",
                     help="Benchmark version: v1 or v2. Auto-sets data-dir if not overridden.")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
-    if args.benchmark_version == "v2" and args.data_dir == "data/tasks_v1":
-        args.data_dir = "data/tasks_v2"
+    if args.benchmark_version == "v2" and args.data_dir == "data/releases/v0.5.0/tasks_v1":
+        args.data_dir = "data/releases/v0.5.0/tasks_v2"
     return args
 
 
