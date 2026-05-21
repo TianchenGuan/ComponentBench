@@ -10,7 +10,7 @@ ComponentBench (this repository) is the **public, downstream artifact**. Interfa
 | Human reference trajectories | `data/releases/<version>/human_traces/` |
 | Ontology + difficulty axes + task templates | `data/releases/<version>/metadata/` |
 | Schemas | `schema/*.schema.json` |
-| Benchmark runner (Python) | `benchmark/`, `scripts/run_benchmark.py`, `scripts/eval_*.sh`, `scripts/slurm/` |
+| Benchmark runner (Python) | `benchmark/`, `scripts/run_benchmark.py`, `scripts/eval_*.sh` |
 | Agent configs and base prompts (public-safe) | `configs/` |
 | Examples | `examples/minimal-runner/` |
 | Documentation | `docs/`, this file |

@@ -68,15 +68,11 @@ ComponentBench/
 ├── scripts/
 │   ├── run_benchmark.py    # main runner
 │   ├── validate-release.py # schema/structure checker
-│   ├── eval_*.sh           # per-mode wrappers
-│   ├── slurm/              # cluster scripts
-│   ├── browser_use/        # browser-use baseline
-│   └── logpack/            # log archival
+│   └── eval_*.sh           # per-mode wrappers
 ├── examples/
 │   └── minimal-runner/     # no-dependency example
 ├── results/public/         # published model results
-├── tests/
-└── archive/                # internal-only material moved here during repo reconstruction; do not depend on it
+└── tests/
 ```
 
 ## Quick start
