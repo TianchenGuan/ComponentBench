@@ -16,7 +16,7 @@ Long-horizon benchmarks blame "task failure" without pinpointing where the agent
 
 ## Scope
 
-- **97 canonical component types** organized into **14 interaction families** (see `data/releases/<version>/metadata/canonical_components.csv`).
+- **97 canonical component types** organized into **14 interaction families** (see `data/metadata/canonical_components.csv`).
 - **3 React component libraries** instantiate each type: Ant Design, MUI, Mantine.
 - **24 task templates** combine canonical types with controlled scene-context factors.
 - **2,910 tasks** in the Full benchmark (v1); **912 tasks** in the harder Core benchmark (v2).
@@ -24,7 +24,7 @@ Long-horizon benchmarks blame "task failure" without pinpointing where the agent
 
 ## What's in a task
 
-Each YAML in `data/releases/<version>/tasks_v{1,2}/` defines:
+Each YAML in `data/tasks_v{1,2}/` defines:
 
 - The canonical component type and the underlying library implementation.
 - A natural-language goal (`browsergym_goal`) shown to the agent.

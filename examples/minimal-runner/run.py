@@ -28,11 +28,11 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def load_task(version: str, task_id: str) -> dict:
-    """Load one task spec from data/releases/<version>/tasks_v{1,2}/."""
+def load_task(task_id: str) -> dict:
+    """Load one task spec from data/tasks_v{1,2}/."""
     canonical = task_id.split("-")[0]
     for suite in ("tasks_v1", "tasks_v2"):
-        yaml_path = REPO_ROOT / "data" / "releases" / version / suite / f"{canonical}.yaml"
+        yaml_path = REPO_ROOT / "data" / suite / f"{canonical}.yaml"
         if not yaml_path.exists():
             continue
         with yaml_path.open() as f:
@@ -40,7 +40,7 @@ def load_task(version: str, task_id: str) -> dict:
         for t in tasks:
             if t.get("id") == task_id:
                 return t
-    raise FileNotFoundError(f"task_id {task_id!r} not found in any suite under data/releases/{version}/")
+    raise FileNotFoundError(f"task_id {task_id!r} not found in data/tasks_v{{1,2}}/")
 
 
 def model_pick_coord(task: dict, screenshot_bytes: bytes) -> tuple[int, int]:

@@ -1,11 +1,11 @@
 # Data Format
 
-This file documents the on-disk shape of a release under `data/releases/<version>/`. The authoritative JSON Schemas live in `schema/`.
+This file documents the on-disk shape of a release under `data/`. The authoritative JSON Schemas live in `schema/`.
 
 ## Directory layout
 
 ```
-data/releases/<version>/
+data/
 ├── tasks_v1/                # 97 YAMLs (Full benchmark, 2,910 tasks)
 │   ├── accordion.yaml
 │   ├── button.yaml
@@ -97,7 +97,7 @@ These are human-curated and stable; refer to them when interpreting task propert
 
 ## Versioning
 
-Releases are pinned: `data/releases/0.5.0/` is immutable once tagged. New benchmark versions or fix-ups land under `data/releases/<next-version>/`. Always include the release version in published result filenames.
+The data version tracks the repository tag. To pin against a specific release, check out the matching git tag.
 
 ## Validation
 

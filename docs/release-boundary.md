@@ -6,9 +6,9 @@ ComponentBench (this repository) is the **public, downstream artifact**. Interfa
 
 | Kind | Where |
 |---|---|
-| Task specifications | `data/releases/<version>/tasks_v{1,2}/` |
-| Human reference trajectories | `data/releases/<version>/human_traces/` |
-| Ontology + difficulty axes + task templates | `data/releases/<version>/metadata/` |
+| Task specifications | `data/tasks_v{1,2}/` |
+| Human reference trajectories | `data/human_traces/` |
+| Ontology + difficulty axes + task templates | `data/metadata/` |
 | Schemas | `schema/*.schema.json` |
 | Benchmark runner (Python) | `benchmark/`, `scripts/run_benchmark.py`, `scripts/eval_*.sh` |
 | Agent configs and base prompts (public-safe) | `configs/` |
@@ -33,8 +33,8 @@ ComponentBench (this repository) is the **public, downstream artifact**. Interfa
 Releases flow **one-way** from InterfaceGym to this repository via `scripts/export-componentbench-release.mjs` (in InterfaceGym). That script:
 
 1. Reads from `packages/componentbench-data/` (the upstream source-of-truth).
-2. Copies into `data/releases/<version>/` here.
-3. Writes a `data/releases/<version>/manifest.json` recording exactly what was copied and when.
+2. Copies into `data/` here.
+3. Writes a `data/manifest.json` recording exactly what was copied and when.
 4. Refuses to touch anything on its built-in deny-list (website code, TaskLab internals, private prompts, env files, internal docs).
 
 ## What this means for contributors
@@ -46,12 +46,12 @@ Releases flow **one-way** from InterfaceGym to this repository via `scripts/expo
 
 ## Versioning
 
-- The release directory name (`data/releases/0.5.0/`) is the source of truth for the data version.
+- The repository's git tag is the source of truth for the data version (e.g. `v0.5.0`).
 - Schemas use a separate semver line in their `$id` if/when they evolve.
 - Published results filename pattern: `<model>-<mode>-<version>.json` under `results/public/`.
 
 ## Editing this repository
 
-- Do not hand-edit files under `data/releases/<version>/`. Update upstream and re-export.
+- Do not hand-edit files under `data/`. Update upstream and re-export.
 - Schemas, docs, examples, and runner code can be edited here directly.
 - Always run `python scripts/validate-release.py --version <v>` before opening a release-touching PR.

@@ -47,7 +47,7 @@ Per (model, mode, version):
 - **Task success rate** = passed / total.
 - **Mean normalized steps** on passed tasks (compare to human reference).
 - **Mean wall-clock seconds** on passed tasks.
-- **Per-family breakdown** — see `data/releases/<version>/metadata/canonical_components.csv` for the family mapping.
+- **Per-family breakdown** — see `data/metadata/canonical_components.csv` for the family mapping.
 - **Per-mode breakdown** if multiple modes were run.
 
 Optionally include per-axis-rating breakdown (precision_requirement, target_acquisition, etc.) for diagnostic comparisons.

@@ -23,7 +23,7 @@ We surveyed widely used React component libraries (Ant Design, MUI, Mantine) and
 | Rich editors | code_editor, json_editor, rich_text_editor, markdown |
 | Composite | wizard, settings_panel, search_filters |
 
-The mapping from canonical type to family and to per-library implementation lives in `data/releases/<version>/metadata/canonical_components.csv`.
+The mapping from canonical type to family and to per-library implementation lives in `data/metadata/canonical_components.csv`.
 
 ## Task generation
 
@@ -49,7 +49,7 @@ Tasks are scored on **7 difficulty axes** (1–5 each):
 
 Aggregating these places each task in a tier (L0–L3) and bucket (easy / mid / hard).
 
-A separate **realized difficulty audit** measures these axes from the rendered DOM and human traces, providing per-task feature values and aggregate axis scores. See `data/releases/<version>/metadata/difficulty_axes.csv` and the Hugging Face dataset at `TianchenGuan/ComponentBench` for the audit outputs.
+A separate **realized difficulty audit** measures these axes from the rendered DOM and human traces, providing per-task feature values and aggregate axis scores. See `data/metadata/difficulty_axes.csv` and the Hugging Face dataset at `TianchenGuan/ComponentBench` for the audit outputs.
 
 ## Human reference trajectories
 
@@ -58,7 +58,7 @@ Annotators completed every task through the site's `/record` interface (in the p
 - Adjacent character-by-character typing was merged into single `type` actions so step counts are comparable with agents that paste in one step.
 - The better of two recordings per task was kept (fewer normalized steps, then shorter duration).
 
-Result: a near-optimal trajectory per task, available under `data/releases/<version>/human_traces/`.
+Result: a near-optimal trajectory per task, available under `data/human_traces/`.
 
 ## Construction validity
 

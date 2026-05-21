@@ -4,7 +4,7 @@ A bare-bones example that walks one ComponentBench task end-to-end without any o
 
 ## What it does
 
-1. Reads a task spec from `data/releases/<version>/tasks_v1/<canonical_type>.yaml`.
+1. Reads a task spec from `data/tasks_v1/<canonical_type>.yaml`.
 2. Loads a single task by `id`.
 3. Opens a Playwright browser at `https://www.interfacegym.com/task/<task_id>?mode=benchmark`.
 4. Asks your model (placeholder hook) to pick one click coordinate.

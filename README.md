@@ -4,15 +4,19 @@
 
 ComponentBench is a diagnostic benchmark for computer-use agents at the layer between atomic GUI grounding and long-horizon workflows. It evaluates agents on isolated interactions with real React UI components — toggling button groups, setting sliders, using date pickers, editing data grids — that are short enough to pinpoint failures and rich enough to reflect modern web interfaces.
 
-- **Website:** https://www.interfacegym.com — interactive benchmark, log viewer, task browser.
-- **Paper:** *ComponentBench: Diagnosing Component-Level Failures in Computer-Use Agents* (COLM 2026 under review).
+- **Hosted website (full version):** https://www.interfacegym.com / https://componentbench.com
+- **Paper:** *ComponentBench: Diagnosing Component-Level Failures in Computer-Use Agents* (COLM 2026 under review)
 - **Dataset on HuggingFace:** https://huggingface.co/datasets/TianchenGuan/ComponentBench
 
 ## What this repository is
 
-This is the **public benchmark artifact repository** — it contains released benchmark data, schemas, documentation, runner code, and public results.
+A **public, reproducible benchmark repo**. Clone it and you have everything needed to:
 
-The interactive site that runs benchmark tasks in a browser is **not** in this repository. It lives in the private InterfaceGym monorepo and is deployed at `componentbench.com`. See [`docs/release-boundary.md`](docs/release-boundary.md) for what stays here vs. upstream.
+1. **Serve the benchmark site locally** — a minimal Next.js app that renders every task page on `http://localhost:3002`.
+2. **Run the Python benchmark harness** against the local site (or against the public hosted site).
+3. **Inspect the data and schemas** — every task YAML, the human reference trajectories, the ontology, and the JSON schemas they conform to.
+
+This is the *simple* public version. The full platform (with Task Lab task generation, log viewer, recording UI, Supabase backend) deploys componentbench.com and is **not** in this repo.
 
 ## Headline numbers
 
@@ -23,7 +27,6 @@ The interactive site that runs benchmark tasks in a browser is **not** in this r
 | Tasks (Full / Core) | **2,910 / 912** |
 | UI libraries | Ant Design, MUI, Mantine |
 | Observation modes evaluated | AX-tree, SoM, Pixel, Browser-Use |
-| Task templates | 24 |
 | Human reference traces | avg 2.7 steps on v1; 5.2 on v2 |
 
 ### Results on Core (912 tasks), task success rate (%)
@@ -45,76 +48,121 @@ ComponentBench/
 ├── LICENSE
 ├── CITATION.cff
 ├── pyproject.toml
-├── docs/
-│   ├── overview.md
-│   ├── methodology.md
-│   ├── evaluation-protocol.md
-│   ├── data-format.md
-│   ├── release-boundary.md
-│   └── ... (existing runbooks)
-├── schema/
-│   ├── task.schema.json
-│   ├── result.schema.json
-│   └── trace.schema.json
+├── site/                   # Next.js app — serves task pages on port 3002
+│   ├── app/
+│   ├── src/
+│   ├── public/
+│   ├── scripts/generate-task-index.mjs
+│   └── package.json
 ├── data/
-│   └── releases/
-│       └── 0.5.0/
-│           ├── tasks_v1/    # 97 YAMLs (Full benchmark)
-│           ├── tasks_v2/    # 19 YAMLs (Core benchmark)
-│           ├── human_traces/
-│           └── metadata/
+│   ├── tasks_v1/           # 97 YAMLs — Full benchmark, 2,910 tasks
+│   ├── tasks_v2/           # 19 YAMLs — Core benchmark, 912 tasks
+│   ├── human_traces/       # cleaned reference trajectories
+│   └── metadata/           # ontology, axes, templates CSVs
 ├── benchmark/              # Python harness (agents/, core/, utils/)
 ├── configs/                # Agent + benchmark configs (YAML)
 ├── scripts/
 │   ├── run_benchmark.py    # main runner
 │   ├── validate-release.py # schema/structure checker
 │   └── eval_*.sh           # per-mode wrappers
-├── examples/
-│   └── minimal-runner/     # no-dependency example
-├── results/public/         # published model results
+├── examples/minimal-runner/
+├── schema/                 # task.schema.json, result.schema.json, trace.schema.json
+├── docs/                   # overview, methodology, evaluation-protocol, data-format
 └── tests/
 ```
 
 ## Quick start
 
+### 1. Clone and install
+
 ```bash
 git clone https://github.com/TianchenGuan/ComponentBench
 cd ComponentBench
+
+# Python harness
 pip install -e .
 playwright install chromium
 
-# Smoke test (requires running benchmark site at http://localhost:3002 — see Website setup below)
+# Next.js site
+cd site
+npm install
+cd ..
+```
+
+### 2. Run the benchmark site locally
+
+```bash
+cd site
+npm run dev          # serves on http://localhost:3002
+```
+
+Open `http://localhost:3002` to browse the task list. Individual tasks live at `http://localhost:3002/task/<taskId>?mode=benchmark`.
+
+### 3. Run an agent against the local site
+
+In a second terminal:
+
+```bash
+# Smoke test with browser-use mode
 python scripts/run_benchmark.py \
-  --mode pixel \
+  --mode browser_use \
   --canonical_types button \
   --libraries antd \
   --max_tasks 2
 
-# Full v1 run with your model
+# Full v1 run
 python scripts/run_benchmark.py --mode pixel --agent_config gpt --model_id gpt-5.4
 
 # v2 (Core)
 python scripts/run_benchmark.py --benchmark_version v2 --mode pixel ...
 ```
 
-Results go to `results/`; structure them as `results/public/<model>-<mode>-<version>.json` (conforming to `schema/result.schema.json`) when you're ready to publish.
+Results land in `results/`.
 
-## Website setup
-
-The benchmark site is not in this repository. To self-host the site for local evaluation:
-
-- **Easiest:** point at the public site, `https://www.interfacegym.com`. Task URLs follow `https://www.interfacegym.com/task/<taskId>?mode=benchmark`. Be polite about request rates.
-- **Self-hosted:** clone the private InterfaceGym repo and run `apps/componentbench-web` on port 3002. Or build a stripped public bundle from that source with the `BENCHMARK_BUILD=1` env var, which disables the log viewer.
-
-We are working on shipping a self-contained public site bundle from a future release. Until then, use the public hosted site or run the private InterfaceGym fork.
-
-## Schemas
-
-See `schema/task.schema.json`, `schema/result.schema.json`, `schema/trace.schema.json`. Validate a release with:
+### 4. Or skip the local site and target the hosted one
 
 ```bash
-python scripts/validate-release.py --version 0.5.0
+python scripts/run_benchmark.py \
+  --mode pixel \
+  --base_url https://www.interfacegym.com \
+  --canonical_types button --libraries antd --max_tasks 2
 ```
+
+## Running on a Slurm cluster
+
+The site and the runner are light enough for a single compute node:
+
+```bash
+salloc -p compsci --time=4:00:00 --mem=16G --cpus-per-task=4
+# on the allocated node:
+cd ~/projects/ComponentBench/site
+npm install            # first time
+npm run dev &          # serves on http://localhost:3002
+
+# In the same shell (or another, after sourcing the venv):
+cd ~/projects/ComponentBench
+python scripts/run_benchmark.py --mode pixel --canonical_types button --max_tasks 2
+```
+
+To browse the local site from your laptop, SSH-forward port 3002:
+
+```bash
+# replace NODE with the hostname salloc gave you (e.g. compsci-cluster-fitz-42):
+ssh -J tg295@login.cs.duke.edu -L 3002:NODE:3002 tg295@NODE
+# then open http://localhost:3002 in your local browser
+```
+
+## Schemas + validation
+
+```bash
+python scripts/validate-release.py --release-dir data
+```
+
+The three JSON Schemas in `schema/` describe the structure of:
+
+- `task.schema.json` — a single benchmark task
+- `result.schema.json` — one row of agent results
+- `trace.schema.json` — a human or agent trajectory
 
 ## Documentation
 
@@ -123,16 +171,16 @@ python scripts/validate-release.py --version 0.5.0
 | [`docs/overview.md`](docs/overview.md) | What the benchmark is and why this layer matters |
 | [`docs/methodology.md`](docs/methodology.md) | How tasks, difficulty axes, and human traces were built |
 | [`docs/evaluation-protocol.md`](docs/evaluation-protocol.md) | How to run and what to report |
-| [`docs/data-format.md`](docs/data-format.md) | On-disk shape of a release |
-| [`docs/release-boundary.md`](docs/release-boundary.md) | Public ↔ private repo boundary |
+| [`docs/data-format.md`](docs/data-format.md) | On-disk shape of `data/` |
+| [`docs/observation_modes.md`](docs/observation_modes.md) | The four observation/action modes |
+| [`docs/benchmark_versioning.md`](docs/benchmark_versioning.md) | v1 vs v2 split |
 
 ## Contributing
 
-Issues and PRs welcome. See [`docs/release-boundary.md`](docs/release-boundary.md) for what's appropriate here vs. upstream:
+Issues and PRs welcome:
 
 - Bugs in tasks, missing edge cases, schema fixes → here.
-- Site bugs, Task Lab issues, log viewer fixes → upstream (file at the interfacegym.com contact).
-- New tasks / new templates → upstream (they're authored in the Task Lab).
+- New tasks / new templates / Task Lab / site features → upstream platform (file at `interfacegym.com`).
 
 ## License
 
@@ -148,5 +196,3 @@ MIT. See `LICENSE`.
   year={2026}
 }
 ```
-
-See `CITATION.cff` for the machine-readable form.

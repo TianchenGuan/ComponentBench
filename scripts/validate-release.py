@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Validate a ComponentBench release directory against the JSON schemas.
+"""Validate a ComponentBench data directory against the JSON schemas.
 
 Usage:
-    python scripts/validate-release.py --version 0.5.0
-    python scripts/validate-release.py --release-dir data/releases/0.5.0
+    python scripts/validate-release.py
+    python scripts/validate-release.py --release-dir data
 
 Checks:
   1. All task YAMLs under tasks_v1/ and tasks_v2/ parse.
@@ -168,15 +168,13 @@ def validate_release(release_dir: Path) -> int:
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    g = p.add_mutually_exclusive_group(required=True)
-    g.add_argument("--version", help="Version tag, e.g. 0.5.0 (resolves to data/releases/<version>/)")
-    g.add_argument("--release-dir", help="Explicit path to a release directory")
+    p.add_argument("--release-dir", default="data",
+                   help="Path to the data directory (default: data/)")
     args = p.parse_args()
 
-    if args.release_dir:
-        release_dir = Path(args.release_dir).resolve()
-    else:
-        release_dir = REPO_ROOT / "data" / "releases" / args.version
+    release_dir = Path(args.release_dir).resolve()
+    if not release_dir.is_absolute():
+        release_dir = (REPO_ROOT / args.release_dir).resolve()
 
     return validate_release(release_dir)
 
