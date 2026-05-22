@@ -65,7 +65,9 @@ ComponentBench/
 │   ├── run_benchmark.py    # main runner
 │   ├── validate-release.py # schema/structure checker
 │   └── eval_*.sh           # per-mode wrappers
-├── examples/minimal-runner/
+├── examples/
+│   ├── minimal-runner/     # bare-bones single-task runner (no model deps)
+│   └── agent-runner/       # vision-LLM agent + log viewer end-to-end (recommended)
 ├── schema/                 # task.schema.json, result.schema.json, trace.schema.json
 ├── docs/                   # overview, methodology, evaluation-protocol, data-format
 └── tests/
@@ -100,7 +102,24 @@ Open `http://localhost:3002` to browse the task list. Individual tasks live at `
 
 ### 3. Run an agent against the local site
 
-In a second terminal:
+The fastest path is the **agent-runner example** — a single script that
+drives one task with an OpenAI vision model and writes results in the
+schema the in-site log viewer reads:
+
+```bash
+export OPENAI_API_KEY=sk-...
+./examples/agent-runner/quickstart.sh \
+  --task-id alert_dialog_confirm-antd-T01 \
+  --model gpt-4o-mini
+```
+
+Then open `http://localhost:3002/` — if `./runs/` has anything in it, the
+home page redirects to the log viewer and you can step through the
+agent's actions, thinking, and screenshots. See
+[examples/agent-runner/README.md](examples/agent-runner/README.md) for
+details (other providers, custom tasks, troubleshooting).
+
+For larger runs through the full Python harness:
 
 ```bash
 # Smoke test with browser-use mode

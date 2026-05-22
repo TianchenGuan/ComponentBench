@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Allow overriding the build output directory so parallel dev servers
+  // (interactive shell + smoke-test slurm job) don't clobber each other's .next/.
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   transpilePackages: ['antd', '@ant-design/icons', 'antd-style', '@gfazioli/mantine-split-pane'],
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
