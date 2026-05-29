@@ -14,6 +14,33 @@ npm run dev
 # Open http://localhost:3002
 ```
 
+## Record human traces
+
+Help collect human reference trajectories for the **278-task benchmark subset**. This runs entirely on your own laptop (Windows or Mac) — no cloud account, no Python, nothing to configure.
+
+**Prerequisite:** [Node.js](https://nodejs.org) version 20 or newer. That's it.
+
+1. Install dependencies (first time only):
+   ```bash
+   npm install
+   ```
+2. Start the recorder:
+   ```bash
+   npm run record
+   ```
+3. Open **http://localhost:3002/record** in your browser.
+4. Enter a Run ID (e.g. `human_yourname`) and click **Start / Resume Run**. Leave the task field empty to record the full 278-task subset.
+5. For each task: read the instruction at the top of the page and complete it. Every task is recorded twice — first a **cold** attempt (no prior knowledge), then a **warm** attempt — and the flow advances automatically. Click **Pause** to stop anytime; resume later by entering the same Run ID.
+
+**Where your traces are saved:** `site/human-traces/<your-run-id>/`. When you finish, zip that folder and send it back:
+- **macOS:** right-click the `human-traces` folder → **Compress**.
+- **Windows:** right-click the `human-traces` folder → **Send to → Compressed (zipped) folder**.
+
+**Notes**
+- Always use `npm run record` (not `npm run build` / `npm start`) — recording is intentionally disabled in production builds, so the other commands will show "recording disabled".
+- The same command works identically on Windows and Mac.
+- If port 3002 is already in use, edit the `record` script in `site/package.json` and change `-p 3002` to another port (the page works on any port).
+
 ## Overview
 
 ComponentBench provides a systematic benchmark for testing UI agents on 97 canonical component types across 14 families. Each component type has associated tasks that test different interaction patterns.

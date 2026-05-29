@@ -16,7 +16,9 @@ A **public, reproducible benchmark repo**. Clone it and you have everything need
 2. **Run the Python benchmark harness** against the local site (or against the public hosted site).
 3. **Inspect the data and schemas** — every task YAML, the human reference trajectories, the ontology, and the JSON schemas they conform to.
 
-This is the *simple* public version. The full platform (with Task Lab task generation, log viewer, recording UI, Supabase backend) deploys componentbench.com and is **not** in this repo.
+4. **Record human traces** — collect human reference trajectories for the 278-task subset, locally on Windows or Mac. See [site/README.md](site/README.md#record-human-traces) (`cd site && npm install && npm run record`).
+
+This is the *simple* public version. The full platform (with Task Lab task generation, log viewer, Supabase backend) deploys componentbench.com and is **not** in this repo — but the human-trace recorder for the 278-task subset now is (see above).
 
 ## Headline numbers
 

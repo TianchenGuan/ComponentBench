@@ -213,8 +213,10 @@ async function main() {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
+  const generated = {};
   for (const [version, config] of Object.entries(VERSION_CONFIGS)) {
     const index = generateForVersion(version, config);
+    generated[version] = index;
     const outPath = path.join(OUTPUT_DIR, `task-index-${version}.json`);
     fs.writeFileSync(outPath, JSON.stringify(index, null, 2));
     console.log(`  📊 ${version}: ${index.total_tasks} tasks, ${index.canonical_types.length} types`);
@@ -226,6 +228,22 @@ async function main() {
   const aliasPath = path.join(OUTPUT_DIR, 'task-index.json');
   fs.copyFileSync(v1Path, aliasPath);
   console.log(`\n  📋 Alias: task-index.json → task-index-v1.json`);
+
+  // Validate that every task in the bundled recording subset exists in the v1
+  // index, so the /record default never points at task pages that 404.
+  const subsetPath = path.join(__dirname, '../src/recording-subset-278.json');
+  if (fs.existsSync(subsetPath) && generated.v1) {
+    const subset = JSON.parse(fs.readFileSync(subsetPath, 'utf-8'));
+    const subsetIds = (subset.tasks || []).map(t => t.task_id);
+    const indexIds = new Set(generated.v1.tasks.map(t => t.id));
+    const missing = subsetIds.filter(id => !indexIds.has(id));
+    if (missing.length) {
+      console.warn(`\n  ⚠️  Recording subset: ${missing.length}/${subsetIds.length} task(s) missing from v1 index:`);
+      console.warn('     ' + missing.slice(0, 20).join(', ') + (missing.length > 20 ? ' …' : ''));
+    } else {
+      console.log(`\n  ✅ Recording subset: all ${subsetIds.length} tasks present in v1 index.`);
+    }
+  }
 
   console.log('\nDone.');
 }
