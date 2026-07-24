@@ -12,7 +12,7 @@ ComponentBench (this repository) is the **public, downstream artifact**. Interfa
 | Schemas | `schema/*.schema.json` |
 | Benchmark runner (Python) | `benchmark/`, `scripts/run_benchmark.py`, `scripts/eval_*.sh` |
 | Agent configs and base prompts (public-safe) | `configs/` |
-| Examples | `examples/minimal-runner/` |
+| Examples | `examples/minimal-runner/`, `examples/agent-runner/` |
 | Documentation | `docs/`, this file |
 | Published results | `results/public/` |
 | License + citation | `LICENSE`, `CITATION.cff` |
@@ -54,4 +54,4 @@ Releases flow **one-way** from InterfaceGym to this repository via `scripts/expo
 
 - Do not hand-edit files under `data/`. Update upstream and re-export.
 - Schemas, docs, examples, and runner code can be edited here directly.
-- Always run `python scripts/validate-release.py --version <v>` before opening a release-touching PR.
+- Always run `python scripts/validate-release.py --release-dir data` before opening a release-touching PR.

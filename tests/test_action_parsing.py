@@ -14,9 +14,9 @@ import sys
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from agents.openrouter_agent import (
+from benchmark.agents.openai_agent import (
     _extract_thinking_and_action,
     _try_parse_single_action,
     _transform_normalized_to_pixel,

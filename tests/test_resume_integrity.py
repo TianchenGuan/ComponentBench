@@ -18,7 +18,7 @@ from datetime import datetime
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 os.chdir(Path(__file__).parent.parent)
 
@@ -56,8 +56,8 @@ def make_fake_result(task_id: str, mode: str = "ax_tree", success: bool = True) 
 
 def test_append_only():
     """Test that append_result_jsonl only appends, never overwrites."""
-    from benchmarks.componentbench.runner import append_result_jsonl, TaskResult
-    from benchmarks.componentbench.types import TaskResult as TR
+    from benchmark.core.runner import append_result_jsonl, TaskResult
+    from benchmark.core.types import TaskResult as TR
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir)
@@ -72,7 +72,7 @@ def test_append_only():
 
         # Append 1 more via append_result_jsonl
         r = TR(
-            task_id="task-C", canonical_type="checkbox", library="mui",
+            task_id="task-C", canonical_type="checkbox", implementation_source="mui",
             mode="ax_tree", success=True, reward=1.0, steps=2,
             termination_reason="success", start_ts=datetime.now().isoformat(),
             end_ts=datetime.now().isoformat(), duration_seconds=5.0,
@@ -87,7 +87,7 @@ def test_append_only():
 
 def test_summary_from_disk():
     """Test that summary is computed from ALL rows on disk."""
-    from benchmarks.componentbench.runner import write_summary_from_disk
+    from benchmark.core.runner import write_summary_from_disk
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir)
@@ -111,7 +111,7 @@ def test_summary_from_disk():
 
 def test_malformed_line_resilience():
     """Test that load_results_jsonl skips malformed lines."""
-    from benchmarks.componentbench.runner import load_results_jsonl
+    from benchmark.core.runner import load_results_jsonl
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir)
@@ -130,7 +130,7 @@ def test_malformed_line_resilience():
 
 def test_no_overwrite_on_save():
     """Test that save_results (now write_summary_from_disk) does NOT overwrite results.jsonl."""
-    from benchmarks.componentbench.runner import write_summary_from_disk
+    from benchmark.core.runner import write_summary_from_disk
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir)

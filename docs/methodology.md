@@ -8,26 +8,26 @@ We surveyed widely used React component libraries (Ant Design, MUI, Mantine) and
 
 | Family | Examples |
 |---|---|
-| Buttons & triggers | button, icon_button, toggle, segmented_control |
-| Selection | checkbox, radio, switch, select, combobox |
-| Text input | text_input, password_input, number_input, autocomplete |
-| Date/time | date_picker_single, date_picker_range, datetime_picker |
-| Navigation | breadcrumb, tabs, pagination, stepper |
-| Disclosure | accordion, collapsible_disclosure, popover, tooltip |
-| Tables & grids | data_table_sortable, data_table_paginated, data_grid_editable |
-| Trees | tree_view, tree_select, cascader |
-| Drag & drop | drag_drop_sortable_list, drag_drop_between_lists, kanban_card |
-| Continuous precision | slider, range_slider, color_picker_2d, alpha_slider |
-| Overlays | dialog_modal, drawer, alert_dialog_confirm, context_menu |
-| Upload | dropzone, file_input |
-| Rich editors | code_editor, json_editor, rich_text_editor, markdown |
-| Composite | wizard, settings_panel, search_filters |
+| Command & Navigation | button, icon_button, tabs, pagination, breadcrumb, stepper |
+| Disclosure & Progressive | accordion, collapsible_disclosure, carousel, window_splitter |
+| Text Entry & Structured Field Input | text_input, password_input, masked_input, pin_input_otp |
+| Discrete Choice | checkbox, radio_group, switch, segmented_control, rating |
+| List-based Selection (Flat) | listbox_single, select_native, select_with_search, transfer_list |
+| Combobox & Autocomplete | combobox_editable_single, autocomplete_restricted |
+| Hierarchical Selection & Navigation | menu, context_menu, tree_view, tree_select, cascader |
+| Continuous & High-Precision Input | slider_single, slider_range, meter, color_picker_2d, alpha_slider |
+| Date & Time | date_picker_single, date_picker_range, datetime_picker_single |
+| Overlays & Transient UI | dialog_modal, drawer, alert_dialog_confirm, tooltip, toast_snackbar |
+| Structured Data Display | data_table_sortable, data_table_filterable, data_grid_editable |
+| Files, Clipboard, Downloads | file_upload_button, file_dropzone, clipboard_copy |
+| Drag/Drop & Workspace Interactions | drag_drop_sortable_list, kanban_board_drag_drop, resizable_columns |
+| Advanced Editors | rich_text_editor, code_editor, markdown_editor, json_editor |
 
 The mapping from canonical type to family and to per-library implementation lives in `data/metadata/canonical_components.csv`.
 
 ## Task generation
 
-Each canonical type is instantiated as concrete tasks via **24 templates** (e.g. *activate*, *select_value*, *toggle_set*, *reorder*, *fill_form*). Templates fix the goal pattern; the variant parameters (target value, distractor count, theme, density, etc.) vary across tasks.
+Each canonical type is instantiated as concrete tasks via **24 templates** (e.g. *activate*, *select_one*, *toggle_state*, *drag_operation*, *enter_formatted* — full list in `data/metadata/task_templates.csv`). Templates fix the goal pattern; the variant parameters (target value, distractor count, theme, density, etc.) vary across tasks.
 
 For each (canonical type × library × template × variant), a Next.js page is generated that:
 1. Renders the underlying component with controlled scene context.
@@ -53,7 +53,7 @@ A separate **realized difficulty audit** measures these axes from the rendered D
 
 ## Human reference trajectories
 
-Annotators completed every task through the site's `/record` interface (in the private platform repo). Mouse events, keystrokes, and DOM mutations were captured and normalized:
+Annotators completed every task through the site's `/record` interface (a local version ships in this repo: `cd site && npm run record`). Mouse events, keystrokes, and DOM mutations were captured and normalized:
 
 - Adjacent character-by-character typing was merged into single `type` actions so step counts are comparable with agents that paste in one step.
 - The better of two recordings per task was kept (fewer normalized steps, then shorter duration).

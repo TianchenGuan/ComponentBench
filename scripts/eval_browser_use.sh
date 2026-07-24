@@ -47,14 +47,14 @@ echo "  Timestamp    : $(date '+%Y-%m-%d %H:%M:%S')"
 echo "======================================================================"
 echo ""
 
-# Browser-use pipeline (separate from BrowserGym)
-if [ ! -f "${SCRIPT_DIR}/browser_use/run_and_pack.py" ]; then
-    echo "ERROR: scripts/browser_use/run_and_pack.py not found."
-    echo "This script requires the browser-use pipeline to be ported from InterfaceGym."
-    exit 1
-fi
+# Browser-use pipeline (separate from BrowserGym).
+# Requires: pip install -e ".[browser-use]"
+RUN_ID="${RUN_ID:-bu_$(echo "${MODEL}" | tr '/.' '__')_$(date +%Y%m%d_%H%M%S)}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-results/browser_use}"
 
 python3 scripts/browser_use/run_and_pack.py \
+    --run-id "${RUN_ID}" \
+    --output-root "${OUTPUT_ROOT}" \
     --model "${MODEL}" \
     --server-url "${BASE_URL:-http://127.0.0.1:3002}" \
     "$@"

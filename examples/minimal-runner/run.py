@@ -29,10 +29,15 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def load_task(task_id: str) -> dict:
-    """Load one task spec from data/tasks_v{1,2}/."""
+    """Load one task spec from data/tasks_v{1,2}/.
+
+    v1 files are named by canonical type (button.yaml); v2 files are named by
+    generation unit, so for v2 we scan every YAML in the directory.
+    """
     canonical = task_id.split("-")[0]
-    for suite in ("tasks_v1", "tasks_v2"):
-        yaml_path = REPO_ROOT / "data" / suite / f"{canonical}.yaml"
+    candidates = [REPO_ROOT / "data" / "tasks_v1" / f"{canonical}.yaml"]
+    candidates += sorted((REPO_ROOT / "data" / "tasks_v2").glob("*.yaml"))
+    for yaml_path in candidates:
         if not yaml_path.exists():
             continue
         with yaml_path.open() as f:
@@ -86,7 +91,7 @@ def run_one(task: dict, site_url: str, max_steps: int = 20) -> dict:
         "task_id": task_id,
         "canonical_type": task.get("canonical_type"),
         "library": task.get("implementation_source"),
-        "benchmark_version": "v1" if "T" in task_id and task_id.split("-")[0] in task.get("canonical_type", "") else "v1",
+        "benchmark_version": "v2" if "-v2-" in task_id else "v1",
         "model_id": "placeholder",
         "mode": "pixel",
         "passed": passed,
@@ -102,13 +107,12 @@ def run_one(task: dict, site_url: str, max_steps: int = 20) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--task-id", required=True)
-    ap.add_argument("--version", default="0.5.0")
-    ap.add_argument("--site-url", default="https://www.interfacegym.com")
+    ap.add_argument("--site-url", default="https://interfacegym.com")
     ap.add_argument("--max-steps", type=int, default=20)
     ap.add_argument("--out", default="-", help="Path to write result JSON (- for stdout)")
     args = ap.parse_args()
 
-    task = load_task(args.version, args.task_id)
+    task = load_task(args.task_id)
     result = run_one(task, args.site_url, args.max_steps)
     payload = json.dumps(result, indent=2)
 

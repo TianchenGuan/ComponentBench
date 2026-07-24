@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=cb_smoke
-#SBATCH --partition=compsci
+#SBATCH --partition=compute   # set to your cluster's partition
 #SBATCH --time=01:30:00
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=8

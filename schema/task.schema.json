@@ -17,8 +17,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "description": "Stable identifier, e.g. `button-antd-T01`. Format: <canonical_type>-<library>-T<NN>.",
-      "pattern": "^[a-z0-9_]+-(antd|mui|mantine)-T[0-9]+$"
+      "description": "Stable identifier, e.g. `button-antd-T01`. Format: <canonical_type>-<library>[-v2]-T<NN>. Library is antd/mui/mantine, or `external` for the 30 markdown-editor tasks implemented with an external component.",
+      "pattern": "^[a-z0-9_]+-(antd|mui|mantine|external)(-v2)?-T[0-9]+$"
     },
     "name": { "type": "string", "description": "Short human-readable label." },
     "canonical_type": {
@@ -27,8 +27,8 @@
     },
     "implementation_source": {
       "type": "string",
-      "enum": ["antd", "mui", "mantine"],
-      "description": "Underlying UI library used to instantiate the component."
+      "enum": ["antd", "mui", "mantine", "external"],
+      "description": "Underlying UI library used to instantiate the component (`external` = component from outside the three core libraries, e.g. the markdown editor)."
     },
     "implementation_variant": { "type": ["string", "null"] },
     "implementation_component": { "type": "string" },
@@ -45,17 +45,24 @@
       "required": ["theme", "spacing", "layout", "placement", "scale", "instances", "guidance", "clutter"],
       "properties": {
         "theme": { "enum": ["light", "dark", "high_contrast"] },
-        "spacing": { "enum": ["comfortable", "compact", "condensed"] },
+        "spacing": { "enum": ["comfortable", "compact"] },
         "layout": {
           "enum": [
             "isolated_card", "form_section", "settings_panel", "dashboard",
-            "table_cell", "modal_flow", "drawer_flow"
+            "table_cell", "modal_flow", "drawer_flow",
+            "dashboard_panel", "inline_surface", "nested_scroll", "panel_flow"
           ]
         },
-        "placement": { "enum": ["center", "top_left", "top_right", "bottom_left", "bottom_right"] },
+        "placement": { "enum": ["center", "top_left", "top_right", "bottom_left", "bottom_right", "off_center"] },
         "scale": { "enum": ["default", "small", "large"] },
-        "instances": { "type": "integer", "minimum": 1, "maximum": 4 },
-        "guidance": { "enum": ["text", "visual", "mixed"] },
+        "instances": {
+          "oneOf": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "string", "pattern": "^([0-9]+|[0-9]+_plus)$" }
+          ],
+          "description": "Number of component instances rendered (integer, stringified integer, or `4_plus`)."
+        },
+        "guidance": { "enum": ["text", "visual", "mixed", "none"] },
         "clutter": { "enum": ["none", "low", "medium", "high"] }
       }
     },
@@ -81,22 +88,29 @@
       "required": ["human_readable", "canonical_predicate"],
       "properties": {
         "human_readable": {
-          "type": "array",
+          "type": ["array", "string"],
           "items": { "type": "string" },
-          "description": "Human-readable description of what counts as success."
+          "description": "Human-readable description of what counts as success (list of bullet strings, or a single string)."
         },
         "canonical_predicate": {
           "type": "object",
           "required": ["predicate_type", "target_state"],
           "properties": {
             "predicate_type": { "type": "string", "description": "e.g. equals, contains, count_at_least" },
-            "target_state": { "type": "object", "additionalProperties": true },
+            "target_state": {
+              "type": ["object", "array", "string", "number", "boolean", "null"],
+              "additionalProperties": true,
+              "description": "Target state for the predicate. Usually an object of key/value pairs; scalar or list forms are used by equals/set-membership predicates."
+            },
             "tolerance": {},
             "require_confirm": { "type": "boolean" },
-            "confirm_control": { "type": ["string", "null"] },
+            "confirm_control": {
+              "type": ["string", "object", "null"],
+              "description": "Confirm control label, or an object with control_type/label."
+            },
             "require_correct_instance": { "type": "boolean" },
             "target_instance_label_or_id": { "type": ["string", "null"] },
-            "terminal_condition": { "type": "string" }
+            "terminal_condition": { "type": ["string", "boolean"] }
           },
           "additionalProperties": true
         }
@@ -107,8 +121,12 @@
       "items": { "type": "string" },
       "description": "Concrete states/events that explicitly do not count as success."
     },
-    "expected_interaction_path": { "type": "string" },
-    "notes": { "type": "string" }
+    "expected_interaction_path": {
+      "type": ["string", "array"],
+      "items": { "type": "string" },
+      "description": "Reference interaction recipe (list of step strings, or a single string)."
+    },
+    "notes": { "type": ["string", "array", "null"], "items": { "type": "string" } }
   },
   "additionalProperties": true
 }

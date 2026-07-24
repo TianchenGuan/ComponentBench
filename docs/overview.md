@@ -72,4 +72,8 @@ See `examples/minimal-runner/` for a hand-rolled runner that doesn't depend on t
 
 ## Where the website lives
 
-The interactive benchmark site at https://www.interfacegym.com (which also serves componentbench.com) is **not** in this repository — it lives in the private InterfaceGym monorepo. This repository contains the static benchmark artifact: task specs, schemas, runner code, and published results.
+A minimal, fully functional version of the benchmark site ships in this repository under `site/` (serve locally with `cd site && npm install && npm run dev`). The hosted deployment at https://interfacegym.com (which also serves componentbench.com) is built from the private InterfaceGym platform repo, which additionally contains the Task Lab generation tooling and hosted log viewer backend.
+
+## Failure analysis
+
+The trace-grounded failure taxonomy and the 20 adversarially verified case studies from the paper are released in [`failure_case_studies.md`](failure_case_studies.md), with the verification workflow in [`case_study_workflow.js`](case_study_workflow.js).

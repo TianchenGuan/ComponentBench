@@ -20,13 +20,13 @@ import sys
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 os.chdir(Path(__file__).parent.parent)
 
 
 def test_task_loading():
     """Test that tasks load, filter, and shard correctly."""
-    from benchmarks.componentbench.loader import (
+    from benchmark.core.loader import (
         load_all_tasks, filter_tasks, shard_tasks, load_ontology_family_map,
     )
 
@@ -40,8 +40,8 @@ def test_task_loading():
 
     shard0, plan0 = shard_tasks(filtered, 0, 2, strategy="stride")
     shard1, plan1 = shard_tasks(filtered, 1, 2, strategy="stride")
-    ids0 = {t.id for t in shard0}
-    ids1 = {t.id for t in shard1}
+    ids0 = {t.task_id for t in shard0}
+    ids1 = {t.task_id for t in shard1}
     assert not ids0 & ids1, "Shard overlap detected"
     assert len(ids0) + len(ids1) == len(filtered), "Shard coverage mismatch"
     print(f"  [PASS] Sharding: {len(shard0)} + {len(shard1)} = {len(filtered)}")
@@ -53,7 +53,7 @@ def test_task_loading():
 
 def test_mismatch_flags():
     """Test mismatch flag computation with synthetic data."""
-    from benchmarks.componentbench.realized_audit import compute_mismatch_flags
+    from benchmark.core.difficulty_audit import compute_mismatch_flags
 
     intended = {
         "difficulty_bucket": "hard",
@@ -85,17 +85,26 @@ def test_mismatch_flags():
 
 
 def test_extract_quoted_phrases():
-    from benchmarks.componentbench.realized_audit import extract_quoted_phrases
+    from benchmark.core.difficulty_audit import extract_quoted_phrases
     phrases = extract_quoted_phrases('Click the "Generate report" button in the "Report" card.')
     assert "Generate report" in phrases
     assert "Report" in phrases
     print(f"  [PASS] Extracted phrases: {phrases}")
 
 
-def test_audit_data_flow(base_url: str):
-    """Test full audit with a real browser on 2 tasks."""
-    from benchmarks.componentbench.loader import load_all_tasks, filter_tasks
-    from benchmarks.componentbench.realized_audit import run_audit
+def test_audit_data_flow(base_url: str = ""):
+    """Test full audit with a real browser on 2 tasks.
+
+    Requires the ComponentBench site to be running. Under pytest this is
+    opt-in: set CB_AUDIT_BASE_URL (e.g. http://127.0.0.1:3002) to enable.
+    """
+    if not base_url:
+        base_url = os.environ.get("CB_AUDIT_BASE_URL", "")
+    if not base_url:
+        import pytest
+        pytest.skip("live-site smoke test; set CB_AUDIT_BASE_URL to enable")
+    from benchmark.core.loader import load_all_tasks, filter_tasks
+    from benchmark.core.difficulty_audit import run_audit
 
     tasks = load_all_tasks("data/tasks_v1")
     sample = filter_tasks(tasks, canonical_types=["button"], libraries=["antd"], max_tasks=2)

@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import json
 import unittest
@@ -27,7 +27,7 @@ class TestMAIUIParser(unittest.TestCase):
     """Tests for MAI-UI-8B action parsing."""
 
     def setUp(self):
-        from agents.mai_ui_agent import parse_mai_ui_action, mai_action_to_browsergym
+        from benchmark.agents.mai_ui_agent import parse_mai_ui_action, mai_action_to_browsergym
         self.parse = parse_mai_ui_action
         self.to_bg = mai_action_to_browsergym
 
@@ -128,15 +128,15 @@ class TestUITarsParser(unittest.TestCase):
     """Tests for UI-TARS-1.5-7B action parsing."""
 
     def setUp(self):
-        from agents.ui_tars_agent import (
+        from benchmark.agents.ui_tars_agent import (
             _extract_last_action_line,
             parse_ui_tars_action,
-            _map_coords_to_browsergym,
+            _map_coords_to_pixels,
         )
-        from agents.pixel_vlm_base import smart_resize
+        from benchmark.agents.pixel_agent_base import smart_resize
         self.extract_action = _extract_last_action_line
         self.parse_action = parse_ui_tars_action
-        self.map_coords = _map_coords_to_browsergym
+        self.map_coords = _map_coords_to_pixels
         self.smart_resize = smart_resize
 
     def test_extract_last_action(self):
@@ -163,12 +163,11 @@ class TestUITarsParser(unittest.TestCase):
 
     def test_coord_mapping(self):
         # Simple case: model predicts in 1400x700 resized image
-        # Point (700, 350) = center of resized image
-        bx, by = self.map_coords(700, 350, 1920, 1080, 1400, 700)
-        # 700/1400*1920 = 960 -> 960/1920*1000 = 500
-        # 350/700*1080 = 540 -> 540/1080*1000 = 500
-        self.assertEqual(bx, 500)
-        self.assertEqual(by, 500)
+        # Point (700, 350) = center of resized image -> center of the screen
+        px, py = self.map_coords(700, 350, 1920, 1080, 1400, 700)
+        # 700/1400*1920 = 960; 350/700*1080 = 540
+        self.assertEqual(px, 960)
+        self.assertEqual(py, 540)
 
     def test_smart_resize(self):
         h, w = self.smart_resize(1080, 1920)
@@ -227,7 +226,7 @@ class TestHolo2Parser(unittest.TestCase):
     """Tests for Holo2-30B-A3B action parsing."""
 
     def setUp(self):
-        from agents.holo2_agent import holo2_json_to_browsergym, _try_parse_json_from_text
+        from benchmark.agents.holo2_agent import holo2_json_to_browsergym, _try_parse_json_from_text
         self.to_bg = holo2_json_to_browsergym
         self.parse_json = _try_parse_json_from_text
 
@@ -312,7 +311,7 @@ class TestNegativeCases(unittest.TestCase):
     """Cross-parser negative tests: reasoning text must never be parsed as actions."""
 
     def test_mai_ui_ignores_reasoning_coordinates(self):
-        from agents.mai_ui_agent import parse_mai_ui_action
+        from benchmark.agents.mai_ui_agent import parse_mai_ui_action
         raw = (
             '<grounding_think>The button is around (530, 410). '
             'I should click coordinates(530, 410) to proceed.</grounding_think>\n'
@@ -322,7 +321,7 @@ class TestNegativeCases(unittest.TestCase):
         self.assertIsNone(d)
 
     def test_ui_tars_only_parses_action_line(self):
-        from agents.ui_tars_agent import _extract_last_action_line
+        from benchmark.agents.ui_tars_agent import _extract_last_action_line
         raw = (
             'Thought: I should click around (530, 410). coordinates(530, 410) looks right.\n'
             'The element at approximately(300, 400) is the target.\n'
@@ -332,7 +331,7 @@ class TestNegativeCases(unittest.TestCase):
         self.assertIsNone(line)
 
     def test_holo2_ignores_non_json(self):
-        from agents.holo2_agent import _try_parse_json_from_text
+        from benchmark.agents.holo2_agent import _try_parse_json_from_text
         raw = (
             'I need to click around(530, 410) and coordinates(100, 200). '
             'Let me try approximately(300, 400).'

@@ -328,7 +328,7 @@ def main():
     if args.data_dir:
         data_dir = args.data_dir
     elif args.benchmark_version == "v2":
-        data_dir = "data/componentbench_v2"
+        data_dir = "data/tasks_v2"
     else:
         data_dir = config.benchmark.data_dir
     all_tasks = load_all_tasks(data_dir)
@@ -382,6 +382,12 @@ def main():
     
     # Determine modes (normalize aliases: set_of_marks → som)
     from benchmark.core.task import normalize_mode
+    if args.mode == "browser_use":
+        logger.error(
+            "browser_use is a separate pipeline (not BrowserGym). "
+            "Use scripts/browser_use/run_and_pack.py or scripts/eval_browser_use.sh instead."
+        )
+        sys.exit(2)
     if args.mode == "all":
         modes = ["ax_tree", "som", "pixel"]
     else:

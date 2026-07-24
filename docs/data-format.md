@@ -11,14 +11,12 @@ data/
 │   ├── button.yaml
 │   ├── ...
 ├── tasks_v2/                # 19 YAMLs (Core benchmark, 912 tasks)
-│   ├── 01_activate.yaml
-│   ├── 02_select_value.yaml
+│   ├── 01_markdown_code_json_editors_v2.yaml
+│   ├── 02_rich_text_editor_v2.yaml
 │   ├── ...
 ├── human_traces/            # cleaned reference trajectories
 │   ├── v1_reference.jsonl
-│   ├── v2_reference.jsonl
-│   ├── v1/                  # per-task JSONL recordings
-│   └── v2/
+│   └── v2_reference.jsonl
 └── metadata/
     ├── canonical_components.csv
     ├── difficulty_axes.csv
@@ -61,7 +59,7 @@ Sample (abbreviated):
 
 ### Task ID convention
 
-`<canonical_type>-<library>-T<NN>`, e.g. `accordion-antd-T01`, `data_grid_editable-mui-T07`. IDs are **stable across releases** — a task does not change identity if its scene_context changes.
+`<canonical_type>-<library>[-v2]-T<NN>`, e.g. `accordion-antd-T01`, `data_grid_editable-mui-T07`, `slider_single-mantine-v2-T03`. The library is `antd`/`mui`/`mantine`, or `external` for the 30 markdown-editor tasks. IDs are **stable across releases** — a task does not change identity if its scene_context changes.
 
 ### Public vs full spec
 
@@ -74,14 +72,17 @@ The TaskSpec contains answer-key fields (`success_trigger.canonical_predicate.ta
 ```json
 {
   "task_id": "button-antd-T01",
+  "status": "SUCCESS",
   "normalized_steps": 1,
   "raw_steps": 1,
-  "duration_ms": 1842,
-  "viewport": { "width": 1280, "height": 768 }
+  "duration_ms": 4711,
+  "hover_only": false,
+  "chosen_pass": 2,
+  "step_types": ["click"]
 }
 ```
 
-The per-step recordings are under `v1/` and `v2/` subdirectories as JSONL (one task per file), schema: `schema/trace.schema.json`.
+The full per-step human episode recordings (screenshots + event streams) are archived on the [Hugging Face dataset](https://huggingface.co/datasets/TianchenGuan/ComponentBench) under `runs/human0_20260312_clean/episodes.tar`; trajectory rows conform to `schema/trace.schema.json`.
 
 **Typing normalization** is critical: human recorders type one character at a time, agents typically paste in one step. Without normalization, step counts are not comparable.
 
@@ -102,7 +103,7 @@ The data version tracks the repository tag. To pin against a specific release, c
 ## Validation
 
 ```bash
-python scripts/validate-release.py --version 0.5.0
+python scripts/validate-release.py --release-dir data
 ```
 
 This script verifies:

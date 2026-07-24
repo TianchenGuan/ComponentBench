@@ -7,7 +7,7 @@ How to run an agent against ComponentBench in a way that yields directly compara
 - **v1 / Full** (2,910 tasks): broad coverage across 97 canonical types × 3 libraries. Use for full leaderboards.
 - **v2 / Core** (912 tasks): harder, generation-unit-based subset with richer designed factors. Use for tracking frontier progress.
 
-v1 is the default unless `--benchmark-version v2` is passed.
+v1 is the default unless `--benchmark_version v2` is passed to `scripts/run_benchmark.py` (the Browser-Use runner uses `--benchmark-version v2`).
 
 ## Choose an observation mode
 
@@ -25,12 +25,12 @@ Report all four (or as many as you support). Switching modes can move scores by 
 ## Hyperparameters to fix
 
 - **max_steps:** 20 per task (we use this for all reported results).
-- **Per-step timeout:** 30s.
-- **Per-task wall-clock cap:** 5 min.
+- **Per-step timeout:** 300s (`step_timeout` in `configs/environment/default.yaml`).
+- **Per-task wall-clock cap:** 600s (`--max_task_walltime_seconds`).
 - **Site URL:** the local self-hosted site (see `docs/data-format.md`) on port 3002 by default.
-- **Browser:** Chromium via Playwright; `--headless` for cluster runs.
-- **Viewport:** 1280×768 unless the task spec requires otherwise.
-- **Random seed:** 42 for sampling; tasks are otherwise deterministic.
+- **Browser:** Chromium via Playwright; headless for cluster runs (default).
+- **Viewport:** 1280×720 (the harness default in `benchmark/core/task.py`).
+- **Random seed:** 42 (`task_seed`); tasks are otherwise deterministic.
 
 ## What counts as success
 
@@ -63,13 +63,26 @@ Drop a JSON file under `results/public/<model>-<mode>-<version>.json` conforming
 3. **Counting raw typing keystrokes as steps.** Normalize before reporting (merge adjacent character-by-character typing into one `type` action).
 4. **Trusting agent self-assessment.** See the browser-use caveat above.
 
-## Reference numbers (Core / v2, task success %)
+## Reference numbers (task success %)
+
+### Full / v1 (2,910 tasks)
 
 | Model | Browser-Use | AX-tree | SoM | Pixel |
 |---|---:|---:|---:|---:|
 | Gemini 3 Flash | 95.2 | 89.6 | 87.1 | 85.4 |
 | GPT-5.4 | 90.4 | 81.5 | 77.0 | 83.8 |
-| GPT-5 mini | 87.0 | 83.1 | 78.5 | 49.0 |
-| UI-TARS-1.5-7B | — | — | — | 12.6 |
+| Gemini 3.1 Flash-Lite | 87.4 | 77.7 | 73.5 | 63.3 |
+| GPT-5 mini | 87.0 | 83.1 | 78.5 | 48.9 |
+| GPT-5.4 mini | 85.8 | 79.1 | 74.7 | 77.1 |
+| Qwen3-VL-235B | 78.8 | 77.0 | 54.4 | 50.5 |
+| UI-TARS-1.5-7B (native harness) | — | — | — | 12.6 |
+
+### Core / v2 (912 tasks)
+
+| Model | Browser-Use | Pixel |
+|---|---:|---:|
+| Gemini 3 Flash | 84.5 | 60.9 |
+| Opus 4.6 | — | 65.4 |
+| GPT-5.4 mini | 57.8 | 37.7 |
 
 Human reference (same tasks, after typing normalization): ~2.7 steps avg on v1, ~5.2 steps avg on v2.

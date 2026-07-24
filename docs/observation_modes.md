@@ -22,7 +22,7 @@ The agent receives a **screenshot** and the full **W3C accessibility tree** as
 text. Each interactive element has an ID in square brackets like `[42]`. The
 agent references elements by their ID: `click('42')`.
 
-- Config: `config/obs/webarena.yaml`
+- Config: `configs/observation/ax_tree.yaml`
 - Action space: `bid` (BrowserGym's ID-based actions)
 - Best for: Models with strong text understanding (reading structured trees)
 
@@ -31,7 +31,7 @@ The agent receives a **screenshot with numbered visual markers** overlaid on
 interactive elements (Set-of-Mark). No accessibility tree text is provided. The
 agent clicks elements by their marker number: `click('42')`.
 
-- Config: `config/obs/som_visual.yaml`
+- Config: `configs/observation/set_of_marks.yaml`
 - Action space: `bid`
 - Best for: Vision-language models that can read overlay numbers
 
@@ -40,7 +40,7 @@ The agent receives only a **raw screenshot** with no DOM or element
 information. It must visually identify elements and click by pixel coordinates:
 `mouse_click(640, 360)`.
 
-- Config: `config/obs/pixel_grid.yaml` (with grid) or inline in `task.py`
+- Config: `configs/observation/pixel.yaml` (or `pixel_grid` mode for a coordinate grid overlay)
 - Action space: `coord` (coordinate-based)
 - Important: Some models output **normalized 0-1000 coordinates** (Qwen3-VL,
   Gemini) while others output **actual pixel coordinates** (GPT). The
@@ -60,7 +60,7 @@ separate pipeline from the BrowserGym modes.
 
 ## 2. Mode Configuration (BrowserGym)
 
-Modes are defined in `src/benchmarks/componentbench/task.py` as the `OBS_MODES`
+Modes are defined in `benchmark/core/task.py` as the `OBS_MODES`
 dictionary:
 
 ```python
@@ -93,7 +93,7 @@ OBS_MODES = {
 }
 ```
 
-The runner (`src/benchmarks/componentbench/runner.py`) reads the mode, looks up
+The runner (`benchmark/core/runner.py`) reads the mode, looks up
 `OBS_MODES`, and configures the agent accordingly.
 
 ---
@@ -102,7 +102,7 @@ The runner (`src/benchmarks/componentbench/runner.py`) reads the mode, looks up
 
 ### BrowserGym Agent (OpenRouterAgent)
 
-All BrowserGym modes use `OpenRouterAgent` (`src/agents/openrouter_agent.py`),
+All BrowserGym modes use `OpenAIAgent` (`benchmark/agents/openai_agent.py`),
 which talks to any OpenAI-compatible chat completions API. The agent:
 
 1. Receives observations from BrowserGym (screenshot, AX-tree, SoM overlay)
@@ -114,9 +114,9 @@ Key agent config files:
 
 | Config | Provider | Model | Coordinate Normalization |
 |--------|----------|-------|--------------------------|
-| `config/agent/local_vllm.yaml` | Local vLLM | Qwen3-VL-235B | Yes (0-1000) |
-| `config/agent/gemini_api.yaml` | Google Gemini API | gemini-3.1-flash-lite | Yes (0-1000) |
-| `config/agent/openrouter_generic.yaml` | OpenRouter / any API | GPT, Claude, etc. | No (actual pixels) |
+| `configs/agents/qwen.yaml` | Local vLLM | Qwen3-VL-235B | Yes (0-1000) |
+| `configs/agents/gemini.yaml` | Google Gemini API | gemini-3.1-flash-lite | Yes (0-1000) |
+| `configs/agents/gpt.yaml` / `openrouter.yaml` | OpenAI / OpenRouter / any API | GPT, etc. | No (actual pixels) |
 
 The `normalize_coordinates` flag determines whether the agent transforms model
 output coordinates from a 0-1000 normalized scale to actual pixel coordinates.

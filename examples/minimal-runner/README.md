@@ -4,9 +4,9 @@ A bare-bones example that walks one ComponentBench task end-to-end without any o
 
 ## What it does
 
-1. Reads a task spec from `data/tasks_v1/<canonical_type>.yaml`.
+1. Reads a task spec from `data/tasks_v1/<canonical_type>.yaml` (falls back to scanning `data/tasks_v2/`).
 2. Loads a single task by `id`.
-3. Opens a Playwright browser at `https://www.interfacegym.com/task/<task_id>?mode=benchmark`.
+3. Opens a Playwright browser at `https://interfacegym.com/task/<task_id>?mode=benchmark`.
 4. Asks your model (placeholder hook) to pick one click coordinate.
 5. Clicks it, then polls for `#cb-success-banner` to determine pass/fail.
 6. Writes a result row matching `schema/result.schema.json`.
@@ -17,7 +17,7 @@ A bare-bones example that walks one ComponentBench task end-to-end without any o
 pip install playwright pyyaml
 playwright install chromium
 
-python run.py --task-id button-antd-T01 --version 0.5.0 --site-url https://www.interfacegym.com
+python run.py --task-id button-antd-T01 --site-url https://interfacegym.com
 ```
 
 The model hook in `run.py` returns a hardcoded coordinate by default; replace it with your model's response parser to see real evaluation.
